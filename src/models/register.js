@@ -6,13 +6,15 @@ import config from '../config.json';
 
 let users = [];
 export default {
-    add: (netid) => {
-        if(users.indexOf(netid) < 0){
-            users.push(netid);
-            return true;
-        } else {
-            return false;
-        }
+    add: (cardId) => {
+        return idcard.get(cardId).then((regId) => {
+            return pws.get(regId).then((result) => {
+                return idcard.getPhoto(regId).then((photo) => {
+                    result.Base64Photo = photo;
+                    return result;
+                })
+            })
+        })
     },
     list: () => {
         return users;

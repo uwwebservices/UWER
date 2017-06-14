@@ -7,12 +7,14 @@ api.get('/list', (req, res) => {
     res.json(register.list());
 });
 
-api.post('/:netid', (req, res) => {
-    if(register.add(req.params.netid)) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(400);
-    }
+api.post('/:cardId', (req, res) => {
+    console.log("received post with cardId:", req.params.cardId)
+    register.add(req.params.cardId.toString()).then((result) => {
+        res.json(result);
+    })
+    .catch((err) => {
+        res.json({"Error": err});
+    })
 });
 
 api.delete('/:netid', (req, res) => {
