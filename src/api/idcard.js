@@ -1,14 +1,11 @@
 import idcard from '../models/idcard';
 import { Router } from 'express';
 
-export default ({config}) => {
-    let api = Router();
+let api = Router();
 
-    api.get('/', (req, res) => {
-        res.json(idcard.get());
-    });
-    
-    return api;
-}
+api.get('/', (req, res) => {
+    res.json(idcard.get());
+});
 
+export default api;
 

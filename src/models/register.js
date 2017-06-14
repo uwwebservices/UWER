@@ -1,5 +1,10 @@
-let users = [];
+import idcard from './idcard';
+import pws from './pws';
+import groups from './groups';
+import register from './register';
+import config from '../config.json';
 
+let users = [];
 export default {
     add: (netid) => {
         if(users.indexOf(netid) < 0){
