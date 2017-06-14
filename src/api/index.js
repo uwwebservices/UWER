@@ -3,6 +3,7 @@ import { Router } from 'express';
 import idcard from './idcard';
 import pws from './pws';
 import groups from './groups';
+import register from './register';
 
 export default ({ config }) => {
 	let api = Router();
@@ -15,6 +16,9 @@ export default ({ config }) => {
 
 	// groups resource
 	api.use('/groups', groups({config}));
+
+	// registration resource
+	api.use('/register', register({config}));
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
