@@ -16,11 +16,10 @@ export default {
             })
         })
         .then((personDetails) => {
-            console.log(personDetails);
-            return groups.add(personDetails).then(() => {
-                console.log(personDetails);
-                return personDetails;
-            });
+            return personDetails;
+            // return groups.add(personDetails).then(() => {
+            //     return personDetails;
+            // });
         });
     },
     list: () => {
