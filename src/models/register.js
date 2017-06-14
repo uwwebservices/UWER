@@ -15,12 +15,21 @@ export default {
                 })
             })
         })
+        .then((personDetails) => {
+            console.log(personDetails);
+            return groups.add(personDetails).then(() => {
+                console.log(personDetails);
+                return personDetails;
+            });
+        });
     },
     list: () => {
-        return users;
+        return groups.list();
     },
-    delete: (netid) => {
-        users.pop(netid);
-        return users;
+    remove: () => {
+        groups.remove();
+    },
+    clear: () => {
+        groups.clear();
     }
 }

@@ -17,11 +17,6 @@ api.post('/:cardId', (req, res) => {
     })
 });
 
-api.delete('/:netid', (req, res) => {
-    register.delete(req.params.netid);
-    res.sendStatus(200);
-});
-
 export default api;
 
 

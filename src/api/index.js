@@ -7,20 +7,14 @@ import register from './register';
 
 export default ({ config }) => {
 	let api = Router();
-    
-	// idcard resource
-	api.use('/idcard', idcard);
 
-	// pws resource
-	api.use('/pws', pws);
+    api.use('/register', register);
 
-	// groups resource
-	api.use('/groups', groups);
-
-	// registration resource
-	api.use('/register', register);
-
-	// perhaps expose some API metadata at the root
+    // Optional API Routes
+	// api.use('/idcard', idcard);
+	// api.use('/pws', pws);
+	// api.use('/groups', groups);
+	
 	api.get('/', (req, res) => {
 		res.json({ version });
 	});

@@ -3,9 +3,21 @@ import rp from 'request-promise';
 
 export default {
     add: (netid) => {
-
+        throw "Not Implemented";
     },
     get: (id) => {
-        return { "groups": "groups" };
+        throw "Not Implemented";
+    },
+    list: () => {
+        throw "Not Implemented";
+    },
+    createGroup: () => {
+        throw "Not Implemented";
+    },
+    remove: () => {
+        throw "Not Implemented";
+    },
+    clear: () => {
+        throw "Not Implemented";
     }
 }
