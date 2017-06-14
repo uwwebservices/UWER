@@ -1,0 +1,12 @@
+{
+	"port": 1111,
+	"bodyLimit": "100kb",
+	"corsHeaders": ["Link"],
+	"idcardToken": "",
+	"pwsToken": "",
+	"certificate": null,
+	"idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
+	"pwsBaseUrl": "https://wseval.s.uw.edu/identity/v2/person/",
+	"photoBaseUrl": "https://wseval.s.uw.edu/idcard/v1/photo/",
+	"groupsBaseUrl": "https://groups.uw.edu:7443/group/"
+}
