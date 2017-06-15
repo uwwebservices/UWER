@@ -28,6 +28,7 @@ Requires a UWCA certificate to authenticate with webservices, which must be auth
 ### Registration
 GET /api/register/list - List members in configured group  
 PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group  
+DELETE /api/register/:netid - Remove member from group by netid
 
 ### GroupsWS
 GET /api/groups/:groupName - List users in groupName  
