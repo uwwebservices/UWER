@@ -3,7 +3,7 @@ import pws from './pwsModel';
 import groups from './groupModel';
 import config from '../config.json';
 
-// Fill out the user list with netid/regid/preferredname/base64image
+// Fill out model, this could be very spammy and slow with a long attendee list
 function verbosifyMemberList(groupInfo) {
     var promises = groupInfo.users.map((user) => {
         return pws.get(user.netid).then((u) => {
