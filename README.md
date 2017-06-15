@@ -39,7 +39,7 @@ DELETE /api/groups/:groupName/:netid - Remove netid from groupname
 DELETE /api/groups/:groupName - Remove the group from GroupsWS  
 
 ### PWS
-GET /api/pws/:regId - Returns the full PWS listing for the regId  
+GET /api/pws/:Id - Returns the full PWS listing for the regId or netId
 
 ### IDCardWS
 GET /api/idcard/:cardNum - Returns RegID for given cardNum (rfid/magstrip)  
