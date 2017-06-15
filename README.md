@@ -26,7 +26,7 @@ Requires a UWCA certificate to authenticate with webservices, which must be auth
 ## API Endpoints
 
 ### Registration
-GET /api/register/list - List members in configured group  
+GET /api/register - List members in configured group  
 PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group  
 DELETE /api/register/:netid - Remove member from group by netid
 
