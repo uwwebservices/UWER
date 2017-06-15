@@ -17,10 +17,10 @@ Requires a UWCA certificate to authenticate with webservices, which must be auth
 ## API Endpoints
 
 ### Registration
-GET /api/register/list - List members in configured group 
-PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group 
+GET /api/register/list - List members in configured group  
+PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group  
 
 ### GroupsWS
-GET /api/groups/:groupName - List users in groupName 
-PUT /api/groups/:groupName/:netid - Add netid to groupName 
-DELETE /api/groups/:groupName/;netid - Remove netid from groupname 
+GET /api/groups/:groupName - List users in groupName  
+PUT /api/groups/:groupName/:netid - Add netid to groupName  
+DELETE /api/groups/:groupName/;netid - Remove netid from groupname  
