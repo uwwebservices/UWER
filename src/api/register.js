@@ -9,7 +9,7 @@ api.get('/list', (req, res) => {
     });
 });
 
-api.post('/:cardId', (req, res) => {
+api.put('/:cardId', (req, res) => {
     console.log("received post with cardId:", req.params.cardId)
     register.add(req.params.cardId.toString()).then((result) => {
         res.json(result);

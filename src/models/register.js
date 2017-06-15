@@ -16,12 +16,9 @@ export default {
             })
         })
         .then((personDetails) => {
-            
-            return personDetails;
-            // need to finish groups model first
-            // return groups.add(personDetails).then(() => {
-            //     return personDetails;
-            // });
+            return groups.addMember("", personDetails.UWNetID).then((result) => {
+                console.log(result);
+            })
         });
     },
     list: () => {
