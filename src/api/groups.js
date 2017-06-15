@@ -12,12 +12,6 @@ function getGroups(groupName = "") {
     })
 }
 
-api.get('/', (req, res) => {
-    getGroups().then((users) => {
-        res.json(users);
-    });
-});
-
 api.get('/:groupName', (req, res) => {
     getGroups(req.params.groupName).then((users) => {
         res.json(users);

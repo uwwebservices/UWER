@@ -25,7 +25,7 @@ export default {
         });
     },
     list: () => {
-        return groups.list();
+        return groups.getMembers();
     },
     remove: () => {
         return groups.remove();

@@ -8,14 +8,15 @@ import register from './register';
 export default ({ config }) => {
 	let api = Router();
 
+	// Registration API
     api.use('/register', register);
+
+	// Groups API
+	api.use('/groups', groups);
 
     // Optional API Routes
 	// api.use('/idcard', idcard);
 	// api.use('/pws', pws);
-	
-	// Groups API
-	api.use('/groups', groups);
 	
 	api.get('/', (req, res) => {
 		res.json({ version });

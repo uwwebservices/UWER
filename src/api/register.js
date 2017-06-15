@@ -4,7 +4,9 @@ import { Router } from 'express';
 let api = Router();
 
 api.get('/list', (req, res) => {
-    res.json(register.list());
+    register.list().then((result) => {
+        res.json(result);
+    });
 });
 
 api.post('/:cardId', (req, res) => {
