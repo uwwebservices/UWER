@@ -2,6 +2,17 @@ import config from '../config.json';
 import rp from 'request-promise';
 import fs from 'fs';
 
+const options = {
+            method: 'GET',
+            url: "",
+            agentOptions: {
+                pfx: fs.readFileSync(config.certificate),
+                passphrase: config.passphrase,
+                securityOptions: 'SSL_OP_NO_SSLv3'
+            },
+            json: true
+        };
+
 export default {
     get: (cardnum) => {
         let magstrip = "", rfid = "";
@@ -18,18 +29,11 @@ export default {
         } else {
             throw "Invalid Card Number";
         }
-
-        let options = {
-            method: 'GET',
+        let opts = Object.assign({}, options, { 
             url: config.idcardBaseUrl +  "?mag_strip_code=" + magstrip + "&prox_rfid=" + rfid,
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            },
-            json: true
-        };
-        return rp(options)
+        });
+
+        return rp(opts)
           .then((parsedBody) => {
             return parsedBody.Cards[0].RegID;
           })
@@ -39,16 +43,10 @@ export default {
           });
     },
     getPhoto: (regId) => {
-        let options = {
-            method: 'GET',
+        let opts = Object.assign({}, options, { 
             url: config.photoBaseUrl + regId + '-large.jpg',
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            }
-        };
-        return rp(options)
+        });
+        return rp(opts)
           .then((body) => {
               return "image/jpeg;base64," + new Buffer(body).toString('base64');
           })
