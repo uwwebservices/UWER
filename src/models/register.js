@@ -7,18 +7,18 @@ import config from '../config.json';
 let users = [];
 export default {
     add: (cardId) => {
+        // Use magstrip/rfid to call IDCard and get RegID
         return idcard.get(cardId).then((regId) => {
+            // Call PWS with RegID to get person info
             return pws.get(regId).then((result) => {
-                return idcard.getPhoto(regId).then((photo) => {
-                    result.Base64Photo = photo;
-                    return result;
-                })
+                return result;
             })
         })
+        // Add user found to group
         .then((personDetails) => {
             return groups.addMember("", personDetails.UWNetID).then((result) => {
-                console.log(result);
-            })
+                return { "updated": true };
+            });
         });
     },
     list: () => {
