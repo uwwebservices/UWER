@@ -2,8 +2,6 @@
 	"port": 1111,
 	"bodyLimit": "100kb",
 	"corsHeaders": ["Link"],
-	"idcardToken": "",
-	"pwsToken": "",
 	"certificate": "src/cert.pfx",
     "passphrase": "",
 	"idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
@@ -18,5 +16,6 @@
 	"enableRegisterAPI": true,
     "enableGroupsAPI": false,
     "enablePWSAPI": false,
-    "enableIDCardAPI": false    
+    "enableIDCardAPI": false,
+    "registerListVerbose": false    
 }

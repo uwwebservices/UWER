@@ -3,11 +3,10 @@ import rp from 'request-promise';
 import fs from 'fs';
 
 export default {
-    get: (regId) => {
-        console.log("Calling PWS");
+    get: (Id) => {
         let options = {
             method: 'GET',
-            url: config.pwsBaseUrl + regId + '/full.json',
+            url: config.pwsBaseUrl + Id + '/full.json',
             agentOptions: {
                 pfx: fs.readFileSync(config.certificate),
                 passphrase: config.passphrase,
