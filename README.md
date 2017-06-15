@@ -4,6 +4,8 @@ This is a work in progress.  The goal of this project is to accept a magstrip/rf
 
 Requires a UWCA certificate to authenticate with webservices, which must be authorized by the registrar.  With this comes the responsibility to properly secure this application.
 
+This project is also intended to be a reference on how to use various APIs, see src/models for the various APIs as examples.
+
 ## Current Features
 - PWS Integration
 - IDCardWS Integration
