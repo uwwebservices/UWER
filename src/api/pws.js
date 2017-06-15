@@ -9,8 +9,8 @@ api.get('/:regId', (req, res) => {
             res.json(response);
         })
         .catch((err) => {
-            res.json({"Error": err});
-        });
+            res.status(err.statusCode).json({"error": err.message});
+        })
 });
 
 export default api;

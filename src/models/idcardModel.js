@@ -22,12 +22,12 @@ export default {
             } else if(cardnum[0] === ';') {
                 magstrip = cardnum.substring(1,14);
             } else {
-                throw "Invalid Card Number";
+                throw new IDCardFormatError();
             }
         } else if(cardnum.length === 14) {
             magstrip = cardnum;
         } else {
-            throw "Invalid Card Number";
+            throw new IDCardFormatError();
         }
         let opts = Object.assign({}, options, { 
             url: config.idcardBaseUrl +  "?mag_strip_code=" + magstrip + "&prox_rfid=" + rfid,
@@ -38,8 +38,7 @@ export default {
             return parsedBody.Cards[0].RegID;
           })
           .catch((err) => {
-            console.log('IDCardWS Error: ', err.message);
-            throw "Error calling IDCardWS Card Service";
+              throw err;
           });
     },
     getPhoto: (regId) => {
@@ -51,8 +50,15 @@ export default {
               return "image/jpeg;base64," + new Buffer(body).toString('base64');
           })
           .catch((err) => {
-            console.log('IDCardWS Error: ', err.message);
-            throw "Error Calling IDCardWS Photo Service";
+            throw err;
           });
     }
+}
+
+function IDCardFormatError() {
+   this.message = "Invalid Card Number";
+   this.statusCode = 400;
+   this.toString = function() {
+      return this.message;
+   };
 }

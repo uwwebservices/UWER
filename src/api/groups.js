@@ -3,19 +3,13 @@ import { Router } from 'express';
 
 let api = Router();
 
-function getGroups(groupName = "") {
-    return groups.getMembers(groupName).then((users) => {
-        return users;
+api.get('/:groupName', (req, res) => {
+     return groups.getMembers(req.params.groupName).then((users) => {
+        res.status(200).json(users);
     })
     .catch((err) => {
-        return {"Error": err};
+        res.status(err.statusCode).json({"error": err.message});
     })
-}
-
-api.get('/:groupName', (req, res) => {
-    getGroups(req.params.groupName).then((users) => {
-        res.json(users);
-    });
 });
 
 api.post('/:groupName', (req, res) => {
@@ -24,7 +18,7 @@ api.post('/:groupName', (req, res) => {
             res.json(msg);
         })
         .catch((err) => {
-            res.json({"Error": err});
+            res.status(err.statusCode).json({"error": err.message});
         })
 });
 
@@ -34,7 +28,7 @@ api.put('/:groupName/:netid', (req, res) => {
             res.json(response);
         })
         .catch((err) => {
-            res.json({"Error": err});
+            res.status(err.statusCode).json({"error": err.message});
         })
 });
 
@@ -44,8 +38,8 @@ api.delete('/:groupName/:netid', (req, res) => {
             res.json(response);
         })
         .catch((err) => {
-            res.json({"Error": err});
-        });
+            res.status(err.statusCode).json({"error": err.message});
+        })
 });
 
 api.delete('/:groupName', (req, res) => {
@@ -54,8 +48,8 @@ api.delete('/:groupName', (req, res) => {
             res.json(response);
         })
         .catch((err) => {
-            res.json({"Error": err});
-        });
+            res.status(err.statusCode).json({"error": err.message});
+        })
 });
 
 export default api;

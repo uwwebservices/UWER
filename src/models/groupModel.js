@@ -25,7 +25,7 @@ export default {
             return { "updated": true };
         })
         .catch((err) => {
-            throw err.message;
+            throw err;
         })
     },
     getMembers: (groupname = "") => {
@@ -48,7 +48,7 @@ export default {
             return groupInfo;
         })
         .catch((err) => {
-            throw err.message;
+            throw err;
         })
     },
     createGroup: (groupname = "") => {
@@ -87,7 +87,7 @@ export default {
             return {"created": true };
         })
         .catch((err) => {
-            throw err.message;
+            throw err;
         })
     },
     removeMember: (netid, groupname = "") => {
@@ -99,7 +99,7 @@ export default {
             return { "deleted": true };
         })
         .catch((err) => {
-            throw err.message;
+            throw err;
         })
     },
     removeGroup: (groupname) => {
@@ -111,7 +111,7 @@ export default {
             return { "deleted": true };
         })
         .catch((err) => {
-            throw err.message;
+            throw err;
         })
     }
 }

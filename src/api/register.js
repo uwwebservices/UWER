@@ -14,7 +14,7 @@ api.put('/:cardId', (req, res) => {
         res.json(result);
     })
     .catch((err) => {
-        res.json({"Error": err});
+        res.status(err.statusCode).json({"error": err.message});
     })
 });
 
@@ -23,7 +23,7 @@ api.delete('/:netid', (req, res) => {
         res.json(result);
     })
     .catch((err) => {
-        res.json({"Error": err});
+        res.status(err.statusCode).json({"error": err.message});
     })
 });
 
