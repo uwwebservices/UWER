@@ -11,8 +11,17 @@ Requires a UWCA certificate to authenticate with webservices, which must be auth
 - GroupsWS API
 
 ## Future
-- Support Authorization Tokens
 - Frontend Application
+- PWS API
+- IDCardWS API
+
+## Setup
+1. Copy config.json.example to config.json
+2. Add certificate to src/cert.pfx and add passphrase to config.json
+3. Add your groups base to config.json, your certificate must be "Subgroup creator" role on this group
+4. Add certs/users to config.admins (likely want yourself and your cert added)
+5. npm install
+6. npm run dev
 
 ## API Endpoints
 
