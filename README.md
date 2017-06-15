@@ -9,11 +9,11 @@ Requires a UWCA certificate to authenticate with webservices, which must be auth
 - IDCardWS Integration
 - Base64 Photo
 - GroupsWS API
+- PWS API
+- IDCardWS API
 
 ## Future
 - Frontend Application
-- PWS API
-- IDCardWS API
 
 ## Setup
 1. Copy config.json.example to config.json
