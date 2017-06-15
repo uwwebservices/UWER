@@ -2,7 +2,7 @@
 
 This is a work in progress.  The goal of this project is to accept a magstrip/rfid from a Husky Card and add the user to a UW Group for attendance purposes.
 
-Requires a UWCA certificate to authenticate with webservices, which must be authorized by the registrar.
+Requires a UWCA certificate to authenticate with webservices, which must be authorized by the registrar.  With this comes the responsibility to properly secure this application.
 
 ## Current Features
 - PWS Integration
@@ -34,3 +34,10 @@ GET /api/groups/:groupName - List users in groupName
 PUT /api/groups/:groupName/:netid - Add netid to groupName  
 DELETE /api/groups/:groupName/:netid - Remove netid from groupname  
 DELETE /api/groups/:groupName - Remove the group from GroupsWS  
+
+### PWS
+GET /api/pws/:regId - Returns the full PWS listing for the regId  
+
+### IDCardWS
+GET /api/idcard/:cardNum - Returns RegID for given cardNum (rfid/magstrip)  
+GET /api/idcard/photo/:regId - Returns a base64 image for a regId
