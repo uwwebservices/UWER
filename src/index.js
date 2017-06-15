@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import middleware from './middleware';
 import api from './api';
 import config from './config.json';
 
@@ -22,11 +21,8 @@ app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
 
-// internal middleware
-app.use(middleware({ config }));
-
 // api router
-app.use('/api', api({ config }));
+app.use('/api', api);
 
 app.server.listen(process.env.PORT || config.port, () => {
 	console.log(`Started on port ${app.server.address().port}`);

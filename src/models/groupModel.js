@@ -21,7 +21,7 @@ export default {
             method: 'PUT',
             url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,
         });
-        return rp(opts).then((body) => {
+        return rp(opts).then(() => {
             return { "updated": true };
         })
         .catch((err) => {
@@ -38,7 +38,7 @@ export default {
         };
         return rp(opts).then((body) => {
             let $ = cheerio.load(body);
-            $('.member').map((i, el) => {;
+            $('.member').map((i, el) => {
                 if(config.registerListVerbose){
                     groupInfo.users.push({ "netid": $(el).html() });
                 } else {
@@ -83,7 +83,7 @@ export default {
             },
             body: htmlPut
         });
-        return rp(opts).then((body) => {
+        return rp(opts).then(() => {
             return {"created": true };
         })
         .catch((err) => {
@@ -95,7 +95,7 @@ export default {
             method: 'DELETE',
             url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,
         });
-        return rp(opts).then((body) => {
+        return rp(opts).then(() => {
             return { "deleted": true };
         })
         .catch((err) => {
@@ -107,7 +107,7 @@ export default {
             method: 'DELETE',
             url: config.groupsBaseUrl + groupname,
         });
-        return rp(opts).then((body) => {
+        return rp(opts).then(() => {
             return { "deleted": true };
         })
         .catch((err) => {

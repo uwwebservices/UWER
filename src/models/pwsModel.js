@@ -23,7 +23,7 @@ export default {
             return parsedBody;
           })
           .catch((err) => {
-            throw "Error Calling PWS";
+            throw err;
           });
     }
 }
