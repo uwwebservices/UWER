@@ -16,7 +16,9 @@ export default {
             })
         })
         .then((personDetails) => {
+            
             return personDetails;
+            // need to finish groups model first
             // return groups.add(personDetails).then(() => {
             //     return personDetails;
             // });
@@ -26,9 +28,9 @@ export default {
         return groups.list();
     },
     remove: () => {
-        groups.remove();
+        return groups.remove();
     },
     clear: () => {
-        groups.clear();
+        return groups.clear();
     }
 }

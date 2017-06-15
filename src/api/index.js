@@ -13,7 +13,9 @@ export default ({ config }) => {
     // Optional API Routes
 	// api.use('/idcard', idcard);
 	// api.use('/pws', pws);
-	// api.use('/groups', groups);
+	
+	// Groups API
+	api.use('/groups', groups);
 	
 	api.get('/', (req, res) => {
 		res.json({ version });
