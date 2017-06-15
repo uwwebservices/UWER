@@ -5,39 +5,38 @@ import cheerio from 'cheerio';
 
 const groupName = config.groupNameBase + config.groupNameLeaf;
 
+const options = {
+    method: 'GET',
+    url: "",
+    agentOptions: {
+        pfx: fs.readFileSync(config.certificate),
+        passphrase: config.passphrase,
+        securityOptions: 'SSL_OP_NO_SSLv3'
+    }
+};
+
 export default {
     addMember: (groupname = "", netid) => {
-        let options = {
+        let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            }
-        };
-        return rp(options).then((body) => {
-            return { "Updated": true };
+        });
+        return rp(opts).then((body) => {
+            return { "updated": true };
         })
         .catch((err) => {
             throw err.message;
         })
     },
     getMembers: (groupname = "") => {
-        let options = {
-            method: 'GET',
+        let opts = Object.assign({}, options, { 
             url: config.groupsBaseUrl + (groupname || groupName) + "/member",
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            }
-        };
+        });
         let groupInfo = {
             groupName: groupname || groupName,
             users: []
         };
-        return rp(options).then((body) => {
+        return rp(opts).then((body) => {
             let $ = cheerio.load(body);
             $('.member').map((i, el) => {;
                 groupInfo.users.push($(el).html());
@@ -71,39 +70,41 @@ export default {
             </body>
             </html>
         `;
-        console.log(htmlPut);
-        let options = {
+        
+        let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: config.groupsBaseUrl + groupName,
             headers: {
                 "content-type":"application/xhtml+xml"
             },
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            },
             body: htmlPut
-        };
-        return rp(options).then((body) => {
-            return {"Created": true };
+        });
+        return rp(opts).then((body) => {
+            return {"created": true };
         })
         .catch((err) => {
             throw err.message;
         })
     },
     removeMember: (groupname, netid) => {
-        let options = {
+        let opts = Object.assign({}, options, { 
             method: 'DELETE',
             url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            }
-        };
-        return rp(options).then((body) => {
-            return { "Deleted": true };
+        });
+        return rp(opts).then((body) => {
+            return { "deleted": true };
+        })
+        .catch((err) => {
+            throw err.message;
+        })
+    },
+    removeGroup: (groupname) => {
+        let opts = Object.assign({}, options, { 
+            method: 'DELETE',
+            url: config.groupsBaseUrl + groupname,
+        });
+        return rp(opts).then((body) => {
+            return { "deleted": true };
         })
         .catch((err) => {
             throw err.message;

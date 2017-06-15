@@ -48,6 +48,16 @@ api.delete('/:groupName/:netid', (req, res) => {
         });
 });
 
+api.delete('/:groupName', (req, res) => {
+    groups.removeGroup(req.params.groupName)
+        .then((response) => {
+            res.json(response);
+        })
+        .catch((err) => {
+            res.json({"Error": err});
+        });
+});
+
 export default api;
 
 
