@@ -23,4 +23,5 @@ PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group
 ### GroupsWS
 GET /api/groups/:groupName - List users in groupName  
 PUT /api/groups/:groupName/:netid - Add netid to groupName  
-DELETE /api/groups/:groupName/;netid - Remove netid from groupname  
+DELETE /api/groups/:groupName/:netid - Remove netid from groupname  
+DELETE /api/groups/:groupName - Remove the group from GroupsWS  
