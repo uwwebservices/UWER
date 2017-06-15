@@ -1,5 +1,6 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
+import config from '../config.json';
 import idcard from './idcard';
 import pws from './pws';
 import groups from './groups';
@@ -9,14 +10,24 @@ export default ({ config }) => {
 	let api = Router();
 
 	// Registration API
-    api.use('/register', register);
+	if(config.enableRegisterAPI) {
+    	api.use('/register', register);
+	}
 
 	// Groups API
-	api.use('/groups', groups);
-
-    // Optional API Routes
-	// api.use('/idcard', idcard);
-	// api.use('/pws', pws);
+	if(config.enableGroupsAPI){
+		api.use('/groups', groups);
+	}
+	
+	// IDCardWS API
+	if(config.enableIDCardAPI) {
+		api.use('/idcard', idcard);
+	}
+	
+	// PWS API
+	if(config.enablePWSAPI) {
+		api.use('/pws', pws);
+	}
 	
 	api.get('/', (req, res) => {
 		res.json({ version });

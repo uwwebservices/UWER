@@ -4,7 +4,8 @@
 	"corsHeaders": ["Link"],
 	"idcardToken": "",
 	"pwsToken": "",
-	"certificate": null,
+	"certificate": "src/cert.pfx",
+    "passphrase": "",
 	"idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
 	"pwsBaseUrl": "https://wseval.s.uw.edu/identity/v2/person/",
 	"photoBaseUrl": "https://wseval.s.uw.edu/idcard/v1/photo/",
@@ -12,6 +13,10 @@
 	"groupAdmins": ["admin"],
     "groupDisplayName": "UW Registration POC",
 	"groupDescription": "This a test group for UW Registration POC",
-	"groupNameBase": "your_group_stem_here",
-	"groupNameLeaf": "test"
+	"groupNameBase": "uw_ais_sm_ews_idcardpoc_",
+	"groupNameLeaf": "test",
+	"enableRegisterAPI": true,
+    "enableGroupsAPI": false,
+    "enablePWSAPI": false,
+    "enableIDCardAPI": false    
 }
