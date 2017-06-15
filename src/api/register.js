@@ -1,9 +1,9 @@
-import register from '../models/register';
+import register from '../models/registerModel';
 import { Router } from 'express';
 
 let api = Router();
 
-api.get('/list', (req, res) => {
+api.get('/', (req, res) => {
     register.list().then((result) => {
         res.json(result);
     });
