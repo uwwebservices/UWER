@@ -39,7 +39,7 @@ api.put('/:groupName/:netid', (req, res) => {
 });
 
 api.delete('/:groupName/:netid', (req, res) => {
-    groups.removeMember(req.params.groupName, req.params.netid)
+    groups.removeMember(req.params.netid, req.params.groupName)
         .then((response) => {
             res.json(response);
         })

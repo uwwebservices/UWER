@@ -86,7 +86,7 @@ export default {
             throw err.message;
         })
     },
-    removeMember: (groupname, netid) => {
+    removeMember: (netid, groupname = "") => {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
             url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,

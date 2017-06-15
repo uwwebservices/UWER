@@ -24,10 +24,7 @@ export default {
     list: () => {
         return groups.getMembers();
     },
-    remove: () => {
-        return groups.remove();
-    },
-    clear: () => {
-        return groups.clear();
+    remove: (netid, groupName) => {
+        return groups.removeMember(netid, groupName);
     }
 }

@@ -10,7 +10,16 @@ api.get('/list', (req, res) => {
 });
 
 api.put('/:cardId', (req, res) => {
-    register.add(req.params.cardId.toString()).then((result) => {
+    register.add(req.params.cardId).then((result) => {
+        res.json(result);
+    })
+    .catch((err) => {
+        res.json({"Error": err});
+    })
+});
+
+api.delete('/:netid', (req, res) => {
+    register.remove(req.params.netid).then((result) => {
         res.json(result);
     })
     .catch((err) => {
