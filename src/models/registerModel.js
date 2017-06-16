@@ -19,7 +19,10 @@ function verbosifyMemberList(groupInfo) {
             return idcard.getPhoto(p.regid).then((image) => {
                 p.base64image = image;
                 return p;
-            });
+            })
+            .catch(() => {
+                return p;
+            })
         });
         return Promise.all(imagePromises).then((result) => {
             groupInfo.users = result;
