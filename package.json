@@ -32,12 +32,13 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.13.3",
+    "cheerio": "1.0.0-rc.1",
     "compression": "^1.5.2",
     "cors": "^2.7.1",
     "express": "^4.13.3",
     "morgan": "^1.8.0",
-    "request-promise": "^4.2.1",
-    "cheerio": "1.0.0-rc.1"
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",

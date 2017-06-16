@@ -1,5 +1,6 @@
 import config from '../config.json';
 import rp from 'request-promise';
+import request from 'request';
 import fs from 'fs';
 
 const options = {
@@ -9,8 +10,7 @@ const options = {
                 pfx: fs.readFileSync(config.certificate),
                 passphrase: config.passphrase,
                 securityOptions: 'SSL_OP_NO_SSLv3'
-            },
-            json: true
+            }
         };
 
 export default {
@@ -22,15 +22,16 @@ export default {
             } else if(cardnum[0] === ';') {
                 magstrip = cardnum.substring(1,14);
             } else {
-                throw new IDCardFormatError();
+                throw new IDCardFormatError("Invalid Card Number");
             }
         } else if(cardnum.length === 14) {
             magstrip = cardnum;
         } else {
-            throw new IDCardFormatError();
+            throw new IDCardFormatError("Invalid Card Number");
         }
         let opts = Object.assign({}, options, { 
             url: config.idcardBaseUrl +  "?mag_strip_code=" + magstrip + "&prox_rfid=" + rfid,
+            json: true
         });
 
         return rp(opts)
@@ -44,20 +45,25 @@ export default {
     getPhoto: (regId) => {
         let opts = Object.assign({}, options, { 
             url: config.photoBaseUrl + regId + '-large.jpg',
+            encoding: null
         });
-        return rp(opts)
-          .then((body) => {
-              return "image/jpeg;base64," + new Buffer(body).toString('base64');
-          })
-          .catch((err) => {
-            throw err;
-          });
+        return new Promise(function(resolve, reject) {
+            request.get(opts, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    var data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
+                    console.log(data);
+                    resolve(data);
+                } else {
+                    reject(new IDCardFormatError("Photo not found", 404));
+                }
+            });
+        });
     }
 }
 
-function IDCardFormatError() {
-   this.message = "Invalid Card Number";
-   this.statusCode = 400;
+function IDCardFormatError(message, code = 400) {
+   this.message = message;
+   this.statusCode = code;
    this.toString = function() {
       return this.message;
    };
