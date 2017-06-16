@@ -28,7 +28,7 @@ This project is also intended to be a reference on how to use various APIs, see 
 ## API Endpoints
 
 ### Registration
-GET /api/register - List members in configured group  
+GET /api/register - List members in configured group (verbose or simple)  
 PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group  
 DELETE /api/register/:netid - Remove member from group by netid
 
