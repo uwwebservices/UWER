@@ -48,10 +48,10 @@ export default {
             encoding: null
         });
         return new Promise(function(resolve, reject) {
+            // Have to use request instead of request-promise as we need a buffer to convert to base64
             request.get(opts, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
-                    var data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
-                    console.log(data);
+                    var data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');S
                     resolve(data);
                 } else {
                     reject(new IDCardFormatError("Photo not found", 404));
