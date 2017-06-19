@@ -28,6 +28,12 @@ app.use('/api', api);
 // frontend
 app.use('/', frontend);
 
+// static files
+if(process.env.NODE_ENV === 'prod') {
+	app.use("/scripts", express.static('dist/scripts'))
+	app.use("/styles", express.static('dist/styles'))
+}
+
 app.server.listen(process.env.PORT || config.port, () => {
 	console.log(`Started on port ${app.server.address().port}`);
 });
