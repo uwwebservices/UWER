@@ -2,6 +2,7 @@ var webpack = require('webpack');
 var webpackStats = require('stats-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var path = require("path");
+var config = require('./src/config.json');
 
 module.exports = {
   devtool: '#source-map',
@@ -12,12 +13,12 @@ module.exports = {
    },
   entry: [
     'webpack/hot/dev-server',
-    'webpack-hot-middleware/client?path=//localhost:1111/__webpack_hmr&reload=true',
+    'webpack-hot-middleware/client?path=//localhost:' + config.port + '/__webpack_hmr&reload=true',
     './src/frontend/js/app.js'
   ],
   output: {
     path: '/',
-    publicPath: 'http://localhost:1111/',
+    publicPath: 'http://localhost:' + config.port + '/',
     filename: 'scripts/bundle.js'
   },
   module: {
