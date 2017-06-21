@@ -32,6 +32,8 @@ function verbosifyMemberList(groupInfo) {
     
 }
 
+let memStorage = { groupName: "internalStorage", users: []};
+
 export default {
     add: (cardId) => {
         return idcard.get(cardId).then((regId) => {
@@ -40,20 +42,41 @@ export default {
             })
         })
         .then((personDetails) => {
-            return groups.addMember("", personDetails.UWNetID).then((result) => {
-                return { "updated": true };
-            });
+            if(config.storeInGroupsWS) { 
+                return groups.addMember("", personDetails.UWNetID).then((result) => {
+                    return { "updated": true };
+                });
+            } else {
+                return new Promise((resolve, reject) => {
+                    memStorage.users.push({"netid": personDetails.UWNetID });
+                    resolve({ "updated": true });    
+                })
+            }
         });
     },
     list: () => {
-        if(config.registerListVerbose) {
-            return groups.getMembers().then(verbosifyMemberList);
-        } else {
-            return groups.getMembers();
-        }
-        
+        return new Promise((resolve, reject) => {
+            if(config.storeInGroupsWS) {
+                resolve(groups.getMembers());
+            } else {
+                resolve(memStorage);
+            }
+            
+        }).then((members) => {
+            console.log(members);
+            if(config.registerListVerbose) {
+                return verbosifyMemberList(members);      
+            }
+        });
     },
     remove: (netid, groupName) => {
-        return groups.removeMember(netid, groupName);
+        if(config.storeInGroupsWS) {
+            return groups.removeMember(netid, groupName);
+        } else {
+            memStorage.pop(netid);
+            return new Promise((resolve, reject) => {
+                resolve({ "updated": true });    
+            });
+        }
     }
 }
