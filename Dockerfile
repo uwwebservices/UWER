@@ -1,7 +1,7 @@
 FROM alpine:3.4
 
 # File Author / Maintainer
-LABEL authors="Zouhir Chahoud <zouhir@zouhir.org>"
+LABEL authors="Chris Cannon <ccan@uw.edu>"
 
 # Update & install required packages
 RUN apk add --update nodejs bash git

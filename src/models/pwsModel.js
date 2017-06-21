@@ -14,6 +14,7 @@ const options = {
 };
 
 export default {
+    // Id can be regid or netid
     get: (Id) => {
         let opts = Object.assign({}, options, { 
             url: config.pwsBaseUrl + Id + '/full.json',

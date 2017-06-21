@@ -16,10 +16,10 @@ const options = {
 };
 
 export default {
-    addMember: (groupname = "", netid) => {
+    addMember: (leaf = "", netid) => {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,
+            url: config.groupsBaseUrl + (leaf || groupName) + "/member/" + netid,
         });
         return rp(opts).then(() => {
             return { "updated": true };
@@ -28,9 +28,9 @@ export default {
             throw err;
         })
     },
-    getMembers: (groupname = "") => {
+    getMembers: (leaf = "") => {
         let opts = Object.assign({}, options, { 
-            url: config.groupsBaseUrl + (groupname || groupName) + "/member",
+            url: config.groupsBaseUrl + (leaf || groupName) + "/member",
         });
         let groupInfo = {
             groupName: groupname || groupName,
@@ -47,7 +47,7 @@ export default {
             throw err;
         })
     },
-    createGroup: (groupname = "") => {
+    createGroup: (leaf = "") => {
         let admins = "";
         for(var i = 0; i < config.groupAdmins.length; i++) {
             admins += `<li class="admin">${config.groupAdmins[i]}</li>`;
@@ -62,7 +62,7 @@ export default {
                         <div class="group">
                 <span class="description">${config.groupDescription}</span>
                 <span class="title">${config.groupDisplayName}</span>
-                <ul class="names"><li class="name">${groupname || groupName}</li></ul>
+                <ul class="names"><li class="name">${leaf || groupName}</li></ul>
                 <ul class="admins">
                     ${admins}
                 </ul>
@@ -86,10 +86,10 @@ export default {
             throw err;
         })
     },
-    removeMember: (netid, groupname = "") => {
+    removeMember: (netid, leaf = "") => {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: config.groupsBaseUrl + (groupname || groupName) + "/member/" + netid,
+            url: config.groupsBaseUrl + (leaf || groupName) + "/member/" + netid,
         });
         return rp(opts).then(() => {
             return { "deleted": true };
@@ -98,10 +98,10 @@ export default {
             throw err;
         })
     },
-    removeGroup: (groupname) => {
+    removeGroup: (leaf) => {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: config.groupsBaseUrl + groupname,
+            url: config.groupsBaseUrl + leaf,
         });
         return rp(opts).then(() => {
             return { "deleted": true };

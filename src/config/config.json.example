@@ -17,6 +17,5 @@
 	"enableRegisterAPI": true,
     "enableGroupsAPI": false,
     "enablePWSAPI": false,
-    "enableIDCardAPI": false,
-    "registerListVerbose": false    
+    "enableIDCardAPI": false
 }

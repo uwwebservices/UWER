@@ -3,7 +3,7 @@ import pws from './pwsModel';
 import groups from './groupModel';
 import config from '../config/config.json';
 
-// Fill out model, this could be very spammy and slow with a long attendee list
+// If verbose flag passed, verbosify the users
 function verbosifyMemberList(groupInfo) {
     var promises = groupInfo.users.map((user) => {
         return pws.get(user.netid).then((u) => {
@@ -70,7 +70,7 @@ export default {
             
         }).then((members) => {
             console.log(members);
-            if(config.registerListVerbose || verbose) {
+            if(verbose) {
                 return verbosifyMemberList(members);      
             } else {
                 return members;
