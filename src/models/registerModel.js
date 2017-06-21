@@ -1,7 +1,7 @@
 import idcard from './idcardModel';
 import pws from './pwsModel';
 import groups from './groupModel';
-import config from '../config.json';
+import config from '../config/config.json';
 
 // Fill out model, this could be very spammy and slow with a long attendee list
 function verbosifyMemberList(groupInfo) {

@@ -1,6 +1,6 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
-import config from '../config.json';
+import config from '../config/config.json';
 import idcard from './idcard';
 import pws from './pws';
 import groups from './groups';

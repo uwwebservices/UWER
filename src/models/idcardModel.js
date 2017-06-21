@@ -1,4 +1,4 @@
-import config from '../config.json';
+import config from '../config/config.json';
 import rp from 'request-promise';
 import request from 'request';
 import fs from 'fs';

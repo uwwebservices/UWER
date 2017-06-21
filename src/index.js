@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import api from './api';
 import frontend from './frontend';
-import config from './config.json';
+import config from './config/config.json';
 
 let app = express();
 app.server = http.createServer(app);
