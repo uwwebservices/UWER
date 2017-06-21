@@ -1,21 +1,25 @@
-# University of Washington - IDCardWS/PWS/GroupsWS POC
+# University of Washington - Event Registration
 
-This is a work in progress.  The goal of this project is to accept a magstrip/rfid from a Husky Card and add the user to a UW Group for attendance purposes.
-
-Requires a UWCA certificate to authenticate with webservices, which must be authorized by the registrar.  With this comes the responsibility to properly secure this application.
+Work in progress project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
+to a desktop/laptop/Raspberry Pi/etc device capable of running node.js and easily take attendance. Submitting a huskycard rfid/magstrip looks up users regid, 
+passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format
+can be returned as well as the UW group will have the member list.  Verbose output from the API includes various user information as well as
+a base64 encoded image from their husky card.
 
 This project is also intended to be a reference on how to use various APIs, see src/models for the various APIs as examples.
 
-## Current Features
-- PWS Integration
-- IDCardWS Integration
-- Base64 Photo
-- GroupsWS API
-- PWS API
-- IDCardWS API
+## Requirements
+- UWCA x509 certificate, authorized for IDCard/PWS/Groups
+- node.js and npm/yarn
+- [optional] docker/docker-compose
+- [optional] card magstrip reader
 
-## Future
-- Frontend Application
+## Current Features
+- PWS/GroupsWS/IDCard APIs
+- Register users to a UWGroup or memory store
+- Full RESTful API
+- Dev environment hot reloading for server and frontend
+- Dockerhub integration
 
 ## Docker-Compose Install
 ```
@@ -58,3 +62,12 @@ GET /api/pws/:Id - Returns the full PWS listing for the regId or netId
 ### IDCardWS
 GET /api/idcard/:cardNum - Returns RegID for given cardNum (rfid/magstrip)  
 GET /api/idcard/photo/:regId - Returns a base64 image for a regId
+
+## Technical Details
+- nodemon for monitoring server file changes
+- webpack-hot-middleware to monitor frontend file changes
+- support for es6 and React transpiling
+- cross-env for environment variables
+- scripts/styles bundled in-memory (dev) and exported (prod)
+- promises everywhere
+- Dockerhub auto-generation (https://hub.docker.com/r/uwwebservices/idcard-webapp-poc/)
