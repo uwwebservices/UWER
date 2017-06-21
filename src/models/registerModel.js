@@ -5,7 +5,6 @@ import config from '../config.json';
 
 // Fill out model, this could be very spammy and slow with a long attendee list
 function verbosifyMemberList(groupInfo) {
-    console.log(groupInfo)
     var promises = groupInfo.users.map((user) => {
         return pws.get(user.netid).then((u) => {
             return {
@@ -61,7 +60,7 @@ export default {
             }
         });
     },
-    list: () => {
+    list: (verbose) => {
         return new Promise((resolve, reject) => {
             if(config.storeInGroupsWS) {
                 resolve(groups.getMembers());
@@ -71,8 +70,10 @@ export default {
             
         }).then((members) => {
             console.log(members);
-            if(config.registerListVerbose) {
+            if(config.registerListVerbose || verbose) {
                 return verbosifyMemberList(members);      
+            } else {
+                return members;
             }
         });
     },

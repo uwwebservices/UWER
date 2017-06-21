@@ -39,11 +39,7 @@ export default {
         return rp(opts).then((body) => {
             let $ = cheerio.load(body);
             $('.member').map((i, el) => {
-                if(config.registerListVerbose){
-                    groupInfo.users.push({ "netid": $(el).html() });
-                } else {
-                    groupInfo.users.push($(el).html());
-                }
+                groupInfo.users.push({ "netid": $(el).html() });
             });
             return groupInfo;
         })
