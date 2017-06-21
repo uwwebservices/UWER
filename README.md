@@ -58,29 +58,3 @@ GET /api/pws/:Id - Returns the full PWS listing for the regId or netId
 ### IDCardWS
 GET /api/idcard/:cardNum - Returns RegID for given cardNum (rfid/magstrip)  
 GET /api/idcard/photo/:regId - Returns a base64 image for a regId
-
-## Config File
-```
-{
-	"port": 1111,
-	"bodyLimit": "100kb",
-	"corsHeaders": ["Link"],
-	"certificate": "config/cert.pfx", # certificate location
-    "passphrase": "", # certificate password
-	"idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
-	"pwsBaseUrl": "https://wseval.s.uw.edu/identity/v2/person/",
-	"photoBaseUrl": "https://wseval.s.uw.edu/idcard/v1/photo/",
-	"groupsBaseUrl": "https://groups.uw.edu:7443/group/",
-	"storeInGroupsWS": true, # store users in memory or persist to UW Group?
-	"groupAdmins": ["admin"], # when creating a new group, who should be the admins?
-    "groupDisplayName": "UW Registration POC",
-	"groupDescription": "This a test group for UW Registration POC",
-	"groupNameBase": "uw_ais_sm_ews_idcardpoc_", # the base group your cert is subgroup-creator on
-	"groupNameLeaf": "test", # the subgroup to be created
-	"enableRegisterAPI": true,
-    "enableGroupsAPI": false,
-    "enablePWSAPI": false,
-    "enableIDCardAPI": false,
-    "registerListVerbose": false    
-}
-```
