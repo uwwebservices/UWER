@@ -4,10 +4,10 @@
   "description": "UW Web Services Registration POC",
   "main": "dist",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev  nodemon -w src --exec \"babel-node src --presets es2015,stage-0,react\"",
-    "build": "babel src -s -D -d dist --presets es2015,stage-0,react&& webpack",
-    "start": "node dist",
-    "prestart": "cross-env NODE_ENV=prod npm run -s build",
+    "dev": "cross-env NODE_ENV=dev nodemon -w src --exec \"babel-node src --presets es2015,stage-0,react\"",
+    "build": "babel src -s -D -d dist --presets es2015,stage-0,react && webpack",
+    "start": "cross-env NODE_ENV=prod node dist",
+    "prestart": "npm run -s build",
     "test": "eslint src"
   },
   "eslintConfig": {
