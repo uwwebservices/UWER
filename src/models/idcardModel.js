@@ -7,7 +7,7 @@ const options = {
             method: 'GET',
             url: "",
             agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
+                pfx: fs.readFileSync(__dirname + "/../" + config.certificate),
                 passphrase: config.passphrase,
                 securityOptions: 'SSL_OP_NO_SSLv3'
             }

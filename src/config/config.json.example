@@ -2,7 +2,7 @@
 	"port": 1111,
 	"bodyLimit": "100kb",
 	"corsHeaders": ["Link"],
-	"certificate": "src/cert.pfx",
+	"certificate": "config/cert.pfx",
     "passphrase": "",
 	"idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
 	"pwsBaseUrl": "https://wseval.s.uw.edu/identity/v2/person/",
