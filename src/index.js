@@ -35,7 +35,7 @@ if(process.env.NODE_ENV === 'prod') {
 }
 
 app.server.listen(process.env.PORT || config.port, () => {
-	console.log(`Started on port ${app.server.address().port}`);
+	console.log(`Started on port ${app.server.address().port} in '${process.env.NODE_ENV}' environment.`);
 });
 
 export default app;
