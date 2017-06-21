@@ -2,7 +2,7 @@ var webpack = require('webpack');
 var webpackStats = require('stats-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var path = require("path");
-var config = require('./src/config.json');
+var config = require('./src/config/config.json');
 
 module.exports = {
   devtool: '#source-map',
