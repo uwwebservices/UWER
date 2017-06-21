@@ -4,7 +4,8 @@ import { Router } from 'express';
 let api = Router();
 
 api.get('/', (req, res) => {
-    register.list().then((result) => {
+    let verbose = req.query.verbose == 'true' ? true : false;
+    register.list(verbose).then((result) => {
         res.json(result);
     });
 });
