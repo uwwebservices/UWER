@@ -5,6 +5,7 @@ import config from '../config.json';
 
 // Fill out model, this could be very spammy and slow with a long attendee list
 function verbosifyMemberList(groupInfo) {
+    console.log(groupInfo)
     var promises = groupInfo.users.map((user) => {
         return pws.get(user.netid).then((u) => {
             return {
@@ -12,7 +13,13 @@ function verbosifyMemberList(groupInfo) {
                 "regid": u.UWRegID,
                 "preferredName": u.PreferredFirstName + ' ' + u.PreferredSurname
             }
+        }).catch((err) => {
+            return {
+                "netid": user.netid,
+                "error": "could not find user details"
+            }
         })
+        
     });
     return Promise.all(promises).then((people) => {
         var imagePromises = people.map((p) => {
@@ -45,8 +52,8 @@ export default {
             });
         });
     },
-    list: () => {
-        if(config.registerListVerbose) {
+    list: (verbose = false) => {
+        if(config.registerListVerbose || verbose) {
             return groups.getMembers().then(verbosifyMemberList);
         } else {
             return groups.getMembers();
