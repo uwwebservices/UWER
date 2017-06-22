@@ -1,12 +1,14 @@
 import React from 'react';
-import Test from './Test.jsx';
+import Form from './Form.jsx';
+import Members from './Members.jsx';
 
 export default class Main extends React.Component {
     render () {
         return (
-            <div>
-                <h1>Main Component!</h1>
-                <Test />
+            <div className="main">
+                <h1>Event Registration</h1>
+                <Form />
+                <Members />
             </div>
         )
     }
