@@ -20,7 +20,7 @@ export default {
             if(cardnum[0] !== ';') {
                 rfid = cardnum;
             } else if(cardnum[0] === ';') {
-                magstrip = cardnum.substring(1,14);
+                magstrip = cardnum.slice(1,14);
             } else {
                 throw new IDCardFormatError("Invalid Card Number");
             }
