@@ -7,11 +7,15 @@ api.get('/', (req, res) => {
     let verbose = req.query.verbose == 'true' ? true : false;
     register.list(verbose).then((result) => {
         res.json(result);
-    });
+    })
+    .catch((err) => {
+        res.status(err.statusCode).json({"error": err.message});
+    })
 });
 
 api.put('/:cardId', (req, res) => {
-    register.add(req.params.cardId).then((result) => {
+    let verbose = req.query.verbose == 'true' ? true : false;
+    register.add(req.params.cardId, verbose).then((result) => {
         res.json(result);
     })
     .catch((err) => {

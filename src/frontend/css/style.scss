@@ -1,18 +1,13 @@
-h1 {
-    color: grey;
+#root {
+    h1 {
+        color: grey;
+    }
+    .main {
+        width: 50%;
+        margin: 0 auto;
+    }
 }
 
-.main {
-    width: 50%;
-    margin: 0 auto;
-}
 
-.form {
-    width: 50%;
-    display: inline-block;
-}
 
-.memberList {
-    width: 50%;
-    display: inline-block;
-}
+

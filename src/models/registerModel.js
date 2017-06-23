@@ -7,11 +7,7 @@ import config from '../config/config.json';
 function verbosifyMemberList(groupInfo) {
     var promises = groupInfo.users.map((user) => {
         return pws.get(user.netid).then((u) => {
-            return {
-                "netid": u.UWNetID,
-                "regid": u.UWRegID,
-                "preferredName": u.PreferredFirstName + ' ' + u.PreferredSurname
-            }
+            return personToMember(u);
         }).catch((err) => {
             return {
                 "netid": user.netid,
@@ -22,13 +18,10 @@ function verbosifyMemberList(groupInfo) {
     });
     return Promise.all(promises).then((people) => {
         var imagePromises = people.map((p) => {
-            return idcard.getPhoto(p.regid).then((image) => {
+            return getPhoto(p.regid).then((image) => {
                 p.base64image = image;
                 return p;
-            })
-            .catch(() => {
-                return p;
-            })
+            });
         });
         return Promise.all(imagePromises).then((result) => {
             groupInfo.users = result;
@@ -38,10 +31,20 @@ function verbosifyMemberList(groupInfo) {
     
 }
 
+function personToMember(person) {
+    return { "netid": person.UWNetID, "regid": person.UWRegID, "preferredName": person.PreferredFirstName + ' ' + person.PreferredSurname }
+}
+
+function getPhoto(regid) {
+    return idcard.getPhoto(regid).then((image) => {
+        return image;
+    });
+}
+
 let memStorage = { groupName: "internalStorage", users: []};
 
 export default {
-    add: (cardId) => {
+    add: (cardId, verbose) => {
         return idcard.get(cardId).then((regId) => {
             return pws.get(regId).then((result) => {
                 return result;
@@ -50,12 +53,31 @@ export default {
         .then((personDetails) => {
             if(config.storeInGroupsWS) { 
                 return groups.addMember("", personDetails.UWNetID).then((result) => {
-                    return { "updated": true };
-                });
+                    if(verbose) {
+                        let pers = personToMember(personDetails); 
+                        return getPhoto(pers.regid).then((image) => {
+                            pers.base64image = image;
+                            return pers;
+                        });
+                    } else {
+                        return { netid: personDetails.UWNetID }
+                    }
+                })
+                .catch(() => {
+                    return p;
+                })
             } else {
                 return new Promise((resolve, reject) => {
                     memStorage.users.push({"netid": personDetails.UWNetID });
-                    resolve({ "updated": true });    
+                    if(verbose) {
+                        let pers = personToMember(personDetails); 
+                        resolve(getPhoto(pers.regid).then((image) => {
+                            pers.base64image = image;
+                            return pers;
+                        }));
+                    } else {
+                        return { netid: personDetails.UWNetID }
+                    }
                 })
             }
         });
@@ -69,7 +91,6 @@ export default {
             }
             
         }).then((members) => {
-            console.log(members);
             if(verbose) {
                 return verbosifyMemberList(members);      
             } else {

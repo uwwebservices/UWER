@@ -21,7 +21,7 @@ export default {
             method: 'PUT',
             url: config.groupsBaseUrl + (leaf || groupName) + "/member/" + netid,
         });
-        return rp(opts).then(() => {
+        return rp(opts).then((res) => {
             return { "updated": true };
         })
         .catch((err) => {
@@ -33,7 +33,7 @@ export default {
             url: config.groupsBaseUrl + (leaf || groupName) + "/member",
         });
         let groupInfo = {
-            groupName: groupname || groupName,
+            groupName: leaf || groupName,
             users: []
         };
         return rp(opts).then((body) => {
