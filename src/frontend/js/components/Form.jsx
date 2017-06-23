@@ -7,7 +7,11 @@ export default class Form extends React.Component {
     }
     registerUser() {
         if(this.state.card) {
-            fetch('/api/register/' + this.state.card + '?verbose=true', {
+            let cardnum = this.state.card;
+            if(cardnum[0] === ';') {
+                cardnum = cardnum.slice(1, -1);
+            }
+            fetch('/api/register/' + cardnum + '?verbose=true', {
                 method: 'PUT'
             }).then(res => res.json())
             .then(json => {
@@ -15,8 +19,8 @@ export default class Form extends React.Component {
             })
             this.setState({ card: ""});
         }
-       
     }
+    
     updateCard(e) {
         this.setState({ card: e.target.value });
     }
