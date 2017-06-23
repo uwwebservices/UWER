@@ -20,6 +20,7 @@ This project is also intended to be a reference on how to use various APIs, see 
 - Full RESTful API
 - Dev environment hot reloading for server and frontend
 - Dockerhub integration
+- Very basic frontend to utilize registration APIs
 
 ## Docker-Compose Install
 ```
