@@ -5,7 +5,8 @@ export default class Form extends React.Component {
         super(props);
         this.state = { card: ""};
     }
-    registerUser() {
+    registerUser(e) {
+        e.preventDefault();
         if(this.state.card) {
             let cardnum = this.state.card;
             if(cardnum[0] === ';') {
@@ -26,10 +27,10 @@ export default class Form extends React.Component {
     }
     render() {
         return (
-            <div className="form">
+            <form className="form" onSubmit={this.registerUser.bind(this)}>
                 <input type="text" placeholder="magstrip/rfid" value={this.state.card} onChange={this.updateCard.bind(this)} />
-                <button onClick={this.registerUser.bind(this)}>Register</button>
-            </div>
+                <button type="submit">Register</button>
+            </form>
         )
     }
 }
