@@ -7,6 +7,7 @@ export default class Test extends React.Component {
         })
         .then(res => {
             this.props.reloadUsers();
+            document.getElementById("registerCard").focus();
         })
         .catch(err => {
             console.log('could not remove user ' + err);

@@ -35,15 +35,14 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpackStats('webpack.json'),
-    new ExtractTextPlugin("styles/styles.css")
+    new webpack.NoEmitOnErrorsPlugin()
   ],
   resolve: {
     extensions: [
       '.js',
       '.json',
-      '.css'
+      '.css',
+      '.scss'
     ]
   },
   target: 'web'

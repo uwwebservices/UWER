@@ -28,7 +28,7 @@ export default class Form extends React.Component {
     render() {
         return (
             <form className="form" onSubmit={this.registerUser.bind(this)}>
-                <input type="text" placeholder="magstrip/rfid" value={this.state.card} onChange={this.updateCard.bind(this)} />
+                <input type="text" placeholder="magstrip/rfid" id="registerCard" value={this.state.card} onChange={this.updateCard.bind(this)} />
                 <button type="submit">Register</button>
             </form>
         )
