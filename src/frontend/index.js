@@ -19,7 +19,7 @@ if(process.env.NODE_ENV === 'dev') {
 	}))
 }
 
-api.get('/*', (req, res) => {
+api.get(['/','/config'], (req, res) => {
 	 res.sendFile(__dirname + '/views/index.html');
 });
 

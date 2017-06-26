@@ -1,8 +1,9 @@
-var webpack = require('webpack');
-var webpackStats = require('stats-webpack-plugin');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var path = require("path");
-var config = require('./src/config/config.json');
+import webpack from 'webpack';
+import webpackStats from 'stats-webpack-plugin';
+import ExtractTextPlugin from "extract-text-webpack-plugin";
+import path from "path";
+import configurator from './src/config/configurator';
+let config = configurator.get();
 
 module.exports = {
   devtool: '#source-map',

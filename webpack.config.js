@@ -1,7 +1,6 @@
-var webpack = require('webpack');
-var webpackStats = require('stats-webpack-plugin');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var path = require("path");
+import webpack from 'webpack';
+import ExtractTextPlugin from "extract-text-webpack-plugin";
+import path from "path";
 
 module.exports = {
   devtool: '#source-map',

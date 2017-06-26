@@ -1,10 +1,12 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
-import config from '../config/config.json';
+import configurator from '../config/configurator';
 import idcard from './idcard';
 import pws from './pws';
 import groups from './groups';
 import register from './register';
+
+let config = configurator.get();
 
 let api = Router();
 
