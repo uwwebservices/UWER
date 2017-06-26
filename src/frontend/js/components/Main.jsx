@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Form from './Form.jsx';
 import Members from './Members.jsx';
+import { Link } from 'react-router-dom'
 
 export default class Main extends Component {
     constructor(props) {
@@ -22,11 +23,14 @@ export default class Main extends Component {
     }
     render () {
         return (
-            <div className="main">
-                <h1>Event Registration</h1>
-                <h5>Group: {this.state.registered.groupName}</h5>
-                <Form addUser={this.addUser.bind(this)} />
-                <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
+            <div>
+                <div className="rightLink"><Link to="/config">config</Link></div>
+                <div className="main">
+                    <h1>Event Registration</h1>
+                    <h5>Group: {this.state.registered.groupName}</h5>
+                    <Form addUser={this.addUser.bind(this)} />
+                    <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
+                </div>
             </div>
         )
     }
