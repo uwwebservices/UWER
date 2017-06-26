@@ -1,0 +1,12 @@
+{
+    "exec" : "babel-node src",
+    "ignore": [
+        "src/config"
+    ],
+    "watch": [
+        "src"
+    ],
+    "env": {
+        "NODE_ENV": "dev"
+    }
+}

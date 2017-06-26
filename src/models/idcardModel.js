@@ -1,7 +1,8 @@
-import config from '../config/config.json';
 import rp from 'request-promise';
 import request from 'request';
 import fs from 'fs';
+import configurator from '../config/configurator';
+const config = configurator.get();
 
 const options = {
             method: 'GET',

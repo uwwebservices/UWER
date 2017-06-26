@@ -1,7 +1,8 @@
 import idcard from './idcardModel';
 import pws from './pwsModel';
 import groups from './groupModel';
-import config from '../config/config.json';
+import configurator from '../config/configurator';
+const config = configurator.get();
 
 // If verbose flag passed, verbosify the users
 function verbosifyMemberList(groupInfo) {
