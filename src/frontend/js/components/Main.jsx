@@ -17,9 +17,6 @@ export default class Main extends Component {
     }
     addUser(user) {
         if(!this.state.registered.users.some((u) => { return user.netid === u.netid })) {
-            // let newUsers = this.state.registered.users.concat([user]);
-            // var newState = Object.assign({}, this.state.registered, {registered: { users: this.state.registered.users.concat([user]) }});
-            // this.setState(Object.assign({}, this.state, newState));
             this.setState({ registered: { ...this.state.registered, users: this.state.registered.users.concat([user]) }})
         }
     }
