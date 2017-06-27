@@ -2,9 +2,12 @@ import rp from 'request-promise';
 import fs from 'fs';
 import cheerio from 'cheerio';
 import configurator from '../config/configurator';
-const config = configurator.get();
+let config = configurator.get();
 
-const groupName = config.groupNameBase + config.groupNameLeaf;
+function groupName() {
+    config = configurator.get();
+    return config.groupNameBase + config.groupNameLeaf;
+}
 
 const options = {
     method: 'GET',
@@ -18,9 +21,10 @@ const options = {
 
 export default {
     addMember: (leaf = "", netid) => {
+        config = configurator.get();
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: config.groupsBaseUrl + (leaf || groupName) + "/member/" + netid,
+            url: config.groupsBaseUrl + (leaf || groupName()) + "/member/" + netid,
         });
         return rp(opts).then((res) => {
             return { "updated": true };
@@ -30,11 +34,12 @@ export default {
         })
     },
     getMembers: (leaf = "") => {
+        config = configurator.get();
         let opts = Object.assign({}, options, { 
-            url: config.groupsBaseUrl + (leaf || groupName) + "/member",
+            url: config.groupsBaseUrl + (leaf || groupName()) + "/member",
         });
         let groupInfo = {
-            groupName: leaf || groupName,
+            groupName: leaf || groupName(),
             users: []
         };
         return rp(opts).then((body) => {
@@ -49,6 +54,7 @@ export default {
         })
     },
     createGroup: (leaf = "") => {
+        config = configurator.get();
         let admins = "";
         for(var i = 0; i < config.groupAdmins.length; i++) {
             admins += `<li class="admin">${config.groupAdmins[i]}</li>`;
@@ -63,7 +69,7 @@ export default {
                         <div class="group">
                 <span class="description">${config.groupDescription}</span>
                 <span class="title">${config.groupDisplayName}</span>
-                <ul class="names"><li class="name">${leaf || groupName}</li></ul>
+                <ul class="names"><li class="name">${leaf || groupName()}</li></ul>
                 <ul class="admins">
                     ${admins}
                 </ul>
@@ -74,7 +80,7 @@ export default {
         
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: config.groupsBaseUrl + groupName,
+            url: config.groupsBaseUrl + groupName(),
             headers: {
                 "content-type":"application/xhtml+xml"
             },
@@ -88,9 +94,10 @@ export default {
         })
     },
     removeMember: (netid, leaf = "") => {
+        config = configurator.get();
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: config.groupsBaseUrl + (leaf || groupName) + "/member/" + netid,
+            url: config.groupsBaseUrl + (leaf || groupName()) + "/member/" + netid,
         });
         return rp(opts).then(() => {
             return { "deleted": true };
@@ -100,6 +107,7 @@ export default {
         })
     },
     removeGroup: (leaf) => {
+        config = configurator.get();
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
             url: config.groupsBaseUrl + leaf,

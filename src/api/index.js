@@ -5,6 +5,7 @@ import idcard from './idcard';
 import pws from './pws';
 import groups from './groups';
 import register from './register';
+import configApi from './config';
 
 let config = configurator.get();
 
@@ -29,6 +30,8 @@ if(config.enableIDCardAPI) {
 if(config.enablePWSAPI) {
 	api.use('/pws', pws);
 }
+
+api.use('/config', configApi);
 
 api.get('/', (req, res) => {
 	res.json({ version });

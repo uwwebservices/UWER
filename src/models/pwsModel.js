@@ -1,7 +1,7 @@
 import rp from 'request-promise';
 import fs from 'fs';
 import configurator from '../config/configurator';
-const config = configurator.get();
+let config = configurator.get();
 
 const options = {
     method: 'GET',
@@ -17,6 +17,7 @@ const options = {
 export default {
     // Id can be regid or netid
     get: (Id) => {
+        config = configurator.get();
         let opts = Object.assign({}, options, { 
             url: config.pwsBaseUrl + Id + '/full.json',
         });

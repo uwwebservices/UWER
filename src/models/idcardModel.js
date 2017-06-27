@@ -2,7 +2,7 @@ import rp from 'request-promise';
 import request from 'request';
 import fs from 'fs';
 import configurator from '../config/configurator';
-const config = configurator.get();
+let config = configurator.get();
 
 const options = {
             method: 'GET',
@@ -16,6 +16,7 @@ const options = {
 
 export default {
     get: (cardnum) => {
+        config = configurator.get();
         let magstrip = "", rfid = "";
         if(cardnum.length === 16) {
             if(cardnum[0] !== ';') {
@@ -44,6 +45,7 @@ export default {
           });
     },
     getPhoto: (regId) => {
+        config = configurator.get();
         let opts = Object.assign({}, options, { 
             url: config.photoBaseUrl + regId + '-large.jpg',
             encoding: null

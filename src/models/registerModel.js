@@ -2,7 +2,7 @@ import idcard from './idcardModel';
 import pws from './pwsModel';
 import groups from './groupModel';
 import configurator from '../config/configurator';
-const config = configurator.get();
+let config = configurator.get();
 
 // If verbose flag passed, verbosify the users
 function verbosifyMemberList(groupInfo) {
@@ -46,6 +46,7 @@ let memStorage = { groupName: "internalStorage", users: []};
 
 export default {
     add: (cardId, verbose) => {
+        config = configurator.get();
         return idcard.get(cardId).then((regId) => {
             return pws.get(regId).then((result) => {
                 return result;
@@ -84,6 +85,7 @@ export default {
         });
     },
     list: (verbose) => {
+        config = configurator.get();
         return new Promise((resolve, reject) => {
             if(config.storeInGroupsWS) {
                 resolve(groups.getMembers());
@@ -97,9 +99,24 @@ export default {
             } else {
                 return members;
             }
-        });
+        }).catch((err) => {
+            if(err.statusCode === 404) {
+                return groups.createGroup().then(() => {
+                    return new Promise((resolve, reject) => {
+                        if(config.storeInGroupsWS) {
+                            resolve(groups.getMembers());
+                        } else {
+                            resolve(memStorage);
+                        }
+                    })
+                })
+            } else {
+                throw err;
+            }
+        })
     },
     remove: (netid, groupName) => {
+        config = configurator.get();
         if(config.storeInGroupsWS) {
             return groups.removeMember(netid, groupName);
         } else {
