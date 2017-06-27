@@ -8,16 +8,21 @@ import { Link } from 'react-router-dom'
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { config: {}};
+        this.state = { message: "", config: {}};
     }
     componentWillMount() {
         fetch('/api/config')
             .then(res => res.json())
-            .then(json => {
+            .then((json) => {
+                console.log(json);
                 let newConfig = this.state.config;
                 newConfig.config = json;
                 this.setState(newConfig);
-            });
+            })
+            .catch((err) => {
+                console.log(err);
+                return this.setState(Object.assign({}, this.state, {"message": "Config Not Available."}));
+            })
     }
     onSubmit(e) {
         this.setState(Object.assign({}, this.state, {"message": ""}));
@@ -29,17 +34,17 @@ export default class Configure extends Component {
                 "Content-Type": "application/json"
             }
         })
-        .then(() => {
+        .then((err) => {
+            if(err) {
+                console.log(err);
+                return this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
+            }
             this.setState(Object.assign({}, this.state, {"message": "Success! Redirecting..."}));
             setTimeout(() => {
                 this.props.history.push('/');
             }, 2000);
             
-        })
-        .catch((err) => {
-            console.log(err);
-            this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
-        })
+        });
     }
     onChange(e) {
         let newConfig = this.state.config;

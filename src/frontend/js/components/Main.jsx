@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 export default class Main extends Component {
     constructor(props) {
         super(props);
-        this.state = { registered: { groupName: "", users: [] }}
+        this.state = { registered: { groupName: "", configEnabled: false, users: [] }}
     }
     componentWillMount() {
         this.loadUsers();
@@ -24,7 +24,7 @@ export default class Main extends Component {
     render () {
         return (
             <div>
-                <div className="rightLink"><Link to="/config">config</Link></div>
+                { this.state.registered.configEnabled && <div className="rightLink"><Link to="/config">config</Link></div> }
                 <div className="main">
                     <h1>Event Registration</h1>
                     <h5>Group: {this.state.registered.groupName}</h5>

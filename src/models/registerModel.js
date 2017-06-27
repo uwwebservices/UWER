@@ -88,8 +88,12 @@ export default {
         config = configurator.get();
         return new Promise((resolve, reject) => {
             if(config.storeInGroupsWS) {
-                resolve(groups.getMembers());
+                groups.getMembers().then(mems => {
+                    mems.configEnabled = config.enableConfigAPI;
+                    resolve(mems);
+                });
             } else {
+                memstorage.configEnabled = config.enableConfigAPI;
                 resolve(memStorage);
             }
             
@@ -104,8 +108,12 @@ export default {
                 return groups.createGroup().then(() => {
                     return new Promise((resolve, reject) => {
                         if(config.storeInGroupsWS) {
-                            resolve(groups.getMembers());
+                            groups.getMembers().then(mems => {
+                                mems.configEnabled = config.enableConfigAPI;
+                                resolve(mems);
+                            });
                         } else {
+                            memstorage.configEnabled = config.enableConfigAPI;
                             resolve(memStorage);
                         }
                     })

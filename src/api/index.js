@@ -31,7 +31,10 @@ if(config.enablePWSAPI) {
 	api.use('/pws', pws);
 }
 
-api.use('/config', configApi);
+// Config API
+if(config.enableConfigAPI) {
+	api.use('/config', configApi);
+}
 
 api.get('/', (req, res) => {
 	res.json({ version });
