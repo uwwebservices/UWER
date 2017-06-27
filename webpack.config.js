@@ -1,6 +1,6 @@
-import webpack from 'webpack';
-import ExtractTextPlugin from "extract-text-webpack-plugin";
-import path from "path";
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
 
 module.exports = {
   devtool: '#source-map',
