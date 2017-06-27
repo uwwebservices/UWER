@@ -34,16 +34,15 @@ export default class Configure extends Component {
                 "Content-Type": "application/json"
             }
         })
-        .then((err) => {
-            if(err) {
-                console.log(err);
-                return this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
-            }
+        .then(() => {
             this.setState(Object.assign({}, this.state, {"message": "Success! Redirecting..."}));
             setTimeout(() => {
                 this.props.history.push('/');
             }, 2000);
             
+        })
+        .catch((err) => {
+            return this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
         });
     }
     onChange(e) {

@@ -18,10 +18,15 @@ api.get('/', (req, res) => {
 });
 
 api.put('/', (req, res) => {
-    Object.keys(req.body).map((k) => {
-        configurator.set(k, req.body[k]);
-    });
-    res.sendStatus(200);
+    try {
+        Object.keys(req.body).map((k) => {
+            configurator.set(k, req.body[k]);
+        });
+        res.sendStatus(200);
+    } catch (ex) {
+        console.log(ex);
+        res.sendStatus(500);
+    }
 })
 
 export default api;
