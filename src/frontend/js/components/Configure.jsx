@@ -8,28 +8,43 @@ import { Link } from 'react-router-dom'
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { config: {}};
     }
     componentWillMount() {
         fetch('/api/config')
             .then(res => res.json())
-            .then(json => this.setState(json))
-            .then(() => {
-                console.log('success!')
+            .then(json => {
+                let newConfig = this.state.config;
+                newConfig.config = json;
+                this.setState(newConfig);
             });
     }
     onSubmit(e) {
+        this.setState(Object.assign({}, this.state, {"message": ""}));
         e.preventDefault();
         fetch('/api/config', {
             method: "PUT",
-            body: JSON.stringify(this.state),
+            body: JSON.stringify(this.state.config),
             headers: {
                 "Content-Type": "application/json"
             }
-        });
+        })
+        .then(() => {
+            this.setState(Object.assign({}, this.state, {"message": "Success! Redirecting..."}));
+            setTimeout(() => {
+                this.props.history.push('/');
+            }, 2000);
+            
+        })
+        .catch((err) => {
+            console.log(err);
+            this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
+        })
     }
     onChange(e) {
-        this.setState({[e.target.name]: e.target.value});
+        let newConfig = this.state.config;
+        newConfig[e.target.name] = e.target.value;
+        this.setState(newConfig);
     }
     render() {
         return (
@@ -38,11 +53,12 @@ export default class Configure extends Component {
                 <h1>Configure</h1>
                 <form className="configForm" onSubmit={this.onSubmit.bind(this)}>
                     {
-                        Object.keys(this.state).map((k) => {
-                            return <ConfigItem itemName={k} key={k} itemValue={this.state[k]} onChange={this.onChange.bind(this)} />
+                        Object.keys(this.state.config).map((k) => {
+                            return <ConfigItem itemName={k} key={k} itemValue={this.state.config[k]} onChange={this.onChange.bind(this)} />
                         })
                     }
                     <SubmitButton display="Update Config" />
+                    <div>{this.state.message}</div>
                 </form>
             </div>
         )

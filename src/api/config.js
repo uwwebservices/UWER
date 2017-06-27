@@ -14,13 +14,14 @@ api.get('/', (req, res) => {
             obj[key] = config[key];
             return obj;
         }, {});
-    return res.json(filteredConfig);
+    res.json(filteredConfig);
 });
 
 api.put('/', (req, res) => {
     Object.keys(req.body).map((k) => {
         configurator.set(k, req.body[k]);
-    })
+    });
+    res.sendStatus(200);
 })
 
 export default api;
