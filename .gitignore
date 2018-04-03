@@ -5,3 +5,4 @@
 .DS_Store
 src/config/config.json
 src/config/cert.pfx
+.vs

@@ -1,7 +1,7 @@
 {
   "name": "idcard",
   "version": "0.1.0",
-  "description": "UW Web Services Registration POC",
+  "description": "UW WebServices Registration POC",
   "main": "dist",
   "scripts": {
     "dev": "nodemon --config nodemon.json",
