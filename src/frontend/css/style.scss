@@ -1,34 +1,57 @@
-#root {
+body {
+    background-color: #e8e3d3;
+    padding:0;
+    margin:0;
+}
+
+#root {    
+
     h1 {
         color: grey;
     }
+
     .main {
-        width: 50%;
         margin: 0 auto;
     }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto;
+        width: 100%;
+    }
+
+    .header {
+        background-color: #4b2e83;
+    }
+
+    .footer {
+        background-color: #e8e3d3;
+    }
+
     .rightLink {
         width: 50px;
         float: right;
     }
+
     .configForm {
         .configLabel {
             width: 120px;
             margin: 4px 0 4px 20px;
             display: inline-block;
         }
+
         .configLabel:after {
             content: ": ";
         }
+
         .configInput {
             width: 300px;
         }
+
         .submitButton {
             margin-top: 20px;
         }
+
         margin-bottom: 20px;
     }
 }
-
-
-
-

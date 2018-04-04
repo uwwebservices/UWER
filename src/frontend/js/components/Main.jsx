@@ -24,12 +24,18 @@ export default class Main extends Component {
     render () {
         return (
             <div>
-                { this.state.registered.configEnabled && <div className="rightLink"><Link to="/config">config</Link></div> }
-                <div className="main">
-                    <h1>Event Registration</h1>
-                    <h5>Group: {this.state.registered.groupName}</h5>
-                    <Form addUser={this.addUser.bind(this)} />
-                    <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
+                {this.state.registered.configEnabled && <div className="rightLink"><Link to="/config">config</Link></div>}
+                <img src="../../img/header_left.png" />
+                <div className="main grid-container">
+                    <div className="grid-item header">
+                        <h1>Event Registration</h1>
+                        <h5>Group: {this.state.registered.groupName}</h5>
+                        <Form addUser={this.addUser.bind(this)} />
+                        <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
+                    </div>
+                    <div className="grid-item footer">
+                        foot
+                    </div>
                 </div>
             </div>
         )
