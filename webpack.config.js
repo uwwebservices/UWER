@@ -27,7 +27,18 @@ module.exports = {
         exclude: /node_modules/ },
       { test: /\.scss$/, 
         loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader', 'sass-loader'] }), 
-        exclude: /node_modules/ }
+            exclude: /node_modules/
+        },
+        {
+            test: /\.(png|jp(e*)g|svg)$/,
+            use: [{
+                loader: 'url-loader',
+                options: {
+                    limit: 8000, // Convert images < 8kb to base64 strings
+                    name: 'frontend/img/[hash]-[name].[ext]'
+                }
+            }]
+        }
     ]
   },
   plugins: [

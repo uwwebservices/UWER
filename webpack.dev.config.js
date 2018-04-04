@@ -31,7 +31,28 @@ module.exports = {
         query: { presets:['react']}
       },
       { test: /\.css$/, loader: 'style-loader!css-loader'},
-      { test: /\.scss$/,loader: 'style-loader!css-loader!sass-loader'}
+      { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader' },
+      {
+            test: /\.(png|jp(e*)g|svg)$/,
+            use: [{
+                loader: 'url-loader',
+                options: {
+                    limit: 8000, // Convert images < 8kb to base64 strings
+                    name: 'frontend/img/[hash]-[name].[ext]'
+                }
+            }]
+        },
+        {
+            test: /\.(eot|svg|ttf|woff|woff2)$/,
+            use: [
+                {
+                    loader: 'file-loader',
+                    options: {
+                        name: '[path][name].[ext]'
+                    }
+                }
+            ]            
+        }
     ]
   },
   plugins: [
