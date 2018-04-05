@@ -1,5 +1,6 @@
 import register from '../models/registerModel';
 import { Router } from 'express';
+import csv from 'csv-express';
 
 let api = Router();
 
@@ -29,6 +30,14 @@ api.delete('/:netid', (req, res) => {
     })
     .catch((err) => {
         res.status(err.statusCode).json({"error": err.message});
+    })
+});
+
+api.get('/memberlist.csv', (req, res) => {
+    register.list(false).then((members) => {
+        res.csv(members.users, true);
+    }).catch((err) => {
+        console.log("error serializing to csv:", err);
     })
 });
 

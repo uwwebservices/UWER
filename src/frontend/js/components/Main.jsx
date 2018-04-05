@@ -35,6 +35,7 @@ export default class Main extends Component {
                     <div className="grid-item main">
                         <h1>Event Registration</h1>
                         {this.state.registered.configEnabled && <div><Link to="/config">config</Link></div>}
+                        <a href="/api/register/memberlist.csv">Please sir, download my members list as a comma separated file.</a>
                         <h5>Group: {this.state.registered.leafName}</h5>
                         <Form addUser={this.addUser.bind(this)} />
                         <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
