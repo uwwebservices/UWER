@@ -40,6 +40,7 @@ export default {
         });
         let groupInfo = {
             groupName: leaf || groupName(),
+            leafName: config.groupNameLeaf,
             users: []
         };
         return rp(opts).then((body) => {

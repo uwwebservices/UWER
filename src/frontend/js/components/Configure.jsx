@@ -14,7 +14,6 @@ export default class Configure extends Component {
         fetch('/api/config')
             .then(res => res.json())
             .then((json) => {
-                console.log(json);
                 let newConfig = this.state.config;
                 newConfig.config = json;
                 this.setState(newConfig);

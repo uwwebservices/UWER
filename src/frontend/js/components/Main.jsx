@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Form from './Form.jsx';
 import Members from './Members.jsx';
+import Configure from './Configure.jsx';
 import { Link } from 'react-router-dom';
 
 
@@ -27,14 +28,14 @@ export default class Main extends Component {
     render () {
         return (
             <div>
-                {this.state.registered.configEnabled && <div className="rightLink"><Link to="/config">config</Link></div>}                
                 <div className="main grid-container">
                     <div className="grid-item header">
                         <img src={header} />                        
                     </div>
                     <div className="grid-item main">
                         <h1>Event Registration</h1>
-                        <h5>Group: {this.state.registered.groupName}</h5>
+                        {this.state.registered.configEnabled && <div><Link to="/config">config</Link></div>}
+                        <h5>Group: {this.state.registered.leafName}</h5>
                         <Form addUser={this.addUser.bind(this)} />
                         <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
                     </div>

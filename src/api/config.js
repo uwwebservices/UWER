@@ -4,7 +4,8 @@ let config = configurator.get();
 
 let api = Router();
 
-let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
+// Items to return from config file
+let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf"];
 
 api.get('/', (req, res) => {
     config = configurator.get();
