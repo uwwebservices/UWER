@@ -45,14 +45,19 @@ function getPhoto(regid) {
 let memStorage = { groupName: "internalStorage", users: []};
 
 export default {
-    add: (cardId, verbose) => {
+    add: (identifier, verbose) => {
         config = configurator.get();
-        return idcard.get(cardId).then((regId) => {
-            return pws.get(regId).then((result) => {
-                return result;
-            })
-        })
-        .then((personDetails) => {
+        let promise;
+        let card = idcard.validCard(identifier);
+        if(card) {
+            promise = idcard.get(card).then((regId) => {
+                return pws.get(regId);
+            });
+        } else {
+            promise = pws.get(identifier);
+        }
+        
+        return promise.then((personDetails) => {
             if(config.storeInGroupsWS) { 
                 return groups.addMember("", personDetails.UWNetID).then((result) => {
                     if(verbose) {

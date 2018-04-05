@@ -15,24 +15,28 @@ const options = {
         };
 
 export default {
-    get: (cardnum) => {
-        config = configurator.get();
-        let magstrip = "", rfid = "";
+    validCard: (cardnum) => {
+        let card = { magstrip: "", rfid: "" };
         if(cardnum.length === 16) {
             if(cardnum[0] !== ';') {
-                rfid = cardnum;
+                card.rfid = cardnum;
             } else if(cardnum[0] === ';') {
-                magstrip = cardnum.slice(1,14);
+                card.magstrip = cardnum.slice(1,14);
             } else {
-                throw new IDCardFormatError("Invalid Card Number");
+                return false;
             }
         } else if(cardnum.length === 14) {
-            magstrip = cardnum;
+            card.magstrip = cardnum;
         } else {
-            throw new IDCardFormatError("Invalid Card Number");
+            return false;
         }
+        return card;
+    },
+    get: (card) => {
+        config = configurator.get();
+        
         let opts = Object.assign({}, options, { 
-            url: config.idcardBaseUrl +  "?mag_strip_code=" + magstrip + "&prox_rfid=" + rfid,
+            url: config.idcardBaseUrl +  "?mag_strip_code=" + card.magstrip + "&prox_rfid=" + card.rfid,
             json: true
         });
 

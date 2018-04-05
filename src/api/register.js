@@ -13,9 +13,9 @@ api.get('/', (req, res) => {
     })
 });
 
-api.put('/:cardId', (req, res) => {
+api.put('/:identifier', (req, res) => {
     let verbose = req.query.verbose == 'true' ? true : false;
-    register.add(req.params.cardId, verbose).then((result) => {
+    register.add(req.params.identifier, verbose).then((result) => {
         res.json(result);
     })
     .catch((err) => {
