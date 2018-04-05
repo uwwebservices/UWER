@@ -17,5 +17,6 @@
 	"enableRegisterAPI": true,
     "enableGroupsAPI": false,
     "enablePWSAPI": false,
-    "enableIDCardAPI": false
+    "enableIDCardAPI": false,
+	"enableConfigAPI": false
 }
