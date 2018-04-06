@@ -1,5 +1,5 @@
-import rp from 'request-promise';
 import request from 'request';
+import rp from 'request-promise';
 import fs from 'fs';
 import configurator from '../config/configurator';
 let config = configurator.get();

@@ -1,11 +1,11 @@
 import webpack from 'webpack';
 import webpackStats from 'stats-webpack-plugin';
-import ExtractTextPlugin from "extract-text-webpack-plugin";
 import path from "path";
 import configurator from './src/config/configurator';
 let config = configurator.get();
 
 module.exports = {
+  mode: "development",
   devtool: '#source-map',
   node: { 
     fs: 'empty',
@@ -15,7 +15,7 @@ module.exports = {
   entry: [
     'webpack/hot/dev-server',
     'webpack-hot-middleware/client?path=//localhost:' + config.port + '/__webpack_hmr&reload=true',
-    './src/frontend/js/app.js'
+    './src/frontend/App.js'
   ],
   output: {
     path: '/',
@@ -23,17 +23,18 @@ module.exports = {
     filename: 'scripts/bundle.js'
   },
   module: {
-    loaders: [
-      { test: /\.json$/, loader: 'json-loader', exclude: /node_modules/ },
+    rules: [
       { test: /\.jsx?$/, 
         loader: 'babel-loader', 
-        exclude: /node_modules/, 
-        query: { presets:['react']}
+        exclude: /node_modules/,
+        options: {
+          babelrc: true
+        }
       },
       { test: /\.css$/, loader: 'style-loader!css-loader'},
       { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader' },
       {
-            test: /\.(png|jp(e*)g|svg)$/,
+            test: /\.(png|jp(e*)g)$/,
             use: [{
                 loader: 'url-loader',
                 options: {
@@ -48,7 +49,7 @@ module.exports = {
                 {
                     loader: 'file-loader',
                     options: {
-                        name: '[path][name].[ext]'
+                        name: 'frontend/fonts/[path][name].[ext]'
                     }
                 }
             ]            
@@ -60,8 +61,10 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin()
   ],
   resolve: {
+    modules: ['node_modules', './src', './src/frontend/img'],
     extensions: [
       '.js',
+      '.jsx',
       '.json',
       '.css',
       '.scss'

@@ -20,7 +20,7 @@ if(process.env.NODE_ENV === 'dev') {
 }
 
 api.get(['/','/config'], (req, res) => {
-	 res.sendFile(__dirname + '/views/index.html');
+	 res.sendFile(__dirname + '/index.html');
 });
 
 export default api;

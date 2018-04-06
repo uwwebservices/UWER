@@ -38,6 +38,7 @@ api.get('/memberlist.csv', (req, res) => {
         res.csv(members.users, true);
     }).catch((err) => {
         console.log("error serializing to csv:", err);
+        res.status(500);
     })
 });
 
