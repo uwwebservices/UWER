@@ -1,11 +1,11 @@
-import { version } from '../../package.json';
+import { version } from '../package.json';
 import { Router } from 'express';
-import configurator from '../config/configurator';
-import idcard from './idcard';
-import pws from './pws';
-import groups from './groups';
-import register from './register';
-import configApi from './config';
+import configurator from './config/configurator';
+import idcard from './api/idcard';
+import pws from './api/pws';
+import groups from './api/groups';
+import register from './api/register';
+import configApi from './api/config';
 
 let config = configurator.get();
 
