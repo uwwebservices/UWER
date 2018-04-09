@@ -24,14 +24,14 @@ This project is also intended to be a reference on how to use various APIs, see 
 
 ## Docker-Compose Install
 ```
-[...]
+version: '3'
+services:
   idcard:
     image: uwwebservices/idcard-webapp-poc
     volumes:
       - /path/to/storage:/www/dist/config
     ports:
       - "1111:1111"
-[...]
 ```
 
 ## Dev Setup
