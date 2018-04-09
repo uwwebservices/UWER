@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import './css/style';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Register from './Containers/Register';
 import Configure from './Containers/Configure';
 import PageWrapper from './Containers/PageWrapper';
@@ -13,18 +14,14 @@ class App extends React.Component {
     render () {
         return (
             <Router>
-                <Switch>
-                    <Route path='/config' render={(routeProps) => (
-                        <PageWrapper>
-                            <Configure {...routeProps} />
-                        </PageWrapper>
-                    )} />
-                    <Route path='/' render={(routeProps) => (
-                        <PageWrapper>
-                            <Register {...routeProps} />
-                        </PageWrapper>
-                    )} />
-                </Switch>
+                <MuiThemeProvider>
+                    <PageWrapper>
+                        <Switch>
+                            <Route path='/config' component={Configure} />
+                            <Route path='/' component={Register} />
+                        </Switch>
+                    </PageWrapper>
+                </MuiThemeProvider>
             </Router>
         )
     }

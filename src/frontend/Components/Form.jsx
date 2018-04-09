@@ -1,4 +1,6 @@
 import React from 'react';
+import TextField from 'material-ui/TextField';
+import {RaisedButton} from 'material-ui';
 
 export default class Form extends React.Component {
     constructor (props) {
@@ -28,8 +30,8 @@ export default class Form extends React.Component {
     render() {
         return (
             <form className="form" onSubmit={this.registerUser.bind(this)}>
-                <input type="text" placeholder="magstrip/rfid/netid" id="registerCard" value={this.state.card} onChange={this.updateCard.bind(this)} />
-                <button type="submit">Register</button>
+                <TextField type="text" placeholder="magstrip/rfid/netid" id="registerCard" value={this.state.card} onChange={this.updateCard.bind(this)} />
+                <RaisedButton primary={true} type="submit">Register</RaisedButton>
             </form>
         )
     }
