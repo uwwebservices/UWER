@@ -30,6 +30,7 @@ export default {
             return { "updated": true };
         })
         .catch((err) => {
+            console.log(err.statusCode, err.statusMessage);
             throw err;
         })
     },
@@ -39,7 +40,7 @@ export default {
             url: config.groupsBaseUrl + (leaf || groupName()) + "/member",
         });
         let groupInfo = {
-            groupName: leaf || groupName(),
+            groupName: config.groupsBaseUrl + leaf || groupName(),
             leafName: config.groupNameLeaf,
             users: []
         };
@@ -58,7 +59,7 @@ export default {
         config = configurator.get();
         let admins = "";
         for(var i = 0; i < config.groupAdmins.length; i++) {
-            admins += `<li class="admin">${config.groupAdmins[i]}</li>`;
+            admins += `<li class="admin" type="dns">${config.groupAdmins[i]}</li>`;
         }
         let htmlPut = `
             <!DOCTYPE html PUBLIC " -//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11/dtd">
@@ -87,6 +88,7 @@ export default {
             },
             body: htmlPut
         });
+        console.log(opts);
         return rp(opts).then(() => {
             return {"created": true };
         })
