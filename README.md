@@ -1,6 +1,6 @@
 # University of Washington - Event Registration
 
-Work in progress project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
+Proof of concept project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
 to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and easily take attendance via card swipes. Submitting a huskycard rfid/magstrip looks up users regid, 
 passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format
 can be returned as well as the UW group will have the member list.  Verbose output from the API includes various user information as well as
