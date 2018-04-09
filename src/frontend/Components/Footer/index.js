@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-import './style';
+import s from './style';
 
 export default class Footer extends Component {
   render() {
     return (
-      <footer>
+      <footer className={s["uw-footer"]}>
         Enterprise Web Services and Events
       </footer>
     );

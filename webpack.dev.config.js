@@ -31,7 +31,7 @@ module.exports = {
           babelrc: true
         }
       },
-      { test: /\.css$/, loader: 'style-loader!css-loader'},
+      { test: /\.css$/, loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]'},
       { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader' },
       {
             test: /\.(png|jp(e*)g)$/,

@@ -1,8 +1,5 @@
-footer {
+.uw-footer {
   grid-row: 2 / 3;
-}
-
-footer {
   background: #4b2e83;
   color: white;
   padding: 20px;
