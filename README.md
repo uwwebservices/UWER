@@ -48,7 +48,7 @@ This project is also intended to be a reference on how to use various APIs, see 
 
 ### Registration
 GET /api/register[?verbose=true] - List members in configured group (verbose or simple)  
-PUT /api/register/:cardNum - Add cardNum (rfid/magstrip) to configured group  
+PUT /api/register/:identifier - Add cardNum (rfid/magstrip/netid) to configured group  
 DELETE /api/register/:netid - Remove member from group by netid
 
 ### GroupsWS
