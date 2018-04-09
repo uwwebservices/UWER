@@ -63,7 +63,11 @@ module.exports = {
     new HtmlWebpackPlugin()
   ],
   resolve: {
-    modules: ['node_modules', './src', './src/frontend/img'],
+    modules: [
+      'node_modules', 
+      './src', 
+      './src/frontend'
+    ],
     extensions: [
       '.js',
       '.jsx',
