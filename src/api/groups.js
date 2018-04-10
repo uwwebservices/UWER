@@ -14,7 +14,7 @@ api.get('/:groupName', (req, res) => {
 
 api.get('/:groupName/check', (req, res) => {
     groups.checkGroup(req.params.groupName).then((response) => {
-        console.log("check group response", response);
+        console.log(response, "check group response error");
         res.status(200).json(response);
     });
 });

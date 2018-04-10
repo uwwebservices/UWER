@@ -4,8 +4,10 @@ import groups from './groupModel';
 import configurator from '../config/configurator';
 let config = configurator.get();
 
-// If verbose flag passed, verbosify the users
-function verbosifyMemberList(groupInfo) {
+// verboseLevel = 0: netid
+// verboseLevel = 1: netid, regId, preferredName
+// verboseLevel = 2: netid, regId, preferredName, base64image
+function verbosifyMemberList(groupInfo, verboseLevel) {
     var promises = groupInfo.users.map((user) => {
         return pws.get(user.netid).then((u) => {
             return personToMember(u);
@@ -15,20 +17,27 @@ function verbosifyMemberList(groupInfo) {
                 "error": "could not find user details"
             }
         })
-        
     });
-    return Promise.all(promises).then((people) => {
-        var imagePromises = people.map((p) => {
-            return getPhoto(p.regid).then((image) => {
-                p.base64image = image;
-                return p;
+    if(verboseLevel > 1) {
+        return Promise.all(promises).then((people) => {
+            var imagePromises = people.map((p) => {
+                return getPhoto(p.regid).then((image) => {
+                    p.base64image = image;
+                    return p;
+                });
+            });
+            return Promise.all(imagePromises).then((result) => {
+                groupInfo.users = result;
+                return groupInfo;
             });
         });
-        return Promise.all(imagePromises).then((result) => {
+    } else {
+        return Promise.all(promises).then((result) => {
             groupInfo.users = result;
             return groupInfo;
-        });
-    });
+        })
+    }
+    
     
 }
 
@@ -89,7 +98,7 @@ export default {
             }
         });
     },
-    list: (verbose) => {
+    list: (verboseLevel) => {
         config = configurator.get();
         
         return new Promise((resolve, reject) => {
@@ -105,8 +114,8 @@ export default {
             
         }).then((members) => {
             console.log("got members!")
-            if(verbose) {
-                return verbosifyMemberList(members);      
+            if(verboseLevel && verboseLevel > 0) {
+                return verbosifyMemberList(members, verboseLevel);      
             } else {
                 return members;
             }

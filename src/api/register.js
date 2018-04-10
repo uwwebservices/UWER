@@ -5,7 +5,7 @@ import csv from 'csv-express';
 let api = Router();
 
 api.get('/', (req, res) => {
-    let verbose = req.query.verbose == 'true' ? true : false;
+    let verbose = req.query.verbose == 'true' ? 2 : 0;
     return register.list(verbose).then((result) => {
         return res.json(result);
     });
@@ -31,7 +31,8 @@ api.delete('/:netid', (req, res) => {
 });
 
 api.get('/memberlist.csv', (req, res) => {
-    register.list(false).then((members) => {
+    register.list(1).then((members) => {
+        console.log(members);
         res.csv(members.users, true);
     }).catch((err) => {
         console.log("error serializing to csv:", err);
