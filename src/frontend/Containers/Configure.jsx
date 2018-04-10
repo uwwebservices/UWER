@@ -40,7 +40,7 @@ export default class Configure extends Component {
             this.props.history.push('/');
         })
         .catch((err) => {
-            return this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
+            this.setState(Object.assign({}, this.state, {"message": "Update Failed!"}));
         });
     }
     handleChange(e) {

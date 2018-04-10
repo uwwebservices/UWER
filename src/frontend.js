@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import path from 'path';
 
 let api = Router();
 
@@ -11,7 +12,12 @@ if(process.env.NODE_ENV === 'dev') {
 
 	api.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackConfig.output.publicPath,
-		stats: {colors: true}
+		stats: {colors: true},
+		watchOptions: {
+			ignored: [
+				path.resolve(__dirname, 'config')
+			]
+		}
 	}))
 	api.use(webpackHotMiddleware(compiler, {
 		log: console.log,

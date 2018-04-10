@@ -13,8 +13,8 @@ api.get('/:groupName', (req, res) => {
 });
 
 api.get('/:groupName/check', (req, res) => {
+    res.status(200);
     groups.checkGroup(req.params.groupName).then((response) => {
-        console.log(response, "check group response error");
         res.status(200).json(response);
     });
 });
