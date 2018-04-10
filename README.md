@@ -1,18 +1,17 @@
 # University of Washington - Event Registration
 
-Proof of concept project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
-to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and easily take attendance via card swipes. Submitting a huskycard rfid/magstrip looks up users regid, 
-passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format
-can be returned as well as the UW group will have the member list.  Verbose output from the API includes various user information as well as
+Project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
+to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and take attendance via card swipes (magstripe/rfid). Submitting a huskycard rfid/magstrip/netid looks up users regid and passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format
+can be returned as well as the UW group will have the member list or download a list as a CSV.  Verbose output from the API includes various user information as well as
 a base64 encoded image from their husky card.
 
-This project is also intended to be a reference on how to use various APIs, see src/models for the various APIs as examples.
+This project is also intended to be a reference on how to use various APIs, see src/backend/models for the various APIs as examples.
 
 ## Requirements
 - UWCA x509 certificate, authorized for IDCard/PWS/Groups
 - node.js and npm/yarn
 - [optional] docker/docker-compose
-- [optional] card magstrip reader
+- [optional] card magstrip/rfid reader
 
 ## Current Features
 - PWS/GroupsWS/IDCard APIs
@@ -20,7 +19,7 @@ This project is also intended to be a reference on how to use various APIs, see 
 - Full RESTful API
 - Dev environment hot reloading for server and frontend
 - Dockerhub integration
-- Very basic frontend to utilize registration APIs
+- Frontend to show usage possibilities
 
 ## Docker-Compose Install
 ```
@@ -49,12 +48,13 @@ services:
 ## API Endpoints
 
 ### Registration
-GET /api/register[?verbose=true] - List members in configured group (verbose or simple)  
+GET /api/register[?verbose=[0-2]] - List members in configured group
 PUT /api/register/:identifier - Add cardNum (rfid/magstrip/netid) to configured group  
 DELETE /api/register/:netid - Remove member from group by netid
 
 ### GroupsWS
 GET /api/groups/:groupName - List users in groupName  
+GET /api/groups/:groupName/check - Check if group exists
 PUT /api/groups/:groupName/:netid - Add netid to groupName  
 DELETE /api/groups/:groupName/:netid - Remove netid from groupname  
 DELETE /api/groups/:groupName - Remove the group from GroupsWS  
