@@ -5,7 +5,7 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon --config nodemon.json",
-    "build": "babel src -s -D -d dist && webpack",
+    "build": "babel src/backend -s -D -d dist && webpack",
     "start": "cross-env NODE_ENV=prod node dist",
     "test": "eslint src"
   },

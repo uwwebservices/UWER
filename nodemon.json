@@ -1,10 +1,11 @@
 {
-    "exec" : "babel-node src",
+    "exec" : "babel-node src/backend",
     "ignore": [
-        "src/config"
+        "src/backend/config",
+        "src/frontend"
     ],
     "watch": [
-        "src"
+        "src/backend"
     ],
     "env": {
         "NODE_ENV": "dev"

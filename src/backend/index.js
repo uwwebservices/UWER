@@ -3,8 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import api from './api';
-import frontend from './frontend';
+import api from './routes/api';
+import frontend from './routes/frontend';
 import configurator from './config/configurator';
 let config = configurator.get();
 

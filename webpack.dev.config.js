@@ -1,7 +1,7 @@
 import webpack from 'webpack';
 import webpackStats from 'stats-webpack-plugin';
 import path from "path";
-import configurator from './src/config/configurator';
+import configurator from './src/backend/config/configurator';
 let config = configurator.get();
 
 module.exports = {

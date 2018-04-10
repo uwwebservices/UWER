@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import { Link } from 'react-router-dom';
-import configurator from 'config/configurator';
-let config = configurator.get();
 
 const pages = [
     { isNavigable: true, path: "/", display: "Register" },
@@ -15,7 +13,7 @@ export default class Main extends Component {
     render () {
         return (
             <div className="pageWrapper">
-                <Header configEnabled={config.enableConfigAPI} pages={pages} />
+                <Header configEnabled={true} pages={pages} />
                     <main>
                         {...this.props.children}
                     </main>

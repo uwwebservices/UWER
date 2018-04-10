@@ -7,15 +7,15 @@ if(process.env.NODE_ENV === 'dev') {
 	const webpack = require('webpack');
 	const webpackDevMiddleware = require('webpack-dev-middleware');
 	const webpackHotMiddleware = require('webpack-hot-middleware');
-	const webpackConfig = require('../webpack.dev.config');
+	const webpackConfig = require('../../../webpack.dev.config');
 	let compiler = webpack(webpackConfig);
-
+	
 	api.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackConfig.output.publicPath,
 		stats: {colors: true},
 		watchOptions: {
 			ignored: [
-				path.resolve(__dirname, 'config')
+				path.resolve(__dirname, '..', 'config')
 			]
 		}
 	}))
@@ -26,7 +26,7 @@ if(process.env.NODE_ENV === 'dev') {
 }
 
 api.get(['/','/config'], (req, res) => {
-	 res.sendFile(__dirname + '/index.html');
+	 res.sendFile(path.resolve(__dirname, '..', 'index.html'));
 });
 
 export default api;
