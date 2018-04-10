@@ -20,18 +20,18 @@ const options = {
     }
 };
 
-export default {
+const Groups = {
     addMember: (leaf = "", netid) => {
         config = configurator.get();
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: generateGroupName(leaf) + "/member/" + netid,
+            url: config.groupsBaseUrl + generateGroupName(leaf) + "/member/" + netid,
         });
         return rp(opts).then((res) => {
             return { "updated": true };
         })
         .catch((err) => {
-            console.log("addMember error:", err);
+            return {"updated": false, "error": error.message};
         })
     },
     checkGroup: (group) => {
@@ -48,7 +48,6 @@ export default {
     },
     getMembers: (leaf = "") => {
         config = configurator.get();
-        console.log("getting members")
         let groupName = generateGroupName(leaf);
         
         let opts = Object.assign({}, options, { 
@@ -61,14 +60,15 @@ export default {
         };
         
         return rp(opts).then((body) => {
-            console.log('got members, parsing')
             let $ = cheerio.load(body);
             $('.member').map((i, el) => {
                 groupInfo.users.push({ "netid": $(el).html() });
             });
             return groupInfo;
         }).catch((err) => {
-            return groupInfo;
+            return Groups.createGroup(groupName).then(() => {
+                return groupInfo;
+            });
         })
     },
     createGroup: (group = "") => {
@@ -109,7 +109,7 @@ export default {
             return {"created": true };
         })
         .catch((err) => {
-            console.log("createGroup error:", err);
+            return {"created": false, "error": err.message };
         })
     },
     removeMember: (netid, leaf = "") => {
@@ -122,7 +122,7 @@ export default {
             return { "deleted": true };
         })
         .catch((err) => {
-            console.log("removeMember error:", err);
+            return {"deleted": false, "error": err.message};
         })
     },
     removeGroup: (leaf) => {
@@ -135,7 +135,9 @@ export default {
             return { "deleted": true };
         })
         .catch((err) => {
-            console.log("remove group error: ", err);
+            return { "deleted": false, "error": err.message}
         })
     }
 }
+
+export default Groups;

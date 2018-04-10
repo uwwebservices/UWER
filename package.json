@@ -7,6 +7,7 @@
     "dev": "nodemon --config nodemon.json",
     "build": "babel src/backend -s -D -d dist && webpack",
     "start": "cross-env NODE_ENV=prod node dist",
+    "prestart": "rm -rf dist && npm run -s build",
     "test": "eslint src"
   },
   "eslintConfig": {
@@ -61,6 +62,7 @@
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.8.3",
     "nodemon": "^1.17.3",
+    "optimize-css-assets-webpack-plugin": "^4.0.0",
     "sass-loader": "^6.0.7",
     "stats-webpack-plugin": "^0.6.2",
     "style-loader": "^0.20.3",

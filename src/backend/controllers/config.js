@@ -24,9 +24,8 @@ api.put('/', (req, res) => {
             configurator.set(k, req.body[k]);
         });
         res.sendStatus(200);
-    } catch (ex) {
-        console.log(ex);
-        res.sendStatus(500);
+    } catch (err) {
+        res.status(err.statusCode).json({"error": err.message});
     }
 })
 

@@ -20,7 +20,6 @@ export default class Configure extends Component {
                 this.setState(newConfig);
             })
             .catch((err) => {
-                console.log(err);
                 return this.setState(Object.assign({}, this.state, {"message": "Config Not Available."}));
             })
     }

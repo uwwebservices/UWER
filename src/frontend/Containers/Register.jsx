@@ -9,12 +9,7 @@ export default class Main extends Component {
         this.state = { registered: { groupName: "", configEnabled: false, users: [] }}
     }
     componentDidMount() {
-        this.setup();
-    }
-    setup() {
-        this.loadUsers().then(() => {
-            this.checkGroup();
-        });
+        this.loadUsers();
     }
     loadUsers() {
         return fetch('/api/register?verbose=true')
@@ -22,22 +17,6 @@ export default class Main extends Component {
             .then(json => this.setState({registered: json}))
             .catch(err => console.log)
         
-    }
-    checkGroup() {
-        return fetch(`/api/groups/${this.state.registered.groupName}/check`)
-            .then(res => res.json())
-            .then((json) => {
-                if(!json.exists) {
-                    console.log("group doesn't exist, creating: ", this.state.registered.groupName)
-                    return fetch(`/api/groups/${this.state.registered.groupName}`, {
-                        method: 'POST'
-                    }).then(res => {
-                        if(res.status === 200) {
-                            console.log("successfully created group " + this.state.registered.groupName);
-                        }
-                    })
-                }
-            })
     }
     addUser(user) {
         if(!this.state.registered.users.some((u) => { return user.netid === u.netid })) {

@@ -10,7 +10,6 @@ api.get('/:cardNum', (req, res) => {
                 res.json(response);
             })
             .catch((err) => {
-                console.log(err);
                 res.status(err.statusCode).json({"error": err.message});
             });
     } catch (err) {

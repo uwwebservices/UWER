@@ -32,11 +32,9 @@ api.delete('/:netid', (req, res) => {
 
 api.get('/memberlist.csv', (req, res) => {
     register.list(1).then((members) => {
-        console.log(members);
         res.csv(members.users, true);
     }).catch((err) => {
-        console.log("error serializing to csv:", err);
-        res.status(500);
+        res.status(err.statusCode).json({"error": err.message});
     })
 });
 

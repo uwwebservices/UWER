@@ -31,8 +31,6 @@ app.use('/', frontend);
 
 // static files
 if(process.env.NODE_ENV === 'prod') {
-	app.use("/scripts", express.static('dist/scripts'))
-	app.use("/styles", express.static('dist/styles'))
 	app.use("/assets", express.static('dist/assets'))
 }
 

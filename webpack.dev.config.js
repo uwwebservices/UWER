@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import webpackStats from 'stats-webpack-plugin';
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 import path from "path";
 import configurator from './src/backend/config/configurator';
 let config = configurator.get();
@@ -58,7 +59,11 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+    new HtmlWebpackPlugin({
+      template: './src/index.template.html',
+      inject: 'body'
+    })
   ],
   resolve: {
     modules: ['node_modules', './src', './src/frontend/img'],

@@ -113,29 +113,10 @@ export default {
             }
             
         }).then((members) => {
-            console.log("got members!")
             if(verboseLevel && verboseLevel > 0) {
                 return verbosifyMemberList(members, verboseLevel);      
             } else {
                 return members;
-            }
-        }).catch((err) => {
-            if(err.statusCode === 404) {
-                return groups.createGroup().then(() => {
-                    return new Promise((resolve, reject) => {
-                        if(config.storeInGroupsWS) {
-                            groups.getMembers().then(mems => {
-                                mems.configEnabled = config.enableConfigAPI;
-                                resolve(mems);
-                            });
-                        } else {
-                            memstorage.configEnabled = config.enableConfigAPI;
-                            resolve(memStorage);
-                        }
-                    })
-                })
-            } else {
-                throw err;
             }
         })
     },
