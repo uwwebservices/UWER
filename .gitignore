@@ -3,6 +3,6 @@
 /npm-debug.log*
 /node_modules
 .DS_Store
-src/config/config.json
-src/config/cert.pfx
+src/backend/config/config.json
+src/backend/config/cert.pfx
 .vs
