@@ -1,15 +1,22 @@
 import groups from '../models/groupModel';
 import { Router } from 'express';
 
-let api = Router();
+let api = Router(); 
 
 api.get('/:groupName', (req, res) => {
-     return groups.getMembers(req.params.groupName).then((users) => {
+     groups.getMembers(req.params.groupName).then((users) => {
         res.status(200).json(users);
     })
     .catch((err) => {
         res.status(err.statusCode).json({"error": err.message});
     })
+});
+
+api.get('/:groupName/check', (req, res) => {
+    groups.checkGroup(req.params.groupName).then((response) => {
+        console.log("check group response", response);
+        res.status(200).json(response);
+    });
 });
 
 api.post('/:groupName', (req, res) => {

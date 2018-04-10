@@ -1,7 +1,5 @@
 {
 	"port": 1111,
-	"bodyLimit": "100kb",
-	"corsHeaders": ["Link"],
 	"certificate": "config/cert.pfx",
     "passphrase": "",
 	"idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
@@ -9,14 +7,14 @@
 	"photoBaseUrl": "https://wseval.s.uw.edu/idcard/v1/photo/",
 	"groupsBaseUrl": "https://groups.uw.edu:7443/group/",
 	"storeInGroupsWS": true,
-	"groupAdmins": ["admin"],
+	"groupAdmins": ["adminNetids"],
     "groupDisplayName": "UW Registration POC",
 	"groupDescription": "This a test group for UW Registration POC",
 	"groupNameBase": "uw_ais_sm_ews_idcardpoc_",
 	"groupNameLeaf": "test",
 	"enableRegisterAPI": true,
-    "enableGroupsAPI": false,
-    "enablePWSAPI": false,
-    "enableIDCardAPI": false,
-	"enableConfigAPI": false
+    "enableGroupsAPI": true,
+    "enablePWSAPI": true,
+    "enableIDCardAPI": true,
+	"enableConfigAPI": true
 }

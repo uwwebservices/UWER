@@ -6,12 +6,9 @@ let api = Router();
 
 api.get('/', (req, res) => {
     let verbose = req.query.verbose == 'true' ? true : false;
-    register.list(verbose).then((result) => {
-        res.json(result);
-    })
-    .catch((err) => {
-        res.status(err.statusCode).json({"error": err.message});
-    })
+    return register.list(verbose).then((result) => {
+        return res.json(result);
+    });
 });
 
 api.put('/:identifier', (req, res) => {

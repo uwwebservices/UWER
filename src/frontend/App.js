@@ -18,7 +18,7 @@ class App extends React.Component {
                     <PageWrapper>
                         <Switch>
                             <Route path='/config' component={Configure} />
-                            <Route path='/' component={Register} />
+                            <Route exact path='/' component={Register} />
                         </Switch>
                     </PageWrapper>
                 </MuiThemeProvider>

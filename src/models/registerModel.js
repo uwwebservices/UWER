@@ -91,6 +91,7 @@ export default {
     },
     list: (verbose) => {
         config = configurator.get();
+        
         return new Promise((resolve, reject) => {
             if(config.storeInGroupsWS) {
                 groups.getMembers().then(mems => {
@@ -103,6 +104,7 @@ export default {
             }
             
         }).then((members) => {
+            console.log("got members!")
             if(verbose) {
                 return verbosifyMemberList(members);      
             } else {

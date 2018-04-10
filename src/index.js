@@ -36,7 +36,7 @@ if(process.env.NODE_ENV === 'prod') {
 	app.use("/assets", express.static('dist/assets'))
 }
 
-app.server.listen(process.env.PORT || '1111', () => {
+app.server.listen(process.env.PORT || config.port, () => {
 	console.log(`Started on port ${app.server.address().port} in '${process.env.NODE_ENV}' environment.`);
 });
 
