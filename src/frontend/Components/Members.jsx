@@ -19,6 +19,7 @@ export default class Test extends React.Component {
             return (
                 <ListItem 
                     primaryText={mem.netid}
+                    secondaryText={mem.preferredName}
                     leftAvatar={<Avatar src={mem.base64image} />}
                     key={mem.netid}
                     rightAvatar={<FloatingActionButton onClick={() => this.removeUser(mem.netid)} mini={true} secondary={true}>x</FloatingActionButton>}
