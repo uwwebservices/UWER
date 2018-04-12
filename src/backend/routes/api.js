@@ -1,4 +1,3 @@
-import { version } from '../../../package.json';
 import { Router } from 'express';
 import configurator from '../config/configurator';
 import idcard from '../controllers/idcard';
@@ -35,9 +34,5 @@ if(config.enablePWSAPI) {
 if(config.enableConfigAPI) {
 	api.use('/config', configApi);
 }
-
-api.get('/', (req, res) => {
-	res.json({ version });
-});
 
 export default api;
