@@ -7,21 +7,36 @@ import { Link } from 'react-router-dom'
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { message: "", config: {}};
+        this.state = { message: "", config: {}, subgroups: []};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     componentDidMount() {
-        fetch('/api/config')
+        this.loadConfig().then(() => {
+            this.loadSubGroups();
+        });
+    }
+    loadConfig() {
+        return fetch('/api/config')
+                .then(res => res.json())
+                .then((json) => {
+                    let newConfig = this.state.config;
+                    newConfig.config = json;
+                    this.setState(newConfig);
+                    console.log(newConfig);
+                })
+                .catch((err) => {
+                    return this.setState(Object.assign({}, this.state, {"message": "Config Not Available."}));
+                });
+    }
+    loadSubGroups() {
+        return fetch(`/api/groups/${this.state.config.groupNameBase}/subgroups`)
             .then(res => res.json())
-            .then((json) => {
-                let newConfig = this.state.config;
-                newConfig.config = json;
-                this.setState(newConfig);
-            })
-            .catch((err) => {
-                return this.setState(Object.assign({}, this.state, {"message": "Config Not Available."}));
-            })
+            .then(subgroups => {
+                console.log(subgroups);
+                this.setState(Object.assign({}, this.state, {"subgroups": subgroups}));
+                return subgroups;
+            });
     }
     handleSubmit(e) {
         e.preventDefault();
@@ -60,6 +75,14 @@ export default class Configure extends Component {
                     <button type="submit" className="submitButton">Update Config</button>
                     <div>{this.state.message}</div>
                 </form>
+                <h2>Subgroups</h2>
+                <ul>
+                    {
+                        this.state.subgroups.map(groupName => {
+                            return <li key={groupName}>{groupName}</li>
+                        })
+                    }
+                </ul>
             </div>
         )
     }
