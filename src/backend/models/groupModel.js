@@ -112,6 +112,20 @@ const Groups = {
             return {"created": false, "error": err.message };
         })
     },
+    getSubGroups: groupName => {
+        let opts = Object.assign({}, options, {
+            method: 'GET',
+            url: `${config.groupsSearchUrl}?name=${groupName}&type=effective&scope=all`
+        })
+        return rp(opts).then(body => {
+            let $ = cheerio.load(body);
+            let groups = [];
+            $('.groupreference .name').map((i, el) => {
+                groups.push($(el).html());
+            });
+            return groups;
+        });
+    },
     removeMember: (netid, leaf = "") => {
         config = configurator.get();
         let opts = Object.assign({}, options, { 
