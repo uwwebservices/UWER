@@ -25,9 +25,9 @@ export default class Main extends Component {
     }
     render () {
         return (
-          <div>
-                  <h1>Event Registration</h1>
+            <div>
                   <h5 class="righted">Group: {this.state.registered.leafName}</h5>
+                  <h1>Event Registration</h1>                  
                   <Form addUser={this.addUser.bind(this)} />
                   <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
           </div>
