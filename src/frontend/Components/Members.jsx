@@ -28,7 +28,7 @@ export default class Test extends React.Component {
         })
         return (
             <div className="memberList">
-                <h2>Registered Users</h2>
+                <h2>Registered Participants</h2>
                 <List>
                     {listItems}
                 </List>

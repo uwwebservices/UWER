@@ -31,7 +31,7 @@ export default class Form extends React.Component {
         return (
             <form className="form" onSubmit={this.registerUser.bind(this)}>
                 <TextField type="text" placeholder="magstrip/rfid/netid" id="registerCard" value={this.state.card} onChange={this.updateCard.bind(this)} />
-                <RaisedButton primary={true} type="submit">Register</RaisedButton>
+                <RaisedButton primary={true} type="submit" className="buttonize">Register</RaisedButton>
             </form>
         )
     }
