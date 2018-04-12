@@ -1,5 +1,5 @@
 import React from 'react';
-import {Avatar, List, ListItem, FloatingActionButton} from 'material-ui'
+import {Avatar, List, ListItem, ListItemText, Button} from 'material-ui'
 
 export default class Test extends React.Component {
     removeUser(netid) {
@@ -17,13 +17,12 @@ export default class Test extends React.Component {
     render() {
         const listItems = this.props.members.map(mem => {
             return (
-                <ListItem 
-                    primaryText={mem.netid}
-                    secondaryText={mem.preferredName}
-                    leftAvatar={<Avatar src={mem.base64image} />}
-                    key={mem.netid}
-                    rightAvatar={<FloatingActionButton onClick={() => this.removeUser(mem.netid)} mini={true} primary={true}>x</FloatingActionButton>}
-                /> 
+                <ListItem
+                    key={mem.netid}>
+                    <Avatar src={mem.base64image} />
+                    <ListItemText primary={mem.netid} secondary={mem.preferredName} />
+                    <Button variant="fab" onClick={() => this.removeUser(mem.netid)} mini={true} color="primary">x</Button>
+                </ListItem> 
             )
         })
         return (

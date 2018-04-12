@@ -62,7 +62,8 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: './src/index.template.html',
-      inject: 'body'
+      inject: 'body',
+      filename: 'index.html'
     })
   ],
   resolve: {
