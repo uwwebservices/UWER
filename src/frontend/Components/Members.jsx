@@ -22,7 +22,7 @@ export default class Test extends React.Component {
                     secondaryText={mem.preferredName}
                     leftAvatar={<Avatar src={mem.base64image} />}
                     key={mem.netid}
-                    rightAvatar={<FloatingActionButton onClick={() => this.removeUser(mem.netid)} mini={true} secondary={true}>x</FloatingActionButton>}
+                    rightAvatar={<FloatingActionButton onClick={() => this.removeUser(mem.netid)} mini={true} primary={true}>x</FloatingActionButton>}
                 /> 
             )
         })

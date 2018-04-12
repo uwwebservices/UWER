@@ -27,7 +27,7 @@ app.use(bodyParser.json({
 app.use('/api', api);
 
 // frontend
-app.use('/', frontend);
+app.use(['/','/config'], frontend);
 
 // static files
 if(process.env.NODE_ENV === 'prod') {
