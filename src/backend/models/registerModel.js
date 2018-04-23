@@ -79,8 +79,8 @@ export default {
                         return { netid: personDetails.UWNetID }
                     }
                 })
-                .catch(() => {
-                    return p;
+                .catch((err) => {
+                    console.log("ERROR", err);
                 })
             } else {
                 return new Promise((resolve, reject) => {

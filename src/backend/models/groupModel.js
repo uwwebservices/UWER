@@ -31,7 +31,7 @@ const Groups = {
             return { "updated": true };
         })
         .catch((err) => {
-            return {"updated": false, "error": error.message};
+            return {"updated": false, "error": err.message};
         })
     },
     checkGroup: (group) => {
