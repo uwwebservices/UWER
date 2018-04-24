@@ -79,9 +79,6 @@ export default {
                         return { netid: personDetails.UWNetID }
                     }
                 })
-                .catch((err) => {
-                    console.log("ERROR", err);
-                })
             } else {
                 return new Promise((resolve, reject) => {
                     memStorage.users.push({"netid": personDetails.UWNetID });

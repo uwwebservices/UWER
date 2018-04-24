@@ -30,9 +30,6 @@ const Groups = {
         return rp(opts).then((res) => {
             return { "updated": true };
         })
-        .catch((err) => {
-            return {"updated": false, "error": err.message};
-        })
     },
     checkGroup: (group) => {
         config = configurator.get();
