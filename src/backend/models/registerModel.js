@@ -42,7 +42,12 @@ function verbosifyMemberList(groupInfo, verboseLevel) {
 }
 
 function personToMember(person) {
-    return { "netid": person.UWNetID, "regid": person.UWRegID, "preferredName": person.PreferredFirstName + ' ' + person.PreferredSurname }
+    //Use display name if the person hasn't set a preferred name
+    if (person.PreferredFirstName == undefined || person.PreferredSurname == undefined) {
+        return { "netid": person.UWNetID, "regid": person.UWRegID, "preferredName": person.DisplayName }
+    } else {
+        return { "netid": person.UWNetID, "regid": person.UWRegID, "preferredName": person.PreferredFirstName + ' ' + person.PreferredSurname }
+    }    
 }
 
 function getPhoto(regid) {

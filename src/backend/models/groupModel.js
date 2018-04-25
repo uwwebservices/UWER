@@ -49,6 +49,7 @@ const Groups = {
         
         let opts = Object.assign({}, options, { 
             url: `${config.groupsBaseUrl}${groupName}/member`,
+            ca: [fs.readFileSync(__dirname + "/../config/uwca.pem", { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
         });
         let groupInfo = {
             groupName,
