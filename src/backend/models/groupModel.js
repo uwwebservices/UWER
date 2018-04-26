@@ -1,6 +1,5 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import cheerio from 'cheerio';
 import configurator from '../config/configurator';
 let config = configurator.get();
 
@@ -10,9 +9,19 @@ function generateGroupName(leaf = "") {
     return group;
 }
 
+function createNewGroupModel(id, displayName, description, admins){    
+    let groupAdmins = [];
+    admins.map((i, el) =>{
+        groupAdmins.push({ "type": "uwnetid", "id": i });
+    });
+    var data = {"id": id, "displayName": displayName, "description": description, "admins" : groupAdmins};
+    this.data = data;
+}
+
 const options = {
     method: 'GET',
     url: "",
+    json: true,
     ca: [fs.readFileSync(__dirname + "/../config/uwca.pem", { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
     agentOptions: {
         pfx: fs.readFileSync(__dirname + "/../" + config.certificate),
@@ -57,12 +66,11 @@ const Groups = {
             users: []
         };
         
-        return rp(opts).then((body) => {
-            let $ = cheerio.load(body);
-            $('.member').map((i, el) => {
-                groupInfo.users.push({ "netid": $(el).html() });
+        return rp(opts).then((parsedBody) => {
+            parsedBody.data.map((i, el) =>{
+                groupInfo.users.push({ "netid": i.id });
             });
-            return groupInfo;
+          return groupInfo;
         }).catch((err) => {
             return Groups.createGroup(groupName).then(() => {
                 return groupInfo;
@@ -71,38 +79,21 @@ const Groups = {
     },
     createGroup: (group = "") => {
         config = configurator.get();
-        let admins = "";
+
+        let admins = [];
         for(var i = 0; i < config.groupAdmins.length; i++) {
-            admins += `<li class="admin" type="dns">${config.groupAdmins[i]}</li>`;
+            admins.push(config.groupAdmins[i]);
         }
-        let htmlPut = `
-            <!DOCTYPE html PUBLIC " -//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11/dtd">
-            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-                <head>
-                    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-                        </head>
-                        <body>
-                        <div class="group">
-                <span class="description">${config.groupDescription}</span>
-                <span class="title">${config.groupDisplayName}</span>
-                <ul class="names"><li class="name">${group}</li></ul>
-                <ul class="admins">
-                    ${admins}
-                </ul>
-                </div>
-            </body>
-            </html>
-        `;
+
+        var groupBody = new createNewGroupModel(group, config.groupDisplayName, config.groupDescription, admins)
+        //console.error(JSON.stringify(groupBody));
         
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: config.groupsBaseUrl + group,
-            headers: {
-                "content-type":"application/xhtml+xml"
-            },
-            body: htmlPut
+            body: JSON.stringify(groupBody)
         });
-        
+
         return rp(opts).then(() => {
             return {"created": true };
         })
@@ -113,13 +104,12 @@ const Groups = {
     getSubGroups: groupName => {
         let opts = Object.assign({}, options, {
             method: 'GET',
-            url: `${config.groupsSearchUrl}?name=${groupName}&type=effective&scope=all`
+            url: `${config.groupsSearchUrl}?name=${groupName}*&type=effective&scope=all`
         })
-        return rp(opts).then(body => {
-            let $ = cheerio.load(body);
+        return rp(opts).then(parsedBody => {
             let groups = [];
-            $('.groupreference .name').map((i, el) => {
-                groups.push($(el).html());
+            parsedBody.data.map((i, el) =>{
+                groups.push(i.id);
             });
             return groups;
         });
