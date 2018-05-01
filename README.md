@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/uwwebservices/idcard-webapp-poc.svg?branch=master)](https://travis-ci.org/uwwebservices/idcard-webapp-poc)
+Master: [![Build Status](https://travis-ci.org/uwwebservices/idcard-webapp-poc.svg?branch=master)](https://travis-ci.org/uwwebservices/idcard-webapp-poc)
 
 # University of Washington - Event Registration
 
