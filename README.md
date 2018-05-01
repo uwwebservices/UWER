@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/uwwebservices/idcard-webapp-poc.svg?branch=master)](https://travis-ci.org/uwwebservices/idcard-webapp-poc)
+
 # University of Washington - Event Registration
 
 Project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
