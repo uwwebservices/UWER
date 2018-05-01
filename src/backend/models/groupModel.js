@@ -12,7 +12,7 @@ function generateGroupName(leaf = "") {
 function createNewGroupModel(id, displayName, description, admins){    
     let groupAdmins = [];
     admins.map((i, el) =>{
-        groupAdmins.push({ "type": "uwnetid", "id": i });
+        groupAdmins.push({ "id": i });
     });
     var data = {"id": id, "displayName": displayName, "description": description, "admins" : groupAdmins};
     this.data = data;
