@@ -1,4 +1,4 @@
-# University of Washington - Event Registration [![Build Status](https://travis-ci.org/uwwebservices/idcard-webapp-poc.svg?branch=master)](https://travis-ci.org/uwwebservices/idcard-webapp-poc)
+# Event Registration [![Build Status](https://travis-ci.org/uwwebservices/idcard-webapp-poc.svg?branch=master)](https://travis-ci.org/uwwebservices/idcard-webapp-poc)
 
 Project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy 
 to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and take attendance via card swipes (magstripe/rfid). Submitting a huskycard rfid/magstrip/netid looks up users regid and passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format
