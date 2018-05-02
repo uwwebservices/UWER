@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - "node"
 before_script:
-  - scripts/config.sh
+  - cp src/backend/config/config.json.example src/backend/config/config.json
