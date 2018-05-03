@@ -9,15 +9,6 @@ function generateGroupName(leaf = "") {
     return group;
 }
 
-function createNewGroupModel(id, displayName, description, admins){    
-    let groupAdmins = [];
-    admins.map((i, el) =>{
-        groupAdmins.push({ "id": i });
-    });
-    var data = {"id": id, "displayName": displayName, "description": description, "admins" : groupAdmins};
-    this.data = data;
-}
-
 const options = {
     method: 'GET',
     url: "",
@@ -85,7 +76,7 @@ const Groups = {
             admins.push(config.groupAdmins[i]);
         }
 
-        var groupBody = new createNewGroupModel(group, config.groupDisplayName, config.groupDescription, admins)
+        var groupBody = createNewGroupModel(group, config.groupDisplayName, config.groupDescription, admins)
         //console.error(JSON.stringify(groupBody));
         
         let opts = Object.assign({}, options, { 
@@ -100,6 +91,14 @@ const Groups = {
         .catch((err) => {
             return {"created": false, "error": err.message };
         })
+    },
+    createNewGroupModel: (id, displayName, description, admins) => {
+        let groupAdmins = [];
+        admins.map((i, el) => {
+            groupAdmins.push({ "id": i });
+        });
+        var data = { "id": id, "displayName": displayName, "description": description, "admins": groupAdmins };
+        return data;
     },
     getSubGroups: groupName => {
         let opts = Object.assign({}, options, {
