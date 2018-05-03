@@ -6,8 +6,6 @@ import groups from '../controllers/groups';
 import register from '../controllers/register';
 import configApi from '../controllers/config';
 
-var unused;
-
 let config = configurator.get();
 
 let api = Router();

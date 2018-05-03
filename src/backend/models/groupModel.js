@@ -3,10 +3,19 @@ import fs from 'fs';
 import configurator from '../config/configurator';
 let config = configurator.get();
 
-function generateGroupName(leaf = "") {
+export const generateGroupName = (leaf = "") => {
     config = configurator.get();
     let group = config.groupNameBase + (leaf ? leaf : config.groupNameLeaf);
     return group;
+}
+
+export const createNewGroupModel = (id, displayName, description, admins) => {
+    let groupAdmins = [];
+    admins.map((i, el) => {
+        groupAdmins.push({ "id": i });
+    });
+    var data = { "id": id, "displayName": displayName, "description": description, "admins": groupAdmins };
+    return data;
 }
 
 const options = {
@@ -68,25 +77,11 @@ const Groups = {
             });
         })
     },
-    createNewGroupModel: (id, displayName, description, admins) => {
-        let groupAdmins = [];
-        admins.map((i, el) => {
-            groupAdmins.push({ "id": i });
-        });
-        var data = { "id": id, "displayName": displayName, "description": description, "admins": groupAdmins };
-        return data;
-    },
     createGroup: (group = "") => {
         config = configurator.get();
 
-        let admins = [];
-        for(var i = 0; i < config.groupAdmins.length; i++) {
-            admins.push(config.groupAdmins[i]);
-        }
+        var groupBody = createNewGroupModel(group, config.groupDisplayName, config.groupDescription, config.groupAdmins);
 
-        var groupBody = new createNewGroupModel(group, config.groupDisplayName, config.groupDescription, admins)
-        //console.error(JSON.stringify(groupBody));
-        
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: config.groupsBaseUrl + group,

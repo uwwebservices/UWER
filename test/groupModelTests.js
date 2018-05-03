@@ -1,10 +1,9 @@
-import groups from '../src/backend/models/groupModel';
-
-var should = require('should');
-var assert = require('assert');
+import { createNewGroupModel, generateGroupName } from '../src/backend/models/groupModel';
+import should from 'should';
+import assert from 'assert';
 
 describe('Array', function () {
-    describe('#BackendCreateNewGroupModelTests()', function () {
+    describe('#BackendCreateNewGroupModelTests()', () => {
         //Create a test group and verify its properties
         var myId = 'Test Group ID';
         var myDisplayName = 'Test Group Display Name';
@@ -12,25 +11,25 @@ describe('Array', function () {
         var myAdmins = ['admin1', 'admin2'];
         var myAdminsArray = [{ "id": "admin1" }, { "id": "admin2" }];
 
-        var mygroup = groups.createNewGroupModel(myId, myDisplayName, myDescription, myAdmins);
+        var mygroup = createNewGroupModel(myId, myDisplayName, myDescription, myAdmins);
 
-        it('New group should have an id', function () {
+        it('New group should have an id', () => {
             mygroup.should.have.property('id', myId);
         });
 
-        it('New group should have a displayName', function () {
+        it('New group should have a displayName', () => {
             mygroup.should.have.property('displayName', myDisplayName);
         });
 
-        it('New group should have a description', function () {
+        it('New group should have a description', () => {
             mygroup.should.have.property('description', myDescription);
         });
 
-        it('New group should have an admins array', function () {
+        it('New group should have an admins array', () => {
             mygroup.should.have.property('admins', myAdminsArray);
         });
 
-        it('New group admins arrary should have the right number of items', function () {
+        it('New group admins arrary should have the right number of items', () => {
             mygroup.should.have.property('admins').with.lengthOf(2);
         });
     });
