@@ -5,8 +5,8 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon --config nodemon.json",
-    "build": "babel src/backend -s -D -d dist && webpack",
-    "start": "cross-env NODE_ENV=prod node dist",
+    "build": "babel src/backend -s -D -d dist/backend && webpack",
+    "start": "cross-env NODE_ENV=prod node dist/backend",
     "prestart": "rm -rf dist && npm run -s build",
     "test": "eslint src && mocha --require babel-core/register test/*.js"
   },
@@ -31,6 +31,7 @@
   "author": "UWWebServices <ews-team@uw.edu>",
   "license": "MIT",
   "dependencies": {
+    "babel-plugin-module-resolver": "^3.1.1",
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
