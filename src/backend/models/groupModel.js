@@ -9,15 +9,6 @@ function generateGroupName(leaf = "") {
     return group;
 }
 
-function createNewGroupModel(id, displayName, description, admins){    
-    let groupAdmins = [];
-    admins.map((i, el) =>{
-        groupAdmins.push({ "id": i });
-    });
-    var data = {"id": id, "displayName": displayName, "description": description, "admins" : groupAdmins};
-    this.data = data;
-}
-
 const options = {
     method: 'GET',
     url: "",
@@ -76,6 +67,14 @@ const Groups = {
                 return groupInfo;
             });
         })
+    },
+    createNewGroupModel: (id, displayName, description, admins) => {
+        let groupAdmins = [];
+        admins.map((i, el) => {
+            groupAdmins.push({ "id": i });
+        });
+        var data = { "id": id, "displayName": displayName, "description": description, "admins": groupAdmins };
+        return data;
     },
     createGroup: (group = "") => {
         config = configurator.get();
