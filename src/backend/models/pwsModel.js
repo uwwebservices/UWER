@@ -1,13 +1,13 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from '../config/configurator';
+import configurator from '../utils/configurator';
 let config = configurator.get();
 
 const options = {
     method: 'GET',
     url: "",
     agentOptions: {
-        pfx: fs.readFileSync(__dirname + "/../" + config.certificate),
+        pfx: fs.readFileSync(config.certificate),
         passphrase: config.passphrase,
         securityOptions: 'SSL_OP_NO_SSLv3'
     },

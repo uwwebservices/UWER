@@ -26,7 +26,7 @@ if(process.env.NODE_ENV === 'dev') {
 }
 
 api.get(['/','/config'], (req, res) => {
-	 res.sendFile(path.resolve(__dirname, '..', 'index.html'));
+	 res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
 });
 
 export default api;

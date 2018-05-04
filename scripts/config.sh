@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cp src/backend/config/config.json.example src/backend/config/config.json
-cp src/backend/config/test.pfx src/backend/config/cert.pfx
+cp config/config.json.example config/config.json
+touch config/cert.pfx # make a dummy file for testing

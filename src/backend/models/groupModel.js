@@ -1,6 +1,6 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from '../config/configurator';
+import configurator from '../utils/configurator';
 let config = configurator.get();
 
 export const generateGroupName = (leaf = "") => {
@@ -22,9 +22,9 @@ const options = {
     method: 'GET',
     url: "",
     json: true,
-    ca: [fs.readFileSync(__dirname + "/../config/uwca.pem", { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
+    ca: [fs.readFileSync(config.uwca, { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
     agentOptions: {
-        pfx: fs.readFileSync(__dirname + "/../" + config.certificate),
+        pfx: fs.readFileSync(config.certificate),
         passphrase: config.passphrase,
         securityOptions: 'SSL_OP_NO_SSLv3'
     }

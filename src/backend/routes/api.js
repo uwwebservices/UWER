@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import configurator from '../config/configurator';
+import configurator from '../utils/configurator';
 import idcard from '../controllers/idcard';
 import pws from '../controllers/pws';
 import groups from '../controllers/groups';

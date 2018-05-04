@@ -1,6 +1,6 @@
 import should from 'should';
 import assert from 'assert';
-import configurator from '../src/backend/config/configurator';
+import configurator from '../src/backend/utils/configurator';
 let config = configurator.get();
 
 
@@ -8,6 +8,9 @@ describe('Array', () => {
     describe('#BackendConfigTests()', () => {
         it('config should have certificate', () => {
             config.should.have.property('certificate');
+        });
+        it('config should have uwca', () => {
+            config.should.have.property('uwca');
         });
         it('config should have passphrase', () => {
             config.should.have.property('passphrase');

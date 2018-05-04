@@ -1,7 +1,7 @@
 import idcard from './idcardModel';
 import pws from './pwsModel';
 import groups from './groupModel';
-import configurator from '../config/configurator';
+import configurator from '../utils/configurator';
 let config = configurator.get();
 
 // verboseLevel = 0: netid

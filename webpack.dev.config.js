@@ -2,7 +2,7 @@ import webpack from 'webpack';
 import webpackStats from 'stats-webpack-plugin';
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 import path from "path";
-import configurator from './src/backend/config/configurator';
+import configurator from './src/backend/utils/configurator';
 let config = configurator.get();
 
 module.exports = {
