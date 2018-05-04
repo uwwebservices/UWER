@@ -1,6 +1,6 @@
 import should from 'should';
 import assert from 'assert';
-import configurator from '../utils/configurator';
+import configurator from '../src/backend/utils/configurator';
 let config = configurator.get();
 
 
