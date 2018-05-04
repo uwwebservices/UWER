@@ -1,6 +1,7 @@
 {
   "port": 1111,
   "certificate": "config/cert.pfx",
+  "uwca": "config/uwca.pem",
   "passphrase": "",
   "idcardBaseUrl": "https://wseval.s.uw.edu/idcard/v1/card.json",
   "pwsBaseUrl": "https://wseval.s.uw.edu/identity/v2/person/",
