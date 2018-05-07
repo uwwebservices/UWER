@@ -1,6 +1,12 @@
 {
     "presets": ["react", "env"],
     "plugins": ["transform-object-rest-spread", ["module-resolver", {
-        "root": ["./config"]
+        "alias": {
+            "utils": "./src/backend/utils",
+            "models": "./src/backend/models",
+            "routes": "./src/backend/routes",
+            "controllers": "./src/backend/controllers",
+            "config": "./config"
+          }
     }]]
 }

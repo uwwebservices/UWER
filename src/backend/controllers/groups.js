@@ -1,4 +1,4 @@
-import groups from '../models/groupModel';
+import groups from 'models/groupModel';
 import { Router } from 'express';
 
 let api = Router(); 

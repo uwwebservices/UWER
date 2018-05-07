@@ -1,4 +1,4 @@
-import { createNewGroupModel, generateGroupName } from '../src/backend/models/groupModel';
+import { createNewGroupModel, generateGroupName } from 'models/groupModel';
 import should from 'should';
 import assert from 'assert';
 

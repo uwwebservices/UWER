@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import configurator from '../utils/configurator';
-import idcard from '../controllers/idcard';
-import pws from '../controllers/pws';
-import groups from '../controllers/groups';
-import register from '../controllers/register';
-import configApi from '../controllers/config';
+import configurator from 'utils/configurator';
+import idcard from 'controllers/idcard';
+import pws from 'controllers/pws';
+import groups from 'controllers/groups';
+import register from 'controllers/register';
+import configApi from 'controllers/config';
 
 let config = configurator.get();
 

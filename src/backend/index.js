@@ -3,9 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import api from './routes/api';
-import frontend from './routes/frontend';
-import configurator from './utils/configurator';
+import api from 'routes/api';
+import frontend from 'routes/frontend';
+import configurator from 'utils/configurator';
 let config = configurator.get();
 
 let app = express();

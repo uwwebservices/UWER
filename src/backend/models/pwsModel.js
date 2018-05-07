@@ -1,6 +1,6 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from '../utils/configurator';
+import configurator from 'utils/configurator';
 let config = configurator.get();
 
 const options = {

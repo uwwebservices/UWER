@@ -1,4 +1,4 @@
-import pws from '../models/pwsModel';
+import pws from 'models/pwsModel';
 import { Router } from 'express';
 
 let api = Router();
