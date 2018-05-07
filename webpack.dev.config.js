@@ -19,8 +19,8 @@ module.exports = {
     './src/frontend/App.js'
   ],
   output: {
-    path: '/',
-    publicPath: 'http://localhost:' + config.port + '/',
+    path: path.resolve(__dirname + '/src/frontend'),
+    publicPath: '/',
     filename: 'scripts/bundle.js'
   },
   module: {

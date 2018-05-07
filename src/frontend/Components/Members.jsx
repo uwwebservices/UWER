@@ -2,7 +2,7 @@ import React from 'react';
 import {Avatar, List, ListItem, ListItemText, Button} from 'material-ui'
 
 export default class Test extends React.Component {
-    removeUser(netid) {
+    removeUser = netid => {
        fetch('/api/register/' + netid, {
             method: 'DELETE'
         })

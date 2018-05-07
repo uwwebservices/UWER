@@ -13,7 +13,7 @@ export default class Configure extends Component {
                     name={this.props.itemName} 
                     placeholder={this.props.itemName} 
                     value={this.props.itemValue} 
-                    onChange={this.props.onChange.bind(this)}
+                    onChange={this.props.onChange}
                 />
             </div>
         )
