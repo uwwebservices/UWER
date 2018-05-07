@@ -1,4 +1,4 @@
-import idcard from '../models/idcardModel';
+import idcard from 'models/idcardModel';
 import { Router } from 'express';
 
 let api = Router();

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Form from '../Components/Form';
-import Members from '../Components/Members';
-import ConfigItem from '../Components/ConfigItem';
+import Form from 'Components/Form';
+import Members from 'Components/Members';
+import ConfigItem from 'Components/ConfigItem';
 import { Link } from 'react-router-dom'
 
 export default class Configure extends Component {

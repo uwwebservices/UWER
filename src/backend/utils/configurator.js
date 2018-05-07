@@ -1,6 +1,6 @@
 // This file will not cause nodemon to restart
 import fs from 'fs';
-import configFile from 'config.json';
+import configFile from 'config/config.json';
 
 let config = configFile;
 

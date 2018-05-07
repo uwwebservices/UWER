@@ -1,4 +1,4 @@
-import configurator from '../utils/configurator';
+import configurator from 'utils/configurator';
 import { Router } from 'express';
 let config = configurator.get();
 

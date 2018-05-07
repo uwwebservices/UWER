@@ -1,4 +1,4 @@
-import register from '../models/registerModel';
+import register from 'models/registerModel';
 import { Router } from 'express';
 import csv from 'csv-express';
 
