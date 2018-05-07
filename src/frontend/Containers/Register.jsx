@@ -11,14 +11,14 @@ export default class Main extends Component {
     componentDidMount() {
         this.loadUsers();
     }
-    loadUsers() {
+    loadUsers = () => {
         return fetch('/api/register?verbose=true')
             .then(res => res.json())
             .then(json => this.setState({registered: json}))
             .catch(err => console.log)
         
     }
-    addUser(user) {
+    addUser = user => {
         if(!this.state.registered.users.some((u) => { return user.netid === u.netid })) {
             this.setState({ registered: { ...this.state.registered, users: this.state.registered.users.concat([user]) }})
         }
@@ -28,8 +28,8 @@ export default class Main extends Component {
             <div>
                   <h5 className="righted">Group: {this.state.registered.leafName}</h5>
                   <h1>Event Registration</h1>                  
-                  <Form addUser={this.addUser.bind(this)} />
-                  <Members members={this.state.registered.users} reloadUsers={this.loadUsers.bind(this)} />
+                  <Form addUser={this.addUser} />
+                  <Members members={this.state.registered.users} reloadUsers={this.loadUsers} />
           </div>
         )
     }

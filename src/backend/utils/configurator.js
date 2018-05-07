@@ -11,7 +11,7 @@ export default {
     set: (key, value) => {
         if(config[key] !== value) {
             let newConfig = Object.assign({}, config, {[key]: value});
-            fs.writeFile(__dirname + 'config.json', JSON.stringify(newConfig, null, 2), function (err) {
+            fs.writeFile('config/config.json', JSON.stringify(newConfig, null, 2), function (err) {
                 if (err) throw err;
                 config = newConfig;
             });

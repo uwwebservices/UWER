@@ -7,7 +7,8 @@ export default class Form extends React.Component {
         super(props);
         this.state = { card: ""};
     }
-    registerUser(e) {
+    
+    registerUser = e => {
         e.preventDefault();
         if(this.state.card) {
             let cardnum = this.state.card;
@@ -22,15 +23,16 @@ export default class Form extends React.Component {
             })
             this.setState({ card: ""});
         }
-    }
+    };
     
-    updateCard(e) {
+    updateCard = e => {
         this.setState({ card: e.target.value });
-    }
+    };
+
     render() {
         return (
-            <form className="form" onSubmit={this.registerUser.bind(this)}>
-                <TextField type="text" placeholder="magstrip/rfid/netid" id="registerCard" value={this.state.card} onChange={this.updateCard.bind(this)} />
+            <form className="form" onSubmit={this.registerUser}>
+                <TextField type="text" placeholder="magstrip/rfid/netid" id="registerCard" value={this.state.card} onChange={this.updateCard} />
                 <Button variant="raised" color="primary" type="submit">Register</Button>
             </form>
         )

@@ -9,12 +9,11 @@ export const generateGroupName = (leaf = "") => {
     return group;
 }
 
-export const createNewGroupModel = (id, displayName, description, admins) => {
-    let groupAdmins = [];
-    admins.map((i, el) => {
-        groupAdmins.push({ "id": i });
+export const createNewGroupModel = (groupName, displayName, description, admins) => {
+    let groupAdmins = admins.map(admin => {
+         return {"id": admin, "type": "dns" };
     });
-    var data = { "id": id, "displayName": displayName, "description": description, "admins": groupAdmins };
+    var data = {"data" : { "id": groupName, "displayName": displayName, "description": description, "admins": groupAdmins }};
     return data;
 }
 
@@ -85,9 +84,9 @@ const Groups = {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: config.groupsBaseUrl + group,
-            body: JSON.stringify(groupBody)
+            body: groupBody
         });
-
+        
         return rp(opts).then(() => {
             return {"created": true };
         })
@@ -123,6 +122,7 @@ const Groups = {
     },
     removeGroup: (leaf) => {
         config = configurator.get();
+        console.log("deleting ", config.groupsBaseUrl + leaf)
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
             url: config.groupsBaseUrl + leaf,
