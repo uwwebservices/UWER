@@ -35,9 +35,3 @@ export default class Test extends React.Component {
         )
     }
 }
-
-{/* // <li key={mem.netid}>
-// <img src={mem.base64image} width="20px"/>&nbsp; 
-// {mem.preferredName}&nbsp; 
-// ({mem.netid})&nbsp; 
-// <a href="#" onClick={() => this.removeUser(mem.netid)}>x</a></li> */}

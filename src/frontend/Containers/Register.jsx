@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Form from '../Components/Form';
-import Members from '../Components/Members';
+import Form from 'Components/Form';
+import Members from 'Components/Members';
 import { Link } from 'react-router-dom';
 
 export default class Main extends Component {

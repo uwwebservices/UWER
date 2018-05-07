@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import './css/style';
+import 'css/style';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import theme from './css/materialTheme';
-import Register from './Containers/Register';
-import Configure from './Containers/Configure';
-import PageWrapper from './Containers/PageWrapper';
+import theme from 'css/materialTheme';
+import Register from 'Containers/Register';
+import Configure from 'Containers/Configure';
+import PageWrapper from 'Containers/PageWrapper';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 class App extends React.Component {

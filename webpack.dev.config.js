@@ -67,14 +67,13 @@ module.exports = {
     })
   ],
   resolve: {
-    modules: ['node_modules', './src', './src/frontend/img'],
-    extensions: [
-      '.js',
-      '.jsx',
-      '.json',
-      '.css',
-      '.scss'
-    ]
+    modules: ['node_modules'],
+    alias: {
+      "Components": path.resolve("./src/frontend/Components"),
+      "Containers": path.resolve("./src/frontend/Containers"),
+      "css": path.resolve("./src/frontend/css")
+    },
+    extensions: ['.js', '.jsx', '.json', '.css', '.scss']
   },
   target: 'web'
 };
