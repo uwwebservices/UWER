@@ -15,8 +15,9 @@ module.exports = {
    },
   entry: './src/frontend/App.js',
   output: {
-    path: __dirname + '/dist/assets',
-    filename: 'bundle.js'
+    path: path.resolve(__dirname + '/dist/'),
+    publicPath: '/',
+    filename: 'assets/bundle.js'
   },
   optimization: {
     minimizer: [
@@ -73,7 +74,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.template.html',
       inject: 'body',
-      filename: '../index.html'
+      filename: 'index.html'
     })
   ],
   resolve: {

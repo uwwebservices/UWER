@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/sh
 if [ "$HEROKU_ENV" = "staging" ]; then
   echo "setting up heroku environment"
   cp config/config.json.example config/config.json

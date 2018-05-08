@@ -1,26 +1,35 @@
-FROM alpine:3.4
+# ---- Base Node ----
+FROM alpine:3.5 AS base
+RUN apk add --no-cache nodejs-current tini
+WORKDIR /dist
+# Set tini as entrypoint
+ENTRYPOINT ["/sbin/tini", "--"]
+# copy project file
+COPY package.json .
 
-# File Author / Maintainer
-LABEL authors="Chris Cannon <ccan@uw.edu>"
+# ---- Dependencies ----
+FROM base AS dependencies
+# install node packages
+RUN npm set progress=false && npm config set depth 0
+RUN npm install --only=production 
+# copy production node_modules aside
+RUN cp -R node_modules prod_node_modules
+# install ALL node_modules, including 'devDependencies'
+RUN npm install
 
-# Update & install required packages
-RUN apk add --update nodejs bash git
+# ---- Test ----
+# run tests, image is not built if tests fail
+FROM dependencies AS test
+COPY . .
+RUN sh ./scripts/config.sh
+RUN npm run test
 
-# Install app dependencies
-COPY package.json /www/package.json
-RUN cd /www; npm install
+# ---- Release ----
+FROM base AS release
+# copy production node_modules
+COPY --from=dependencies /dist/prod_node_modules ./node_modules
+# copy app sources
+COPY . ./dist
 
-# Copy app source
-COPY . /www
-
-# Set work directory to /www
-WORKDIR /www
-
-# set your port
-ENV PORT 1111
-
-# expose the port to outside world
-EXPOSE  1111
-
-# start command as per package.json
-CMD ["npm", "start"]
+EXPOSE 1111
+CMD npm run start
