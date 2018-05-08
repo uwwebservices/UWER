@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --config nodemon.json",
     "build": "babel src/backend -s -D -d dist/backend && webpack",
-    "start": "cross-env NODE_ENV=prod node dist/backend",
+    "start": "bash scripts/server_setup.sh && cross-env NODE_ENV=prod node dist/backend",
     "prestart": "rm -rf dist && npm run -s build",
     "test": "eslint src && mocha --require babel-core/register test/*.js"
   },
