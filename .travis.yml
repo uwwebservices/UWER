@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "node"
 before_script:
-  - bash scripts/config.sh
+  - bash scripts/server_setup.sh
 cache:
   directories:
     - "node_modules"
