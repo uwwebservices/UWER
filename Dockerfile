@@ -24,7 +24,7 @@ RUN npm run build
 # run tests, image is not built if tests fail
 FROM dependencies AS test
 COPY . .
-RUN sh ./scripts/config.sh
+RUN sh ./scripts/server_setup.sh
 RUN npm run test
 
 # ---- Release ----
