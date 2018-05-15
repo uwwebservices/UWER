@@ -18,15 +18,4 @@ api.get('/', (req, res) => {
     res.json(filteredConfig);
 });
 
-api.put('/', (req, res) => {
-    try {
-        Object.keys(req.body).map((k) => {
-            configurator.set(k, req.body[k]);
-        });
-        res.sendStatus(200);
-    } catch (err) {
-        res.status(err.statusCode).json({"error": err.message});
-    }
-})
-
 export default api;

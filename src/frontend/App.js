@@ -6,7 +6,9 @@ import theme from 'css/materialTheme';
 import Register from 'Containers/Register';
 import Configure from 'Containers/Configure';
 import PageWrapper from 'Containers/PageWrapper';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './Store.js';
 
 class App extends React.Component {
     constructor(props) {
@@ -15,14 +17,16 @@ class App extends React.Component {
     render () {
         return (
             <Router>
-                <MuiThemeProvider theme={theme}>
-                    <PageWrapper>
-                        <Switch>
-                            <Route path='/config' component={Configure} />
-                            <Route exact path='/' component={Register} />
-                        </Switch>
-                    </PageWrapper>
-                </MuiThemeProvider>
+                <Provider store={store}>
+                    <MuiThemeProvider theme={theme}>
+                        <PageWrapper>
+                            <Switch>
+                                <Route path='/config' component={Configure} />
+                                <Route exact path='/' component={Register} />
+                            </Switch>
+                        </PageWrapper>
+                    </MuiThemeProvider>
+                </Provider>
             </Router>
         )
     }

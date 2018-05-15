@@ -13,7 +13,7 @@ export default class Main extends Component {
     render () {
         return (
             <div className="pageWrapper">
-                <Header configEnabled={true} pages={pages} />
+                <Header pages={pages} />
                     <main>
                         {...this.props.children}
                     </main>
