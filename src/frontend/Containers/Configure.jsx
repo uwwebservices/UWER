@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Form from 'Components/Form';
 import Members from 'Components/Members';
 import ConfigItem from 'Components/ConfigItem';
-import { Link } from 'react-router-dom'
 import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
@@ -14,10 +13,9 @@ class Configure extends Component {
         super(props);
         this.state = { groupName: "", message: "", subgroups: [], loadingSubGroups: false};
     }
-    componentDidMount() {
-        this.props.initApp().then(() => {
-            this.setState({groupName: this.props.groupName});
-        });
+    async componentDidMount() {
+        await this.props.initApp();
+        this.setState({groupName: this.props.groupName});
     }
     validateGroupName(groupName) {
         let valid = groupName.indexOf(this.props.config.groupNameBase) >= 0;
@@ -83,7 +81,7 @@ const mapStateToProps = state => ({
    groupName: state.groupName,
    config: state.config,
    subgroups: state.subgroups
-})
+});
 const mapDispatchToProps = dispatch => {
     return {
         updateGroupName: groupName => dispatch(UpdateGroupName(groupName)),
