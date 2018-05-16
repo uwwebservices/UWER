@@ -10,7 +10,7 @@
     "prod": "sh scripts/server_setup.sh && cross-env NODE_ENV=prod node dist/backend",
     "prestart": "cross-env npm run -s clean && cross-env BABEL_ENV=production npm run -s build",
     "clean": "rm -rf dist",
-    "test": "eslint src && mocha --require babel-core/register test/*.js"
+    "test": "eslint src && cross-env BABEL_ENV=test mocha --require babel-core/register test/*.js"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
