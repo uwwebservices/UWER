@@ -1,9 +1,10 @@
-import { RECEIVE_GROUP_NAME, RECEIVE_CONFIG, RECEIVE_SUBGROUPS, DELETE_SUBGROUP } from '../Constants';
+import { RECEIVE_GROUP_NAME, RECEIVE_CONFIG, RECEIVE_SUBGROUPS, DELETE_SUBGROUP, RECEIVE_USERS, UPDATE_USERS, REMOVE_USER } from '../Constants';
 
 const initialState = {
   groupName: "",
   config: {},
-  subgroups: []
+  subgroups: [],
+  users: []
 };
 
 export default (state = initialState, action) => {
@@ -22,7 +23,14 @@ export default (state = initialState, action) => {
       });
     case DELETE_SUBGROUP:
       let subgroups = state.subgroups.filter(sg => sg !== action.subgroup);
-      return Object.assign({}, state, {subgroups: subgroups});
+      return Object.assign({}, state, {subgroups});
+    case RECEIVE_USERS:
+      return Object.assign({}, state, {users: action.users});
+    case UPDATE_USERS:
+      return Object.assign({}, state, {users: [...state.users, action.user]});
+    case REMOVE_USER:
+      let users =  state.users.filter(u => u.netid !== action.user);
+      return Object.assign({}, state, {users})
     default:
       return state;
   }

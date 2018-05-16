@@ -3,16 +3,8 @@ import {Avatar, List, ListItem, ListItemText, Button} from 'material-ui'
 
 export default class Test extends React.Component {
     removeUser = netid => {
-       fetch('/api/register/' + netid, {
-            method: 'DELETE'
-        })
-        .then(res => {
-            this.props.reloadUsers();
-            document.getElementById("registerCard").focus();
-        })
-        .catch(err => {
-            console.log('could not remove user ' + err);
-        })
+        this.props.removeUser(netid);
+        document.getElementById("registerCard").focus();
     }
     render() {
         const listItems = this.props.members.map(mem => {

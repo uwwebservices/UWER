@@ -7,7 +7,7 @@ import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup } from '../Actions'
+import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup } from '../Actions'
 
 class Configure extends Component {
     constructor(props) {
@@ -15,9 +15,8 @@ class Configure extends Component {
         this.state = { groupName: "", message: "", subgroups: [], loadingSubGroups: false};
     }
     componentDidMount() {
-        this.props.loadConfig().then(() => {
-            this.loadSubGroups();
-            this.state.groupName = this.props.groupName;
+        this.props.initApp().then(() => {
+            this.setState({groupName: this.props.groupName});
         });
     }
     validateGroupName(groupName) {
@@ -63,10 +62,7 @@ class Configure extends Component {
                     })
                 }
                 <form className="configForm" onSubmit={this.handleSubmit}>
-                    
                     <ConfigItem itemName="groupName" key="groupName" itemValue={this.state.groupName} onChange={this.handleChange}/>
-                    
-
                     <Button variant="raised" color="primary" type="submit">Update Config</Button>
                     <div>{this.state.message}</div>
                 </form>
@@ -93,7 +89,8 @@ const mapDispatchToProps = dispatch => {
         updateGroupName: groupName => dispatch(UpdateGroupName(groupName)),
         loadConfig: () => dispatch(LoadConfig()),
         loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
-        destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup))
+        destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
+        initApp: () => dispatch(InitApp())
     }
 }
 

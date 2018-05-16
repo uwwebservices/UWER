@@ -2,35 +2,40 @@ import React, { Component } from 'react';
 import Form from 'Components/Form';
 import Members from 'Components/Members';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { InitApp, LoadUsers, AddUser, LoadGroupName, DeleteUser } from '../Actions';
 
-export default class Main extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { registered: { groupName: "", configEnabled: false, users: [] }}
-    }
+class Register extends Component {
     componentDidMount() {
-        this.loadUsers();
+        this.props.initApp();
     }
-    loadUsers = () => {
-        return fetch('/api/register?verbose=true')
-            .then(res => res.json())
-            .then(json => this.setState({registered: json}))
-            .catch(err => console.log)
-        
-    }
-    addUser = user => {
-        if(!this.state.registered.users.some((u) => { return user.netid === u.netid })) {
-            this.setState({ registered: { ...this.state.registered, users: this.state.registered.users.concat([user]) }})
-        }
-    }
+    addUser = user => this.props.addUser(user);
     render () {
         return (
             <div>
-                  <h5 className="righted">Group: {this.state.registered.leafName}</h5>
+                  <h5 className="righted">Group: {this.props.groupName.replace(this.props.groupNameBase, "")}</h5>
                   <h1>Event Registration</h1>                  
                   <Form addUser={this.addUser} />
-                  <Members members={this.state.registered.users} reloadUsers={this.loadUsers} />
+                  <Members members={this.props.users} reloadUsers={this.loadUsers} removeUser={this.props.removeUser} />
           </div>
         )
     }
 }
+
+
+const mapStateToProps = state => ({
+    groupName: state.groupName,
+    users: state.users,
+    groupNameBase: state.config.groupNameBase
+ })
+ const mapDispatchToProps = dispatch => {
+     return {
+         loadUsers: () => dispatch(LoadUsers()),
+         addUser: user => dispatch(AddUser(user)),
+         loadGroupName: () => dispatch(LoadGroupName()),
+         removeUser: user => dispatch(DeleteUser(user)),
+         initApp: () => dispatch(InitApp())
+     }
+ }
+ 
+ export default connect(mapStateToProps, mapDispatchToProps)(Register);
