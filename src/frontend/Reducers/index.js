@@ -27,7 +27,9 @@ export default (state = initialState, action) => {
     case RECEIVE_USERS:
       return Object.assign({}, state, {users: action.users});
     case UPDATE_USERS:
-      return Object.assign({}, state, {users: [...state.users, action.user]});
+      // Currently, api/addUser returns the user regardless, remove before adding to avoid dupes, this can be removed when API is refactored
+      let newUsers = state.users.filter(u => u.regid !== action.user.regid);
+      return Object.assign({}, state, {users: [...newUsers, action.user]});
     case REMOVE_USER:
       let users =  state.users.filter(u => u.netid !== action.user);
       return Object.assign({}, state, {users})

@@ -1,16 +1,14 @@
 {
-    "presets": [
-        "env",
-        "react-app"
-    ],
+    "presets": [ "env", "react-app" ],
     "plugins": [
         ["module-resolver", {
-        "alias": {
-            "utils": "./src/backend/utils",
-            "models": "./src/backend/models",
-            "routes": "./src/backend/routes",
-            "controllers": "./src/backend/controllers",
-            "config": "./config"
-          }
-    }]]
+            "alias": {
+                "utils": "./src/backend/utils",
+                "models": "./src/backend/models",
+                "routes": "./src/backend/routes",
+                "controllers": "./src/backend/controllers",
+                "config": "./config"
+            }
+        }]
+    ]
 }

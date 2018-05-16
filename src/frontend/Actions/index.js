@@ -87,9 +87,9 @@ export const LoadUsers = () => {
 }
 
 // This needs to send groupName and utilize it in the backend
-export const AddUser = user => {
+export const AddUser = identifier => {
   return async dispatch => {
-    let res = await fetch('/api/register/' + user.regid + '?verbose=true', { method: 'PUT' });
+    let res = await fetch('/api/register/' + identifier + '?verbose=true', { method: 'PUT' });
     let user = await res.json();
     return await dispatch(UpdateUsers(user))
   }
@@ -106,17 +106,10 @@ export const DeleteUser = user => {
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-    if(state.config) {
-      await dispatch(LoadConfig());
-    }
-    if(!state.groupName) {
-      await dispatch(LoadGroupName());
-    }
-    if(!state.users.length) {
-      await dispatch(LoadUsers());
-    }
-    if(!state.subgroups.length) {
-      await dispatch(LoadSubgroups());
-    }
+
+    state.config && await dispatch(LoadConfig());
+    state.groupName && await dispatch(LoadGroupName());
+    !state.users.length && await dispatch(LoadUsers());
+    !state.subgroups.length && await dispatch(LoadSubgroups());
   }
 }

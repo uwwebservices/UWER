@@ -11,7 +11,7 @@ import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup } 
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { groupName: "", message: "", subgroups: [], loadingSubGroups: false};
+        this.state = { groupName: "", message: "", loadingSubGroups: false };
     }
     async componentDidMount() {
         await this.props.initApp();
@@ -27,26 +27,25 @@ class Configure extends Component {
         
         return valid;
     }
-    loadSubGroups = () => {
+    loadSubGroups = async () => {
         this.setState({loadingSubGroups: true});
-        this.props.loadSubgroups(this.props.groupName).then(() => {
-            this.setState({loadingSubGroups: false});
-        });
+        await this.props.loadSubgroups(this.props.groupName);
+        this.setState({loadingSubGroups: false});
     };
 
-    deleteSubGroup = subgroup => {
-        this.props.destroySubgroup(subgroup);
+    deleteSubGroup = async subgroup => {
+        await this.props.destroySubgroup(subgroup);
     };
 
     handleChange = e => {
         this.setState({[e.target.name]: e.target.value});
     }
 
-    handleSubmit = e => {
+    handleSubmit = async e => {
         e.preventDefault();
         let groupName = e.target.groupName.value;
         if(this.validateGroupName(groupName)) {
-            this.props.updateGroupName(groupName);
+            await this.props.updateGroupName(groupName);
         }
     }
 
@@ -84,11 +83,10 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => {
     return {
-        updateGroupName: groupName => dispatch(UpdateGroupName(groupName)),
-        loadConfig: () => dispatch(LoadConfig()),
-        loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
-        destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
-        initApp: () => dispatch(InitApp())
+        updateGroupName: async groupName => await dispatch(UpdateGroupName(groupName)),
+        loadSubgroups: async groupName => await dispatch(LoadSubgroups(groupName)),
+        destroySubgroup: async subgroup => await dispatch(DestroySubgroup(subgroup)),
+        initApp: async () => await dispatch(InitApp())
     }
 }
 

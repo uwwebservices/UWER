@@ -15,12 +15,15 @@ export default class Form extends React.Component {
             if(cardnum[0] === ';') {
                 cardnum = cardnum.slice(1, -1);
             }
-            fetch('/api/register/' + cardnum + '?verbose=true', {
-                method: 'PUT'
-            }).then(res => res.json())
-            .then(json => {
-                this.props.addUser(json);
-            })
+            this.props.addUser(cardnum);
+
+
+            // fetch('/api/register/' + cardnum + '?verbose=true', {
+            //     method: 'PUT'
+            // }).then(res => res.json())
+            // .then(json => {
+            //     this.props.addUser(json);
+            // })
             this.setState({ card: ""});
         }
     };

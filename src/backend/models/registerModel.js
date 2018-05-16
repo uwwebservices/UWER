@@ -83,7 +83,7 @@ export default {
                     } else {
                         return { netid: personDetails.UWNetID }
                     }
-                })
+                });
             } else {
                 return new Promise((resolve, reject) => {
                     memStorage.users.push({"netid": personDetails.UWNetID });
