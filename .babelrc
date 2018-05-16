@@ -1,12 +1,14 @@
 {
-    "presets": ["react", "env"],
-    "plugins": ["transform-object-rest-spread", "transform-class-properties", ["module-resolver", {
-        "alias": {
-            "utils": "./src/backend/utils",
-            "models": "./src/backend/models",
-            "routes": "./src/backend/routes",
-            "controllers": "./src/backend/controllers",
-            "config": "./config"
-          }
-    }]]
+    "presets": [ "env", "react-app" ],
+    "plugins": [
+        ["module-resolver", {
+            "alias": {
+                "utils": "./src/backend/utils",
+                "models": "./src/backend/models",
+                "routes": "./src/backend/routes",
+                "controllers": "./src/backend/controllers",
+                "config": "./config"
+            }
+        }]
+    ]
 }

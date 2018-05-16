@@ -8,6 +8,6 @@
         "src/backend"
     ],
     "env": {
-        "NODE_ENV": "dev"
+        "NODE_ENV": "development"
     }
 }

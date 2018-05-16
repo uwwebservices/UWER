@@ -30,7 +30,7 @@ app.use('/api', api);
 app.use(['/','/config'], frontend);
 
 // static files
-if(process.env.NODE_ENV === 'prod') {
+if(process.env.NODE_ENV === 'production') {
 	app.use("/assets", express.static('dist/assets'))
 }
 
@@ -39,7 +39,7 @@ app.server.listen(process.env.PORT || config.port || 1111, () => {
 });
 
 // add some spiffy colors to the console output so it stands out
-if(process.env.NODE_ENV === 'dev') {
+if(process.env.NODE_ENV === 'development') {
 	[
 		['warn', '\x1b[43m\x1b[1m\x1b[37m'],
 		['error', '\x1b[41m\x1b[1m\x1b[37m'],

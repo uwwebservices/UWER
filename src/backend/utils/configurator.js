@@ -2,19 +2,8 @@
 import fs from 'fs';
 import configFile from 'config/config.json';
 
-let config = configFile;
-
 export default {
     get: () => {
-        return config;
-    },
-    set: (key, value) => {
-        if(config[key] !== value) {
-            let newConfig = Object.assign({}, config, {[key]: value});
-            fs.writeFile('config/config.json', JSON.stringify(newConfig, null, 2), function (err) {
-                if (err) throw err;
-                config = newConfig;
-            });
-        }
+        return configFile;
     }
 }

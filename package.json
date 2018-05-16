@@ -5,12 +5,12 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon --config nodemon.json",
-    "build": "babel src/backend -s -D -d dist/backend && webpack --config webpack.config.js",
-    "start": "sh scripts/server_setup.sh && cross-env NODE_ENV=prod node dist/backend",
-    "prod": "sh scripts/server_setup.sh && cross-env NODE_ENV=prod node dist/backend",
+    "build": "cross-env NODE_ENV=production babel src/backend -s -D -d dist/backend && cross-env NODE_ENV=production webpack --config webpack.config.js",
+    "start": "sh scripts/server_setup.sh && cross-env NODE_ENV=production node dist/backend",
+    "prod": "sh scripts/server_setup.sh && cross-env NODE_ENV=production node dist/backend",
     "prestart": "npm run -s clean && npm run -s build",
     "clean": "rm -rf dist",
-    "test": "eslint src && mocha --require babel-core/register test/*.js"
+    "test": "eslint src && cross-env NODE_ENV=test mocha --require babel-core/register test/*.js"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -33,7 +33,6 @@
   "author": "UWWebServices <ews-team@uw.edu>",
   "license": "MIT",
   "dependencies": {
-    "babel-plugin-module-resolver": "^3.1.1",
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
@@ -45,20 +44,22 @@
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-fontawesome": "^1.6.1",
+    "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
+    "redux": "^4.0.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
     "webpack": "^4.8.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
-    "babel-plugin-syntax-async-functions": "^6.13.0",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-module-resolver": "^3.1.1",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "babel-preset-react-app": "^3.1.1",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
     "file-loader": "^1.1.11",
