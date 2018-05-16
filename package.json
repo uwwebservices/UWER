@@ -8,7 +8,7 @@
     "build": "babel src/backend -s -D -d dist/backend && webpack --config webpack.config.js",
     "start": "sh scripts/server_setup.sh && cross-env NODE_ENV=prod node dist/backend",
     "prod": "sh scripts/server_setup.sh && cross-env NODE_ENV=prod node dist/backend",
-    "prestart": "cross-env npm run -s clean && cross-env BABEL_ENV=production npm run -s build",
+    "prestart": "npm run -s clean && cross-env BABEL_ENV=production npm run -s build",
     "clean": "rm -rf dist",
     "test": "eslint src && cross-env BABEL_ENV=test mocha --require babel-core/register test/*.js"
   },
