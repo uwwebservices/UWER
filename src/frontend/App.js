@@ -16,22 +16,18 @@ class App extends React.Component {
     }
     render () {
         return (
-            
-                <Provider store={store}>
-                    <MuiThemeProvider theme={theme}>
+            <Provider store={store}>
+                <MuiThemeProvider theme={theme}>
                     <Router>
                         <PageWrapper>
-                        
                             <Switch>
                                 <Route path='/config' component={Configure} />
                                 <Route exact path='/' component={Register} />
                             </Switch>
-                            
                         </PageWrapper>
-                        </Router>
-                    </MuiThemeProvider>
-                </Provider>
-            
+                    </Router>
+                </MuiThemeProvider>
+            </Provider>
         )
     }
 }
