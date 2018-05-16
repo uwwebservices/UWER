@@ -3,7 +3,7 @@ import path from 'path';
 
 let api = Router();
 
-if(process.env.NODE_ENV === 'dev') {
+if(process.env.NODE_ENV === 'development') {
 	const webpack = require('webpack');
 	const webpackDevMiddleware = require('webpack-dev-middleware');
 	const webpackHotMiddleware = require('webpack-hot-middleware');
@@ -36,7 +36,7 @@ if(process.env.NODE_ENV === 'dev') {
 	});
 }
 
-if(process.env.NODE_ENV === 'prod'){
+if(process.env.NODE_ENV === 'production'){
 	api.get(['/', '/config'], (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
  });
