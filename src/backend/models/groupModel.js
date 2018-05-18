@@ -17,19 +17,67 @@ export const createNewGroupModel = (groupName, displayName, description, admins)
     return data;
 }
 
+const caCert = fs.readFileSync(config.uwca, { encoding: 'utf-8' });
+const clientCert = fs.readFileSync(config.certificate);
+
 const options = {
     method: 'GET',
     url: "",
     json: true,
-    ca: [fs.readFileSync(config.uwca, { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
+    ca: [caCert],    //UW CA not trusted by nodejs so we must include the UW CA on our request
     agentOptions: {
-        pfx: fs.readFileSync(config.certificate),
+        pfx: clientCert,
         passphrase: config.passphrase,
         securityOptions: 'SSL_OP_NO_SSLv3'
     }
 };
 
+const SuccessResponse = (code, payload) => {
+    return {
+        "Status": code || 200,
+        ...payload
+    }
+};
+const ErrorResponse = (code, message) => {
+    return {
+        "Status": code || 500,
+        "Error": ""
+    }
+};
+
 const Groups = {
+    AddMember: async (group, netid) => {
+        let opts = Object.assign({}, options, { 
+            method: 'PUT',
+            url: `${config.groupsBaseUrl}/${group}/member/${netid}`
+        });
+        try {
+            let res = await rp(opts);
+            return 
+        } catch(ex) {
+            throw ex;
+        }
+    },
+    GetDetailedMembers: async group => {
+
+    },
+    GetMembers: async () => {
+
+    },
+    RemoveMember: async () => {
+
+    },
+    GetSubgroups: async () => {
+
+    },
+    DeleteSubgroup: async () => {
+
+    }
+};
+
+
+
+const Groups2 = {
     addMember: (leaf = "", netid) => {
         config = configurator.get();
         let opts = Object.assign({}, options, { 
