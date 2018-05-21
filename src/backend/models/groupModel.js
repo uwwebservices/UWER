@@ -3,185 +3,116 @@ import fs from 'fs';
 import configurator from 'utils/configurator';
 let config = configurator.get();
 
-export const generateGroupName = (leaf = "") => {
-    config = configurator.get();
-    let group = config.groupNameBase + (leaf ? leaf : config.groupNameLeaf);
-    return group;
-}
-
-export const createNewGroupModel = (groupName, displayName, description, admins) => {
-    let groupAdmins = admins.map(admin => {
-         return {"id": admin, "type": "dns" };
-    });
-    var data = {"data" : { "id": groupName, "displayName": displayName, "description": description, "admins": groupAdmins }};
-    return data;
-}
-
-const caCert = fs.readFileSync(config.uwca, { encoding: 'utf-8' });
-const clientCert = fs.readFileSync(config.certificate);
-
 const options = {
     method: 'GET',
     url: "",
     json: true,
-    ca: [caCert],    //UW CA not trusted by nodejs so we must include the UW CA on our request
+    ca: [fs.readFileSync(config.uwca, { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
     agentOptions: {
-        pfx: clientCert,
+        pfx: fs.readFileSync(config.certificate),
         passphrase: config.passphrase,
         securityOptions: 'SSL_OP_NO_SSLv3'
     }
 };
 
-const SuccessResponse = (code, payload) => {
+const SuccessResponse = (Payload, Status=200, ) => {
     return {
-        "Status": code || 200,
-        ...payload
+        Status,
+        Payload
     }
 };
-const ErrorResponse = (code, message) => {
+const ErrorResponse = ex => {
     return {
-        "Status": code || 500,
-        "Error": ""
+        "Status": ex.statusCode,
+        "Payload": ex.error.errors
     }
 };
 
 const Groups = {
-    AddMember: async (group, netid) => {
+    AddMember: async (group, identifier) => {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
+            url: `${config.groupsBaseUrl}/${group}/member/${identifier}`
+        });
+        try {
+            let res = await rp(opts);
+            return SuccessResponse(res.errors[0], res.errors[0].status);
+        } catch(ex) {
+            return ErrorResponse(ex);
+        }
+    },
+    GetMembers: async group => {
+        let opts = Object.assign({}, options, { 
+            url: `${config.groupsBaseUrl}/${group}/member`,
+        });
+        try {
+            let res = await rp(opts);
+            return SuccessResponse(res.data, res.error);
+        } catch(ex) {
+            return ErrorResponse(ex);
+        }
+    },
+    RemoveMember: async (group, netid) => {
+        let opts = Object.assign({}, options, { 
+            method: 'DELETE',
             url: `${config.groupsBaseUrl}/${group}/member/${netid}`
         });
         try {
             let res = await rp(opts);
-            return 
+            return SuccessResponse(res.errors[0], res.errors[0].status);
         } catch(ex) {
-            throw ex;
+            return ErrorResponse(ex);
         }
     },
-    GetDetailedMembers: async group => {
-
-    },
-    GetMembers: async () => {
-
-    },
-    RemoveMember: async () => {
-
-    },
-    GetSubgroups: async () => {
-
-    },
-    DeleteSubgroup: async () => {
-
-    }
-};
-
-
-
-const Groups2 = {
-    addMember: (leaf = "", netid) => {
-        config = configurator.get();
-        let opts = Object.assign({}, options, { 
-            method: 'PUT',
-            url: config.groupsBaseUrl + generateGroupName(leaf) + "/member/" + netid,
-        });
-        return rp(opts).then((res) => {
-            return { "updated": true };
-        })
-    },
-    checkGroup: (group) => {
-        config = configurator.get();
-        let opts = Object.assign({}, options, {
-            url: config.groupsBaseUrl + group
-        });
-        
-        return rp(opts).then(res => {
-            return { "exists": true };
-        }).catch(err => {
-            return { "exists": false };
-        })
-    },
-    getMembers: (leaf = "") => {
-        config = configurator.get();
-        let groupName = generateGroupName(leaf);
-        
-        let opts = Object.assign({}, options, { 
-            url: `${config.groupsBaseUrl}${groupName}/member`,
-        });
-        let groupInfo = {
-            groupName,
-            leafName: config.groupNameLeaf,
-            users: []
+    CreateGroup: async group => {
+        var groupBody = {
+            "data" : { 
+                "id": group, 
+                "displayName": config.groupDisplayName, 
+                "description": config.groupDescription, 
+                "admins": config.groupAdmins.map(admin => {
+                    return {"id": admin, "type": "dns" };
+                })
+            }
         };
-        
-        return rp(opts).then((parsedBody) => {
-            parsedBody.data.map((i, el) =>{
-                groupInfo.users.push({ "netid": i.id });
-            });
-          return groupInfo;
-        }).catch((err) => {
-            return Groups.createGroup(groupName).then(() => {
-                return groupInfo;
-            });
-        })
-    },
-    createGroup: (group = "") => {
-        config = configurator.get();
-
-        var groupBody = createNewGroupModel(group, config.groupDisplayName, config.groupDescription, config.groupAdmins);
 
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: config.groupsBaseUrl + group,
+            url: `${config.groupsBaseUrl}/${group}`,
             body: groupBody
         });
         
-        return rp(opts).then(() => {
-            return {"created": true };
-        })
-        .catch((err) => {
-            return {"created": false, "error": err.message };
-        })
+        try {
+            let res = await rp(opts);
+            return SuccessResponse(res.data)
+        } catch(ex) {
+            return ErrorResponse(ex);
+        }
     },
-    getSubGroups: groupName => {
+    SearchGroups: async group => {
         let opts = Object.assign({}, options, {
             method: 'GET',
-            url: `${config.groupsSearchUrl}?name=${groupName}*&type=effective&scope=all`
-        })
-        return rp(opts).then(parsedBody => {
-            let groups = [];
-            parsedBody.data.map((i, el) =>{
-                groups.push(i.id);
-            });
-            return groups;
+            url: `${config.groupsSearchUrl}?name=${group}*&type=effective&scope=all`
         });
+        try {
+            let res = await rp(opts);
+            return SuccessResponse(res.data)
+        } catch(ex) {
+            return ErrorResponse(ex);
+        }
     },
-    removeMember: (netid, leaf = "") => {
-        config = configurator.get();
+    DeleteGroup: async group => {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: config.groupsBaseUrl + generateGroupName(leaf) + "/member/" + netid,
+            url: `${config.groupsBaseUrl}/${group}`
         });
-        return rp(opts).then(() => {
-            return { "deleted": true };
-        })
-        .catch((err) => {
-            return {"deleted": false, "error": err.message};
-        })
-    },
-    removeGroup: (leaf) => {
-        config = configurator.get();
-        console.log("deleting ", config.groupsBaseUrl + leaf)
-        let opts = Object.assign({}, options, { 
-            method: 'DELETE',
-            url: config.groupsBaseUrl + leaf,
-        });
-        return rp(opts).then(() => {
-            return { "deleted": true };
-        })
-        .catch((err) => {
-            return { "deleted": false, "error": err.message}
-        })
+        try {
+            let res = await rp(opts);
+            return SuccessResponse(res.errors[0], res.errors[0].status);
+        } catch(ex) {
+            return ErrorResponse(ex);
+        }
     }
-}
+};
 
 export default Groups;

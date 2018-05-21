@@ -5,17 +5,18 @@ import configurator from 'utils/configurator';
 let config = configurator.get();
 
 const options = {
-            method: 'GET',
-            url: "",
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            }
-        };
+    method: 'GET',
+    url: "",
+    agentOptions: {
+        pfx: fs.readFileSync(config.certificate),
+        passphrase: config.passphrase,
+        securityOptions: 'SSL_OP_NO_SSLv3'
+    },
+    json: true
+};
 
-export default {
-    validCard: (cardnum) => {
+const IDCard = {
+    ValidCard: cardnum => {
         let card = { magstrip: "", rfid: "" };
         if(cardnum.length === 16) {
             if(cardnum[0] !== ';') {
@@ -32,26 +33,31 @@ export default {
         }
         return card;
     },
-    get: (card) => {
-        config = configurator.get();
-        
+    Get: async card => {
         let opts = Object.assign({}, options, { 
-            url: config.idcardBaseUrl +  "?mag_strip_code=" + card.magstrip + "&prox_rfid=" + card.rfid,
-            json: true
+            url: `${config.idcardBaseUrl}?mag_strip_code=${card.magstrip}&prox_rfid=${card.rfid}`,
         });
-
-        return rp(opts)
-          .then((parsedBody) => {
-            return parsedBody.Cards[0].RegID;
-          })
-          .catch((err) => {
-              throw err;
-          });
+        try {
+            let res = await rp(opts);
+            return res.Cards[0].RegID;
+        } catch(ex) {
+            console.log("GetCard Error", ex);
+            return "";
+        }
     },
-    getPhoto: (regId) => {
-        config = configurator.get();
+    GetManyPhotos: async memberList => {
+        let promises = [];
+        for(let mem of memberList) {
+            promises.push(IDCard.GetPhoto(mem.UWRegID).then((img) => {
+                mem.Base64Image = img;
+                return mem;
+            }));
+        }
+        return await Promise.all(promises);
+    },
+    GetPhoto: regId => {
         let opts = Object.assign({}, options, { 
-            url: config.photoBaseUrl + regId + '-large.jpg',
+            url: `${config.photoBaseUrl}/${regId}-large.jpg`,
             encoding: null
         });
         return new Promise(function(resolve, reject) {
@@ -67,6 +73,8 @@ export default {
         });
     }
 }
+
+export default IDCard;
 
 function IDCardFormatError(message, code = 400) {
    this.message = message;

@@ -14,19 +14,31 @@ const options = {
     json: true
 };
 
-export default {
-    // Id can be regid or netid
-    get: (Id) => {
-        config = configurator.get();
+const whitelist = ["DisplayName", "UWNetID", "UWRegID"];
+const FilterPWSModel = model => {
+    return Object.keys(model)
+        .filter(key => whitelist.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = model[key];
+            return obj;
+        }, {});
+}
+
+const PWS = {
+    Get: async identifier => {
         let opts = Object.assign({}, options, { 
-            url: config.pwsBaseUrl + Id + '/full.json',
+            url: `${config.pwsBaseUrl}/${identifier}/full.json`,
         });
-        return rp(opts)
-          .then((parsedBody) => {
-            return parsedBody;
-          })
-          .catch((err) => {
-            throw err;
-          });
+        let res = await rp(opts);
+        return FilterPWSModel(res);
+    },
+    GetMany: async memberList => {
+        let members = [];
+        for(let mem of memberList) {
+            members.push(PWS.Get(mem.id));
+        }
+        return await Promise.all(members);
     }
 }
+
+export default PWS;

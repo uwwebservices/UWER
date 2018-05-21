@@ -8,22 +8,22 @@ export default class Test extends React.Component {
         this.state = {loadingUsers: false};
     }
     removeUser = netid => {
-        this.props.removeUser(netid);
+        this.props.removeUser(this.props.group, netid);
         document.getElementById("registerCard").focus();
     }
     reload = async () => {
         this.setState({loadingUsers: true});
-        await this.props.reloadUsers()
+        await this.props.reloadUsers(this.props.group);
         this.setState({loadingUsers: false});
     }
     render() {
         const listItems = this.props.members.map(mem => {
             return (
                 <ListItem
-                    key={mem.netid}>
-                    <Avatar src={mem.base64image} />
-                    <ListItemText primary={mem.netid} secondary={mem.preferredName} />
-                    <Button variant="fab" onClick={() => this.removeUser(mem.netid)} mini={true} color="primary">x</Button>
+                    key={mem.UWNetID}>
+                    <Avatar src={mem.Base64Image} />
+                    <ListItemText primary={mem.UWNetID} secondary={mem.DisplayName} />
+                    <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>
                 </ListItem> 
             )
         })

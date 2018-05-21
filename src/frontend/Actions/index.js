@@ -55,61 +55,56 @@ export const LoadGroupName = group => {
   }
 }
 
-// This needs to send groupName and utilize it in the backend
 export const LoadSubgroups = groupName => {
   return async dispatch => {
     await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
-    let res = await fetch(`/api/groups/${groupNameBase}/subgroups`)
+    let res = await fetch(`/api/subgroups/${groupNameBase}`);
     let subgroups = await res.json();
     return await dispatch(await ReceiveSubgroups(subgroups));
   }
 }
 
-// This needs to send groupName and utilize it in the backend
-export const DestroySubgroup = subgroup => {
+export const DestroySubgroup = group => {
   return async dispatch => {
-    await fetch(`/api/groups/${subgroup}`, {
+    await fetch(`/api/subgroups/${group}`, {
       method: "DELETE"
     })
-    return await dispatch(await DeleteSubgroup(subgroup));
+    return await dispatch(await DeleteSubgroup(group));
   }
 }
 
-// This needs to send groupName and utilize it in the backend
-export const LoadUsers = () => {
+export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
-    let res = await fetch('/api/register?verbose=true')
-    let users = (await res.json()).users;
+    let res = await fetch(`/api/members/${group}`)
+    let users = await res.json();
     return await dispatch(await ReceiveUsers(users));
   }
 }
 
-// This needs to send groupName and utilize it in the backend
-export const AddUser = identifier => {
+export const AddUser = (group, identifier) => {
   return async dispatch => {
-    let res = await fetch('/api/register/' + identifier + '?verbose=true', { method: 'PUT' });
+    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT' });
     let user = await res.json();
     return await dispatch(UpdateUsers(user))
   }
 }
 
-// This needs to send groupName and utilize it in the backend
-export const DeleteUser = user => {
+export const DeleteUser = (group, identifier) => {
   return async dispatch => {
-    await fetch('/api/register/' + user, { method: 'DELETE' })
-    return await dispatch(await RemoveUser(user));
+    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE' })
+    return await dispatch(await RemoveUser(identifier));
   }
 }
 
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-
     state.config && await dispatch(LoadConfig());
     state.groupName && await dispatch(LoadGroupName());
-    !state.users.length && await dispatch(LoadUsers());
-    !state.subgroups.length && await dispatch(LoadSubgroups());
+    state = store.getState();
+    !state.users.length && await dispatch(LoadUsers(state.groupName));
+    !state.subgroups.length && await dispatch(LoadSubgroups(state.groupName));
   }
 }
