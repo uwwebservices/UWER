@@ -26,7 +26,6 @@ api.put('/members/:group/:identifier', async (req, res) => {
 	
 	let result = await Groups.AddMember(req.params.group, identifier);
 	let user = await PWS.Get(identifier);
-	console.log(user);
 	user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
 	return res.status(result.Status).json(user);
 });
