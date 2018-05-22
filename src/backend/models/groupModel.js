@@ -29,7 +29,7 @@ const ErrorResponse = ex => {
 };
 
 const Groups = {
-    AddMember: async (group, identifier) => {
+    async AddMember(group, identifier) {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}/member/${identifier}`
@@ -41,7 +41,7 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    GetMembers: async group => {
+    async GetMembers(group) {
         let opts = Object.assign({}, options, { 
             url: `${config.groupsBaseUrl}/${group}/member`,
         });
@@ -52,7 +52,7 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    RemoveMember: async (group, netid) => {
+    async RemoveMember(group, netid) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
             url: `${config.groupsBaseUrl}/${group}/member/${netid}`
@@ -64,7 +64,7 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    CreateGroup: async group => {
+    async CreateGroup(group) {
         var groupBody = {
             "data" : { 
                 "id": group, 
@@ -89,7 +89,7 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    SearchGroups: async group => {
+    async SearchGroups(group) {
         let opts = Object.assign({}, options, {
             method: 'GET',
             url: `${config.groupsSearchUrl}?name=${group}*&type=effective&scope=all`
@@ -101,7 +101,7 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    DeleteGroup: async group => {
+    async DeleteGroup(group) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
             url: `${config.groupsBaseUrl}/${group}`

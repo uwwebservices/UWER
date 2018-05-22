@@ -10,30 +10,22 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case RECEIVE_GROUP_NAME:
-      return Object.assign({}, state, {
-        groupName: action.groupName
-      });
+      return Object.assign({}, state, { groupName: action.groupName });
     case RECEIVE_CONFIG:
-      return Object.assign({}, state, {
-        config: action.config
-      });
+      return Object.assign({}, state, { config: action.config });
     case RECEIVE_SUBGROUPS:
-      return Object.assign({}, state, {
-        subgroups: action.subgroups
-      });
+      return Object.assign({}, state, { subgroups: action.subgroups });
     case DELETE_SUBGROUP:
       let subgroups = state.subgroups.filter(sg => sg !== action.subgroup);
       return Object.assign({}, state, {subgroups});
     case RECEIVE_USERS:
       return Object.assign({}, state, {users: action.users});
     case UPDATE_USERS:
-      // Currently, api/addUser returns the user regardless, remove before adding to avoid dupes, this can be removed when API is refactored
       let newUsers = state.users.filter(u => u.UWRegID !== action.user.UWRegID);
-      console.log(action);
       return Object.assign({}, state, {users: [...newUsers, action.user]});
     case REMOVE_USER:
-      let users =  state.users.filter(u => u.UWNetID !== action.user);
-      return Object.assign({}, state, {users})
+      let users = state.users.filter(u => u.UWNetID !== action.user);
+      return Object.assign({}, state, {users});
     default:
       return state;
   }

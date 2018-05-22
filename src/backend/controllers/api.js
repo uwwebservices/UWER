@@ -11,8 +11,8 @@ let api = Router();
 api.get('/members/:group', async (req, res) => {
 		let result = await Groups.GetMembers(req.params.group);
 		let members = await PWS.GetMany(result.Payload);
-		members = await IDCard.GetManyPhotos(members);
-		return res.status(result.Status).json(members);
+		let verbose = await IDCard.GetManyPhotos(members);
+		return res.status(result.Status).json(verbose);
 });
 
 api.put('/members/:group/:identifier', async (req, res) => {

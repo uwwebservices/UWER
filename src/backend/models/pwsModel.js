@@ -25,17 +25,17 @@ const FilterPWSModel = model => {
 }
 
 const PWS = {
-    Get: async identifier => {
+    async Get(identifier) {
         let opts = Object.assign({}, options, { 
             url: `${config.pwsBaseUrl}/${identifier}/full.json`,
         });
         let res = await rp(opts);
         return FilterPWSModel(res);
     },
-    GetMany: async memberList => {
+    async GetMany(memberList) {
         let members = [];
         for(let mem of memberList) {
-            members.push(PWS.Get(mem.id));
+            members.push(this.Get(mem.id));
         }
         return await Promise.all(members);
     }
