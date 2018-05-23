@@ -20,12 +20,12 @@ class Configure extends Component {
         let valid = groupName.indexOf(this.props.config.groupNameBase) >= 0;
         if(!valid) {
             this.setState({ "message": "Invalid Group Name, should begin with " + this.props.config.groupNameBase});
+            setTimeout(() => {
+                this.setState({"message": ""});
+            }, 2500);
         } else {
-            this.setState({"message": "Updated Group."});
+            this.setState({"message": "Group is being created..."});
         }
-        setTimeout(() => {
-            this.setState({"message": ""});
-        }, 2500);
         return valid;
     }
     loadSubGroups = async () => {
@@ -48,7 +48,8 @@ class Configure extends Component {
             // ugh, this sucks, hopefully we can find a better solution
             setTimeout(()=> {
                 this.props.loadSubgroups(this.props.groupName);
-            }, 5000)
+                this.setState({"message": ""});
+            }, 2000)
         }
     }
 
