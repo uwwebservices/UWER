@@ -45,7 +45,10 @@ class Configure extends Component {
     createSubgroup = async () => {
         if(this.validateGroupName(this.state.newSubgroup)) {
             await this.props.createGroup(this.state.newSubgroup);
-            await this.loadSubGroups(this.props.groupName);
+            // ugh, this sucks, hopefully we can find a better solution
+            setTimeout(()=> {
+                this.props.loadSubgroups(this.props.groupName);
+            }, 5000)
         }
     }
 
@@ -68,7 +71,7 @@ class Configure extends Component {
                 <div>
                     {
                         this.props.subgroups.map(subgroups => {
-                            return <Subgroup key={subgroups.regid} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
+                            return <Subgroup key={subgroups.id} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
                         })
                     }
                 </div>

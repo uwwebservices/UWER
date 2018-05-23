@@ -20,9 +20,9 @@ const RequestSubgroups = () => { return { type: REQUEST_SUBGROUPS }};
 const ReceiveSubgroups = subgroups => { return { type: RECEIVE_SUBGROUPS, subgroups }};
 const DeleteSubgroup = subgroup => { return { type: DELETE_SUBGROUP, subgroup }};
 const RequestUsers = () => { return { type: REQUEST_USERS }};
-const ReceiveUsers = users => { return { type: RECEIVE_USERS, users}};
-const UpdateUsers = user => { return { type: UPDATE_USERS, user}};
-const RemoveUser = user => { return { type: REMOVE_USER, user}};
+const ReceiveUsers = users => { return { type: RECEIVE_USERS, users }};
+const UpdateUsers = user => { return { type: UPDATE_USERS, user }};
+const RemoveUser = user => { return { type: REMOVE_USER, user }};
 
 // -----------------------
 // Thunks - Async Actions
@@ -34,7 +34,7 @@ export const LoadConfig = () => {
     let res = await fetch('/api/config');
     let json = await res.json();
     await dispatch(await ConfigLoaded(json));
-    return await dispatch(await LoadGroupName(json.groupNameBase+json.groupNameLeaf));
+    return await dispatch(LoadGroupName(json.groupNameBase+json.groupNameLeaf));
   }
 }
 
@@ -42,7 +42,7 @@ export const LoadConfig = () => {
 export const UpdateGroupName = groupName => {
   return async dispatch => {
     localStorage.setItem("groupName", groupName);
-    return await dispatch( await ReceiveGroupName(groupName));
+    return await dispatch(ReceiveGroupName(groupName));
   }
 }
 
@@ -51,7 +51,7 @@ export const LoadGroupName = group => {
   return async dispatch => {
     let groupName = localStorage.getItem("groupName");
     groupName = groupName ? groupName : group;
-    return await dispatch(await ReceiveGroupName(groupName));
+    return await dispatch(ReceiveGroupName(groupName));
   }
 }
 
@@ -67,23 +67,23 @@ export const LoadSubgroups = groupName => {
     let groupNameBase = store.getState().config.groupNameBase;
     let res = await fetch(`/api/subgroups/${groupNameBase}`);
     let subgroups = await res.json();
-    return await dispatch(await ReceiveSubgroups(subgroups));
+    return await dispatch(ReceiveSubgroups(subgroups));
   }
 }
 
 export const DestroySubgroup = group => {
   return async dispatch => {
     await fetch(`/api/subgroups/${group}`, { method: "DELETE" });
-    return await dispatch(await DeleteSubgroup(group));
+    return await dispatch(DeleteSubgroup(group));
   }
 }
 
 export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
-    let res = await fetch(`/api/members/${group}`)
+    let res = await fetch(`/api/members/${group}`);
     let users = await res.json();
-    return await dispatch(await ReceiveUsers(users));
+    return await dispatch(ReceiveUsers(users));
   }
 }
 
@@ -98,7 +98,7 @@ export const AddUser = (group, identifier) => {
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
     await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE' })
-    return await dispatch(await RemoveUser(identifier));
+    return await dispatch(RemoveUser(identifier));
   }
 }
 

@@ -49,15 +49,16 @@ api.post('/subgroups/:group', async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
-let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
+
 api.get('/config', (req, res) => {
-    let filteredConfig = Object.keys(config)
-        .filter(key => whitelist.includes(key))
-        .reduce((obj, key) => {
-            obj[key] = config[key];
-            return obj;
-        }, {});
-    res.status(200).json(filteredConfig);
+	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
+	let filteredConfig = Object.keys(config)
+			.filter(key => whitelist.includes(key))
+			.reduce((obj, key) => {
+					obj[key] = config[key];
+					return obj;
+			}, {});
+	res.status(200).json(filteredConfig);
 });
 
 api.get('/csv/:group.csv', async (req, res) => {
