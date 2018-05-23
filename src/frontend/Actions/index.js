@@ -55,6 +55,12 @@ export const LoadGroupName = group => {
   }
 }
 
+export const CreateGroup = group => {
+  return async dispatch => {
+    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST"});
+  }
+}
+
 export const LoadSubgroups = groupName => {
   return async dispatch => {
     await dispatch(RequestSubgroups());
@@ -67,9 +73,7 @@ export const LoadSubgroups = groupName => {
 
 export const DestroySubgroup = group => {
   return async dispatch => {
-    await fetch(`/api/subgroups/${group}`, {
-      method: "DELETE"
-    })
+    await fetch(`/api/subgroups/${group}`, { method: "DELETE" });
     return await dispatch(await DeleteSubgroup(group));
   }
 }

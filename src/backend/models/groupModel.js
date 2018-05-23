@@ -1,7 +1,6 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import config from 'config/config.json';
 
 const options = {
     method: 'GET',
@@ -65,21 +64,19 @@ const Groups = {
         }
     },
     async CreateGroup(group) {
-        var groupBody = {
-            "data" : { 
-                "id": group, 
-                "displayName": config.groupDisplayName, 
-                "description": config.groupDescription, 
-                "admins": config.groupAdmins.map(admin => {
-                    return {"id": admin, "type": "dns" };
-                })
-            }
-        };
-
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}`,
-            body: groupBody
+            body: {
+                "data" : { 
+                    "id": group, 
+                    "displayName": config.groupDisplayName, 
+                    "description": config.groupDescription, 
+                    "admins": config.groupAdmins.map(admin => {
+                        return {"id": admin, "type": "dns" };
+                    })
+                }
+            }
         });
         
         try {

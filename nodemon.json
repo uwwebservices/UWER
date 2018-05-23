@@ -1,7 +1,6 @@
 {
     "exec" : "babel-node src/backend",
     "ignore": [
-        "src/backend/utils/configurator.js",
         "src/frontend"
     ],
     "watch": [

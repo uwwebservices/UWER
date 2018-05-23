@@ -5,8 +5,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import config from 'config/config.json';
 
 let app = express();
 app.server = http.createServer(app);

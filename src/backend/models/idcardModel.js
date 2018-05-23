@@ -1,9 +1,8 @@
 import request from 'request';
 import rp from 'request-promise';
 import fs from 'fs';
-import DefaultUser from 'utils/defaultUser';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import DefaultUser from 'assets/defaultUser';
+import config from 'config/config.json';
 
 const options = {
     method: 'GET',

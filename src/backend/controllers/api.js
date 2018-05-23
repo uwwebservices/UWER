@@ -3,8 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import csv from 'csv-express';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import config from 'config/config.json';
 
 let api = Router();
 
@@ -61,13 +60,11 @@ api.get('/config', (req, res) => {
     res.status(200).json(filteredConfig);
 });
 
-// Needs to be modified to use the passed in group
-api.get('/memberlist.csv', (req, res) => {
-	register.list(1).then((members) => {
-			res.csv(members.users, true);
-	}).catch((err) => {
-			res.status(err.statusCode).json({"error": err.message});
-	})
+api.get('/csv/:group.csv', async (req, res) => {
+	let members = await Groups.GetMembers(req.params.group);
+	let csvWhitelist = ["DisplayName", "UWNetID", "UWRegID"];
+	let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
+	res.csv(verboseMembers, true);
 });
 
 export default api;

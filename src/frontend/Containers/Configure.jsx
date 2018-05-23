@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import Form from 'Components/Form';
 import Members from 'Components/Members';
-import ConfigItem from 'Components/ConfigItem';
 import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers } from '../Actions'
+import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup } from '../Actions'
 
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { groupName: "", message: "", loadingSubGroups: false };
+        this.state = { newSubgroup: "", message: "", loadingSubGroups: false };
     }
     async componentDidMount() {
         await this.props.initApp();
@@ -24,7 +23,9 @@ class Configure extends Component {
         } else {
             this.setState({"message": "Updated Group."});
         }
-        
+        setTimeout(() => {
+            this.setState({"message": ""});
+        }, 2500);
         return valid;
     }
     loadSubGroups = async () => {
@@ -41,13 +42,17 @@ class Configure extends Component {
         this.setState({[e.target.name]: e.target.value});
     }
 
-    handleSubmit = async e => {
-        e.preventDefault();
-        let groupName = e.target.groupName.value;
-        if(this.validateGroupName(groupName)) {
-            await this.props.updateGroupName(groupName);
-            await this.props.loadUsers(groupName);
+    createSubgroup = async () => {
+        if(this.validateGroupName(this.state.newSubgroup)) {
+            await this.props.createGroup(this.state.newSubgroup);
+            await this.loadSubGroups(this.props.groupName);
         }
+    }
+
+    updateGroupName = async groupName => {
+        await this.props.updateGroupName(groupName);
+        this.setState({groupName: this.props.groupName});
+        await this.props.loadUsers(groupName);
     }
 
     render() {
@@ -59,19 +64,21 @@ class Configure extends Component {
                         return <div key={k}>{k}: {this.props.config[k]}</div>
                     })
                 }
-                <form className="configForm" onSubmit={this.handleSubmit}>
-                    <ConfigItem itemName="groupName" key="groupName" itemValue={this.state.groupName} onChange={this.handleChange}/>
-                    <Button variant="raised" color="primary" type="submit">Update Config</Button>
-                    <div>{this.state.message}</div>
-                </form>
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                 <div>
                     {
                         this.props.subgroups.map(subgroups => {
-                            return <Subgroup key={subgroups.regid} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} group={this.props.groupName} />
+                            return <Subgroup key={subgroups.regid} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
                         })
                     }
                 </div>
+                <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
+                <input type="text" className="newSubgroup" 
+                    name="newSubgroup"
+                    onChange={this.handleChange}
+                />
+                <Button variant="raised" color="primary" type="submit" onClick={this.createSubgroup}>Create New Subgroup</Button>
+                <div>{this.state.message}</div>
             </div>
         )
     }
@@ -86,9 +93,11 @@ const mapDispatchToProps = dispatch => {
     return {
         updateGroupName: async groupName => await dispatch(UpdateGroupName(groupName)),
         loadSubgroups: async groupName => await dispatch(LoadSubgroups(groupName)),
+        loadGroupName: async () => await dispatch(LoadGroupName()),
         destroySubgroup: async subgroup => await dispatch(DestroySubgroup(subgroup)),
         initApp: async () => await dispatch(InitApp()),
         loadUsers: async group => await dispatch(LoadUsers(group)),
+        createGroup: async group => await dispatch(CreateGroup(group))
     }
 }
 

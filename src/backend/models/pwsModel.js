@@ -1,7 +1,6 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import config from 'config/config.json';
 
 const options = {
     method: 'GET',
@@ -14,8 +13,8 @@ const options = {
     json: true
 };
 
-const whitelist = ["DisplayName", "UWNetID", "UWRegID"];
-const FilterPWSModel = model => {
+const defaultWhiteList = ["DisplayName", "UWNetID", "UWRegID"];
+const FilterPWSModel = (model, whitelist = defaultWhiteList) => {
     return Object.keys(model)
         .filter(key => whitelist.includes(key))
         .reduce((obj, key) => {
@@ -25,17 +24,17 @@ const FilterPWSModel = model => {
 }
 
 const PWS = {
-    async Get(identifier) {
+    async Get(identifier, whitelist) {
         let opts = Object.assign({}, options, { 
             url: `${config.pwsBaseUrl}/${identifier}/full.json`,
         });
         let res = await rp(opts);
-        return FilterPWSModel(res);
+        return FilterPWSModel(res,whitelist);
     },
-    async GetMany(memberList) {
+    async GetMany(memberList, whitelist) {
         let members = [];
         for(let mem of memberList) {
-            members.push(this.Get(mem.id));
+            members.push(this.Get(mem.id, whitelist));
         }
         return await Promise.all(members);
     }
