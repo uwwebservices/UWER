@@ -2,6 +2,7 @@ import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
 import saml from 'passport-saml';
+import fs from 'fs';
 
 let samlStrategy = new saml.Strategy(
 	{
@@ -19,16 +20,7 @@ let samlStrategy = new saml.Strategy(
 
 passport.use(samlStrategy);
 
-function authenticationMiddleware() {
-  return function (req, res, next) {
-		console.log("Authenticating...");
-    if (req.isAuthenticated()) {
-			console.log("OMG Authenticated!");
-      return next();
-		}
-    res.redirect('/');
-  }
-}
+
 
 let api = Router();
 
@@ -40,6 +32,12 @@ api.get('/Shibboleth.sso/Metadata',
   function(req, res) {
     res.type('application/xml');
     res.status(200).send(samlStrategy.generateServiceProviderMetadata());
+  }
+);
+api.post('/login/callback',
+  passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+  function(req, res) {
+    res.redirect('/test');
   }
 );
 
