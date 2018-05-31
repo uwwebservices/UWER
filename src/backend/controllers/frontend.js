@@ -7,7 +7,7 @@ let samlStrategy = new saml.Strategy(
 	{
     path: '/login/callback',
     entryPoint: 'https://idp.u.washington.edu/idp/profile/SAML2/Redirect/SSO',
-		issuer: 'http://10.158.22.24/shibboleth',
+		issuer: 'https://idcard-poc-staging.herokuapp.com/shibboleth',
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
   },
   function(profile, done) {
