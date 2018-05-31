@@ -11,14 +11,12 @@ let samlStrategy = new saml.Strategy(
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
   },
   function(profile, done) {
-    findByEmail(profile.email, function(err, user) {
-      if (err) {
-        return done(err);
-      }
-      return done(null, user);
-    });
-  });
-
+		console.log("OMG PROFILE", profile);
+		return done(null, {
+			email: profile.email
+		})
+	});
+	
 passport.use(samlStrategy);
 
 function authenticationMiddleware() {
