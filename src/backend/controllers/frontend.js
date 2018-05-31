@@ -16,7 +16,7 @@ let samlStrategy = new saml.Strategy(
 			email: profile.email
 		})
 	});
-	
+
 passport.use(samlStrategy);
 
 function authenticationMiddleware() {
@@ -32,7 +32,7 @@ function authenticationMiddleware() {
 
 let api = Router();
 
-api.get('/test', authenticationMiddleware(), function(req, res) {
+api.get('/test', passport.authenticate(samlStrategy.name), function(req, res) {
 	res.send("you must be authenticated to reach this page.");
 });
 
