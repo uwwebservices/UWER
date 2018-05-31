@@ -24,7 +24,8 @@ passport.use(samlStrategy);
 
 let api = Router();
 
-api.get('/test', passport.authenticate(samlStrategy.name), function(req, res) {
+api.get('/test',
+ passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), function(req, res) {
 	res.send("you must be authenticated to reach this page.");
 });
 
