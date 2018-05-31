@@ -41,6 +41,8 @@
     "express": "^4.16.3",
     "material-ui": "^1.0.0-beta.41",
     "morgan": "^1.8.0",
+    "passport": "^0.4.0",
+    "passport-saml": "^0.33.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-fontawesome": "^1.6.1",

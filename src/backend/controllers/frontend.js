@@ -1,7 +1,49 @@
 import { Router } from 'express';
 import path from 'path';
+import passport from 'passport';
+import saml from 'passport-saml';
+
+let samlStrategy = new saml.Strategy(
+	{
+    path: '/login/callback',
+    entryPoint: 'https://idp.u.washington.edu/idp/profile/SAML2/Redirect/SSO',
+		issuer: 'http://10.158.22.24/shibboleth',
+		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+  },
+  function(profile, done) {
+    findByEmail(profile.email, function(err, user) {
+      if (err) {
+        return done(err);
+      }
+      return done(null, user);
+    });
+  });
+
+passport.use(samlStrategy);
+
+function authenticationMiddleware() {
+  return function (req, res, next) {
+		console.log("Authenticating...");
+    if (req.isAuthenticated()) {
+			console.log("OMG Authenticated!");
+      return next();
+		}
+    res.redirect('/');
+  }
+}
 
 let api = Router();
+
+api.get('/test', authenticationMiddleware(), function(req, res) {
+	res.send("you must be authenticated to reach this page.");
+});
+
+api.get('/Shibboleth.sso/Metadata', 
+  function(req, res) {
+    res.type('application/xml');
+    res.status(200).send(samlStrategy.generateServiceProviderMetadata());
+  }
+);
 
 if(process.env.NODE_ENV === 'development') {
 	const webpack = require('webpack');
@@ -36,7 +78,7 @@ if(process.env.NODE_ENV === 'development') {
 	});
 }
 
-if(process.env.NODE_ENV === 'production'){
+if(process.env.NODE_ENV === 'production') {
 	api.get(['/', '/config'], (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
  });
