@@ -3,10 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import api from 'routes/api';
-import frontend from 'routes/frontend';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import api from 'controllers/api';
+import frontend from 'controllers/frontend';
+import config from 'config/config.json';
 
 let app = express();
 app.server = http.createServer(app);

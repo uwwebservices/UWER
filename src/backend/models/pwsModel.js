@@ -1,7 +1,6 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import config from 'config/config.json';
 
 const options = {
     method: 'GET',
@@ -14,19 +13,31 @@ const options = {
     json: true
 };
 
-export default {
-    // Id can be regid or netid
-    get: (Id) => {
-        config = configurator.get();
+const defaultWhiteList = ["DisplayName", "UWNetID", "UWRegID"];
+const FilterPWSModel = (model, whitelist = defaultWhiteList) => {
+    return Object.keys(model)
+        .filter(key => whitelist.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = model[key];
+            return obj;
+        }, {});
+}
+
+const PWS = {
+    async Get(identifier, whitelist) {
         let opts = Object.assign({}, options, { 
-            url: config.pwsBaseUrl + Id + '/full.json',
+            url: `${config.pwsBaseUrl}/${identifier}/full.json`,
         });
-        return rp(opts)
-          .then((parsedBody) => {
-            return parsedBody;
-          })
-          .catch((err) => {
-            throw err;
-          });
+        let res = await rp(opts);
+        return FilterPWSModel(res,whitelist);
+    },
+    async GetMany(memberList, whitelist) {
+        let members = [];
+        for(let mem of memberList) {
+            members.push(this.Get(mem.id, whitelist));
+        }
+        return await Promise.all(members);
     }
 }
+
+export default PWS;

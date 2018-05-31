@@ -1,7 +1,6 @@
 import should from 'should';
 import assert from 'assert';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import config from 'config/config.json';
 
 
 describe('Array', () => {
@@ -59,8 +58,7 @@ describe('Array', () => {
         });
         it('config should have enableIDCardAPI', () => {
             config.should.have.property('enableIDCardAPI');
-        });        
-
+        });    
         it('config should have enableConfigAPI', () => {
             config.should.have.property('enableConfigAPI');
         });

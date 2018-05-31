@@ -1,21 +1,22 @@
 import request from 'request';
 import rp from 'request-promise';
 import fs from 'fs';
-import configurator from 'utils/configurator';
-let config = configurator.get();
+import DefaultUser from 'assets/defaultUser';
+import config from 'config/config.json';
 
 const options = {
-            method: 'GET',
-            url: "",
-            agentOptions: {
-                pfx: fs.readFileSync(config.certificate),
-                passphrase: config.passphrase,
-                securityOptions: 'SSL_OP_NO_SSLv3'
-            }
-        };
+    method: 'GET',
+    url: "",
+    agentOptions: {
+        pfx: fs.readFileSync(config.certificate),
+        passphrase: config.passphrase,
+        securityOptions: 'SSL_OP_NO_SSLv3'
+    },
+    json: true
+};
 
-export default {
-    validCard: (cardnum) => {
+const IDCard = {
+    ValidCard(cardnum) {
         let card = { magstrip: "", rfid: "" };
         if(cardnum.length === 16) {
             if(cardnum[0] !== ';') {
@@ -32,46 +33,40 @@ export default {
         }
         return card;
     },
-    get: (card) => {
-        config = configurator.get();
-        
+    async Get(card) {
         let opts = Object.assign({}, options, { 
-            url: config.idcardBaseUrl +  "?mag_strip_code=" + card.magstrip + "&prox_rfid=" + card.rfid,
-            json: true
+            url: `${config.idcardBaseUrl}?mag_strip_code=${card.magstrip}&prox_rfid=${card.rfid}`,
         });
-
-        return rp(opts)
-          .then((parsedBody) => {
-            return parsedBody.Cards[0].RegID;
-          })
-          .catch((err) => {
-              throw err;
-          });
+        try {
+            let res = await rp(opts);
+            return res.Cards[0].RegID;
+        } catch(ex) {
+            console.log("GetCard Error", ex);
+            return "";
+        }
     },
-    getPhoto: (regId) => {
-        config = configurator.get();
+    async GetManyPhotos(memberList) {
+        let promises = [];
+        for(let mem of memberList) {
+            promises.push(this.GetPhoto(mem.UWRegID).then((img) => {
+                mem.Base64Image = img;
+                return mem;
+            }));
+        }
+        return await Promise.all(promises);
+    },
+    async GetPhoto(regid) {
         let opts = Object.assign({}, options, { 
-            url: config.photoBaseUrl + regId + '-large.jpg',
+            url: `${config.photoBaseUrl}/${regid}-large.jpg`,
             encoding: null
         });
-        return new Promise(function(resolve, reject) {
-            // Have to use request instead of request-promise as we need a buffer to convert to base64
-            request.get(opts, function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    var data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
-                    resolve(data);
-                } else {
-                    reject(new IDCardFormatError("Photo not found", 404));
-                }
-            });
-        });
+        try {
+            let res = await rp(opts);
+            return `data:image/jpeg;base64,${new Buffer(res).toString('base64')}`;
+        } catch(ex) {
+            return DefaultUser;
+        }
     }
 }
 
-function IDCardFormatError(message, code = 400) {
-   this.message = message;
-   this.statusCode = code;
-   this.toString = function() {
-      return this.message;
-   };
-}
+export default IDCard;

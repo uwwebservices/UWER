@@ -3,11 +3,10 @@
     "plugins": [
         ["module-resolver", {
             "alias": {
-                "utils": "./src/backend/utils",
                 "models": "./src/backend/models",
-                "routes": "./src/backend/routes",
                 "controllers": "./src/backend/controllers",
-                "config": "./config"
+                "config": "./config",
+                "assets": "./src/backend/assets"
             }
         }]
     ]

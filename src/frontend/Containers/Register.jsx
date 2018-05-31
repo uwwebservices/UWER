@@ -13,8 +13,8 @@ class Register extends Component {
             <div>
                   <h5 className="righted">Group: {this.props.groupName.replace(this.props.groupNameBase, "")}</h5>
                   <h1>Event Registration</h1>                  
-                  <Form addUser={this.props.addUser} />
-                  <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} />
+                  <Form addUser={this.props.addUser} group={this.props.groupName} />
+                  <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} />
           </div>
         )
     }
@@ -27,10 +27,10 @@ const mapStateToProps = state => ({
  });
  const mapDispatchToProps = dispatch => {
      return {
-        loadUsers: async () => await dispatch(LoadUsers()),
-        addUser: async user => await dispatch(AddUser(user)),
+        loadUsers: async group => await dispatch(LoadUsers(group)),
+        addUser: async (group, user) => await dispatch(AddUser(group, user)),
         loadGroupName: async () => await dispatch(LoadGroupName()),
-        removeUser: async user => await dispatch(DeleteUser(user)),
+        removeUser: async (group, user) => await dispatch(DeleteUser(group, user)),
         initApp: async () => await dispatch(InitApp())
      }
  }
