@@ -37,7 +37,7 @@ api.get('/Shibboleth.sso/Metadata',
 api.post('/login/callback',
   passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
   function(req, res) {
-    res.redirect('/test');
+    res.redirect('/');
   }
 );
 
