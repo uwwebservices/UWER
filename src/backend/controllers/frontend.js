@@ -3,6 +3,11 @@ import path from 'path';
 import passport from 'passport';
 import saml from 'passport-saml';
 import fs from 'fs';
+import bodyParser from 'body-parser';
+
+app.use(bodyParser.json({
+	limit : "100kb"
+}));
 
 let samlStrategy = new saml.Strategy(
 	{
@@ -38,7 +43,6 @@ api.get('/Shibboleth.sso/Metadata',
 api.post('/login/callback',
   passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
   function(req, res) {
-		console.log(req.isAuthenticated);
     res.redirect('/');
   }
 );
