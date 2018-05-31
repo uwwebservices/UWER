@@ -5,10 +5,6 @@ import saml from 'passport-saml';
 import fs from 'fs';
 import bodyParser from 'body-parser';
 
-app.use(bodyParser.json({
-	limit : "100kb"
-}));
-
 let samlStrategy = new saml.Strategy(
 	{
     callbackUrl: 'https://idcard-poc-staging.herokuapp.com/login/callback',
@@ -28,6 +24,9 @@ passport.use(samlStrategy);
 
 
 let api = Router();
+api.use(bodyParser.json({
+	limit : "100kb"
+}));
 
 api.get('/test',
  passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), function(req, res) {
