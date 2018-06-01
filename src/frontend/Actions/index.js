@@ -115,7 +115,9 @@ export const InitApp = () => {
 
 export const FetchToken = () => {
   return async dispatch => {
-    let res = await fetch('/api/token');
+    let res = await fetch('/api/token', {
+      credentials: 'include'
+    });
     let token = await res.json();
     console.log("Token!", token);
   }
