@@ -39,7 +39,7 @@ let samlStrategy = new saml.Strategy(
   function(profile, done) {
 		console.log("OMG PROFILE", profile);
 		return done(null, {
-			email: profile.email
+			UWNetID: profile.nameID
 		})
 	});
 
