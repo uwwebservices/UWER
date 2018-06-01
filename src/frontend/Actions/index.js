@@ -31,7 +31,9 @@ const RemoveUser = user => { return { type: REMOVE_USER, user }};
 export const LoadConfig = () => {
   return async dispatch => {
     dispatch(await RequestConfig());
-    let res = await fetch('/api/config');
+    let res = await fetch('/api/config', {
+      credentials: 'include'
+    });
     let json = await res.json();
     await dispatch(await ConfigLoaded(json));
     return await dispatch(LoadGroupName(json.groupNameBase+json.groupNameLeaf));
@@ -57,7 +59,7 @@ export const LoadGroupName = group => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST"});
+    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: include });
   }
 }
 
@@ -65,7 +67,9 @@ export const LoadSubgroups = groupName => {
   return async dispatch => {
     await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
-    let res = await fetch(`/api/subgroups/${groupNameBase}`);
+    let res = await fetch(`/api/subgroups/${groupNameBase}`{
+      credentials: 'include'
+    });
     let subgroups = await res.json();
     return await dispatch(ReceiveSubgroups(subgroups));
   }
@@ -81,7 +85,9 @@ export const DestroySubgroup = group => {
 export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
-    let res = await fetch(`/api/members/${group}`);
+    let res = await fetch(`/api/members/${group}`{
+      credentials: 'include'
+    });
     let users = await res.json();
     return await dispatch(ReceiveUsers(users));
   }
@@ -89,7 +95,7 @@ export const LoadUsers = group => {
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
-    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT' });
+    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: include });
     let user = await res.json();
     return await dispatch(UpdateUsers(user))
   }
@@ -97,7 +103,7 @@ export const AddUser = (group, identifier) => {
 
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
-    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE' })
+    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE', credentials: include })
     return await dispatch(RemoveUser(identifier));
   }
 }
@@ -110,15 +116,5 @@ export const InitApp = () => {
     state = store.getState();
     !state.users.length && await dispatch(LoadUsers(state.groupName));
     !state.subgroups.length && await dispatch(LoadSubgroups(state.groupName));
-  }
-}
-
-export const FetchToken = () => {
-  return async dispatch => {
-    let res = await fetch('/api/token', {
-      credentials: 'include'
-    });
-    let token = await res.json();
-    console.log("Token!", token);
   }
 }

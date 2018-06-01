@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import Form from 'Components/Form';
 import Members from 'Components/Members';
 import { connect } from 'react-redux';
-import { InitApp, LoadUsers, AddUser, LoadGroupName, DeleteUser, FetchToken } from '../Actions';
+import { InitApp, LoadUsers, AddUser, LoadGroupName, DeleteUser } from '../Actions';
 
 class Register extends Component {
     async componentDidMount() {
         await this.props.initApp();
     }
     redirect() {
-        window.location = '/login';
+        // redirect to login page example
+        // window.location = '/login?returnUrl=/my/return/page';
+        window.location = "/login";
     }
     render() {
         return (
@@ -35,8 +37,7 @@ const mapStateToProps = state => ({
         addUser: async (group, user) => await dispatch(AddUser(group, user)),
         loadGroupName: async () => await dispatch(LoadGroupName()),
         removeUser: async (group, user) => await dispatch(DeleteUser(group, user)),
-        initApp: async () => await dispatch(InitApp()),
-        fetchToken: async () => await dispatch(FetchToken())
+        initApp: async () => await dispatch(InitApp())
      }
  }
  
