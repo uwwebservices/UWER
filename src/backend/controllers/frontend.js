@@ -46,6 +46,10 @@ if(process.env.NODE_ENV === 'development') {
 		reload: true
 	}))
 	app.get('*', (req, res, next) => {
+		console.log("req.user", req.user);
+		console.log("req.session", req.session);
+		console.log("req.session.passport", req.session.passport);
+		
 		var filename = path.join(compiler.outputPath,'index.html');
 		compiler.outputFileSystem.readFile(filename, function(err, result){
 			if (err) {
