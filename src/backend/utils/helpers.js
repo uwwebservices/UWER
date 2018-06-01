@@ -1,10 +1,11 @@
 export function ensureAuth(adminOnly = false) {
 	return function (req, res, next) {
 		if (req.isAuthenticated() || process.env.NODE_ENV === 'development') {
-			console.log("Authorized");
+			console.log("Authenticated");
 			return next();
 		}
 		else {
+			console.log("Not Authenticated");
 			if (req.session) {
 				req.session.authRedirectUrl = req.originalUrl;
 			}
