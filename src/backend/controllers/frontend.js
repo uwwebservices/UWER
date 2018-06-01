@@ -5,23 +5,39 @@ import fs from 'fs';
 
 let app = Router();
 
-function checkAuth(req,res,next) {
-	if(req.isAuthenticated()) {
-		next();
-	} else {
-		res.redirect("/login");
-	}
-}
+function ensureAuth(loginUrl="/login") {
+	return function(req, res, next) {
+			if (req.isAuthenticated())
+					return next();
+			else {
+					if (req.session) {
+							req.session.authRedirectUrl = req.originalUrl;
+					}
+					else {
+							console.warn('passport-uwshib: No session property on request! Is your session store unreachable?');
+					}
+					res.redirect(loginUrl);
+			}
+	};
+};
 
-app.get('/test', checkAuth, function(req, res) {
+function backToUrl(url = "/") {
+	return function(req, res) {
+			if (req.session) {
+					url = req.session.authRedirectUrl;
+					delete req.session.authRedirectUrl;
+			}
+			res.redirect(url);
+	};
+};
+
+app.get('/test', ensureAuth(), function(req, res) {
 	res.send("you must be authenticated to reach this page, welcome: " + req.user.DisplayName + "!");
 });
 
 app.get('/login', 
 	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
-	function(req, res) {
-		res.redirect('/');
-	}
+	backToUrl()
 ); 
 
 app.get('/Shibboleth.sso/Metadata', 
@@ -31,10 +47,8 @@ app.get('/Shibboleth.sso/Metadata',
   }
 );
 app.post('/login/callback',
-  passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
-  function(req, res) {
-    res.redirect('/');
-  }
+	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+	backToUrl()
 );
 
 if(process.env.NODE_ENV === 'development') {
