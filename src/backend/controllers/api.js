@@ -8,7 +8,7 @@ import {ensureAuth} from '../utils/helpers';
 
 let api = Router();
 
-api.get('/token', ensureAuth(), (req, res) => {
+api.get('/token', (req, res) => {
 	if(req.isAuthenticated()) {
 		res.json({token: 'this is a token!'});
 	} else {
