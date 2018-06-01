@@ -2,44 +2,16 @@ import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
 import fs from 'fs';
+import { ensureAuth, backToUrl } from '../utils/helpers';
 
 let app = Router();
 
-function ensureAuth(loginUrl="/login") {
-	return function(req, res, next) {
-			if (req.isAuthenticated())
-					return next();
-			else {
-					if (req.session) {
-							req.session.authRedirectUrl = req.originalUrl;
-					}
-					else {
-							console.warn('passport-uwshib: No session property on request! Is your session store unreachable?');
-					}
-					res.redirect(loginUrl);
-			}
-	};
-};
+let admins = ["ccan"];
 
-function backToUrl(url = "/") {
-	return function(req, res) {
-			if (req.session) {
-					url = req.session.authRedirectUrl;
-					delete req.session.authRedirectUrl;
-			}
-			res.redirect(url);
-	};
-};
-
-app.get('/test', ensureAuth(), function(req, res) {
-	res.send("you must be authenticated to reach this page, welcome: " + req.user.DisplayName + "!");
-});
-
+// Shibboleth Routes
 app.get('/login', 
-	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
-	backToUrl()
+	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true })
 ); 
-
 app.get('/Shibboleth.sso/Metadata', 
   function(req, res) {
     res.type('application/xml');
@@ -85,12 +57,12 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 if(process.env.NODE_ENV === 'production') {
-	app.get(['/', '/config'], (req, res) => {
-		console.log("req.user", req.user);
-		console.log("req.session", req.session);
-		console.log("req.session.passport", req.session.passport);
+	app.get('/', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
- });
+	});
+	app.get('/config', ensureAuth(), (req, res) => {
+		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
+	});
 }
 
 export default app;

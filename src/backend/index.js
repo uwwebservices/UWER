@@ -9,15 +9,15 @@ import config from 'config/config.json';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
-import saml from 'passport-saml';
+import uwSamlStrategy from './utils/uwSamlStrategy.js'
 
 let app = express();
-// static files
 if(process.env.NODE_ENV === 'production') {
 	app.use("/assets", express.static('dist/assets'))
 }
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
+// need to make cookies secure for production?
 app.use(session({ 
 	secret: 'ewsr0x', 
 	resave: true, 
@@ -27,46 +27,20 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// logger
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+passport.use(uwSamlStrategy);
+
 app.use(morgan('dev'));
 
 app.use(cors({
+	origin: true,
 	exposedHeaders: ["Link"]
 }));
 
-let samlStrategy = new saml.Strategy(
-	{
-		callbackUrl: 'https://idcard-poc-staging.herokuapp.com/login/callback',
-		entryPoint: 'https://idp.u.washington.edu/idp/profile/SAML2/Redirect/SSO',
-		issuer: 'http://ccan.cac.washington.edu/idcard',
-		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
-	},
-	function(profile, done) {
-		console.log("OMG PROFILE", profile);
-		return done(null, {
-			UWNetID: profile.nameID,
-			DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
-		})
-});
-
-passport.serializeUser(function(user, done) {
-	console.log("SERIALIZE USER", user);
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-	console.log("DESERIALIZE USER", user);
-  done(null, user);
-});
-
-passport.use(samlStrategy);
-
 app.server = http.createServer(app);
 
-// api router
 app.use('/api', api);
-
-// frontend
 app.use(['/','/config'], frontend);
 
 app.server.listen(process.env.PORT || config.port || 1111, () => {
