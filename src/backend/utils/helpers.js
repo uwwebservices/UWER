@@ -7,6 +7,7 @@ export function ensureAuth(adminOnly = false) {
 		else {
 			console.log("Not Authenticated");
 			if (req.session) {
+				console.log('orig url', req.originalUrl)
 				req.session.authRedirectUrl = req.originalUrl;
 			}
 			else {
@@ -20,9 +21,17 @@ export function ensureAuth(adminOnly = false) {
 export function backToUrl(url = "/") {
 	return function (req, res) {
 		if (req.session) {
-			url = req.session.authRedirectUrl;
+			url = req.session.authRedirectUrl || req.params.returnUrl || "/";
 			delete req.session.authRedirectUrl;
 		}
 		res.redirect(url);
 	};
 };
+
+export function ensureAPIAuth(req, res, next) {
+	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
+		return next();
+	} else {
+		res.json({"error": "Not Authenticated"});
+	}
+}

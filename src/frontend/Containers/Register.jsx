@@ -8,6 +8,9 @@ class Register extends Component {
     async componentDidMount() {
         await this.props.initApp();
     }
+    redirect() {
+        window.location = '/login?returnUrl=/blah';
+    }
     render() {
         return (
             <div>
@@ -15,7 +18,7 @@ class Register extends Component {
                   <h1>Event Registration</h1>                  
                   <Form addUser={this.props.addUser} group={this.props.groupName} />
                   <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} />
-                  <button onClick={() => this.props.fetchToken()}>Fetch Token</button>
+                  <button onClick={() => this.redirect()}>Fetch Token</button>
           </div>
         )
     }
