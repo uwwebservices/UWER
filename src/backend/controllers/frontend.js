@@ -1,27 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import saml from 'passport-saml';
 import fs from 'fs';
-//import bodyParser from 'body-parser';
-
-let samlStrategy = new saml.Strategy(
-	{
-    callbackUrl: 'https://idcard-poc-staging.herokuapp.com/login/callback',
-    entryPoint: 'https://idp.u.washington.edu/idp/profile/SAML2/Redirect/SSO',
-		issuer: 'http://ccan.cac.washington.edu/idcard',
-		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
-  },
-  function(profile, done) {
-		console.log("OMG PROFILE", profile);
-		return done(null, {
-			email: profile.email
-		})
-	});
-
-passport.use(samlStrategy);
-
-
 
 let app = Router();
 
@@ -81,6 +61,5 @@ if(process.env.NODE_ENV === 'production') {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
  });
 }
-
 
 export default app;
