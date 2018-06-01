@@ -18,11 +18,14 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
 // need to make cookies secure for production?
 app.use(session({ 
-	secret: 'ewsr0x', 
+	secret: process.env.SessionKey || "devlopment", 
 	resave: true, 
 	saveUnitialized: true,
 	cookie: { secure: false, maxAge: (4*60*60*1000)}
 }));
+if(process.env.SessionKey === "development") {
+	console.error("Session is not secured, SessionKey environment variable must be set.");
+}
 app.use(passport.initialize());
 app.use(passport.session());
 

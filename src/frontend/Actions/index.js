@@ -112,3 +112,11 @@ export const InitApp = () => {
     !state.subgroups.length && await dispatch(LoadSubgroups(state.groupName));
   }
 }
+
+export const FetchToken = () => {
+  return async dispatch => {
+    let res = await fetch('/api/token');
+    let token = await res.json();
+    console.log("Token!", token);
+  }
+}

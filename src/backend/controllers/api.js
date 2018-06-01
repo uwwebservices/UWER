@@ -4,8 +4,17 @@ import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import csv from 'csv-express';
 import config from 'config/config.json';
+import {ensureAuth} from '../utils/helpers';
 
 let api = Router();
+
+api.get('/token', ensureAuth(), (req, res) => {
+	if(req.isAuthenticated()) {
+		res.json({token: 'this is a token!'});
+	} else {
+		res.json({token: 'not authorized'});
+	}
+});
 
 api.get('/members/:group', async (req, res) => {
 		let result = await Groups.GetMembers(req.params.group);
