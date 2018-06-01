@@ -5,12 +5,24 @@ import fs from 'fs';
 
 let app = Router();
 
-app.get('/test',
- passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), function(req, res) {
-	 console.log("TEST USER", req.user);
-	 console.log("TEST SESSION", req.session);
-	res.send("you must be authenticated to reach this page.");
+function checkAuth(req,res,next) {
+	if(req.isAuthenticated()) {
+		next();
+	} else {
+		res.redirect("/login");
+	}
+}
+
+app.get('/test', checkAuth, function(req, res) {
+	res.send("you must be authenticated to reach this page, welcome: " + req.user.DisplayName + "!");
 });
+
+app.get('/login', 
+	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+	function(req, res) {
+		res.redirect('/');
+	}
+); 
 
 app.get('/Shibboleth.sso/Metadata', 
   function(req, res) {
