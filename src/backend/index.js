@@ -50,7 +50,7 @@ let samlStrategy = new saml.Strategy(
 
 passport.serializeUser(function(user, done) {
 	console.log("SERIALIZE USER", user);
-  done(null, user.nameID);
+  done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
