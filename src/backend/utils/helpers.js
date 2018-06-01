@@ -7,7 +7,6 @@ export function ensureAuth(adminOnly = false) {
 		else {
 			console.log("Not Authenticated");
 			if (req.session) {
-				console.log('orig url', req.originalUrl)
 				req.session.authRedirectUrl = req.originalUrl;
 			}
 			else {
@@ -21,7 +20,7 @@ export function ensureAuth(adminOnly = false) {
 export function backToUrl(url = "/") {
 	return function (req, res) {
 		if (req.session) {
-			url = req.session.authRedirectUrl || req.params.returnUrl || "/";
+			url = req.session.authRedirectUrl;
 			delete req.session.authRedirectUrl;
 		}
 		res.redirect(url);

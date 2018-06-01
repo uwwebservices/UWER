@@ -10,6 +10,10 @@ let admins = ["ccan"];
 
 // Shibboleth Routes
 app.get('/login', 
+	function(req, res, next) {
+		req.session.authRedirectUrl = req.query.returnUrl;
+		next();
+	},
 	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true })
 ); 
 app.get('/Shibboleth.sso/Metadata', 
