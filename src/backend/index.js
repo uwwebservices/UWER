@@ -19,9 +19,11 @@ app.use(cors({
 	exposedHeaders: ["Link"]
 }));
 
-app.use(bodyParser.json({
-	limit : "100kb"
-}));
+app.use(bodyParser.urlencoded({extended: false}));
+
+// app.use(bodyParser.json({
+// 	limit : "100kb"
+// }));
 
 // api router
 app.use('/api', api);

@@ -3,7 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import saml from 'passport-saml';
 import fs from 'fs';
-import bodyParser from 'body-parser';
+//import bodyParser from 'body-parser';
 
 let samlStrategy = new saml.Strategy(
 	{
@@ -23,23 +23,20 @@ passport.use(samlStrategy);
 
 
 
-let api = Router();
-api.use(bodyParser.json({
-	limit : "100kb"
-}));
+let app = Router();
 
-api.get('/test',
+app.get('/test',
  passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), function(req, res) {
 	res.send("you must be authenticated to reach this page.");
 });
 
-api.get('/Shibboleth.sso/Metadata', 
+app.get('/Shibboleth.sso/Metadata', 
   function(req, res) {
     res.type('application/xml');
     res.status(200).send(samlStrategy.generateServiceProviderMetadata());
   }
 );
-api.post('/login/callback',
+app.post('/login/callback',
   passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
   function(req, res) {
     res.redirect('/');
@@ -53,7 +50,7 @@ if(process.env.NODE_ENV === 'development') {
 	const webpackConfig = require('../../../webpack.dev.config');
 	let compiler = webpack(webpackConfig);
 	
-	api.use(webpackDevMiddleware(compiler, {
+	app.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackConfig.output.publicPath,
 		stats: {colors: true},
 		watchOptions: {
@@ -62,11 +59,11 @@ if(process.env.NODE_ENV === 'development') {
 			]
 		}
 	}))
-	api.use(webpackHotMiddleware(compiler, {
+	app.use(webpackHotMiddleware(compiler, {
 		log: console.log,
 		reload: true
 	}))
-	api.get('*', (req, res, next) => {
+	app.get('*', (req, res, next) => {
 		var filename = path.join(compiler.outputPath,'index.html');
 		compiler.outputFileSystem.readFile(filename, function(err, result){
 			if (err) {
@@ -80,10 +77,10 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 if(process.env.NODE_ENV === 'production') {
-	api.get(['/', '/config'], (req, res) => {
+	app.get(['/', '/config'], (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
  });
 }
 
 
-export default api;
+export default app;
