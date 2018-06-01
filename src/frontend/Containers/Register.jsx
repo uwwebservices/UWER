@@ -9,7 +9,7 @@ class Register extends Component {
         await this.props.initApp();
     }
     redirect() {
-        window.location = '/login?returnUrl=/blah';
+        window.location = '/login';
     }
     render() {
         return (

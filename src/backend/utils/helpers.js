@@ -23,7 +23,7 @@ export function backToUrl(url = "/") {
 			url = req.session.authRedirectUrl;
 			delete req.session.authRedirectUrl;
 		}
-		res.redirect(url);
+		res.redirect(url || "/");
 	};
 };
 
