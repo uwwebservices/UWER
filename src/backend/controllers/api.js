@@ -4,7 +4,6 @@ import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import csv from 'csv-express';
 import config from 'config/config.json';
-import { ensureAuth } from '../utils/helpers';
 
 let api = Router();
 
@@ -30,7 +29,7 @@ api.put('/members/:group/:identifier', async (req, res) => {
 	return res.status(result.Status).json(user);
 });
 
-api.delete('/members/:group/member/:identifier', ensureAuth(), async (req, res) => {
+api.delete('/members/:group/member/:identifier', async (req, res) => {
 	let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
 	return res.status(result.Status).json(result.Payload);
 });
@@ -40,18 +39,18 @@ api.get('/subgroups/:group', async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.delete('/subgroups/:group', ensureAuth(), async (req, res) => {
+api.delete('/subgroups/:group', async (req, res) => {
 	let result = await Groups.DeleteGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.post('/subgroups/:group', ensureAuth(), async (req, res) => {
+api.post('/subgroups/:group', async (req, res) => {
 	let result = await Groups.CreateGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-
-api.get('/config', ensureAuth(), (req, res) => {
+api.get('/config', (req, res) => {
+	console.log("Session", req.session);
 	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
 	let filteredConfig = Object.keys(config)
 			.filter(key => whitelist.includes(key))
@@ -62,7 +61,7 @@ api.get('/config', ensureAuth(), (req, res) => {
 	res.status(200).json(filteredConfig);
 });
 
-api.get('/csv/:group.csv', ensureAuth(), async (req, res) => {
+api.get('/csv/:group.csv', async (req, res) => {
 	let members = await Groups.GetMembers(req.params.group);
 	let csvWhitelist = ["DisplayName", "UWNetID", "UWRegID"];
 	let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
