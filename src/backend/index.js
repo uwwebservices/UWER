@@ -47,8 +47,8 @@ let samlStrategy = new saml.Strategy(
 passport.serializeUser(function(user, done) {
 	console.log("SERIALIZE USER", user);
   done(null, {
-		UWNetID: profile.nameID,
-		DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
+		UWNetID: user.nameID,
+		DisplayName: user["urn:oid:2.16.840.1.113730.3.1.241"]
 	});
 });
 
