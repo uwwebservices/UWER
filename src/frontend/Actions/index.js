@@ -67,7 +67,7 @@ export const LoadSubgroups = groupName => {
   return async dispatch => {
     await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
-    let res = await fetch(`/api/subgroups/${groupNameBase}`{
+    let res = await fetch(`/api/subgroups/${groupNameBase}`, {
       credentials: 'include'
     });
     let subgroups = await res.json();
@@ -85,7 +85,7 @@ export const DestroySubgroup = group => {
 export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
-    let res = await fetch(`/api/members/${group}`{
+    let res = await fetch(`/api/members/${group}`, {
       credentials: 'include'
     });
     let users = await res.json();
