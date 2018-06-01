@@ -44,7 +44,8 @@ let samlStrategy = new saml.Strategy(
 	function(profile, done) {
 		console.log("OMG PROFILE", profile);
 		return done(null, {
-			UWNetID: profile.nameID
+			UWNetID: profile.nameID,
+			DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
 		})
 });
 
