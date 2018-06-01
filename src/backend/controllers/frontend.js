@@ -7,7 +7,8 @@ let app = Router();
 
 app.get('/test',
  passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }), function(req, res) {
-	 console.log(req.user);
+	 console.log("TEST USER", req.user);
+	 console.log("TEST SESSION", req.session);
 	res.send("you must be authenticated to reach this page.");
 });
 

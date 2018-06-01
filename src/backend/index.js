@@ -18,7 +18,12 @@ if(process.env.NODE_ENV === 'production') {
 }
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(session({ secret: 'ewsr0x', resave: true, saveUnitialized: true}));
+app.use(session({ 
+	secret: 'ewsr0x', 
+	resave: true, 
+	saveUnitialized: true,
+	cookie: { secure: false, maxAge: (4*60*60*1000)}
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
