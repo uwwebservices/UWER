@@ -120,14 +120,14 @@ export const CheckAuthentication = () => {
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-    !state.config && await dispatch(LoadConfig());
+    state.config && await dispatch(LoadConfig());
     !state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
 
     if(!state.authenticated) {
       dispatch(Authenticated((await dispatch(CheckAuthentication())).authenticated));
     }
-    !state.users.length && await dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && await dispatch(LoadSubgroups(state.groupName));
+    !state.users.length && state.groupName && await dispatch(LoadUsers(state.groupName));
+    !state.subgroups.length && state.groupName && await dispatch(LoadSubgroups(state.groupName));
   }
 }
