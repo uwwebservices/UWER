@@ -3,16 +3,16 @@ export function ensureAuth() {
 	return function (req, res, next) {
 		if (req.isAuthenticated()) {
 			console.log("Authenticated");
-			req.user.Shib = true;
 			return next();
 		} else if(process.env.NODE_ENV === 'development') {
 			console.log("Running in development mode - Auth Disabled");
-			req.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User', Shib: false };
+			req.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User' };
 		}
 		else {
 			console.log("Not Authenticated");
-			req.user = Object.assign({}, req.user || {}, { Shib: false });
 			if (req.session) {
+				console.log("originalUrl", req.originalUrl);
+				console.log("authRedirectUrl", req.session.authRedirectUrl);
 				req.session.authRedirectUrl = req.originalUrl;
 			}
 			else {
@@ -29,6 +29,7 @@ export function backToUrl(url = "/") {
 			url = req.session.authRedirectUrl;
 			delete req.session.authRedirectUrl;
 		}
+		console.log("Redirecting to:", url);
 		res.redirect(url || "/");
 	};
 };

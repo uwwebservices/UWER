@@ -11,7 +11,9 @@ let admins = ["ccan"];
 // Shibboleth Routes
 app.get('/login', 
 	function(req, res, next) {
-		req.session.authRedirectUrl = req.query.returnUrl;
+		console.log("req.query.returnUrl", req.query.returnUrl);
+		console.log("req.session.authRedirectUrl", req.session.authRedirectUrl);
+		req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
 		next();
 	},
 	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true })

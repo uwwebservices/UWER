@@ -50,7 +50,7 @@ api.post('/subgroups/:group', async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get('/config', (req, res) => {
+api.get('/config', ensureAPIAuth, (req, res) => {
 	console.log("REQUEST", req);
 	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
 	let filteredConfig = Object.keys(config)
