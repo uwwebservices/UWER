@@ -8,10 +8,6 @@ class Register extends Component {
     async componentDidMount() {
         await this.props.initApp();
     }
-    redirect() {
-        // example of how to redirect outside of react-router
-        window.location = "/login";
-    }
     render() {
         return (
             <div>

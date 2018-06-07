@@ -2,17 +2,14 @@
 export function ensureAuth() {
 	return function (req, res, next) {
 		if (req.isAuthenticated()) {
-			console.log("Authenticated");
 			return next();
 		} else if(process.env.NODE_ENV === 'development') {
 			console.log("Running in development mode - Auth Disabled");
 			req.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User' };
+			return next();
 		}
 		else {
-			console.log("Not Authenticated");
 			if (req.session) {
-				console.log("originalUrl", req.originalUrl);
-				console.log("authRedirectUrl", req.session.authRedirectUrl);
 				req.session.authRedirectUrl = req.originalUrl;
 			}
 			else {
@@ -29,7 +26,6 @@ export function backToUrl(url = "/") {
 			url = req.session.authRedirectUrl;
 			delete req.session.authRedirectUrl;
 		}
-		console.log("Redirecting to:", url);
 		res.redirect(url || "/");
 	};
 };
@@ -38,6 +34,6 @@ export function ensureAPIAuth(req, res, next) {
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
 		return next();
 	} else {
-		res.json({"error": "Not Authenticated"});
+		res.json({ "authenticated": false });
 	}
 }

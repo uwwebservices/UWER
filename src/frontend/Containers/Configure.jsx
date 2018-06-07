@@ -14,6 +14,9 @@ class Configure extends Component {
     }
     async componentDidMount() {
         await this.props.initApp();
+        if(!this.props.authenticated) {
+            window.location = "/login?returnUrl=/config";
+        }
         this.setState({groupName: this.props.groupName});
     }
     validateGroupName(groupName) {
@@ -91,7 +94,8 @@ class Configure extends Component {
 const mapStateToProps = state => ({
    groupName: state.groupName,
    config: state.config,
-   subgroups: state.subgroups
+   subgroups: state.subgroups,
+   authenticated: state.authenticated
 });
 const mapDispatchToProps = dispatch => {
     return {

@@ -7,7 +7,8 @@ import { RECEIVE_GROUP_NAME,
          RECEIVE_USERS,
          REQUEST_USERS,
          UPDATE_USERS,
-         REMOVE_USER
+         REMOVE_USER,
+         USER_AUTHENTICATION
         } from '../Constants';
 import store from '../Store';
 
@@ -23,6 +24,7 @@ const RequestUsers = () => { return { type: REQUEST_USERS }};
 const ReceiveUsers = users => { return { type: RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: REMOVE_USER, user }};
+const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, authenticated }};
 
 // -----------------------
 // Thunks - Async Actions
@@ -108,12 +110,23 @@ export const DeleteUser = (group, identifier) => {
   }
 }
 
+export const CheckAuthentication = () => {
+  return async dispatch => {
+    let res = await fetch('/api/checkAuth', { credentials: 'same-origin'});
+    return await res.json();
+  }
+}
+
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
     state.config && await dispatch(LoadConfig());
     state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
+
+    if(!state.authenticated) {
+      dispatch(Authenticated((await dispatch(CheckAuthentication())).authenticated));
+    }
     !state.users.length && await dispatch(LoadUsers(state.groupName));
     !state.subgroups.length && await dispatch(LoadSubgroups(state.groupName));
   }

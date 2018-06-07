@@ -15,7 +15,7 @@ api.get('/members/:group', async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.put('/members/:group/:identifier', async (req, res) => {
+api.put('/members/:group/:identifier', ensureAPIAuth, async (req, res) => {
 	let identifier = req.params.identifier;
 	let validCard = IDCard.ValidCard(identifier);
 
@@ -30,28 +30,31 @@ api.put('/members/:group/:identifier', async (req, res) => {
 	return res.status(result.Status).json(user);
 });
 
-api.delete('/members/:group/member/:identifier', async (req, res) => {
+api.delete('/members/:group/member/:identifier', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get('/subgroups/:group', async (req, res) => {
+api.get('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.SearchGroups(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.delete('/subgroups/:group', async (req, res) => {
+api.delete('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.DeleteGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.post('/subgroups/:group', async (req, res) => {
+api.post('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.CreateGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get('/config', ensureAPIAuth, (req, res) => {
-	console.log("REQUEST", req);
+api.get('/checkAuth', ensureAPIAuth, async (req, res) => {
+	res.json({ "authenticated": true });
+})
+
+api.get('/config', (req, res) => {
 	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
 	let filteredConfig = Object.keys(config)
 			.filter(key => whitelist.includes(key))

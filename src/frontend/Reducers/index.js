@@ -1,4 +1,4 @@
-import { RECEIVE_GROUP_NAME, RECEIVE_CONFIG, RECEIVE_SUBGROUPS, DELETE_SUBGROUP, RECEIVE_USERS, UPDATE_USERS, REMOVE_USER } from '../Constants';
+import { RECEIVE_GROUP_NAME, RECEIVE_CONFIG, RECEIVE_SUBGROUPS, DELETE_SUBGROUP, RECEIVE_USERS, UPDATE_USERS, REMOVE_USER, USER_AUTHENTICATION } from '../Constants';
 
 const initialState = {
   groupName: "",
@@ -26,6 +26,8 @@ export default (state = initialState, action) => {
     case REMOVE_USER:
       let users = state.users.filter(u => u.UWNetID !== action.user);
       return Object.assign({}, state, {users});
+    case USER_AUTHENTICATION:
+      return Object.assign({}, state, {authenticated: action.authenticated})
     default:
       return state;
   }
