@@ -32,7 +32,7 @@ export const LoadConfig = () => {
   return async dispatch => {
     dispatch(await RequestConfig());
     let res = await fetch('/api/config', {
-      credentials: 'include'
+      credentials: 'same-origin'
     });
     let json = await res.json();
     await dispatch(await ConfigLoaded(json));
@@ -59,7 +59,7 @@ export const LoadGroupName = group => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: 'include' });
+    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: 'same-origin' });
   }
 }
 
@@ -68,7 +68,7 @@ export const LoadSubgroups = groupName => {
     await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
     let res = await fetch(`/api/subgroups/${groupNameBase}`, {
-      credentials: 'include'
+      credentials: 'same-origin'
     });
     let subgroups = await res.json();
     return await dispatch(ReceiveSubgroups(subgroups));
@@ -86,7 +86,7 @@ export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
     let res = await fetch(`/api/members/${group}`, {
-      credentials: 'include'
+      credentials: 'same-origin'
     });
     let users = await res.json();
     return await dispatch(ReceiveUsers(users));
@@ -95,7 +95,7 @@ export const LoadUsers = group => {
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
-    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: 'include' });
+    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: 'same-origin' });
     let user = await res.json();
     return await dispatch(UpdateUsers(user))
   }
@@ -103,7 +103,7 @@ export const AddUser = (group, identifier) => {
 
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
-    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE', credentials: 'include' })
+    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE', credentials: 'same-origin' })
     return await dispatch(RemoveUser(identifier));
   }
 }

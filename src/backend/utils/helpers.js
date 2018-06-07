@@ -1,14 +1,17 @@
-export function ensureAuth(adminOnly = false) {
+// 
+export function ensureAuth() {
 	return function (req, res, next) {
 		if (req.isAuthenticated()) {
 			console.log("Authenticated");
+			req.user.Shib = true;
 			return next();
 		} else if(process.env.NODE_ENV === 'development') {
 			console.log("Running in development mode - Auth Disabled");
-			req.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User' };
+			req.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User', Shib: false };
 		}
 		else {
 			console.log("Not Authenticated");
+			req.user.Shib = false;
 			if (req.session) {
 				req.session.authRedirectUrl = req.originalUrl;
 			}
