@@ -5,8 +5,7 @@ import Footer from 'Components/Footer';
 const pages = [
     { isNavigable: true, path: "/", display: "Register" },
     { isNavigable: true, path: "/config", display: "Config"},
-    { isNavigable: false, path: "/api/register/memberlist.csv", display: "CSV"},
-    { isNavigable: true, path: "/test", display: "AuthTest" }
+    { isNavigable: false, path: "/api/register/memberlist.csv", display: "CSV"}
 ];
 
 export default class PageWrapper extends Component {

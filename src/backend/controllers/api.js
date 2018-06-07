@@ -8,14 +8,6 @@ import {ensureAuth} from '../utils/helpers';
 
 let api = Router();
 
-api.get('/token', (req, res) => {
-	if(req.isAuthenticated()) {
-		res.json({token: 'this is a token!'});
-	} else {
-		res.json({token: 'not authorized'});
-	}
-});
-
 api.get('/members/:group', async (req, res) => {
 		let result = await Groups.GetMembers(req.params.group);
 		let members = await PWS.GetMany(result.Payload);
