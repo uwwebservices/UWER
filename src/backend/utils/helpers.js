@@ -1,4 +1,4 @@
-// 
+// This will cover first load of pages but not SPA routing
 export function ensureAuth() {
 	return function (req, res, next) {
 		if (req.isAuthenticated()) {
@@ -11,7 +11,7 @@ export function ensureAuth() {
 		}
 		else {
 			console.log("Not Authenticated");
-			req.user.Shib = false;
+			req.user = Object.assign({}, req.user || {}, { Shib: false });
 			if (req.session) {
 				req.session.authRedirectUrl = req.originalUrl;
 			}
