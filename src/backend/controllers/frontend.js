@@ -47,7 +47,7 @@ if(process.env.NODE_ENV === 'development') {
 		log: console.log,
 		reload: true
 	}))
-	app.get('*', (req, res, next) => {
+	app.get('*', ensureAuth(), (req, res, next) => {
 		var filename = path.join(compiler.outputPath,'index.html');
 		compiler.outputFileSystem.readFile(filename, function(err, result){
 			if (err) {

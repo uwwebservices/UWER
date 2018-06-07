@@ -4,8 +4,8 @@ export function ensureAuth(adminOnly = false) {
 			console.log("Authenticated");
 			return next();
 		} else if(process.env.NODE_ENV === 'development') {
-			console.log("Development Mode - Auth Bypassed");
-			req.user = "Devlopment"; // I don't think this is right, but we want to set a default username or something
+			console.log("Running in development mode - Auth Disabled");
+			req.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User' };
 		}
 		else {
 			console.log("Not Authenticated");

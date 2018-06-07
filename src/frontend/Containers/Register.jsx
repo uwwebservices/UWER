@@ -9,8 +9,7 @@ class Register extends Component {
         await this.props.initApp();
     }
     redirect() {
-        // redirect to login page example
-        // window.location = '/login?returnUrl=/my/return/page';
+        // example of how to redirect outside of react-router
         window.location = "/login";
     }
     render() {
@@ -20,7 +19,6 @@ class Register extends Component {
                   <h1>Event Registration</h1>                  
                   <Form addUser={this.props.addUser} group={this.props.groupName} />
                   <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} />
-                  <button onClick={() => this.redirect()}>Fetch Token</button>
           </div>
         )
     }
