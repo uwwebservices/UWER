@@ -14,6 +14,7 @@ class Configure extends Component {
     }
     async componentDidMount() {
         await this.props.initApp();
+        console.log("Auth", this.props.authenticated)
         if(!this.props.authenticated) {
             window.location = "/login?returnUrl=/config";
         }
