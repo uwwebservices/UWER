@@ -99,7 +99,7 @@ export const AddUser = (group, identifier) => {
   return async dispatch => {
     let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: 'same-origin' });
     let user = await res.json();
-    return await dispatch(UpdateUsers(user))
+    return await dispatch(UpdateUsers(user));
   }
 }
 
@@ -120,8 +120,8 @@ export const CheckAuthentication = () => {
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-    state.config && await dispatch(LoadConfig());
-    state.groupName && await dispatch(LoadGroupName());
+    !state.config && await dispatch(LoadConfig());
+    !state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
 
     if(!state.authenticated) {
