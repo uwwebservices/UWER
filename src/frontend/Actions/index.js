@@ -59,7 +59,7 @@ export const LoadGroupName = group => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: include });
+    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: 'include' });
   }
 }
 
@@ -95,7 +95,7 @@ export const LoadUsers = group => {
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
-    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: include });
+    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: 'include' });
     let user = await res.json();
     return await dispatch(UpdateUsers(user))
   }
@@ -103,7 +103,7 @@ export const AddUser = (group, identifier) => {
 
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
-    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE', credentials: include })
+    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE', credentials: 'include' })
     return await dispatch(RemoveUser(identifier));
   }
 }
