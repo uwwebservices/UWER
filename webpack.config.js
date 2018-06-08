@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
@@ -76,9 +75,6 @@ module.exports = {
       template: './src/index.template.html',
       inject: 'body',
       filename: 'index.html'
-    }),
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname + '/hardsource/[confighash]/')
     })
   ],
   resolve: {
