@@ -23,7 +23,7 @@ export default class Test extends React.Component {
                     key={mem.UWNetID}>
                     <Avatar src={mem.Base64Image} />
                     <ListItemText primary={mem.UWNetID} secondary={mem.DisplayName} />
-                    <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>
+                    {this.props.authenticated && <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>}
                 </ListItem> 
             )
         })

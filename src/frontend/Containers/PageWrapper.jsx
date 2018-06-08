@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router'
+import { InitApp } from '../Actions';
 
 const pages = [
     { isNavigable: true, path: "/", display: "Register" },
@@ -9,12 +11,18 @@ const pages = [
 ];
 
 class PageWrapper extends Component {
+    async componentWillMount() {
+        this.props.initApp();
+    }
     render () {
         return (
             <div className="pageWrapper">
                 <Header pages={pages} />
                     <main>
-                        <div className="righted">{this.props.DisplayName && `Welcome ${this.props.DisplayName}`}</div>
+                        <div className="righted">
+                            <div>{this.props.DisplayName && `Welcome ${this.props.DisplayName}`}</div>
+                            <div>Group: {this.props.GroupNameBase && this.props.GroupName && this.props.GroupName.replace(this.props.GroupNameBase, "")}</div>
+                        </div>
                         {...this.props.children}
                     </main>
                 <Footer />
@@ -25,7 +33,14 @@ class PageWrapper extends Component {
 
 const mapStateToProps = state => ({
     UWNetID: state.auth.UWNetID,
-    DisplayName: state.auth.DisplayName
+    DisplayName: state.auth.DisplayName,
+    GroupName: state.groupName,
+    GroupNameBase: state.config.groupNameBase
  });
+ const mapDispatchToProps = dispatch => {
+    return {
+        initApp: async () => await dispatch(InitApp()),
+    }
+}
  
- export default connect(mapStateToProps)(PageWrapper);
+ export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PageWrapper));

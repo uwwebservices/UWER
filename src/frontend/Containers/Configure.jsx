@@ -5,7 +5,7 @@ import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup, CheckAuthentication } from '../Actions';
+import { UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup, CheckAuthentication } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -13,9 +13,7 @@ class Configure extends Component {
         this.state = { newSubgroup: "", message: "", loadingSubGroups: false };
     }
     async componentWillMount() {
-        await this.props.initApp();
         if(!this.props.authenticated) {
-            //await this.props.checkAuth();
             console.log(this.props.authenticated);
             if(!this.props.authenticated) {
                 window.location = "/login?returnUrl=/config";
@@ -108,7 +106,6 @@ const mapDispatchToProps = dispatch => {
         loadSubgroups: async groupName => await dispatch(LoadSubgroups(groupName)),
         loadGroupName: async () => await dispatch(LoadGroupName()),
         destroySubgroup: async subgroup => await dispatch(DestroySubgroup(subgroup)),
-        initApp: async () => await dispatch(InitApp()),
         loadUsers: async group => await dispatch(LoadUsers(group)),
         createGroup: async group => await dispatch(CreateGroup(group)),
         checkAuth: async () => await dispatch(CheckAuthentication())
