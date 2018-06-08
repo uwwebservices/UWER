@@ -121,6 +121,7 @@ export const CheckAuthentication = () => {
       dispatch(Authenticated(auth));
       dispatch(ReceiveAuth(user));
     } catch(ex) {
+      // this shouldn't really get hit, but just in case...
       dispatch(Authenticated(false));
       dispatch(ReceiveAuth({ UWNetID: "", DisplayName: "" }));
     }

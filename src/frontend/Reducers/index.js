@@ -2,7 +2,7 @@ import { RECEIVE_GROUP_NAME, RECEIVE_CONFIG, RECEIVE_SUBGROUPS, DELETE_SUBGROUP,
 
 const initialState = {
   authenticated: false,
-  auth: {UWNetID: "", DisplayName: ""},
+  auth: { UWNetID: "", DisplayName: "" },
   groupName: "",
   config: {},
   subgroups: [],

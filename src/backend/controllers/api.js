@@ -52,12 +52,14 @@ api.post('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 
 // Simple endpoint to verify user is authenticated
 api.get('/checkAuth', (req, res) => {
+	const defaultUser = { UWNetID: '', DisplayName: '' };
+	const devUser = { UWNetID: 'developer', DisplayName: 'Developer' };
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
-		return res.status(200).json({auth: req.user || req.session.user});
+		return res.status(200).json({auth: req.user || devUser});
 	} else {
 		// using 202 because 4xx throws a dumb error in the console,
 		// anything but 200 is fine for this use case
-		return res.sendStatus(202).json({auth: req.user || req.session.user});
+		return res.sendStatus(202).json({auth: req.user || defaultUser});
 	}
 });
 

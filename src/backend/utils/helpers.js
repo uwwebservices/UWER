@@ -5,7 +5,6 @@ export function ensureAuth() {
 			return next();
 		} else if(process.env.NODE_ENV === 'development') {
 			console.log("Running in development mode - Auth Disabled");
-			req.session.user = { UWNetID: 'DEVELOPMENT', DisplayName: 'Dev User' };
 			return next();
 		}
 		else {

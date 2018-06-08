@@ -10,7 +10,7 @@ import { UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers,
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", message: "", loadingSubGroups: false };
+        this.state = { newSubgroup: "", message: "", loadingSubGroups: false, loadingConfigPage: true };
     }
     async componentWillMount() {
         if(!this.props.authenticated) {
@@ -18,7 +18,6 @@ class Configure extends Component {
             if(!this.props.authenticated) {
                 window.location = "/login?returnUrl=/config";
             }
-            
         }
         this.setState({groupName: this.props.groupName});
     }

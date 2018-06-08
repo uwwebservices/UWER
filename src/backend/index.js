@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
 import config from 'config/config.json';
-import cookieParser from 'cookie-parser';
+import MemoryStore from 'memorystore';
 import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
@@ -14,15 +14,25 @@ let app = express();
 if(process.env.NODE_ENV === 'production') {
 	app.use("/assets", express.static('dist/assets'))
 }
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
-// need to make cookies secure for production?
-app.use(session({ 
-	secret: process.env.SessionKey || "devlopment", 
-	resave: true, 
+
+const memStore = MemoryStore(session);
+
+app.use(session({
+	store: new memStore({
+		checkPeriod: 86400000
+	}),
 	saveUninitialized: true,
-	cookie: { secure: false, maxAge: (4*60*60*1000)}
+	secret: process.env.SessionKey || "devlopment"
 }));
+
+// app.use(session({ 
+// 	secret: process.env.SessionKey || "devlopment", 
+// 	resave: true, 
+// 	saveUninitialized: true,
+// 	cookie: { secure: false, maxAge: (4*60*60*1000)}
+// }));
+
 if(process.env.SessionKey === "development") {
 	console.error("Session is not secured, SessionKey environment variable must be set.");
 }
