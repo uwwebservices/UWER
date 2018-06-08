@@ -52,7 +52,6 @@ api.post('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 
 // Simple endpoint to verify user is authenticated
 api.get('/checkAuth', ensureAPIAuth, async (req, res) => {
-	console.log("API ENSURED", req.user, req.session.user);
 	return res.status(200).json({auth: req.user || req.session.user});
 });
 

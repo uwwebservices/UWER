@@ -31,12 +31,9 @@ export function backToUrl(url = "/") {
 };
 
 export function ensureAPIAuth(req, res, next) {
-	console.log("ENSURING");
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
-		console.log("ENSURED");
 		return next();
 	} else {
-		console.log("NOENSURED");
 		res.sendStatus(401);
 	}
 }

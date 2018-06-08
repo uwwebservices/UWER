@@ -13,7 +13,6 @@ import store from './Store.js';
 class App extends React.Component {
     render () {
         return (
-            
             <Router>
                 <Provider store={store}>
                     <MuiThemeProvider theme={theme}>
@@ -26,7 +25,6 @@ class App extends React.Component {
                     </MuiThemeProvider>
                 </Provider>
             </Router>
-                
         )
     }
 }
