@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path');
 import config from 'config/config.json';
 
