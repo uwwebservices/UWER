@@ -9,4 +9,5 @@ export const RECEIVE_USERS = "RECEIVE_USERS";
 export const UPDATE_USERS = "UPDATE_USERS";
 export const REMOVE_USER = "REMOVE_USER";
 export const USER_AUTHENTICATION = "USER_AUTHENTICATION";
+export const RECEIVE_AUTH = "RECEIVE_AUTH";
 

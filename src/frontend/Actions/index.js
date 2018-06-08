@@ -8,7 +8,8 @@ import { RECEIVE_GROUP_NAME,
          REQUEST_USERS,
          UPDATE_USERS,
          REMOVE_USER,
-         USER_AUTHENTICATION
+         USER_AUTHENTICATION,
+         RECEIVE_AUTH
         } from '../Constants';
 import store from '../Store';
 
@@ -25,6 +26,7 @@ const ReceiveUsers = users => { return { type: RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: REMOVE_USER, user }};
 const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, authenticated }};
+const ReceiveAuth = auth => { return {type: RECEIVE_AUTH, auth}};
 
 // -----------------------
 // Thunks - Async Actions
@@ -112,7 +114,11 @@ export const DeleteUser = (group, identifier) => {
 
 export const CheckAuthentication = () => {
   return async dispatch => {
-    return (await fetch('/api/checkAuth', { credentials: "same-origin" })).status === 200;
+    let res = await fetch('/api/checkAuth', { credentials: "same-origin" });
+    let json = await res.json();
+    await dispatch(ReceiveAuth(json.auth));
+    console.log(json.auth);
+    return res.status === 200;
   }
 }
 

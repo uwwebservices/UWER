@@ -52,7 +52,7 @@ api.post('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 
 // Simple endpoint to verify user is authenticated
 api.get('/checkAuth', ensureAPIAuth, async (req, res) => {
-	res.sendStatus(200);
+	res.status(200).json({auth: req.user || req.session.user});
 });
 
 api.get('/config', (req, res) => {
