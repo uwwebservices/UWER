@@ -5,7 +5,7 @@ import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup } from '../Actions';
+import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup, CheckAuthentication } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
