@@ -119,18 +119,21 @@ export const CheckAuthentication = () => {
       res = await fetch('/api/checkAuth', { credentials: "same-origin" });
       user = await res.json();
       auth = res.status === 200;
+      console.log("should be valid", res.status, user)
     } catch(ex) {
       user = { UWNetID: "", DisplayName: "" };
       auth = false
     }
-    await dispatch(ReceiveAuth(user));
+    console.log("AUTH", auth);
+    dispatch(Authenticated(auth));
+    dispatch(ReceiveAuth(user));
     return auth;
   }
 }
 
 export const InitApp = () => {
   return async dispatch => {
-    dispatch(Authenticated((await dispatch(CheckAuthentication()))));
+    await dispatch(CheckAuthentication());
     let state = store.getState();
     state.config && await dispatch(LoadConfig());
     !state.groupName && await dispatch(LoadGroupName());
