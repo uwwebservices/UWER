@@ -118,7 +118,7 @@ export const CheckAuthentication = () => {
 
 export const InitApp = () => {
   return async dispatch => {
-    dispatch(Authenticated((await dispatch(CheckAuthentication()))));
+    await dispatch(Authenticated((await dispatch(CheckAuthentication()))));
     let state = store.getState();
     state.config && await dispatch(LoadConfig());
     !state.groupName && await dispatch(LoadGroupName());
