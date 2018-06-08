@@ -113,19 +113,17 @@ export const DeleteUser = (group, identifier) => {
 }
 
 export const CheckAuthentication = () => {
-  return dispatch => {
-    fetch('/api/checkAuth', { credentials: "same-origin" })
-      .then((res) => {
-        res.json().then(user => {
-          dispatch(Authenticated(res.status === 200));
-          dispatch(ReceiveAuth(user));
-        });
-      }).catch(err => {
-        dispatch(Authenticated(false));
-        dispatch(ReceiveAuth({ UWNetID: "", DisplayName: "" }));
-      });
-
-    
+  return async dispatch => {
+    let auth = false, user = { UWNetID: "", DisplayName: "" };
+    try {
+      res = await fetch('/api/checkAuth', { credentials: "same-origin" });
+      user = await res.json();
+      auth = res.status === 200;
+    } catch(ex) {
+      // do nothing
+    }
+    dispatch(Authenticated(auth));
+    dispatch(ReceiveAuth(user));
   }
 }
 
