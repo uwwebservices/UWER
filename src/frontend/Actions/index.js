@@ -122,6 +122,7 @@ export const CheckAuthentication = () => {
     } catch(ex) {
       // do nothing
     }
+    console.log(auth, user);
     dispatch(Authenticated(auth));
     dispatch(ReceiveAuth(user));
   }
