@@ -37,6 +37,6 @@ export function ensureAPIAuth(req, res, next) {
 		return next();
 	} else {
 		console.log("NOENSURED");
-		res.status(401);
+		res.sendStatus(401);
 	}
 }
