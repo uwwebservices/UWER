@@ -34,6 +34,6 @@ export function ensureAPIAuth(req, res, next) {
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
 		return next();
 	} else {
-		res.json({ "authenticated": false });
+		res.sendStatus(401);
 	}
 }

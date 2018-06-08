@@ -12,9 +12,9 @@ class Configure extends Component {
         super(props);
         this.state = { newSubgroup: "", message: "", loadingSubGroups: false };
     }
-    async componentDidMount() {
+    async componentWillMount() {
         await this.props.initApp();
-        console.log("Auth", this.props.authenticated)
+        // This page requires auth, if not auth'd redirect to shib with a returnUrl
         if(!this.props.authenticated) {
             window.location = "/login?returnUrl=/config";
         }

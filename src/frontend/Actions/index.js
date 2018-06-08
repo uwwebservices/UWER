@@ -29,14 +29,21 @@ const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, auth
 // -----------------------
 // Thunks - Async Actions
 
+const APIRequestWithAuth = async (url, opts) => {
+  let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
+  let res = await fetch(url, body);
+  try {
+    return await res.json();
+  } catch(ex) {
+    return {};
+  }
+}
+
 // Load config file from API into store
 export const LoadConfig = () => {
   return async dispatch => {
     dispatch(await RequestConfig());
-    let res = await fetch('/api/config', {
-      credentials: 'same-origin'
-    });
-    let json = await res.json();
+    let json = await APIRequestWithAuth('/api/config');
     await dispatch(await ConfigLoaded(json));
     return await dispatch(LoadGroupName(json.groupNameBase+json.groupNameLeaf));
   }
@@ -69,17 +76,14 @@ export const LoadSubgroups = groupName => {
   return async dispatch => {
     await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
-    let res = await fetch(`/api/subgroups/${groupNameBase}`, {
-      credentials: 'same-origin'
-    });
-    let subgroups = await res.json();
+    let subgroups = await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`);
     return await dispatch(ReceiveSubgroups(subgroups));
   }
 }
 
 export const DestroySubgroup = group => {
   return async dispatch => {
-    await fetch(`/api/subgroups/${group}`, { method: "DELETE" });
+    await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "DELETE" });
     return await dispatch(DeleteSubgroup(group));
   }
 }
@@ -87,46 +91,38 @@ export const DestroySubgroup = group => {
 export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
-    let res = await fetch(`/api/members/${group}`, {
-      credentials: 'same-origin'
-    });
-    let users = await res.json();
+    let users = await APIRequestWithAuth(`/api/members/${group}`);
     return await dispatch(ReceiveUsers(users));
   }
 }
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
-    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT', credentials: 'same-origin' });
-    let user = await res.json();
+    let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`,  { method: 'PUT' });
     return await dispatch(UpdateUsers(user));
   }
 }
 
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
-    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE', credentials: 'same-origin' })
+    await APIRequestWithAuth(`/api/members/${group}/member/${identifier}`, { method: "DELETE" });
     return await dispatch(RemoveUser(identifier));
   }
 }
 
 export const CheckAuthentication = () => {
   return async dispatch => {
-    let res = await fetch('/api/checkAuth', { credentials: 'same-origin'});
-    return await res.json();
+    return (await fetch('/api/checkAuth')).status === 200;
   }
 }
 
 export const InitApp = () => {
   return async dispatch => {
+    dispatch(Authenticated((await dispatch(CheckAuthentication()))));
     let state = store.getState();
     state.config && await dispatch(LoadConfig());
     !state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
-
-    if(!state.authenticated) {
-      dispatch(Authenticated((await dispatch(CheckAuthentication())).authenticated));
-    }
     !state.users.length && state.groupName && await dispatch(LoadUsers(state.groupName));
     !state.subgroups.length && state.groupName && await dispatch(LoadSubgroups(state.groupName));
   }

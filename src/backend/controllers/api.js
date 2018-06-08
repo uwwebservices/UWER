@@ -50,9 +50,10 @@ api.post('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
+// Simple endpoint to verify user is authenticated
 api.get('/checkAuth', ensureAPIAuth, async (req, res) => {
-	res.json({ "authenticated": true });
-})
+	res.sendStatus(200);
+});
 
 api.get('/config', (req, res) => {
 	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
