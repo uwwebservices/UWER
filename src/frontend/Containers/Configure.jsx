@@ -22,7 +22,7 @@ class Configure extends Component {
             console.log(this.props.authenticated);
             if(!this.props.authenticated) {
                 console.log("still not authd, shib them");
-                //window.location = "/login?returnUrl=/config";
+                window.location = "/login?returnUrl=/config";
             }
             
         }
