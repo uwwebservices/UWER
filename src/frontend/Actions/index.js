@@ -112,7 +112,7 @@ export const DeleteUser = (group, identifier) => {
 
 export const CheckAuthentication = () => {
   return async dispatch => {
-    return (await fetch('/api/checkAuth'), { credentials: "same-origin" }).status === 200;
+    return (await fetch('/api/checkAuth', { credentials: "same-origin" })).status === 200;
   }
 }
 

@@ -8,7 +8,7 @@ import config from 'config/config.json';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
-import uwSamlStrategy from './utils/uwSamlStrategy.js'
+import saml from 'passport-saml';
 
 let app = express();
 if(process.env.NODE_ENV === 'production') {
@@ -31,6 +31,21 @@ app.use(passport.session());
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
+
+const uwSamlStrategy = new saml.Strategy(
+	{
+		callbackUrl: 'https://idcard-poc-staging.herokuapp.com/login/callback',
+		entryPoint: 'https://idp.u.washington.edu/idp/profile/SAML2/Redirect/SSO',
+		issuer: 'http://ccan.cac.washington.edu/idcard',
+		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+	},
+	function(profile, done) {
+		return done(null, {
+			UWNetID: profile.nameID,
+			DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
+		})
+});
+
 passport.use(uwSamlStrategy);
 
 app.use(morgan('dev'));
