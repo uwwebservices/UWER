@@ -117,7 +117,7 @@ export const CheckAuthentication = () => {
     let auth = false, user = { UWNetID: "", DisplayName: "" };
     try {
       res = await fetch('/api/checkAuth', { credentials: "same-origin" });
-      user = await res.json();
+      user = (await res.json()).auth;
       auth = res.status === 200;
     } catch(ex) {
       // do nothing
