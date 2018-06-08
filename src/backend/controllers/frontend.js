@@ -11,8 +11,6 @@ let admins = ["ccan"];
 // Shibboleth Routes
 app.get('/login', 
 	function(req, res, next) {
-		console.log("req.query.returnUrl", req.query.returnUrl);
-		console.log("req.session.authRedirectUrl", req.session.authRedirectUrl);
 		req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
 		next();
 	},
