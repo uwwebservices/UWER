@@ -14,10 +14,11 @@ class Configure extends Component {
     }
     async componentWillMount() {
         if(!this.props.authenticated) {
-            console.log(this.props.authenticated);
+            await this.props.checkAuth();
             if(!this.props.authenticated) {
                 window.location = "/login?returnUrl=/config";
             }
+            
         }
         this.setState({groupName: this.props.groupName});
     }
