@@ -5,7 +5,7 @@ import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup } from '../Actions'
+import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -15,8 +15,16 @@ class Configure extends Component {
     async componentWillMount() {
         await this.props.initApp();
         // This page requires auth, if not auth'd redirect to shib with a returnUrl
+        console.log("Authenticated?", this.props.authenticated);
         if(!this.props.authenticated) {
-            window.location = "/login?returnUrl=/config";
+            console.log("not auth'd, lets verify");
+            await this.props.checkAuth();
+            console.log(this.props.authenticated);
+            if(!this.props.authenticated) {
+                console.log("still not authd, shib them");
+                window.location = "/login?returnUrl=/config";
+            }
+            
         }
         this.setState({groupName: this.props.groupName});
     }
@@ -106,7 +114,8 @@ const mapDispatchToProps = dispatch => {
         destroySubgroup: async subgroup => await dispatch(DestroySubgroup(subgroup)),
         initApp: async () => await dispatch(InitApp()),
         loadUsers: async group => await dispatch(LoadUsers(group)),
-        createGroup: async group => await dispatch(CreateGroup(group))
+        createGroup: async group => await dispatch(CreateGroup(group)),
+        checkAuth: async () => await dispatch(CheckAuthentication())
     }
 }
 
