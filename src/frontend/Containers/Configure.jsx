@@ -18,7 +18,6 @@ class Configure extends Component {
             if(!this.props.authenticated) {
                 window.location = "/login?returnUrl=/config";
             }
-            
         }
         this.setState({groupName: this.props.groupName});
     }
