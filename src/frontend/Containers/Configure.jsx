@@ -14,14 +14,10 @@ class Configure extends Component {
     }
     async componentWillMount() {
         await this.props.initApp();
-        // This page requires auth, if not auth'd redirect to shib with a returnUrl
-        console.log("Authenticated?", this.props.authenticated);
         if(!this.props.authenticated) {
-            console.log("not auth'd, lets verify");
-            await this.props.checkAuth();
+            //await this.props.checkAuth();
             console.log(this.props.authenticated);
             if(!this.props.authenticated) {
-                console.log("still not authd, shib them");
                 window.location = "/login?returnUrl=/config";
             }
             
