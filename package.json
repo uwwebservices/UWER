@@ -1,6 +1,9 @@
 {
   "name": "idcard",
   "version": "0.1.0",
+  "engines": {
+    "npm": "5.7.1"
+  },
   "description": "UW WebServices Registration POC",
   "main": "dist",
   "scripts": {
