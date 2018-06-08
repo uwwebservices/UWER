@@ -59,7 +59,7 @@ api.get('/checkAuth', (req, res) => {
 	} else {
 		// using 202 because 4xx throws a dumb error in the console,
 		// anything but 200 is fine for this use case
-		return res.sendStatus(202).json({auth: req.user || defaultUser});
+		return res.status(202).json({defaultUser});
 	}
 });
 
