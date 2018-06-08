@@ -30,6 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/uwwebservices/idcard-webapp-poc.git"
   },
+  "cacheDirectories": ["node_modules", "hardsource"],
   "author": "UWWebServices <ews-team@uw.edu>",
   "license": "MIT",
   "dependencies": {

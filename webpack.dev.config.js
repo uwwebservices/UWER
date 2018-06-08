@@ -64,7 +64,9 @@ module.exports = {
       inject: 'body',
       filename: 'index.html'
     }),
-    new HardSourceWebpackPlugin()
+    new HardSourceWebpackPlugin({
+      cacheDirectory: path.resolve(__dirname + '/hardsource/[confighash]/')
+    })
   ],
   resolve: {
     modules: ['node_modules'],
