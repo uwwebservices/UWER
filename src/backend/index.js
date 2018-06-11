@@ -26,13 +26,6 @@ app.use(session({
 	secret: process.env.SessionKey || "devlopment"
 }));
 
-// app.use(session({ 
-// 	secret: process.env.SessionKey || "devlopment", 
-// 	resave: true, 
-// 	saveUninitialized: true,
-// 	cookie: { secure: false, maxAge: (4*60*60*1000)}
-// }));
-
 if(process.env.SessionKey === "development") {
 	console.error("Session is not secured, SessionKey environment variable must be set.");
 }
