@@ -8,7 +8,7 @@ class Register extends Component {
     render() {
         return (
             <div>
-                  <h1>Event Registration</h1>                  
+                  <h1>Event Registrations</h1>                  
                   <Form addUser={this.props.addUser} group={this.props.groupName} />
                   <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>
