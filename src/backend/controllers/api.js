@@ -4,6 +4,7 @@ import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import csv from 'csv-express';
 import config from 'config/config.json';
+import { ensureAPIAuth } from '../utils/helpers';
 
 let api = Router();
 
@@ -14,7 +15,7 @@ api.get('/members/:group', async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.put('/members/:group/:identifier', async (req, res) => {
+api.put('/members/:group/:identifier', ensureAPIAuth, async (req, res) => {
 	let identifier = req.params.identifier;
 	let validCard = IDCard.ValidCard(identifier);
 
@@ -29,26 +30,38 @@ api.put('/members/:group/:identifier', async (req, res) => {
 	return res.status(result.Status).json(user);
 });
 
-api.delete('/members/:group/member/:identifier', async (req, res) => {
+api.delete('/members/:group/member/:identifier', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get('/subgroups/:group', async (req, res) => {
+api.get('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.SearchGroups(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.delete('/subgroups/:group', async (req, res) => {
+api.delete('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.DeleteGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.post('/subgroups/:group', async (req, res) => {
+api.post('/subgroups/:group', ensureAPIAuth, async (req, res) => {
 	let result = await Groups.CreateGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
+// Simple endpoint to verify user is authenticated
+api.get('/checkAuth', (req, res) => {
+	const defaultUser = { UWNetID: '', DisplayName: '' };
+	const devUser = { UWNetID: 'developer', DisplayName: 'Developer' };
+	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
+		return res.status(200).json({auth: req.user || devUser});
+	} else {
+		// using 202 because 4xx throws a dumb error in the console,
+		// anything but 200 is fine for this use case
+		return res.status(202).json({auth: defaultUser});
+	}
+});
 
 api.get('/config', (req, res) => {
 	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];

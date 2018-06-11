@@ -5,15 +5,20 @@ import { Button } from 'material-ui';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { InitApp, UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup } from '../Actions'
+import { UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, LoadGroupName, CreateGroup, CheckAuthentication } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", message: "", loadingSubGroups: false };
+        this.state = { newSubgroup: "", message: "", loadingSubGroups: false, loadingConfigPage: true };
     }
-    async componentDidMount() {
-        await this.props.initApp();
+    async componentWillMount() {
+        if(!this.props.authenticated) {
+            await this.props.checkAuth();
+            if(!this.props.authenticated) {
+                window.location = "/login?returnUrl=/config";
+            }
+        }
         this.setState({groupName: this.props.groupName});
     }
     validateGroupName(groupName) {
@@ -91,7 +96,8 @@ class Configure extends Component {
 const mapStateToProps = state => ({
    groupName: state.groupName,
    config: state.config,
-   subgroups: state.subgroups
+   subgroups: state.subgroups,
+   authenticated: state.authenticated
 });
 const mapDispatchToProps = dispatch => {
     return {
@@ -99,9 +105,9 @@ const mapDispatchToProps = dispatch => {
         loadSubgroups: async groupName => await dispatch(LoadSubgroups(groupName)),
         loadGroupName: async () => await dispatch(LoadGroupName()),
         destroySubgroup: async subgroup => await dispatch(DestroySubgroup(subgroup)),
-        initApp: async () => await dispatch(InitApp()),
         loadUsers: async group => await dispatch(LoadUsers(group)),
-        createGroup: async group => await dispatch(CreateGroup(group))
+        createGroup: async group => await dispatch(CreateGroup(group)),
+        checkAuth: async () => await dispatch(CheckAuthentication())
     }
 }
 

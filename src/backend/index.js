@@ -1,37 +1,62 @@
 import http from 'http';
 import express from 'express';
-import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
 import config from 'config/config.json';
+import MemoryStore from 'memorystore';
+import session from 'express-session';
+import passport from 'passport';
+import saml from 'passport-saml';
 
 let app = express();
-app.server = http.createServer(app);
-
-// logger
-app.use(morgan('dev'));
-
-// 3rd party middleware
-app.use(cors({
-	exposedHeaders: ["Link"]
-}));
-
-app.use(bodyParser.json({
-	limit : "100kb"
-}));
-
-// api router
-app.use('/api', api);
-
-// frontend
-app.use(['/','/config'], frontend);
-
-// static files
 if(process.env.NODE_ENV === 'production') {
 	app.use("/assets", express.static('dist/assets'))
 }
+app.use(bodyParser.urlencoded({extended: false}));
+
+const memStore = MemoryStore(session);
+
+app.use(session({
+	store: new memStore({
+		checkPeriod: 86400000
+	}),
+	saveUninitialized: true,
+	secret: process.env.SessionKey || "devlopment"
+}));
+
+if(process.env.SessionKey === "development") {
+	console.error("Session is not secured, SessionKey environment variable must be set.");
+}
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+const uwSamlStrategy = new saml.Strategy(
+	{
+		callbackUrl: config.IdPCallbackUrl,
+		entryPoint: config.IdPEntryPoint,
+		issuer: config.IdPIssuer,
+		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+	},
+	function(profile, done) {
+		return done(null, {
+			UWNetID: profile.nameID,
+			DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
+		})
+});
+
+passport.use(uwSamlStrategy);
+
+app.use(morgan('dev'));
+
+app.server = http.createServer(app);
+
+app.use('/api', api);
+app.use(['/','/config'], frontend);
 
 app.server.listen(process.env.PORT || config.port || 1111, () => {
 	console.log(`Started on port ${app.server.address().port} in '${process.env.NODE_ENV}' environment.`);

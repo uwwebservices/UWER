@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "node"
+  - "8.10"
 before_script:
   - bash scripts/server_setup.sh
 cache:
