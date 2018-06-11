@@ -29,8 +29,14 @@ describe('Array', () => {
         it('config should have groupsSearchUrl', () => {
             config.should.have.property('groupsSearchUrl');
         });
-        it('config should have storeInGroupsWS', () => {
-            config.should.have.property('storeInGroupsWS');
+        it('config should have IdPCallbackUrl', () => {
+            config.should.have.property('IdPCallbackUrl');
+        });
+        it('config should have IdPEntryPoint', () => {
+            config.should.have.property('IdPEntryPoint');
+        });
+        it('config should have IdPIssuer', () => {
+            config.should.have.property('IdPIssuer');
         });
         it('config should have groupAdmins', () => {
             config.should.have.property('groupAdmins');
@@ -47,23 +53,5 @@ describe('Array', () => {
         it('config should have groupNameLeaf', () => {
             config.should.have.property('groupNameLeaf');
         });
-        it('config should have enableRegisterAPI', () => {
-            config.should.have.property('enableRegisterAPI');
-        });
-        it('config should have enableGroupsAPI', () => {
-            config.should.have.property('enableGroupsAPI');
-        });
-        it('config should have enablePWSAPI', () => {
-            config.should.have.property('enablePWSAPI');
-        });
-        it('config should have enableIDCardAPI', () => {
-            config.should.have.property('enableIDCardAPI');
-        });    
-        it('config should have enableConfigAPI', () => {
-            config.should.have.property('enableConfigAPI');
-        });
     });
 });
-
-
-

@@ -7,7 +7,9 @@ import { RECEIVE_GROUP_NAME,
          RECEIVE_USERS,
          REQUEST_USERS,
          UPDATE_USERS,
-         REMOVE_USER
+         REMOVE_USER,
+         USER_AUTHENTICATION,
+         RECEIVE_AUTH
         } from '../Constants';
 import store from '../Store';
 
@@ -23,16 +25,27 @@ const RequestUsers = () => { return { type: REQUEST_USERS }};
 const ReceiveUsers = users => { return { type: RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: REMOVE_USER, user }};
+const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, authenticated }};
+const ReceiveAuth = auth => { return {type: RECEIVE_AUTH, auth}};
 
 // -----------------------
 // Thunks - Async Actions
+
+const APIRequestWithAuth = async (url, opts) => {
+  let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
+  let res = await fetch(url, body);
+  try {
+    return await res.json();
+  } catch(ex) {
+    return {};
+  }
+}
 
 // Load config file from API into store
 export const LoadConfig = () => {
   return async dispatch => {
     dispatch(await RequestConfig());
-    let res = await fetch('/api/config');
-    let json = await res.json();
+    let json = await APIRequestWithAuth('/api/config');
     await dispatch(await ConfigLoaded(json));
     return await dispatch(LoadGroupName(json.groupNameBase+json.groupNameLeaf));
   }
@@ -57,7 +70,7 @@ export const LoadGroupName = group => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST"});
+    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: 'same-origin' });
   }
 }
 
@@ -65,15 +78,14 @@ export const LoadSubgroups = groupName => {
   return async dispatch => {
     await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
-    let res = await fetch(`/api/subgroups/${groupNameBase}`);
-    let subgroups = await res.json();
+    let subgroups = await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`);
     return await dispatch(ReceiveSubgroups(subgroups));
   }
 }
 
 export const DestroySubgroup = group => {
   return async dispatch => {
-    await fetch(`/api/subgroups/${group}`, { method: "DELETE" });
+    await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "DELETE" });
     return await dispatch(DeleteSubgroup(group));
   }
 }
@@ -81,34 +93,49 @@ export const DestroySubgroup = group => {
 export const LoadUsers = group => {
   return async dispatch => {
     await dispatch(RequestUsers());
-    let res = await fetch(`/api/members/${group}`);
-    let users = await res.json();
+    let users = await APIRequestWithAuth(`/api/members/${group}`);
     return await dispatch(ReceiveUsers(users));
   }
 }
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
-    let res = await fetch(`/api/members/${group}/${identifier}`, { method: 'PUT' });
-    let user = await res.json();
-    return await dispatch(UpdateUsers(user))
+    let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`,  { method: 'PUT' });
+    return await dispatch(UpdateUsers(user));
   }
 }
 
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
-    await fetch(`/api/members/${group}/member/${identifier}`, { method: 'DELETE' })
+    await APIRequestWithAuth(`/api/members/${group}/member/${identifier}`, { method: "DELETE" });
     return await dispatch(RemoveUser(identifier));
+  }
+}
+
+export const CheckAuthentication = () => {
+  return async dispatch => {
+    try {
+      let res = await fetch('/api/checkAuth', { credentials: "same-origin" });
+      let user = (await res.json()).auth;
+      let auth = res.status === 200;
+      dispatch(Authenticated(auth));
+      dispatch(ReceiveAuth(user));
+    } catch(ex) {
+      // this shouldn't really get hit, but just in case...
+      dispatch(Authenticated(false));
+      dispatch(ReceiveAuth({ UWNetID: "", DisplayName: "" }));
+    }
   }
 }
 
 export const InitApp = () => {
   return async dispatch => {
+    await dispatch(CheckAuthentication());
     let state = store.getState();
     state.config && await dispatch(LoadConfig());
-    state.groupName && await dispatch(LoadGroupName());
+    !state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
-    !state.users.length && await dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && await dispatch(LoadSubgroups(state.groupName));
+    !state.users.length && state.groupName && await dispatch(LoadUsers(state.groupName));
+    !state.subgroups.length && state.groupName && await dispatch(LoadSubgroups(state.groupName));
   }
 }

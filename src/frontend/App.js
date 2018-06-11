@@ -13,18 +13,18 @@ import store from './Store.js';
 class App extends React.Component {
     render () {
         return (
-            <Provider store={store}>
-                <MuiThemeProvider theme={theme}>
-                    <Router>
+            <Router>
+                <Provider store={store}>
+                    <MuiThemeProvider theme={theme}>
                         <PageWrapper>
                             <Switch>
                                 <Route path='/config' component={Configure} />
                                 <Route exact path='/' component={Register} />
                             </Switch>
                         </PageWrapper>
-                    </Router>
-                </MuiThemeProvider>
-            </Provider>
+                    </MuiThemeProvider>
+                </Provider>
+            </Router>
         )
     }
 }

@@ -1,7 +1,31 @@
 import { Router } from 'express';
 import path from 'path';
+import passport from 'passport';
+import fs from 'fs';
+import { ensureAuth, backToUrl } from '../utils/helpers';
 
-let api = Router();
+let app = Router();
+
+let admins = ["ccan"];
+
+// Shibboleth Routes
+app.get('/login', 
+	function(req, res, next) {
+		req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
+		next();
+	},
+	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true })
+); 
+app.get('/Shibboleth.sso/Metadata', 
+  function(req, res) {
+    res.type('application/xml');
+    res.status(200).send(samlStrategy.generateServiceProviderMetadata());
+  }
+);
+app.post('/login/callback',
+	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+	backToUrl()
+);
 
 if(process.env.NODE_ENV === 'development') {
 	const webpack = require('webpack');
@@ -10,7 +34,7 @@ if(process.env.NODE_ENV === 'development') {
 	const webpackConfig = require('../../../webpack.dev.config');
 	let compiler = webpack(webpackConfig);
 	
-	api.use(webpackDevMiddleware(compiler, {
+	app.use(webpackDevMiddleware(compiler, {
 		publicPath: webpackConfig.output.publicPath,
 		stats: {colors: true},
 		watchOptions: {
@@ -19,11 +43,11 @@ if(process.env.NODE_ENV === 'development') {
 			]
 		}
 	}))
-	api.use(webpackHotMiddleware(compiler, {
+	app.use(webpackHotMiddleware(compiler, {
 		log: console.log,
 		reload: true
 	}))
-	api.get('*', (req, res, next) => {
+	app.get('*', ensureAuth(), (req, res, next) => {
 		var filename = path.join(compiler.outputPath,'index.html');
 		compiler.outputFileSystem.readFile(filename, function(err, result){
 			if (err) {
@@ -36,11 +60,13 @@ if(process.env.NODE_ENV === 'development') {
 	});
 }
 
-if(process.env.NODE_ENV === 'production'){
-	api.get(['/', '/config'], (req, res) => {
+if(process.env.NODE_ENV === 'production') {
+	app.get('/', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
- });
+	});
+	app.get('/config', ensureAuth(), (req, res) => {
+		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
+	});
 }
 
-
-export default api;
+export default app;
