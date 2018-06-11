@@ -2,7 +2,13 @@ language: node_js
 node_js:
   - "8.10"
 before_script:
-  - bash scripts/server_setup.sh
+  - bash bin/server_setup.sh
 cache:
   directories:
     - "node_modules"
+sudo: required
+services:
+  - docker
+after_success:
+  - bin/docker_push.sh
+  - bin/ecs_deploy.sh
