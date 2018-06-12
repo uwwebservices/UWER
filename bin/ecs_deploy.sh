@@ -6,7 +6,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Deploying..."
     echo "Branch: $TRAVIS_BRANCH, TASK: $TASK_DEFINITION, Cluster: $CLUSTER, Service: $SERVICE, Image: $REMOTE_IMAGE_URL:latest"
     
-    bash ./bin/ecs-deploy.sh -c $CLUSTER -n $SERVICE -i $REMOTE_IMAGE_URL:latest --max-definitions 5 -v
+    bash ./bin/ecs-deploy.sh -c $CLUSTER -n $SERVICE -i $REMOTE_IMAGE_URL:latest --max-definitions 2 -v
   else
     echo "Skipping deploy because it's not an allowed branch"
   fi
