@@ -20,13 +20,6 @@ COPY . .
 # build the project
 RUN npm run build
 
-# ---- Test ----
-# run tests, image is not built if tests fail
-FROM dependencies AS test
-COPY . .
-RUN sh ./scripts/server_setup.sh
-RUN npm run test
-
 # ---- Release ----
 FROM base AS release
 # copy production node_modules
@@ -38,4 +31,4 @@ COPY --from=dependencies /www/scripts /www/scripts
 COPY --from=dependencies /www/config_base /www/config_base
 
 EXPOSE 1111
-CMD npm run prod
+CMD npm start

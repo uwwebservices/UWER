@@ -8,12 +8,10 @@
   "description": "UW WebServices Registration POC",
   "main": "dist",
   "scripts": {
-    "postinstall": "npm run -s clean && npm run -s build",
     "dev": "nodemon --config nodemon.json",
+    "prebuild": "rm -rf dist",
     "build": "cross-env NODE_ENV=production babel src/backend -s -D -d dist/backend && cross-env NODE_ENV=production webpack --config webpack.config.js",
-    "start": "sh bin/server_setup.sh && cross-env NODE_ENV=production node dist/backend",
-    "prod": "sh bin/server_setup.sh && cross-env NODE_ENV=production node dist/backend",
-    "clean": "rm -rf dist",
+    "start": "cross-env NODE_ENV=production node dist/backend",
     "test": "eslint src && cross-env NODE_ENV=test mocha --require babel-core/register test/*.js"
   },
   "eslintConfig": {
