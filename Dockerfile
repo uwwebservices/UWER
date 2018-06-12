@@ -24,7 +24,7 @@ RUN npm run build
 # run tests, image is not built if tests fail
 FROM dependencies AS test
 COPY . .
-RUN sh ./bin/server_setup.sh
+RUN sh ./scripts/server_setup.sh
 RUN npm run test
 
 # ---- Release ----
@@ -34,7 +34,7 @@ COPY --from=dependencies /www/prod_node_modules /www/node_modules
 
 # copy only the things we need for production
 COPY --from=dependencies /www/dist /www/dist
-COPY --from=dependencies /www/bin /www/bin
+COPY --from=dependencies /www/scripts /www/scripts
 COPY --from=dependencies /www/config_base /www/config_base
 
 EXPOSE 1111
