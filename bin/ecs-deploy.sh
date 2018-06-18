@@ -565,7 +565,7 @@ if [ "$BASH_SOURCE" == "$0" ]; then
 
     # Get current task definition
     getCurrentTaskDefinition
-    echo "Current task definition: $TASK_DEFINITION_ARN";
+    #echo "Current task definition: $TASK_DEFINITION_ARN";
 
     # create new task definition json
     createNewTaskDefJson
