@@ -37,7 +37,7 @@ passport.deserializeUser((user, done) => done(null, user));
 
 const uwSamlStrategy = new saml.Strategy(
 	{
-		callbackUrl: config.IdPCallbackUrl,
+		callbackUrl: process.env.idpCallbackUrl,
 		entryPoint: config.IdPEntryPoint,
 		issuer: config.IdPIssuer,
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
