@@ -1,6 +1,6 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 export default class Form extends React.Component {
     registerUser = async e => {

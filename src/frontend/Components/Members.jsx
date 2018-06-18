@@ -1,5 +1,9 @@
 import React from 'react';
-import {Avatar, List, ListItem, ListItemText, Button} from 'material-ui'
+import Avatar from '@material-ui/core/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';
 
 export default class Test extends React.Component {

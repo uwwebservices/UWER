@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ConfirmModal from 'Components/ConfirmModal';
 import FA from 'react-fontawesome';
 
-import { Button } from 'material-ui';
+import Button from '@material-ui/core/Button';
 
 export default class Configure extends Component {
     constructor(props) {
