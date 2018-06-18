@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Header from 'Components/Header';
-import Footer from 'Components/Footer';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router'
 import { InitApp } from '../Actions';
+import Header from 'Components/Header';
+import Footer from 'Components/Footer';
 
 const pages = [
     { isNavigable: true, path: "/", display: "Register" },
