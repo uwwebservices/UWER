@@ -264,13 +264,26 @@ function parseImageName() {
     fi
 }
 
-function getCurrentTaskDefinition() {
-    if [ $SERVICE != false ]; then
-      # Get current task definition name from service
-      TASK_DEFINITION_ARN=`$AWS_ECS describe-services --services $SERVICE --cluster $CLUSTER | jq -r .services[0].taskDefinition`
-      TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
-    fi
-}
+# function getCurrentTaskDefinition() {
+#     if [ $SERVICE != false ]; then
+#       # Get current task definition name from service
+#       TASK_DEFINITION_ARN=`$AWS_ECS describe-services --services $SERVICE --cluster $CLUSTER | jq -r .services[0].taskDefinition`
+#       TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
+#     fi
+# }
+ function getCurrentTaskDefinition() {
+     if [ $SERVICE != false ]; then
+-      # Get current task definition name from service
++      # Get current task definition arn from service
+       TASK_DEFINITION_ARN=`$AWS_ECS describe-services --services $SERVICE --cluster $CLUSTER | jq -r .services[0].taskDefinition`
+-      TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
++    elif [ $TASK_DEFINITION != false ]; then
++      # Get current task definition arn from family[:revision] (or arn)
++      TASK_DEFINITION_ARN=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION | jq -r .taskDefinition.taskDefinitionArn`
+     fi
++    TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
+ }
+
 
 function createNewTaskDefJson() {
     # Get a JSON representation of the current task definition
@@ -565,7 +578,7 @@ if [ "$BASH_SOURCE" == "$0" ]; then
 
     # Get current task definition
     getCurrentTaskDefinition
-    #echo "Current task definition: $TASK_DEFINITION_ARN";
+    echo "Current task definition: $TASK_DEFINITION_ARN";
 
     # create new task definition json
     createNewTaskDefJson
