@@ -39,7 +39,7 @@ const uwSamlStrategy = new saml.Strategy(
 	{
 		callbackUrl: process.env.idpCallbackUrl,
 		entryPoint: config.IdPEntryPoint,
-		issuer: config.IdPIssuer,
+		issuer: process.env.idpIssuer,
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 	},
 	function(profile, done) {

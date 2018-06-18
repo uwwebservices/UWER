@@ -29,14 +29,8 @@ describe('Array', () => {
         it('config should have groupsSearchUrl', () => {
             config.should.have.property('groupsSearchUrl');
         });
-        it('config should have IdPCallbackUrl', () => {
-            config.should.have.property('IdPCallbackUrl');
-        });
         it('config should have IdPEntryPoint', () => {
             config.should.have.property('IdPEntryPoint');
-        });
-        it('config should have IdPIssuer', () => {
-            config.should.have.property('IdPIssuer');
         });
         it('config should have groupAdmins', () => {
             config.should.have.property('groupAdmins');
