@@ -49,8 +49,6 @@ const uwSamlStrategy = new saml.Strategy(
 		})
 });
 
-console.log("SAML Strategy:", uwSamlStrategy);
-
 passport.use(uwSamlStrategy);
 
 app.use(morgan('dev'));
