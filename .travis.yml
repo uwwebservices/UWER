@@ -10,5 +10,5 @@ sudo: required
 services:
   - docker
 after_success:
-  - bin/docker-push.sh
-  - bin/ews-deploy.sh
+  - bash bin/docker-push.sh
+  - bash bin/ews-deploy.sh
