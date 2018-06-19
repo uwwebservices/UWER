@@ -62,7 +62,7 @@ const IDCard = {
         });
         try {
             let res = await rp(opts);
-            return `data:image/jpeg;base64,${new Buffer(res).toString('base64')}`;
+            return `data:image/jpeg;base64,${new Buffer.from(res).toString('base64')}`;
         } catch(ex) {
             return DefaultUser;
         }

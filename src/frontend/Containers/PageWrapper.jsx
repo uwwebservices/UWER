@@ -12,7 +12,7 @@ const pages = [
 
 class PageWrapper extends Component {
     async componentWillMount() {
-        this.props.initApp();
+        this.props.initApp(this.props.authenticated);
     }
     render () {
         return (
@@ -35,7 +35,8 @@ const mapStateToProps = state => ({
     UWNetID: state.auth.UWNetID,
     DisplayName: state.auth.DisplayName,
     GroupName: state.groupName,
-    GroupNameBase: state.config.groupNameBase
+    GroupNameBase: state.config.groupNameBase,
+    authenticated: state.authenticated
  });
  const mapDispatchToProps = dispatch => {
     return {

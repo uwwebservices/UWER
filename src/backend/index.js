@@ -23,6 +23,7 @@ app.use(session({
 		checkPeriod: 86400000
 	}),
 	saveUninitialized: true,
+	resave: false,
 	secret: process.env.SessionKey || "devlopment"
 }));
 
