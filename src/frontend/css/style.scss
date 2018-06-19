@@ -81,4 +81,26 @@ body {
     .buttonize {
         background-color: $uw-purple !important;
     }
+    .subgroupList {
+        margin-bottom: 20px;
+    }
+    .subgroupName {
+        display: inline-block;
+        width: 314px;
+    }
+    .subgroupItem {
+        display: block;
+        margin-top: 3px;
+    }
+    .subgroupButtons {
+        display: inline-block;
+        button {
+            width: 100px;
+            margin: 0 2px;
+        }
+    }
+    .newSubgroup {
+        width: 300px;
+        margin-right: 10px;
+    }
 }

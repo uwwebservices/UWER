@@ -25,7 +25,7 @@ const mapStateToProps = state => ({
  const mapDispatchToProps = dispatch => {
      return {
         loadUsers: async group => await dispatch(LoadUsers(group)),
-        addUser: async (group, user) => await dispatch(AddUser(group, user)),
+        addUser: (group, user) => dispatch(AddUser(group, user)),
         loadGroupName: async () => await dispatch(LoadGroupName()),
         removeUser: async (group, user) => await dispatch(DeleteUser(group, user))
      }

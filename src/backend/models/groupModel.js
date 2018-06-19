@@ -66,7 +66,7 @@ const Groups = {
     async CreateGroup(group) {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: `${config.groupsBaseUrl}/${group}`,
+            url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
             body: {
                 "data" : { 
                     "id": group, 
@@ -101,7 +101,7 @@ const Groups = {
     async DeleteGroup(group) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: `${config.groupsBaseUrl}/${group}`
+            url: `${config.groupsBaseUrl}/${group}?synchronized=true`
         });
         try {
             let res = await rp(opts);

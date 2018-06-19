@@ -12,7 +12,7 @@ const pages = [
 
 class PageWrapper extends Component {
     async componentWillMount() {
-        this.props.initApp(this.props.authenticated);
+        this.props.initApp();
     }
     render () {
         return (
@@ -40,7 +40,7 @@ const mapStateToProps = state => ({
  });
  const mapDispatchToProps = dispatch => {
     return {
-        initApp: async () => await dispatch(InitApp()),
+        initApp: () => dispatch(InitApp()),
     }
 }
  

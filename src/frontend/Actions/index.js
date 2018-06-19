@@ -128,7 +128,7 @@ export const CheckAuthentication = () => {
   }
 }
 
-export const InitApp = authenticated => {
+export const InitApp = () => {
   return async dispatch => {
     await dispatch(CheckAuthentication());
     let state = store.getState();
@@ -136,6 +136,6 @@ export const InitApp = authenticated => {
     !state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
     !state.users.length && state.groupName && await dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && state.groupName && authenticated && await dispatch(LoadSubgroups(state.groupName));
+    !state.subgroups.length && state.groupName && state.authenticated && await dispatch(LoadSubgroups(state.groupName));
   }
 }

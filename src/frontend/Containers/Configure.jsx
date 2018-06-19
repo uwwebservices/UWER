@@ -41,20 +41,24 @@ class Configure extends Component {
 
     deleteSubGroup = async subgroup => {
         await this.props.destroySubgroup(subgroup);
+        console.log("done");
     };
 
     handleChange = e => {
         this.setState({[e.target.name]: e.target.value});
     }
+    defaultSubgroup = (e) => {
+        if(!e.target.value) {
+            this.setState({newSubgroup: this.props.config.groupNameBase});
+        }
+    }
 
     createSubgroup = async () => {
         if(this.validateGroupName(this.state.newSubgroup)) {
             await this.props.createGroup(this.state.newSubgroup);
-            // ugh, this sucks, hopefully we can find a better solution
-            setTimeout(()=> {
-                this.props.loadSubgroups(this.props.groupName);
-                this.setState({"message": ""});
-            }, 2000)
+            this.props.loadSubgroups(this.props.groupName);
+            this.setState({"message": ""});
+            this.setState({newSubgroup: this.props.config.groupNameBase});
         }
     }
 
@@ -73,18 +77,22 @@ class Configure extends Component {
                         return <div key={k}>{k}: {this.props.config[k]}</div>
                     })
                 }
+                <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
-                <div>
-                    {
-                        this.props.subgroups.map(subgroups => {
-                            return <Subgroup key={subgroups.id} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
-                        })
-                    }
+                    <div>
+                        {
+                            this.props.subgroups.map(subgroups => {
+                                return <Subgroup key={subgroups.id} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
+                            })
+                        }
+                    </div>
                 </div>
                 <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
                 <input type="text" className="newSubgroup" 
                     name="newSubgroup"
                     onChange={this.handleChange}
+                    value={this.state.newSubgroup}
+                    onClick={this.defaultSubgroup}
                 />
                 <Button variant="raised" color="primary" type="submit" onClick={this.createSubgroup}>Create New Subgroup</Button>
                 <div>{this.state.message}</div>
