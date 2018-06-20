@@ -5,8 +5,6 @@ to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and ta
 can be returned as well as the UW group will have the member list or download a list as a CSV.  Verbose output from the API includes various user information as well as
 a base64 encoded image from their husky card.
 
-This project is also intended to be a reference on how to use various APIs, see src/backend/models for the various APIs as examples.
-
 ## Requirements
 - UWCA x509 certificate, authorized for IDCard/PWS/Groups
 - node.js and npm/yarn
