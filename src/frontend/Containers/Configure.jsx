@@ -109,13 +109,13 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => {
     return {
-        updateGroupName: async groupName => await dispatch(UpdateGroupName(groupName)),
-        loadSubgroups: async groupName => await dispatch(LoadSubgroups(groupName)),
-        loadGroupName: async () => await dispatch(LoadGroupName()),
-        destroySubgroup: async subgroup => await dispatch(DestroySubgroup(subgroup)),
-        loadUsers: async group => await dispatch(LoadUsers(group)),
-        createGroup: async group => await dispatch(CreateGroup(group)),
-        checkAuth: async () => await dispatch(CheckAuthentication())
+        updateGroupName: groupName => dispatch(UpdateGroupName(groupName)),
+        loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
+        loadGroupName: () => dispatch(LoadGroupName()),
+        destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
+        loadUsers: group => dispatch(LoadUsers(group)),
+        createGroup: group => dispatch(CreateGroup(group)),
+        checkAuth: () => dispatch(CheckAuthentication())
     }
 }
 

@@ -9,7 +9,7 @@ export default class Form extends React.Component {
         if(identifier.length) {
             // if identifier is a magstrip, remove the semicolon
             identifier = identifier[0] === ';' ? identifier.slice(1, -1) : identifier;
-            await this.props.addUser(this.props.group, identifier);
+            this.props.addUser(this.props.group, identifier);
             document.getElementById("registerCard").value = "";
         }
     };
