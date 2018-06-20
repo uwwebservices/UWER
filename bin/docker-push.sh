@@ -11,7 +11,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 
     case "$TRAVIS_BRANCH" in
       "master") TAG="latest" ;;
-      "devlop") TAG="devlop" ;;
+      "develop") TAG="develop" ;;
     esac
 
     # Build and push
@@ -21,7 +21,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker push "$REMOTE_IMAGE_URL:$TAG"
     echo "Pushed $IMAGE_NAME:$TAG"
   else
-    echo "Skipping deploy because branch is not 'devlop' or 'master'"
+    echo "Skipping deploy because branch is not 'develop' or 'master'"
   fi
 else
   echo "Skipping deploy because it's a pull request"
