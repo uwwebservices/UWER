@@ -52,7 +52,16 @@ const uwSamlStrategy = new saml.Strategy(
 
 passport.use(uwSamlStrategy);
 
-app.use(morgan('dev'));
+app.use(morgan(function (tokens, req, res) {
+	return [
+		tokens["remote-addr"](req,res),
+		req.user ? req.user.UWNetID : "Anonymous",
+		tokens.method(req,res),
+		tokens.url(req,res),
+		tokens.status(req,res),
+		tokens['response-time'](req, res), 'ms'
+	].join(' ');
+}));
 
 app.server = http.createServer(app);
 

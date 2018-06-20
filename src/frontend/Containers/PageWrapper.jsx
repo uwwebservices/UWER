@@ -20,7 +20,10 @@ class PageWrapper extends Component {
                 <Header pages={pages} />
                     <main>
                         <div className="righted">
-                            <div>{this.props.DisplayName && `Welcome ${this.props.DisplayName}`}</div>
+                            <div>
+                                { this.props.DisplayName && `Welcome ${this.props.DisplayName}`}
+                                { this.props.authenticated && <span> | <a href="/logout">logout</a></span> }
+                            </div>
                             <div>Group: {this.props.GroupNameBase && this.props.GroupName && this.props.GroupName.replace(this.props.GroupNameBase, "")}</div>
                         </div>
                         {...this.props.children}

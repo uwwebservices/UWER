@@ -27,6 +27,11 @@ app.post('/login/callback',
 	backToUrl()
 );
 
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
 if(process.env.NODE_ENV === 'development') {
 	const webpack = require('webpack');
 	const webpackDevMiddleware = require('webpack-dev-middleware');
