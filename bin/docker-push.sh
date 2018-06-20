@@ -17,7 +17,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     # Build and push
     docker build -t $IMAGE_NAME .
     echo "Pushing $IMAGE_NAME:$TAG"
-    docker tag $IMAGE_NAME:$TAG" "$REMOTE_IMAGE_URL:$TAG"
+    docker tag "$IMAGE_NAME:$TAG" "$REMOTE_IMAGE_URL:$TAG"
     docker push "$REMOTE_IMAGE_URL:$TAG"
     echo "Pushed $IMAGE_NAME:$TAG"
   else
