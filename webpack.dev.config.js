@@ -69,7 +69,8 @@ module.exports = {
     alias: {
       "Components": path.resolve("./src/frontend/Components"),
       "Containers": path.resolve("./src/frontend/Containers"),
-      "css": path.resolve("./src/frontend/css")
+      "css": path.resolve("./src/frontend/css"),
+      "Assets": path.resolve("./src/assets")
     },
     extensions: ['.js', '.jsx', '.json', '.css', '.scss']
   },

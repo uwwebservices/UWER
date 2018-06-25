@@ -6,7 +6,7 @@
                 "models": "./src/backend/models",
                 "controllers": "./src/backend/controllers",
                 "config": "./config",
-                "assets": "./src/backend/assets"
+                "Assets": "./src/assets"
             }
         }]
     ]

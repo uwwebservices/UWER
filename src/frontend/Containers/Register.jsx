@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Form from 'Components/Form';
+import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, LoadGroupName, DeleteUser } from '../Actions';
@@ -9,7 +9,7 @@ class Register extends Component {
         return (
             <div>
                   <h1>Event Registration</h1>                  
-                  <Form addUser={this.props.addUser} group={this.props.groupName} />
+                  <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} />
                   <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>
         )

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Form from 'Components/Form';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';

@@ -10,4 +10,5 @@ export const UPDATE_USERS = "UPDATE_USERS";
 export const REMOVE_USER = "REMOVE_USER";
 export const USER_AUTHENTICATION = "USER_AUTHENTICATION";
 export const RECEIVE_AUTH = "RECEIVE_AUTH";
+export const ADD_DUMMY_USER = "ADD_DUMMY_USER";
 

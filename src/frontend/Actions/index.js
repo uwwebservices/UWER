@@ -9,10 +9,10 @@ import { RECEIVE_GROUP_NAME,
          UPDATE_USERS,
          REMOVE_USER,
          USER_AUTHENTICATION,
-         RECEIVE_AUTH
+         RECEIVE_AUTH,
+         ADD_DUMMY_USER
         } from '../Constants';
 import store from '../Store';
-
 
 // Action Creators
 const ReceiveGroupName = groupName => { return {type: RECEIVE_GROUP_NAME, groupName }};
@@ -27,6 +27,7 @@ const UpdateUsers = user => { return { type: UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: REMOVE_USER, user }};
 const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, authenticated }};
 const ReceiveAuth = auth => { return {type: RECEIVE_AUTH, auth}};
+const AddDummyUser = identifier => { return { type: ADD_DUMMY_USER, identifier}};
 
 // -----------------------
 // Thunks - Async Actions
@@ -100,6 +101,7 @@ export const LoadUsers = group => {
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
+    dispatch(AddDummyUser(identifier));
     let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`,  { method: 'PUT' });
     return await dispatch(UpdateUsers(user));
   }

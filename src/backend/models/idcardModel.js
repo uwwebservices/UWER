@@ -1,7 +1,7 @@
 import request from 'request';
 import rp from 'request-promise';
 import fs from 'fs';
-import DefaultUser from 'assets/defaultUser';
+import DefaultUser from 'Assets/defaultUser';
 import config from 'config/config.json';
 
 const options = {
