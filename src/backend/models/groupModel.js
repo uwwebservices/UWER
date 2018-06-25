@@ -54,7 +54,7 @@ const Groups = {
     async RemoveMember(group, netid) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: `${config.groupsBaseUrl}/${group}/member/${netid}`
+            url: `${config.groupsBaseUrl}/${group}/member/${netid}?synchronized=true`
         });
         try {
             let res = await rp(opts);
