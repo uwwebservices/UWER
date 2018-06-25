@@ -3,10 +3,20 @@ import path from 'path';
 import passport from 'passport';
 import fs from 'fs';
 import { ensureAuth, backToUrl } from '../utils/helpers';
+import { AES, enc } from 'crypto-js';
 
 let app = Router();
 
 let admins = ["ccan"];
+
+let passphrase = process.env.SessionKey || "development";
+
+let encrypt = value => {
+	return AES.encrypt(value, passphrase);
+}
+let decrypt = value => {
+	return AES.decrypt(value, passphrase).toString(enc.Utf8);
+}
 
 // Shibboleth Routes
 app.get('/login', 
@@ -27,9 +37,22 @@ app.post('/login/callback',
 	backToUrl()
 );
 
+// completely log out
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
+});
+
+app.get('/startRegistration', function(req, res) {
+	let now = new Date();
+	let expiry = now.setHours(now.getHours() + 1);
+	let encryptedPayload = encrypt(JSON.stringify({user: req.user, expiry }));
+	console.log("DECRYPTED", (decrypt(encryptedPayload)));
+	req.logout();
+	
+	req.session.registrationEnabledTimeout = expiry;
+
+	res.redirect('/register');
 });
 
 if(process.env.NODE_ENV === 'development') {

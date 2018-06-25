@@ -6,7 +6,7 @@ import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 
 const pages = [
-    { isNavigable: true, path: "/", display: "Register" },
+    { isNavigable: true, path: "/register", display: "Register" },
     { isNavigable: true, path: "/config", display: "Config"}
 ];
 

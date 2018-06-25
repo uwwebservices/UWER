@@ -5,6 +5,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from 'css/materialTheme';
 import Register from 'Containers/Register';
 import Configure from 'Containers/Configure';
+import Welcome from 'Containers/Welcome';
 import PageWrapper from 'Containers/PageWrapper';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -19,7 +20,8 @@ class App extends React.Component {
                         <PageWrapper>
                             <Switch>
                                 <Route path='/config' component={Configure} />
-                                <Route exact path='/' component={Register} />
+                                <Route path='/register' component={Register} />
+                                <Route exact path='/' component={Welcome} />
                             </Switch>
                         </PageWrapper>
                     </MuiThemeProvider>
