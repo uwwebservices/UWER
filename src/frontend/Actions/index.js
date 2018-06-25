@@ -10,7 +10,8 @@ import { RECEIVE_GROUP_NAME,
          REMOVE_USER,
          USER_AUTHENTICATION,
          RECEIVE_AUTH,
-         ADD_DUMMY_USER
+         ADD_DUMMY_USER,
+         MARK_USER_FOR_DELETION
         } from '../Constants';
 import store from '../Store';
 
@@ -28,6 +29,7 @@ const RemoveUser = user => { return { type: REMOVE_USER, user }};
 const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, authenticated }};
 const ReceiveAuth = auth => { return {type: RECEIVE_AUTH, auth}};
 const AddDummyUser = identifier => { return { type: ADD_DUMMY_USER, identifier}};
+const MarkUserForDeletion = identifier => { return { type: MARK_USER_FOR_DELETION, identifier }};
 
 // -----------------------
 // Thunks - Async Actions
@@ -109,6 +111,7 @@ export const AddUser = (group, identifier) => {
 
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
+    dispatch(MarkUserForDeletion(identifier));
     await APIRequestWithAuth(`/api/members/${group}/member/${identifier}`, { method: "DELETE" });
     return await dispatch(RemoveUser(identifier));
   }

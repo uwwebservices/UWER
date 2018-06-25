@@ -26,6 +26,7 @@ export default class Test extends React.Component {
                 <ListItem
                     key={mem.UWNetID || mem.identifier}>
                     <Avatar src={mem.Base64Image} />
+                    {mem.deleting && <span>OMG DELETING</span>}
                     <ListItemText primary={mem.UWNetID} secondary={mem.DisplayName} />
                     {this.props.authenticated && <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>}
                 </ListItem> 

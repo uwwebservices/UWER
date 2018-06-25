@@ -7,7 +7,8 @@ import { RECEIVE_GROUP_NAME,
          REMOVE_USER, 
          USER_AUTHENTICATION, 
          RECEIVE_AUTH,
-         ADD_DUMMY_USER } from '../Constants';
+         ADD_DUMMY_USER,
+         MARK_USER_FOR_DELETION } from '../Constants';
 
 import defaultUser from 'Assets/defaultUser';
 
@@ -46,9 +47,17 @@ export default (state = initialState, action) => {
         }
       });
       return Object.assign({}, state, {users: newUsers});
+    case MARK_USER_FOR_DELETION:
+      let userMarked = state.users.map(u => {
+        if(u.UWNetID === action.identifier) {
+          u.deleting = true;
+        }
+        return u;
+      });
+      return Object.assign({}, state, {users: userMarked});
     case REMOVE_USER:
-      let users = state.users.filter(u => u.UWNetID !== action.user);
-      return Object.assign({}, state, {users});
+      let userRemoved = state.users.filter(u => u.UWNetID !== action.user);
+      return Object.assign({}, state, {users: userRemoved});
     case USER_AUTHENTICATION:
       return Object.assign({}, state, {authenticated: action.authenticated});
     case RECEIVE_AUTH:
