@@ -97,7 +97,6 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
-      if(!user) { console.log("no user")}
       return dispatch(UpdateUsers(user));
     } catch (ex) {
       dispatch(DummyUserFail(identifier));

@@ -1,4 +1,4 @@
-import { AES } from 'crypto-js';
+import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
 	
 export const ensureAuth = () => {
