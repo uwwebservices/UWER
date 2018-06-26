@@ -50,7 +50,6 @@ export const verifyAuthToken = token => {
 	if(!token) { return false; }
 	let passphrase = process.env.SessionKey || "development";
 	let payload = AES.decrypt(token, passphrase).toString(enc.Utf8);
-	console.log("Payload", payload);
-	//req.session.user.UWNetID = payload.UWNetID;
-	return payload.expiry > new Date();
+	req.session.user.UWNetID = payload.user.UWNetID; //should enable logging
+	return payload.expiry > (new Date()).getTime();
 }
