@@ -14,7 +14,10 @@ let app = express();
 if(process.env.NODE_ENV === 'production') {
 	app.use("/assets", express.static('dist/assets'))
 }
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 const memStore = MemoryStore(session);
 

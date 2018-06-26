@@ -20,6 +20,7 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 
 const APIRequestWithAuth = async (url, opts) => {
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
+  console.log("OMG BODY", body);
   let res = await fetch(url, body);
   try {
     return await res.json();
@@ -85,7 +86,14 @@ export const LoadUsers = group => {
 export const AddUser = (group, identifier) => {
   return async dispatch => {
     dispatch(AddDummyUser(identifier));
-    let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`,  { method: 'PUT' });
+    let state = store.getState();
+    let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
+      method: 'PUT', 
+      body: JSON.stringify({token: state.registrationToken}),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    });
     return await dispatch(UpdateUsers(user));
   }
 }

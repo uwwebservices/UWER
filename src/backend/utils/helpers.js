@@ -45,7 +45,12 @@ export const getAuthToken = req => {
 	let expiry = now.setHours(now.getHours() + 1);
 	return encodeURIComponent(AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase));
 }
-export const verifyAuthToken = value => {
+
+export const verifyAuthToken = token => {
+	if(!token) { return false; }
 	let passphrase = process.env.SessionKey || "development";
-	return AES.decrypt(value, passphrase).toString(enc.Utf8);
+	let payload = AES.decrypt(token, passphrase).toString(enc.Utf8);
+	console.log("Payload", payload);
+	//req.session.user.UWNetID = payload.UWNetID;
+	return payload.expiry > new Date();
 }

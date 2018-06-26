@@ -3,7 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth } from '../utils/helpers';
+import { ensureAPIAuth, verifyAuthToken } from '../utils/helpers';
 import { API } from 'Routes';
 
 let api = Router();
@@ -15,20 +15,25 @@ api.get(API.GetMembers, async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.put(API.RegisterMember, ensureAPIAuth, async (req, res) => {
-	let identifier = req.params.identifier;
-	let validCard = IDCard.ValidCard(identifier);
-
-	if(validCard){
-		identifier = await IDCard.Get(validCard);
-		identifier = (await PWS.Get(identifier)).UWNetID;
-	}
+api.put(API.RegisterMember, async (req, res) => {
+	// if shib'd or have an auth token from someone who did shib
+	if(req.isAuthenticated || verifyAuthToken(req.body.token)) {
+		let identifier = req.params.identifier;
+		let validCard = IDCard.ValidCard(identifier);
 	
-	let result = await Groups.AddMember(req.params.group, identifier);
-	let user = await PWS.Get(identifier);
-	user.identifier = identifier;
-	user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
-	return res.status(result.Status).json(user);
+		if(validCard){
+			identifier = await IDCard.Get(validCard);
+			identifier = (await PWS.Get(identifier)).UWNetID;
+		}
+		
+		let result = await Groups.AddMember(req.params.group, identifier);
+		let user = await PWS.Get(identifier);
+		user.identifier = identifier;
+		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
+		res.status(result.Status).json(user);
+	} else {
+		res.sendStatus(401);
+	}
 });
 
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
