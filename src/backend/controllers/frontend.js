@@ -2,57 +2,45 @@ import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
 import fs from 'fs';
-import { ensureAuth, backToUrl } from '../utils/helpers';
-import { AES, enc } from 'crypto-js';
+import { ensureAuth, backToUrl, getAuthToken, Routes } from '../utils/helpers';
 
 let app = Router();
 
-let admins = ["ccan"];
-
-let passphrase = process.env.SessionKey || "development";
-
-let encrypt = value => {
-	return AES.encrypt(value, passphrase);
-}
-let decrypt = value => {
-	return AES.decrypt(value, passphrase).toString(enc.Utf8);
-}
-
 // Shibboleth Routes
-app.get('/login', 
+app.get(Routes.Login, 
 	function(req, res, next) {
 		req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
 		next();
 	},
-	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true })
+	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
 ); 
-app.get('/Shibboleth.sso/Metadata', 
+app.get(Routes.ShibbolethMetadata, 
   function(req, res) {
     res.type('application/xml');
     res.status(200).send(samlStrategy.generateServiceProviderMetadata());
   }
 );
-app.post('/login/callback',
-	passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+app.post(Routes.ShibbolethCallback,
+	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
 	backToUrl()
 );
 
 // completely log out
-app.get('/logout', function(req, res){
+app.get(Routes.Logout, function(req, res){
   req.logout();
-  res.redirect('/');
+  res.redirect(Routes.Welcome);
 });
 
-app.get('/startRegistration', function(req, res) {
-	let now = new Date();
-	let expiry = now.setHours(now.getHours() + 1);
-	let encryptedPayload = encrypt(JSON.stringify({user: req.user, expiry }));
-	console.log("DECRYPTED", (decrypt(encryptedPayload)));
-	req.logout();
+app.get(Routes.StartRegistration, function(req, res) {
+	if(req.isAuthenticated) {
+		let encryptedPayload = getAuthToken(req);
+		req.logout();
+		res.redirect(`${Routes.Register}?token=${encryptedPayload}`);
+	} else {
+		// if not shib'd, shib them and come back
+		res.redirect(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`);
+	}
 	
-	req.session.registrationEnabledTimeout = expiry;
-
-	res.redirect('/register');
 });
 
 if(process.env.NODE_ENV === 'development') {
@@ -89,10 +77,7 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 if(process.env.NODE_ENV === 'production') {
-	app.get('/', (req, res) => {
-		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
-	});
-	app.get('/config', ensureAuth(), (req, res) => {
+	app.get([Routes.Welcome, Routes.Register, Routes.Config], (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
 	});
 }
