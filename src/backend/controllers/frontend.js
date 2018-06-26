@@ -33,7 +33,7 @@ app.get(Routes.Logout, function(req, res){
 
 // log out, but keep a token around so we know who is responsible
 app.get(Routes.StartRegistration, function(req, res) {
-	if(req.isAuthenticated) {
+	if(req.isAuthenticated()) {
 		let encryptedPayload = getAuthToken(req);
 		req.logout();
 		res.redirect(`${Routes.Register}?token=${encryptedPayload}`);

@@ -17,7 +17,7 @@ api.get(API.GetMembers, async (req, res) => {
 
 api.put(API.RegisterMember, async (req, res) => {
 	// if shib'd or have an auth token from someone who did shib
-	if(req.isAuthenticated || verifyAuthToken(req.body.token)) {
+	if(req.isAuthenticated() || verifyAuthToken(req.body.token)) {
 		let identifier = req.params.identifier;
 		let validCard = IDCard.ValidCard(identifier);
 	
