@@ -2,7 +2,7 @@ import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
 import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
-import { Routes } from 'Routes';
+import { API, Routes } from 'Routes';
 
 let app = Router();
 
@@ -77,7 +77,7 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 if(process.env.NODE_ENV === 'production') {
-	app.get([Routes.Welcome, Routes.Register, Routes.Config], (req, res) => {
+	app.get([Routes.Welcome, Routes.Register, API.Config], (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
 	});
 }

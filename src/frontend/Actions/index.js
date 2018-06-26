@@ -20,7 +20,6 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 
 const APIRequestWithAuth = async (url, opts) => {
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
-  console.log("OMG BODY", body);
   let res = await fetch(url, body);
   try {
     return await res.json();

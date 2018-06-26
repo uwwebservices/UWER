@@ -6,8 +6,8 @@
                 "models": "./src/backend/models",
                 "controllers": "./src/backend/controllers",
                 "config": "./config",
-                "Assets": "./src/assets",
-                "Routes": "./src/routes"
+                "Assets": "./src/backend/assets",
+                "Routes": "./src/backend/routes"
             }
         }]
     ]
