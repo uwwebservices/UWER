@@ -13,7 +13,10 @@ const Authenticated = authenticated => { return {type: Const.USER_AUTHENTICATION
 const ReceiveAuth = auth => { return {type: Const.RECEIVE_AUTH, auth}};
 const AddDummyUser = identifier => { return { type: Const.ADD_DUMMY_USER, identifier}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
+const DummyUserFail = identifier => { return { type: Const.FAILED_DUMMY_USER, identifier }}
+
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
+
 
 // -----------------------
 // Thunks - Async Actions
@@ -24,7 +27,7 @@ const APIRequestWithAuth = async (url, opts) => {
   try {
     return await res.json();
   } catch(ex) {
-    return {};
+    throw(ex);
   }
 }
 
@@ -86,14 +89,19 @@ export const AddUser = (group, identifier) => {
   return async dispatch => {
     dispatch(AddDummyUser(identifier));
     let state = store.getState();
-    let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
-      method: 'PUT', 
-      body: JSON.stringify({token: state.registrationToken}),
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    });
-    return await dispatch(UpdateUsers(user));
+    try {
+      let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
+        method: 'PUT', 
+        body: JSON.stringify({token: state.registrationToken}),
+        headers:{
+          'Content-Type': 'application/json'
+        }
+      });
+      if(!user) { console.log("no user")}
+      return dispatch(UpdateUsers(user));
+    } catch (ex) {
+      dispatch(DummyUserFail(identifier));
+    }
   }
 }
 
