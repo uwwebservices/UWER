@@ -1,21 +1,5 @@
-export const Routes = {
-	"Welcome": "/",
-	"Register": "/register",
-	"Config": "/config",
-	"StartRegistration": "/startRegistration",
-	"Login": "/login",
-	"Logout": "/logout",
-	"GetMembers": "/members/:group",
-	"RegisterMember": "/members/:group/:identifier",
-	"RemoveMember": "/members/:group/member/:identifier",
-	"GetSubgroups": "/subgroups/:group",
-	"RemoveSubgroup": "/subgroups/:group",
-	"CreateGroup": "/subgroups/:group",
-	"CheckAuth": "/checkAuth",
-	"CSV": "/csv/:group.csv",
-	"ShibbolethMetadata": "/Shibboleth.sso/Metadata",
-	"ShibbolethCallback": "/login/callback"
-};
+import { AES } from 'crypto-js';
+import { Routes } from 'Routes';
 	
 export const ensureAuth = () => {
 	return function (req, res, next) {

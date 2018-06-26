@@ -1,35 +1,19 @@
-import { RECEIVE_GROUP_NAME, 
-         REQUEST_CONFIG, 
-         RECEIVE_CONFIG,
-         REQUEST_SUBGROUPS, 
-         RECEIVE_SUBGROUPS, 
-         DELETE_SUBGROUP,
-         RECEIVE_USERS,
-         REQUEST_USERS,
-         UPDATE_USERS,
-         REMOVE_USER,
-         USER_AUTHENTICATION,
-         RECEIVE_AUTH,
-         ADD_DUMMY_USER,
-         MARK_USER_FOR_DELETION
-        } from '../Constants';
+import Const from '../Constants';
 import store from '../Store';
 
 // Action Creators
-const ReceiveGroupName = groupName => { return {type: RECEIVE_GROUP_NAME, groupName }};
-const RequestConfig = () => { return { type: REQUEST_CONFIG }};
-const ConfigLoaded = config => { return { type: RECEIVE_CONFIG, config }};
-const RequestSubgroups = () => { return { type: REQUEST_SUBGROUPS }};
-const ReceiveSubgroups = subgroups => { return { type: RECEIVE_SUBGROUPS, subgroups }};
-const DeleteSubgroup = subgroup => { return { type: DELETE_SUBGROUP, subgroup }};
-const RequestUsers = () => { return { type: REQUEST_USERS }};
-const ReceiveUsers = users => { return { type: RECEIVE_USERS, users }};
-const UpdateUsers = user => { return { type: UPDATE_USERS, user }};
-const RemoveUser = user => { return { type: REMOVE_USER, user }};
-const Authenticated = authenticated => { return {type: USER_AUTHENTICATION, authenticated }};
-const ReceiveAuth = auth => { return {type: RECEIVE_AUTH, auth}};
-const AddDummyUser = identifier => { return { type: ADD_DUMMY_USER, identifier}};
-const MarkUserForDeletion = identifier => { return { type: MARK_USER_FOR_DELETION, identifier }};
+const ReceiveGroupName = groupName => { return {type: Const.RECEIVE_GROUP_NAME, groupName }};
+const ConfigLoaded = config => { return { type: Const.RECEIVE_CONFIG, config }};
+const ReceiveSubgroups = subgroups => { return { type: Const.RECEIVE_SUBGROUPS, subgroups }};
+const DeleteSubgroup = subgroup => { return { type: Const.DELETE_SUBGROUP, subgroup }};
+const ReceiveUsers = users => { return { type: Const.RECEIVE_USERS, users }};
+const UpdateUsers = user => { return { type: Const.UPDATE_USERS, user }};
+const RemoveUser = user => { return { type: Const.REMOVE_USER, user }};
+const Authenticated = authenticated => { return {type: Const.USER_AUTHENTICATION, authenticated }};
+const ReceiveAuth = auth => { return {type: Const.RECEIVE_AUTH, auth}};
+const AddDummyUser = identifier => { return { type: Const.ADD_DUMMY_USER, identifier}};
+const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
+export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
 
 // -----------------------
 // Thunks - Async Actions
@@ -47,7 +31,6 @@ const APIRequestWithAuth = async (url, opts) => {
 // Load config file from API into store
 export const LoadConfig = () => {
   return async dispatch => {
-    dispatch(await RequestConfig());
     let json = await APIRequestWithAuth('/api/config');
     await dispatch(await ConfigLoaded(json));
     return await dispatch(LoadGroupName(json.groupNameBase+json.groupNameLeaf));
@@ -79,7 +62,6 @@ export const CreateGroup = group => {
 
 export const LoadSubgroups = groupName => {
   return async dispatch => {
-    await dispatch(RequestSubgroups());
     let groupNameBase = store.getState().config.groupNameBase;
     let subgroups = await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`);
     return await dispatch(ReceiveSubgroups(subgroups));
@@ -95,7 +77,6 @@ export const DestroySubgroup = group => {
 
 export const LoadUsers = group => {
   return async dispatch => {
-    await dispatch(RequestUsers());
     let users = await APIRequestWithAuth(`/api/members/${group}`);
     return await dispatch(ReceiveUsers(users));
   }
@@ -126,7 +107,6 @@ export const CheckAuthentication = () => {
       dispatch(Authenticated(auth));
       dispatch(ReceiveAuth(user));
     } catch(ex) {
-      // this shouldn't really get hit, but just in case...
       dispatch(Authenticated(false));
       dispatch(ReceiveAuth({ UWNetID: "", DisplayName: "" }));
     }

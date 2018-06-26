@@ -70,7 +70,8 @@ module.exports = {
       "Components": path.resolve("./src/frontend/Components"),
       "Containers": path.resolve("./src/frontend/Containers"),
       "css": path.resolve("./src/frontend/css"),
-      "Assets": path.resolve("./src/assets")
+      "Assets": path.resolve("./src/assets"),
+      "Routes": path.resolve("./src/routes")
     },
     extensions: ['.js', '.jsx', '.json', '.css', '.scss']
   },

@@ -3,18 +3,19 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, Routes } from '../utils/helpers';
+import { ensureAPIAuth } from '../utils/helpers';
+import { API } from 'Routes';
 
 let api = Router();
 
-api.get(Routes.GetMembers, async (req, res) => {
+api.get(API.GetMembers, async (req, res) => {
 		let result = await Groups.GetMembers(req.params.group);
 		let members = await PWS.GetMany(result.Payload);
 		let verbose = await IDCard.GetManyPhotos(members);
 		return res.status(result.Status).json(verbose);
 });
 
-api.put(Routes.RegisterMember, ensureAPIAuth, async (req, res) => {
+api.put(API.RegisterMember, ensureAPIAuth, async (req, res) => {
 	let identifier = req.params.identifier;
 	let validCard = IDCard.ValidCard(identifier);
 
@@ -30,22 +31,22 @@ api.put(Routes.RegisterMember, ensureAPIAuth, async (req, res) => {
 	return res.status(result.Status).json(user);
 });
 
-api.delete(Routes.RemoveMember, ensureAPIAuth, async (req, res) => {
+api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
 	let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get(Routes.GetSubgroups, ensureAPIAuth, async (req, res) => {
+api.get(API.GetSubgroups, ensureAPIAuth, async (req, res) => {
 	let result = await Groups.SearchGroups(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.delete(Routes.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
+api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
 	let result = await Groups.DeleteGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.post(Routes.CreateGroup, ensureAPIAuth, async (req, res) => {
+api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 	let result = await Groups.CreateGroup(req.params.group);
 	return res.status(result.Status).json(result.Payload);
 });
@@ -53,7 +54,7 @@ api.post(Routes.CreateGroup, ensureAPIAuth, async (req, res) => {
 // Simple endpoint to verify user is authenticated
 // If a UWNetID and DisplayName is returned it is displayed in the client
 // This is just for show/hide, API doesn't rely on this
-api.get(Routes.CheckAuth, (req, res) => {
+api.get(API.CheckAuth, (req, res) => {
 	const defaultUser = { UWNetID: '', DisplayName: '' };
 	const devUser = { UWNetID: 'developer', DisplayName: 'Developer' };
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
@@ -65,7 +66,7 @@ api.get(Routes.CheckAuth, (req, res) => {
 	}
 });
 
-api.get(Routes.Config, (req, res) => {
+api.get(API.Config, (req, res) => {
 	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameLeaf", "groupNameBase"];
 	let filteredConfig = Object.keys(config)
 			.filter(key => whitelist.includes(key))
@@ -76,7 +77,7 @@ api.get(Routes.Config, (req, res) => {
 	res.status(200).json(filteredConfig);
 });
 
-api.get(Routes.CSV, async (req, res) => {
+api.get(API.CSV, async (req, res) => {
 	let members = await Groups.GetMembers(req.params.group);
 	let csvWhitelist = ["DisplayName", "UWNetID", "UWRegID"];
 	let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);

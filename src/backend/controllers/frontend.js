@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import fs from 'fs';
-import { ensureAuth, backToUrl, getAuthToken, Routes } from '../utils/helpers';
+import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
+import { Routes } from 'Routes';
 
 let app = Router();
 
@@ -31,6 +31,7 @@ app.get(Routes.Logout, function(req, res){
   res.redirect(Routes.Welcome);
 });
 
+// log out, but keep a token around so we know who is responsible
 app.get(Routes.StartRegistration, function(req, res) {
 	if(req.isAuthenticated) {
 		let encryptedPayload = getAuthToken(req);
@@ -40,7 +41,6 @@ app.get(Routes.StartRegistration, function(req, res) {
 		// if not shib'd, shib them and come back
 		res.redirect(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`);
 	}
-	
 });
 
 if(process.env.NODE_ENV === 'development') {
