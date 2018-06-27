@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import { ensureAuth, backToUrl, getAuthToken, ensureAuthOrToken } from '../utils/helpers';
+import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 
 let app = Router();
@@ -32,12 +32,12 @@ app.get(Routes.Logout, function(req, res){
 });
 
 // log out, but keep a token around so we know who is responsible
+// will likely make this an api call for a modal instead of a redirect
 app.get(Routes.StartRegistration, ensureAuth(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`), function(req, res) {
-	let encryptedPayload = getAuthToken(req);
 	let user = req.user ? "ActAs:" + req.user.UWNetID : "Developer";
 	req.logout();
 	req.session.registrationUser = user;
-	res.redirect(`${Routes.Register}?token=${encryptedPayload}`);
+	res.redirect(`${Routes.Register}?token=${getAuthToken(req)}`);
 });
 
 if(process.env.NODE_ENV === 'development') {

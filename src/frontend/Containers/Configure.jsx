@@ -71,7 +71,7 @@ class Configure extends Component {
         return (
             <div>
                 <h1>Configure</h1>
-                <a href="/startRegistration">Start Registration</a>
+                <div className="righted"><h2><a href="/startRegistration">Start Registration</a></h2></div>
                 {
                     Object.keys(this.props.config).map(k => {
                         return <div key={k}>{k}: {this.props.config[k]}</div>
