@@ -34,7 +34,9 @@ app.get(Routes.Logout, function(req, res){
 // log out, but keep a token around so we know who is responsible
 app.get(Routes.StartRegistration, ensureAuth(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`), function(req, res) {
 	let encryptedPayload = getAuthToken(req);
+	let user = req.user ? req.user.UWNetID : "Developer";
 	req.logout();
+	req.session.registrationUser = user;
 	res.redirect(`${Routes.Register}?token=${encryptedPayload}`);
 });
 
