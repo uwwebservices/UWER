@@ -40,6 +40,14 @@ export const ensureAPIAuth = (req, res, next) => {
 	}
 }
 
+export const ensureAuthOrToken = (req, res, next) => {
+	if(process.env.NODE_ENV === 'development' || req.isAuthenticated() || verifyAuthToken(req)) {
+		return next();
+	} else {
+		res.sendStatus(401);
+	}
+}
+
 export const getAuthToken = req => {
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
@@ -50,7 +58,8 @@ export const getAuthToken = req => {
 }
 
 export const verifyAuthToken = req => {
-	if(!req.session.token) { return false; }
+	if(!req.session.token && !req.body.token) { return false; }
+	if(!req.session.token && req.body.token) { req.session.token = req.body.token; }
 	let passphrase = process.env.SessionKey || "development";
 	let payload = JSON.parse(AES.decrypt(req.session.token, passphrase).toString(enc.Utf8));
 	return payload.expiry > (new Date()).getTime();

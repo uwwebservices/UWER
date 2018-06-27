@@ -15,7 +15,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     #bash ./bin/ecs-deploy.sh -c $CLUSTER -n $SERVICE -i $REMOTE_IMAGE_URL:latest --max-definitions 5 -v
     
     # use this to just update the task definition (manual deploy)
-    bash ./bin/ecs-deploy.sh --max-definitions 5 -c $CLUSTER -d $TASK_DEF -i $REMOTE_IMAGE_URL:$TAG
+    bash ./bin/ecs-deploy.sh -c $CLUSTER -d $TASK_DEF -i $REMOTE_IMAGE_URL:$TAG --max-definitions 1 -v
     
   else
     echo "Skipping deploy because it's not an allowed branch"

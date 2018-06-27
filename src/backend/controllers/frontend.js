@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
+import { ensureAuth, backToUrl, getAuthToken, ensureAuthOrToken } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 
 let app = Router();
