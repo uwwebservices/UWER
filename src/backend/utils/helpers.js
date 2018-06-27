@@ -1,7 +1,7 @@
 import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
 	
-export const ensureAuth = () => {
+export const ensureAuth = (returnUrl = "/") => {
 	return function (req, res, next) {
 		if (req.isAuthenticated()) {
 			return next();
@@ -43,13 +43,15 @@ export const getAuthToken = req => {
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setHours(now.getHours() + 1);
-	return encodeURIComponent(AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase));
+	let token = AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase).toString();
+	req.session.token = token;
+	return encodeURIComponent(token);
 }
 
-export const verifyAuthToken = token => {
-	if(!token) { return false; }
+export const verifyAuthToken = req => {
+	if(!req.session.token) { return false; }
 	let passphrase = process.env.SessionKey || "development";
-	let payload = AES.decrypt(token, passphrase).toString(enc.Utf8);
+	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
 	req.session.user.UWNetID = payload.user.UWNetID; //should enable logging
 	return payload.expiry > (new Date()).getTime();
 }
