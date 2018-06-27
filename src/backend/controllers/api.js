@@ -18,9 +18,10 @@ api.get(API.GetMembers, async (req, res) => {
 api.put(API.RegisterMember, async (req, res) => {
 	// if shib'd or have an auth token from someone who did shib
 	if(req.body.token) {
+		console.log("setting session")
 		req.session.token = req.body.token;
 	}
-	if(process.env.NODE_ENV === 'development' || req.isAuthenticated() || verifyAuthToken(req)) {
+	if(verifyAuthToken(req)) {
 		let identifier = req.params.identifier;
 		let validCard = IDCard.ValidCard(identifier);
 	

@@ -52,6 +52,6 @@ export const getAuthToken = req => {
 export const verifyAuthToken = req => {
 	if(!req.session.token) { return false; }
 	let passphrase = process.env.SessionKey || "development";
-	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
+	let payload = JSON.parse(AES.decrypt(req.session.token, passphrase).toString(enc.Utf8));
 	return payload.expiry > (new Date()).getTime();
 }
