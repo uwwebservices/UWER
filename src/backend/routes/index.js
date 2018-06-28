@@ -7,7 +7,8 @@ export const API = {
 	"CreateGroup": "/subgroups/:group",
 	"CheckAuth": "/checkAuth",
 	"Config": "/config",
-	"CSV": "/csv/:group.csv"
+	"CSV": "/csv/:group.csv",
+	"GetToken": "/getToken"
 };
 
 export const Routes = {

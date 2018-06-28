@@ -13,7 +13,7 @@ const Authenticated = authenticated => { return {type: Const.USER_AUTHENTICATION
 const ReceiveAuth = auth => { return {type: Const.RECEIVE_AUTH, auth}};
 const AddDummyUser = identifier => { return { type: Const.ADD_DUMMY_USER, identifier}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
-const DummyUserFail = identifier => { return { type: Const.FAILED_DUMMY_USER, identifier }}
+const DummyUserFail = identifier => { return { type: Const.FAILED_DUMMY_USER, identifier }};
 
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
 
@@ -28,6 +28,13 @@ const APIRequestWithAuth = async (url, opts) => {
     return await res.json();
   } catch(ex) {
     throw(ex);
+  }
+}
+
+export const GetRegistrationToken = () => {
+  return async dispatch => {
+    let json = await APIRequestWithAuth('/api/getToken');
+    dispatch(StoreRegistrationToken(json.token));
   }
 }
 
@@ -59,7 +66,7 @@ export const LoadGroupName = group => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    let res = await fetch(`/api/subgroups/${group}?synchronized=true`, {method: "POST", credentials: 'same-origin' });
+    await APIRequestWithAuth(`/api/subgroups/${group}?synchronized=true`, { method: "POST"});
   }
 }
 

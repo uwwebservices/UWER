@@ -3,7 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken } from '../utils/helpers';
 import { API } from 'Routes';
 
 let api = Router();
@@ -13,6 +13,11 @@ api.get(API.GetMembers, async (req, res) => {
 		let members = await PWS.GetMany(result.Payload);
 		let verbose = await IDCard.GetManyPhotos(members);
 		return res.status(result.Status).json(verbose);
+});
+
+api.get(API.GetToken, async (req, res) => {
+	let token = getAuthToken(req);
+	res.status(200).json({token});
 });
 
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
