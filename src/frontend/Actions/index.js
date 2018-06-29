@@ -32,15 +32,6 @@ const APIRequestWithAuth = async (url, opts) => {
   }
 }
 
-export const GetRegistrationToken = () => {
-  return async dispatch => {
-    console.log("getting registration token");
-    let token = (await APIRequestWithAuth('/api/getToken')).token;
-    Cookies.set('registrationToken', token, { expires: 1/24 });
-    dispatch(StoreRegistrationToken(token));
-  }
-}
-
 // Load config file from API into store
 export const LoadConfig = () => {
   return async dispatch => {
@@ -49,10 +40,8 @@ export const LoadConfig = () => {
   }
 }
 
-// Store groupname in localstorage and update store
 export const UpdateGroupName = groupName => {
   return async dispatch => {
-    console.log("COOKIE", Cookies.get("groupName"), groupName)
     if(Cookies.get("groupName")) {
       Cookies.erase("groupName");
     }
@@ -116,10 +105,11 @@ export const DeleteUser = (group, identifier) => {
   }
 }
 
-export const CheckAuthentication = () => {
+export const CheckAuthentication = (token) => {
   return async dispatch => {
     try {
       let res = await fetch('/api/checkAuth', { credentials: "same-origin" });
+      
       let user = (await res.json()).auth;
       let auth = res.status === 200;
       dispatch(Authenticated(auth));
@@ -133,18 +123,18 @@ export const CheckAuthentication = () => {
 
 export const Logout = () => {
   return async dispatch => {
-    console.log("logging out of passport");
-    await fetch('/api/logout');
+    let token = (await fetch('/api/logout')).token;
+    dispatch(StoreRegistrationToken(token));
     dispatch(Authenticated(false));
+    return token;
   }
 }
 
 export const StartRegistrationSession = () => {
   return async dispatch => {
-    dispatch(GetRegistrationToken());
-    dispatch(Logout());
+    let token = dispatch(Logout());
     window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
-    dispatch(CheckAuthentication());
+    dispatch(CheckAuthentication(token));
   }
 }
 

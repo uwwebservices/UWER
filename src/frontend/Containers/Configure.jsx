@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, GetRegistrationToken, Logout, StartRegistrationSession } from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, Logout, StartRegistrationSession } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -73,7 +73,6 @@ class Configure extends Component {
 
     render() {
         let canStartRegistration = this.props.groupName.length > 0;
-        console.warn(canStartRegistration)
         return (
             <div>
                 <h1>Configure</h1>

@@ -27,12 +27,12 @@ app.post(Routes.ShibbolethCallback,
 
 // log out, but keep a token around so we know who is responsible
 // will likely make this an api call for a modal instead of a redirect
-app.get(Routes.StartRegistration, ensureAuth(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`), function(req, res) {
-	let user = req.user ? "ActAs:" + req.user.UWNetID : "Developer";
-	req.logout();
-	req.session.registrationUser = user;
-	res.redirect(`${Routes.Register}?token=${getAuthToken(req)}`);
-});
+// app.get(Routes.StartRegistration, ensureAuth(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`), function(req, res) {
+// 	let user = req.user ? "ActAs:" + req.user.UWNetID : "Developer";
+// 	req.logout();
+// 	req.session.registrationUser = user;
+// 	res.redirect(`${Routes.Register}?token=${getAuthToken(req)}`);
+// });
 
 if(process.env.NODE_ENV === 'development') {
 	const webpack = require('webpack');

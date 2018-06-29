@@ -15,15 +15,22 @@ api.get(API.GetMembers, async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.get(API.GetToken, async (req, res) => {
-	let token = getAuthToken(req);
-	res.status(200).json({token});
-});
-
 api.get(API.Logout, (req,res) => {
+	// console.log("PRESESSION", req.session);
+	// let token = getAuthToken();
+	// let user = req.user;
+	// req.logout();
+	// //req.session.destroy();
+	// req.session = {};
+	// req.session.registrationUser = user;
+	// console.log("OMG SESSION", req.session);
+	// res.status(200).json({token});
+	let token = getAuthToken();
 	req.logout();
 	res.clearCookie('connect.sid');
-	res.sendStatus(200);
+	req.user = null;
+	req.session.user = null;
+	res.status(200).json({token});
 });
 
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
@@ -68,6 +75,7 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 api.get(API.CheckAuth, (req, res) => {
 	const defaultUser = { UWNetID: '', DisplayName: '' };
 	const devUser = { UWNetID: 'developer', DisplayName: 'Developer' };
+
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
 		return res.status(200).json({auth: req.user || devUser});
 	} else {

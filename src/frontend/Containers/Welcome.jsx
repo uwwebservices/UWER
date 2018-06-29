@@ -34,7 +34,7 @@ class Welcome extends Component {
         if(this.props.authenticated) {
             this.props.history.push("/config");
         } else {
-            window.location = "/config";
+            window.location = "/login?returnUrl=/config";
         }
     }
     render() {
