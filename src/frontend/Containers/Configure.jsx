@@ -68,7 +68,7 @@ class Configure extends Component {
 
     startRegistration = () => {
         this.props.getRegistrationToken();
-        window.open("https://weblogin.washington.edu/logout/", "_blank");
+        window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
         this.props.logout();
         this.props.history.push("/register");
     }
