@@ -12,6 +12,5 @@
   "groupAdmins": [ "adminNetids" ],
   "groupDisplayName": "UW Registration POC",
   "groupDescription": "This a test group for UW Registration POC",
-  "groupNameBase": "uw_ais_sm_ews_idcardpoc_",
-  "groupNameLeaf": "test"
+  "groupNameBase": "uw_ais_sm_ews_idcardpoc_"
 }

@@ -34,9 +34,9 @@ const APIRequestWithAuth = async (url, opts) => {
 
 export const GetRegistrationToken = () => {
   return async dispatch => {
-    let json = await APIRequestWithAuth('/api/getToken');
-    Cookies.set('registrationToken', json.token, { expires: 1/24 });
-    dispatch(StoreRegistrationToken(json.token));
+    let token = (await APIRequestWithAuth('/api/getToken')).token;
+    Cookies.set('registrationToken', token, { expires: 1/24 });
+    dispatch(StoreRegistrationToken(token));
   }
 }
 

@@ -44,8 +44,5 @@ describe('Array', () => {
         it('config should have groupNameBase', () => {
             config.should.have.property('groupNameBase');
         });
-        it('config should have groupNameLeaf', () => {
-            config.should.have.property('groupNameLeaf');
-        });
     });
 });
