@@ -23,6 +23,7 @@ api.get(API.GetToken, async (req, res) => {
 api.get(API.Logout, (req,res) => {
 	req.logout();
 	req.session.destroy();
+	res.clearCookie('connect.sid');
 	res.sendStatus(200);
 });
 
