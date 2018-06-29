@@ -137,6 +137,15 @@ export const Logout = () => {
   }
 }
 
+export const StartRegistrationSession = () => {
+  return async dispatch => {
+    await GetRegistrationToken();
+    await Logout();
+    window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
+    CheckAuthentication();
+  }
+}
+
 export const InitApp = () => {
   return async dispatch => {
     await dispatch(CheckAuthentication());
