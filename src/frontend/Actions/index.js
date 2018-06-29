@@ -34,6 +34,7 @@ const APIRequestWithAuth = async (url, opts) => {
 
 export const GetRegistrationToken = () => {
   return async dispatch => {
+    console.log("getting registration token");
     let token = (await APIRequestWithAuth('/api/getToken')).token;
     Cookies.set('registrationToken', token, { expires: 1/24 });
     dispatch(StoreRegistrationToken(token));
@@ -132,6 +133,7 @@ export const CheckAuthentication = () => {
 
 export const Logout = () => {
   return async dispatch => {
+    console.log("logging out of passport");
     await fetch('/api/logout');
     dispatch(Authenticated(false));
   }
@@ -139,10 +141,10 @@ export const Logout = () => {
 
 export const StartRegistrationSession = () => {
   return async dispatch => {
-    await GetRegistrationToken();
-    await Logout();
+    dispatch(GetRegistrationToken());
+    dispatch(Logout());
     window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
-    CheckAuthentication();
+    dispatch(CheckAuthentication());
   }
 }
 
