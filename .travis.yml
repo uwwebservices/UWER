@@ -12,3 +12,5 @@ services:
 after_success:
   - bash bin/docker-push.sh
   - bash bin/ews-deploy.sh
+notifications:
+    slack: uw-it:xY28CfCjInuYc4XqbkntDd3o
