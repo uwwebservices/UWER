@@ -68,16 +68,18 @@ class Configure extends Component {
 
     startRegistration = () => {
         this.props.getRegistrationToken();
-        // need to open modal
+        window.open("https://weblogin.washington.edu/logout/", "_blank");
         this.props.logout();
         this.props.history.push("/register");
     }
 
     render() {
+        let canStartRegistration = this.props.groupName.length > 0;
+        console.warn(canStartRegistration)
         return (
             <div>
                 <h1>Configure</h1>
-                <Button variant="raised" color="primary" type="submit" onClick={this.startRegistration}>Start Registration</Button>
+                <Button variant="raised" color="primary" disabled={!canStartRegistration} type="submit" onClick={this.startRegistration}>Start Registration</Button>
                 {
                     Object.keys(this.props.config).map(k => {
                         return <div key={k}>{k}: {this.props.config[k]}</div>
