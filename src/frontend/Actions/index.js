@@ -137,6 +137,6 @@ export const InitApp = () => {
     state.config && await dispatch(LoadConfig());
     state = store.getState();
     !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && dispatch(LoadSubgroups());
+    !state.subgroups.length && state.authenticated && dispatch(LoadSubgroups());
   }
 }
