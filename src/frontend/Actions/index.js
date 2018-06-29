@@ -130,11 +130,18 @@ export const CheckAuthentication = () => {
   }
 }
 
+export const Logout = () => {
+  return async dispatch => {
+    await fetch('/api/logout');
+    dispatch(Authenticated(false));
+  }
+}
+
 export const InitApp = () => {
   return async dispatch => {
     await dispatch(CheckAuthentication());
     let state = store.getState();
-    state.config && await dispatch(LoadConfig());
+    state.config && state.authenticated && await dispatch(LoadConfig());
     state = store.getState();
     !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
     !state.subgroups.length && state.authenticated && dispatch(LoadSubgroups());

@@ -20,6 +20,11 @@ api.get(API.GetToken, async (req, res) => {
 	res.status(200).json({token});
 });
 
+api.get(API.Logout, (req,res) => {
+	req.logout();
+	res.sendStatus(200);
+});
+
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let identifier = req.params.identifier;
 	let validCard = IDCard.ValidCard(identifier);

@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { UpdateGroupName, LoadConfig, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, GetRegistrationToken } from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, GetRegistrationToken, Logout } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -69,6 +69,7 @@ class Configure extends Component {
     startRegistration = () => {
         this.props.getRegistrationToken();
         // need to open modal
+        this.props.logout();
         this.props.history.push("/register");
     }
 
@@ -120,7 +121,8 @@ const mapDispatchToProps = dispatch => {
         loadUsers: group => dispatch(LoadUsers(group)),
         createGroup: group => dispatch(CreateGroup(group)),
         checkAuth: () => dispatch(CheckAuthentication()),
-        getRegistrationToken: () => dispatch(GetRegistrationToken())
+        getRegistrationToken: () => dispatch(GetRegistrationToken()),
+        logout: () => dispatch(Logout())
     }
 }
 

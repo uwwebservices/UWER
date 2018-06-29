@@ -22,13 +22,16 @@ export default class Test extends React.Component {
     }
     render() {
         const listItems = this.props.members.map(mem => {
+            let showDelete = this.props.authenticated && !mem.deleting && !mem.loading;
             return (
                 <ListItem
                     key={mem.UWNetID || mem.identifier}>
                     <Avatar src={mem.Base64Image} />
                     {mem.deleting && <span>OMG DELETING</span>}
-                    <ListItemText primary={mem.UWNetID} secondary={mem.DisplayName} />
-                    {this.props.authenticated && <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>}
+                    <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
+                    { showDelete &&  (
+                        <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>
+                    )}
                 </ListItem> 
             )
         })

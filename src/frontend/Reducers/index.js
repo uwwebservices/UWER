@@ -25,7 +25,7 @@ export default (state = initialState, action) => {
     case Const.RECEIVE_USERS:
       return Object.assign({}, state, {users: action.users});
     case Const.ADD_DUMMY_USER:
-      let dummy = { identifier: action.identifier, Base64Image: defaultUser, DisplayName: "Loading..." };
+      let dummy = { identifier: action.identifier, Base64Image: defaultUser, loading: true };
       return Object.assign({}, state, { users: [dummy, ...state.users]});
     case Const.FAILED_DUMMY_USER:
       let noDummy = state.users.filter(u => u.identifier !== action.identifier);

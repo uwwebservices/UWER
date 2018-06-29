@@ -25,12 +25,6 @@ app.post(Routes.ShibbolethCallback,
 	backToUrl()
 );
 
-// completely log out
-app.get(Routes.Logout, function(req, res){
-  req.logout();
-  res.redirect(Routes.Welcome);
-});
-
 // log out, but keep a token around so we know who is responsible
 // will likely make this an api call for a modal instead of a redirect
 app.get(Routes.StartRegistration, ensureAuth(`${Routes.Login}?returnUrl=${Routes.StartRegistration}`), function(req, res) {

@@ -8,7 +8,8 @@ export const API = {
 	"CheckAuth": "/checkAuth",
 	"Config": "/config",
 	"CSV": "/csv/:group.csv",
-	"GetToken": "/getToken"
+	"GetToken": "/getToken",
+    "Logout": "/logout"
 };
 
 export const Routes = {
@@ -16,7 +17,6 @@ export const Routes = {
 	"Register": "/register",
 	"StartRegistration": "/startRegistration",
 	"Login": "/login",
-    "Logout": "/logout",
     "ShibbolethMetadata": "/Shibboleth.sso/Metadata",
     "ShibbolethCallback": "/login/callback",
 };
