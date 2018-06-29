@@ -1,5 +1,6 @@
 import Const from '../Constants';
 import store from '../Store';
+import Cookies from 'browser-cookies';
 
 // Action Creators
 const ReceiveGroupName = groupName => { return {type: Const.RECEIVE_GROUP_NAME, groupName }};
@@ -34,6 +35,7 @@ const APIRequestWithAuth = async (url, opts) => {
 export const GetRegistrationToken = () => {
   return async dispatch => {
     let json = await APIRequestWithAuth('/api/getToken');
+    Cookies.set('registrationToken', json.token, { expires: 1/24 });
     dispatch(StoreRegistrationToken(json.token));
   }
 }
@@ -42,24 +44,18 @@ export const GetRegistrationToken = () => {
 export const LoadConfig = () => {
   return async dispatch => {
     let json = await APIRequestWithAuth('/api/config');
-    await dispatch(await ConfigLoaded(json));
-    return await dispatch(LoadGroupName(json.groupNameBase+json.groupNameLeaf));
+    return await dispatch(await ConfigLoaded(json));
   }
 }
 
 // Store groupname in localstorage and update store
 export const UpdateGroupName = groupName => {
   return async dispatch => {
-    localStorage.setItem("groupName", groupName);
-    return await dispatch(ReceiveGroupName(groupName));
-  }
-}
-
-// load group name into store, generate default if null
-export const LoadGroupName = group => {
-  return async dispatch => {
-    let groupName = localStorage.getItem("groupName");
-    groupName = groupName ? groupName : group;
+    console.log("COOKIE", Cookies.get("groupName"), groupName)
+    if(Cookies.get("groupName")) {
+      Cookies.erase("groupName");
+    }
+    Cookies.set("groupName", groupName, { expires: 1/24 });
     return await dispatch(ReceiveGroupName(groupName));
   }
 }
@@ -70,7 +66,7 @@ export const CreateGroup = group => {
   }
 }
 
-export const LoadSubgroups = groupName => {
+export const LoadSubgroups = () => {
   return async dispatch => {
     let groupNameBase = store.getState().config.groupNameBase;
     let subgroups = await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`);
@@ -139,9 +135,8 @@ export const InitApp = () => {
     await dispatch(CheckAuthentication());
     let state = store.getState();
     state.config && await dispatch(LoadConfig());
-    !state.groupName && await dispatch(LoadGroupName());
     state = store.getState();
-    !state.users.length && state.groupName && await dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && state.groupName && state.authenticated && await dispatch(LoadSubgroups(state.groupName));
+    !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
+    !state.subgroups.length && dispatch(LoadSubgroups());
   }
 }

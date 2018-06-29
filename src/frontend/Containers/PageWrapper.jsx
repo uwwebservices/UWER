@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router'
-import { InitApp, StoreRegistrationToken } from '../Actions';
+import { withRouter } from 'react-router';
+import Cookies from 'browser-cookies';
+import { InitApp, StoreRegistrationToken, UpdateGroupName } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 
 class PageWrapper extends Component {
+    constructor(props) {
+        super(props);
+        let groupName = Cookies.get('groupName');
+        console.log("READ GROUP NAME FROM COOKIE", groupName)
+        if(groupName) {
+            props.updateGroupName(groupName);
+        }
+    }
     componentWillMount() {
         this.props.initApp();
     }
@@ -45,7 +54,8 @@ const mapStateToProps = state => ({
  const mapDispatchToProps = dispatch => {
     return {
         initApp: () => dispatch(InitApp()),
-        storeRegistrationToken: token => dispatch(StoreRegistrationToken(token))
+        storeRegistrationToken: token => dispatch(StoreRegistrationToken(token)),
+        updateGroupName: groupName => dispatch(UpdateGroupName(groupName))
     }
 }
  

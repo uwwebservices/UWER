@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import { connect } from 'react-redux';
-import { LoadUsers, AddUser, LoadGroupName, DeleteUser } from '../Actions';
+import { LoadUsers, AddUser, DeleteUser } from '../Actions';
 
 class Register extends Component {
     render() {
@@ -26,7 +26,6 @@ const mapStateToProps = state => ({
      return {
         loadUsers: group => dispatch(LoadUsers(group)),
         addUser: (group, user) => dispatch(AddUser(group, user)),
-        loadGroupName: () => dispatch(LoadGroupName()),
         removeUser: (group, user) => dispatch(DeleteUser(group, user))
      }
  }

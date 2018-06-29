@@ -49,7 +49,7 @@ Header.propTypes = {
 Header.defaultProps = {
     pages: [],
     title: "University of Washington",
-    url: "http://uw.edu"
+    url: "/"
 }
 
 export default Header;

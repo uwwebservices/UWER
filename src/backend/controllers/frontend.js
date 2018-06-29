@@ -60,6 +60,7 @@ if(process.env.NODE_ENV === 'development') {
 		log: console.log,
 		reload: true
 	}))
+	// If you run into a weird "No such file or directory" error here, likely an import failed somewhere
 	app.get('*', ensureAuth(), (req, res, next) => {
 		var filename = path.join(compiler.outputPath,'index.html');
 		compiler.outputFileSystem.readFile(filename, function(err, result){
