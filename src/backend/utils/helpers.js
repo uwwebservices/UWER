@@ -61,7 +61,7 @@ export const getAuthToken = (req, uriEncode = true) => {
 export const verifyAuthToken = req => {
 	console.log("verifying token", req.session.token, req.body.token);
 	if(!req.session.token && !req.body.token) { return false; }
-	if(!req.session.token && req.body.token) { req.session.token = req.body.token; }
+	if(!req.session.token && req.body.token) { req.session.token = decodeURIComponent(req.body.token); }
 	console.log("loaded token", req.session.token, req.body.token);
 	let passphrase = process.env.SessionKey || "development";
 	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
