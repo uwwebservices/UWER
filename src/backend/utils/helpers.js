@@ -50,7 +50,7 @@ export const ensureAuthOrToken = (req, res, next) => {
 
 export const getAuthToken = (req, uriEncode = true) => {
 	console.log("GetAuthToken User:", req.user, req.session);
-	if(!req.user) { return false; }
+	if(!req.user && process.env.NODE_ENV !== "development") { return false; }
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setHours(now.getHours() + 1);
