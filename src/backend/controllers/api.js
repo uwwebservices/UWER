@@ -69,11 +69,11 @@ api.get(API.CheckAuth, (req, res) => {
 	console.log("Check Auth Session", req.session);
 
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
-		return res.status(200);
+		return res.sendStatus(200);
 	} else {
 		// using 202 because 4xx throws a dumb error in the chrome console,
 		// anything but 200 is fine for this use case
-		return res.status(202).json({auth: defaultUser});
+		return res.sendStatus(202);
 	}
 });
 
