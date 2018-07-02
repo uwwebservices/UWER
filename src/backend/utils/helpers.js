@@ -62,9 +62,11 @@ export const verifyAuthToken = req => {
 	console.log("verifying token", req.session.token, req.body.token);
 	if(!req.session.token && !req.body.token) { return false; }
 	if(!req.session.token && req.body.token) { req.session.token = req.body.token; }
-
+	console.log("loaded token", req.session.token, req.body.token);
 	let passphrase = process.env.SessionKey || "development";
-	let payload = JSON.parse(AES.decrypt(req.session.token, passphrase).toString(enc.Utf8));
+	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
+	console.log(payload);
+	payload = JSON.parse(payload);
 	req.session.user = payload.user;
 	console.log("Token expired?", payload.expiry, (new Date()).getTime(), payload.expiry > (new Date()).getTime())
 	return payload.expiry > (new Date()).getTime();
