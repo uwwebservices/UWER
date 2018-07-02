@@ -21,9 +21,9 @@ api.get(API.GetToken, (req, res) => {
 	let token = getAuthToken(req);
 	console.log("Token Acquired:", token);
 	if(token) {
-		res.send(200).json({token});
+		return res.status(200).json({token});
 	} else {
-		res.send(401).json({token: ""});
+		return res.status(401).json({token: ""});
 	}
 	
 });
