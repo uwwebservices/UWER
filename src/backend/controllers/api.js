@@ -17,17 +17,14 @@ api.get(API.GetMembers, async (req, res) => {
 
 api.get(API.GetToken, (req, res) => {
 	let token = getAuthToken(req);
-	console.log("Token Acquired:", token);
 	if(token) {
 		return res.status(200).json({token});
 	} else {
 		return res.status(401).json({token: ""});
 	}
-	
 });
 
 api.get(API.Logout, (req,res) => {	
-	console.log("Logging out user");
 	req.logout();
 	req.session.destroy();
 	res.clearCookie('connect.sid', {path:'/'});
@@ -71,8 +68,6 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.CheckAuth, (req, res) => {
-	console.log("Check Auth Session", req.session);
-
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
 		return res.sendStatus(200);
 	} else {
