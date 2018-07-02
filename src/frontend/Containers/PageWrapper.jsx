@@ -10,7 +10,6 @@ class PageWrapper extends Component {
     constructor(props) {
         super(props);
         let groupName = Cookies.get('groupName');
-        console.log("READ GROUP NAME FROM COOKIE", groupName)
         if(groupName) {
             props.updateGroupName(groupName);
         }

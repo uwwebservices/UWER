@@ -10,6 +10,7 @@ class Welcome extends Component {
 
         // if we have a token, we shoud go back to registering
         if(Cookies.get('registrationToken')) {
+            props.storeRegistrationToken(Cookies.get('registrationToken'));
             props.history.push("/register");
             return;
         }
