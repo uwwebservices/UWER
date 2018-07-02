@@ -133,7 +133,9 @@ export const Logout = () => {
 export const StartRegistrationSession = () => {
   return async dispatch => {
     let token = dispatch(Logout());
-    window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
+    if(!process.env.NODE_ENV === "development") {
+      window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
+    }
     dispatch(CheckAuthentication(token));
   }
 }

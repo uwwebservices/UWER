@@ -28,9 +28,8 @@ api.get(API.Logout, (req,res) => {
 	let token = getAuthToken();
 	req.logout();
 	res.clearCookie('connect.sid');
-	req.user = null;
-	req.session.user = null;
-	res.status(200).json({token});
+	res.send("logged out", 401);
+	//res.status(200).json({token});
 });
 
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
@@ -73,6 +72,7 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 // If a UWNetID and DisplayName is returned it is displayed in the client
 // This is just for show/hide, API doesn't rely on this
 api.get(API.CheckAuth, (req, res) => {
+	console.log("Check Auth Session", req.session)
 	const defaultUser = { UWNetID: '', DisplayName: '' };
 	const devUser = { UWNetID: 'developer', DisplayName: 'Developer' };
 
