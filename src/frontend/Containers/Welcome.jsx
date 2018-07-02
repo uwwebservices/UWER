@@ -5,15 +5,15 @@ import Cookies from 'browser-cookies';
 import { UpdateGroupName } from '../Actions';
 
 class Welcome extends Component {
-    constructor (props) {
-        super(props);
-
+    componentDidMount() {
         // throw at end of stack to give authentication some time -- may need tweaking
         setTimeout(() => {
             // if we have a token, we shoud go back to registering
             if(Cookies.get('registrationToken')) {
-                props.storeRegistrationToken(Cookies.get('registrationToken'));
-                props.history.push("/register");
+                let token = Cookies.get('registrationToken');
+                console.log("Got token from cookie", token);
+                this.props.storeRegistrationToken(token);
+                this.props.history.push("/register");
                 return;
             }
             if (this.props.authenticated) {
