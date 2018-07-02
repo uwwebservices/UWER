@@ -16,7 +16,6 @@ export default class Configure extends Component {
       link.click();
     }
     gws = groupName => {
-      console.log("GOING TO", groupName)
       window.open(`https://groups.uw.edu/group/${groupName}`, "_blank")
     }
     render() {

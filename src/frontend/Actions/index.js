@@ -136,6 +136,14 @@ export const StartRegistrationSession = () => {
   }
 }
 
+export const StopRegistrationSession = () => {
+  return async dispatch => {
+    console.log("Erasing cookies")
+    Cookies.erase("registrationToken", { path: "/"});
+    Cookies.erase("groupName", { path: "/"});
+  }
+}
+
 export const InitApp = () => {
   return async dispatch => {
     await dispatch(CheckAuthentication());

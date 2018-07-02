@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, Logout, StartRegistrationSession } from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -71,12 +71,18 @@ class Configure extends Component {
         this.props.history.push("/register");
     }
 
+    stopRegistration = async () => {
+        await this.props.stopRegistrationSession();
+        this.props.history.push("/");
+    }
+
     render() {
         let canStartRegistration = this.props.groupName.length > 0;
         return (
             <div>
                 <h1>Configure</h1>
-                <Button variant="raised" color="primary" disabled={!canStartRegistration} type="submit" onClick={this.startRegistration}>Start Registration</Button>
+                <Button variant="raised" color="primary" disabled={!canStartRegistration} onClick={this.startRegistration}>Start Registration</Button>
+                <Button variant="raised" color="secondary" onClick={this.stopRegistration}>Stop Registration</Button>
                 {
                     Object.keys(this.props.config).map(k => {
                         return <div key={k}>{k}: {this.props.config[k]}</div>
@@ -120,7 +126,8 @@ const mapDispatchToProps = dispatch => {
         loadUsers: group => dispatch(LoadUsers(group)),
         createGroup: group => dispatch(CreateGroup(group)),
         checkAuth: () => dispatch(CheckAuthentication()),
-        startRegistrationSession: () => dispatch(StartRegistrationSession())
+        startRegistrationSession: () => dispatch(StartRegistrationSession()),
+        stopRegistrationSession: () => dispatch(StopRegistrationSession())
     }
 }
 

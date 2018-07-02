@@ -3,17 +3,27 @@ import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
-import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession } from '../Actions';
+import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
 class Register extends Component {
+    endRegistration = () => {
+        this.props.stopRegistrationSession();
+        this.props.history.push("/");
+    }
     render() {
+        let adminMode = this.props.authenticated && this.props.groupName;
         return (
             <div>
-                { this.props.authenticated && this.props.groupName && (
+                { adminMode && (
                     <div>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
                         <Button variant="raised" onClick={() => this.props.startRegistrationSession()} color="primary">Start Registering</Button>
                     </div>
+                )}
+                { !adminMode && (
+                    <span className="righted">
+                        <a href="" onClick={() => this.endRegistration()}>End Registration</a>
+                    </span>
                 )}
                   <h1>Event Registration</h1>                  
                   <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} />
@@ -34,7 +44,8 @@ const mapStateToProps = state => ({
         loadUsers: group => dispatch(LoadUsers(group)),
         addUser: (group, user) => dispatch(AddUser(group, user)),
         removeUser: (group, user) => dispatch(DeleteUser(group, user)),
-        startRegistrationSession: () => dispatch(StartRegistrationSession())
+        startRegistrationSession: () => dispatch(StartRegistrationSession()),
+        stopRegistrationSession: () => dispatch(StopRegistrationSession())
      }
  }
  
