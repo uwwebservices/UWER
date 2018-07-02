@@ -16,7 +16,6 @@ api.get(API.GetMembers, async (req, res) => {
 });
 
 api.get(API.GetToken, (req, res) => {
-	console.log("getting token, auth:", req.user, req.session)
 	let token = getAuthToken(req);
 	console.log("Token Acquired:", token);
 	if(token) {
