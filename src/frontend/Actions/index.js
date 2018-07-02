@@ -118,7 +118,7 @@ export const CheckAuthentication = () => {
 
 export const Logout = () => {
   return async dispatch => {
-    await APIRequestWithAuth('/api/logout');
+    await fetch('/api/logout', { credentials: "same-origin" });
     dispatch(Authenticated(false));
   }
 }
