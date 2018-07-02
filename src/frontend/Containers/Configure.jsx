@@ -66,8 +66,8 @@ class Configure extends Component {
         await this.props.loadUsers(groupName);
     }
 
-    startRegistration = () => {
-        this.props.startRegistrationSession();
+    startRegistration = async () => {
+        await this.props.startRegistrationSession();
         this.props.history.push("/register");
     }
 

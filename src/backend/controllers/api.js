@@ -15,7 +15,8 @@ api.get(API.GetMembers, async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.get(API.GetToken, ensureAPIAuth, (req, res) => {
+// this should have ensureApiAuth, but is buggy atm
+api.get(API.GetToken, (req, res) => {
 	let token = getAuthToken();
 	console.log("Token Acquired:", token);
 	res.send(200).json({token});
