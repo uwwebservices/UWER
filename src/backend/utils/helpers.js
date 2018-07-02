@@ -48,7 +48,8 @@ export const ensureAuthOrToken = (req, res, next) => {
 	}
 }
 
-export const getAuthToken = (req, uriEncode = true) => {
+export const getAuthToken = (req, res, uriEncode = true) => {
+	if(!req.user) { res.send(401); }
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setHours(now.getHours() + 1);
