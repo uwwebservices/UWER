@@ -85,7 +85,7 @@ export const AddUser = (group, identifier) => {
     try {
       let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
         method: 'PUT', 
-        body: JSON.stringify({token: state.registrationToken}),
+        body: JSON.stringify({token: state.registrationToken || Cookies.get("registrationToken")}),
         headers:{
           'Content-Type': 'application/json'
         }
