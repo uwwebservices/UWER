@@ -105,38 +105,33 @@ export const DeleteUser = (group, identifier) => {
   }
 }
 
-export const CheckAuthentication = (token) => {
+export const CheckAuthentication = () => {
   return async dispatch => {
     try {
       let res = await fetch('/api/checkAuth', { credentials: "same-origin" });
-      
-      let user = (await res.json()).auth;
-      let auth = res.status === 200;
-      dispatch(Authenticated(auth));
-      dispatch(ReceiveAuth(user));
+      dispatch(Authenticated(res.status === 200));
     } catch(ex) {
       dispatch(Authenticated(false));
-      dispatch(ReceiveAuth({ UWNetID: "", DisplayName: "" }));
     }
   }
 }
 
 export const Logout = () => {
   return async dispatch => {
-    let token = (await fetch('/api/logout')).token;
-    dispatch(StoreRegistrationToken(token));
+    await fetch('/api/logout');
     dispatch(Authenticated(false));
-    return token;
   }
 }
 
 export const StartRegistrationSession = () => {
   return async dispatch => {
-    let token = dispatch(Logout());
-    if(!process.env.NODE_ENV === "development") {
+    let token = (await fetch('/api/getToken')).token;
+    dispatch(StoreRegistrationToken(token));
+    dispatch(Logout());
+    if(process.env.NODE_ENV !== "development") {
+      // this will be a modal instead of a new window
       window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
     }
-    dispatch(CheckAuthentication(token));
   }
 }
 

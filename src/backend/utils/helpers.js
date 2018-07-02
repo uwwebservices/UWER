@@ -48,24 +48,20 @@ export const ensureAuthOrToken = (req, res, next) => {
 	}
 }
 
-export const getAuthToken = req => {
-	if(!req) {
-		req = {};
-		req.user = "Developer";
-		req.session = {};
-	}
+export const getAuthToken = (req, uriEncode = true) => {
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setHours(now.getHours() + 1);
 	let token = AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase).toString();
-	req.session.token = token;
-	return encodeURIComponent(token);
+	return uriEncode ? encodeURIComponent(token) : token;
 }
 
 export const verifyAuthToken = req => {
 	if(!req.session.token && !req.body.token) { return false; }
 	if(!req.session.token && req.body.token) { req.session.token = req.body.token; }
+
 	let passphrase = process.env.SessionKey || "development";
 	let payload = JSON.parse(AES.decrypt(req.session.token, passphrase).toString(enc.Utf8));
+	req.session.user = payload.user;
 	return payload.expiry > (new Date()).getTime();
 }

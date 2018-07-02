@@ -9,13 +9,12 @@ export const API = {
 	"Config": "/config",
 	"CSV": "/csv/:group.csv",
 	"GetToken": "/getToken",
-    "Logout": "/logout"
+	"Logout": "/logout",
 };
 
 export const Routes = {
 	"Welcome": "/",
 	"Register": "/register",
-	"StartRegistration": "/startRegistration",
 	"Login": "/login",
     "ShibbolethMetadata": "/Shibboleth.sso/Metadata",
     "ShibbolethCallback": "/login/callback",

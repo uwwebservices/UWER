@@ -15,21 +15,18 @@ api.get(API.GetMembers, async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.get(API.Logout, (req,res) => {
-	// console.log("PRESESSION", req.session);
-	// let token = getAuthToken();
-	// let user = req.user;
-	// req.logout();
-	// //req.session.destroy();
-	// req.session = {};
-	// req.session.registrationUser = user;
-	// console.log("OMG SESSION", req.session);
-	// res.status(200).json({token});
+api.get(API.GetToken, ensureAPIAuth, (req, res) => {
 	let token = getAuthToken();
+	console.log("Token Acquired:", token);
+	res.send(200).json({token});
+});
+
+api.get(API.Logout, (req,res) => {	
+	console.log("Logging out user");
 	req.logout();
-	res.clearCookie('connect.sid');
-	res.send("logged out", 401);
-	//res.status(200).json({token});
+	//req.session.destroy();
+	res.clearCookie('connect.sid', {path:'/'});
+	res.sendStatus(200);
 });
 
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
@@ -68,16 +65,11 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
-// Simple endpoint to verify user is authenticated
-// If a UWNetID and DisplayName is returned it is displayed in the client
-// This is just for show/hide, API doesn't rely on this
 api.get(API.CheckAuth, (req, res) => {
-	console.log("Check Auth Session", req.session)
-	const defaultUser = { UWNetID: '', DisplayName: '' };
-	const devUser = { UWNetID: 'developer', DisplayName: 'Developer' };
+	console.log("Check Auth Session", req.session);
 
 	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
-		return res.status(200).json({auth: req.user || devUser});
+		return res.status(200);
 	} else {
 		// using 202 because 4xx throws a dumb error in the chrome console,
 		// anything but 200 is fine for this use case
