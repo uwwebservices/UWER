@@ -15,7 +15,7 @@ class PageWrapper extends Component {
         }
         let registrationToken = Cookies.get('registrationToken');
         if(registrationToken && !props.token) {
-            props.storeRegistrationToken(token);
+            props.storeRegistrationToken(registrationToken);
         }
     }
     componentWillMount() {
