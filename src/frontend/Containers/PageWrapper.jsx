@@ -10,8 +10,12 @@ class PageWrapper extends Component {
     constructor(props) {
         super(props);
         let groupName = Cookies.get('groupName');
-        if(groupName) {
+        if(groupName && !props.GroupName) {
             props.updateGroupName(groupName);
+        }
+        let registrationToken = Cookies.get('registrationToken');
+        if(registrationToken && !props.token) {
+            props.storeRegistrationToken(token);
         }
     }
     componentWillMount() {
