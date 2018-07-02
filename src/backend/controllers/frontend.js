@@ -14,12 +14,7 @@ app.get(Routes.Login,
 	},
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
 ); 
-app.get(Routes.ShibbolethMetadata, 
-  function(req, res) {
-    res.type('application/xml');
-    res.status(200).send(samlStrategy.generateServiceProviderMetadata());
-  }
-);
+
 app.post(Routes.ShibbolethCallback,
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
 	backToUrl()

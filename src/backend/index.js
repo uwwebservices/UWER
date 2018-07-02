@@ -71,6 +71,13 @@ app.use(morgan(function (tokens, req, res) {
 
 app.server = http.createServer(app);
 
+app.get('/Shibboleth.sso/metadata', 
+	function(req, res) {
+	  res.type('application/xml');
+	  res.status(200).send(uwSamlStrategy.generateServiceProviderMetadata());
+	}
+  );
+
 app.use('/api', api);
 app.use(['/','/config'], frontend);
 

@@ -118,14 +118,14 @@ export const CheckAuthentication = () => {
 
 export const Logout = () => {
   return async dispatch => {
-    await fetch('/api/logout');
+    await APIRequestWithAuth('/api/logout');
     dispatch(Authenticated(false));
   }
 }
 
 export const StartRegistrationSession = () => {
   return async dispatch => {
-    let token = (await fetch('/api/getToken')).token;
+    let token = (await APIRequestWithAuth('/api/getToken')).token;
     console.log("got token", token);
     dispatch(StoreRegistrationToken(token));
     Cookies.set("registrationToken", token);
