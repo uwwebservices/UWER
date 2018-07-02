@@ -126,7 +126,9 @@ export const Logout = () => {
 export const StartRegistrationSession = () => {
   return async dispatch => {
     let token = (await fetch('/api/getToken')).token;
+    console.log("got token", token);
     dispatch(StoreRegistrationToken(token));
+    Cookies.set("registrationToken", token);
     dispatch(Logout());
     if(process.env.NODE_ENV !== "development") {
       // this will be a modal instead of a new window
