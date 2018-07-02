@@ -10,6 +10,18 @@ class Register extends Component {
         this.props.stopRegistrationSession();
         this.props.history.push("/");
     }
+    componentWillMount() {
+        console.log("WillMount auth", this.props.authenticated, "token", this.props.token)
+        if(!this.props.authenticated || !this.props.token) {
+            this.props.history.push("/");
+        }
+    }
+    componentWillUpdate() {
+        console.log("WillUpdate auth", this.props.authenticated, "token", this.props.token)
+        if(!this.props.authenticated || !this.props.token) {
+            this.props.history.push("/");
+        }
+    }
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;
         return (
@@ -37,7 +49,8 @@ const mapStateToProps = state => ({
     groupName: state.groupName,
     users: state.users,
     groupNameBase: state.config.groupNameBase,
-    authenticated: state.authenticated
+    authenticated: state.authenticated,
+    token: state.registrationToken
  });
  const mapDispatchToProps = dispatch => {
      return {

@@ -2,7 +2,7 @@ import Const from '../Constants';
 import defaultUser from 'Assets/defaultUser';
 
 const initialState = {
-  authenticated: false,
+  authenticated: null,
   auth: { UWNetID: "", DisplayName: "" },
   groupName: "",
   config: {},
