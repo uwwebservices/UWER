@@ -24,7 +24,7 @@ api.get(API.GetToken, ensureAPIAuth, (req, res) => {
 api.get(API.Logout, (req,res) => {	
 	console.log("Logging out user");
 	req.logout();
-	//req.session.destroy();
+	req.session.destroy();
 	res.clearCookie('connect.sid', {path:'/'});
 	res.sendStatus(200);
 });
