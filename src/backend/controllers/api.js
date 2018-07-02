@@ -17,9 +17,14 @@ api.get(API.GetMembers, async (req, res) => {
 
 // this should have ensureApiAuth, but is buggy atmg
 api.get(API.GetToken, (req, res) => {
-	let token = getAuthToken(req, res);
+	let token = getAuthToken(req);
 	console.log("Token Acquired:", token);
-	res.send(200).json({token});
+	if(token) {
+		res.send(200).json({token});
+	} else {
+		res.send(401).json({token: ""});
+	}
+	
 });
 
 api.get(API.Logout, (req,res) => {	
