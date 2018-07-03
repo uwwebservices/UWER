@@ -9,7 +9,7 @@ class Welcome extends Component {
         // throw at end of stack to give authentication some time -- may need tweaking
         setTimeout(() => {
             if (this.props.authenticated) {
-                console.log("authenticted, back to config to finish");
+                console.log("authenticated, back to config to finish");
                 // Comment this out to test welcome screen in dev
                 //this.props.history.push("/config")
                 return;
