@@ -11,13 +11,11 @@ class Register extends Component {
         this.props.history.push("/");
     }
     componentWillMount() {
-        console.log("WillMount auth", this.props.authenticated, "token", this.props.token)
         if(!this.props.authenticated && !this.props.token) {
             this.props.history.push("/");
         }
     }
     componentWillUpdate() {
-        console.log("WillUpdate auth", this.props.authenticated, "token", this.props.token)
         if(!this.props.authenticated && !this.props.token) {
             this.props.history.push("/");
         }

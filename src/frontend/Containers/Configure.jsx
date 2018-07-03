@@ -39,7 +39,6 @@ class Configure extends Component {
 
     deleteSubGroup = async subgroup => {
         await this.props.destroySubgroup(subgroup);
-        console.log("done");
     };
 
     handleChange = e => {
