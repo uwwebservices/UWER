@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
+import ConfirmModal from 'Components/ConfirmModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
@@ -36,7 +37,7 @@ class Register extends Component {
                 )}
                 { !adminMode && (
                     <span className="righted">
-                        <a href="" onClick={() => this.endRegistration()}>End Registration</a>
+                        <ConfirmModal buttonText="End Registration" confirmCallback={() => this.endRegistration()} dialogContent={`Are you sure you want to end this registration session and fully log out?`} dialogTitle={`End Registration Session?`} />
                     </span>
                 )}
                 <h1>Event Registration</h1>                  

@@ -9,10 +9,12 @@ export default class Configure extends Component {
         super(props);
     }
     csvify = groupName => {
+      console.log("csvifying", groupName)
       let filePath = `/api/csv/${groupName}.csv`;
       var link = document.createElement('a');
       link.href = filePath;
       link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+      console.log(link)
       link.click();
     }
     gws = groupName => {
@@ -23,7 +25,7 @@ export default class Configure extends Component {
       let SelectButton = groupName === this.props.selectedGroup ? (
         <span>
           <Button color="primary" variant="raised" onClick={() => this.gws(this.props.groupName)}><FA name="group" />&nbsp;GWS</Button>
-          <ConfirmModal buttonText="Delete" confirmCallback={() => this.props.deleteCallback(this.props.groupName)} dialogContent={`This will delete the leaf group and all members, are you sure you want to delete ${groupName}?`} dialogTitle={`Delete ${groupName}?`} />
+          <ConfirmModal buttonText="Delete" confirmCallback={() => this.props.deleteCallback(groupName)} dialogContent={`This will delete the leaf group and all members, are you sure you want to delete ${groupName}?`} dialogTitle={`Delete ${groupName}?`} />
           <Button color="primary" variant="raised" onClick={() => this.csvify(groupName)}>
           <FA name="file-excel-o" />&nbsp;
           CSV

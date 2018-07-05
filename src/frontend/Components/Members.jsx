@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
+import ConfirmModal from 'Components/ConfirmModal';
 import FA from 'react-fontawesome';
 
 export default class Test extends React.Component {
@@ -30,7 +31,7 @@ export default class Test extends React.Component {
                     {mem.deleting && <span>OMG DELETING</span>}
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
                     { showDelete &&  (
-                        <Button variant="fab" onClick={() => this.removeUser(mem.UWNetID)} mini={true} color="primary">x</Button>
+                        <ConfirmModal openButtonIcon="remove" openButtonText="" openButtonVariant="fab" openButtonFabMini={true} confirmCallback={() => this.removeUser(mem.UWNetID)} dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group}?`} dialogTitle={`Remove User?`} />
                     )}
                 </ListItem> 
             )

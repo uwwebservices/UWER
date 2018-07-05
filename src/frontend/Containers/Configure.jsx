@@ -4,6 +4,7 @@ import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
+import ConfirmModal from 'Components/ConfirmModal';
 import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
 class Configure extends Component {
@@ -72,7 +73,7 @@ class Configure extends Component {
         this.props.history.push("/register");
     }
 
-    stopRegistration = async () => {
+    endRegistration = async () => {
         await this.props.stopRegistrationSession();
         this.props.history.push("/");
     }
@@ -83,12 +84,14 @@ class Configure extends Component {
 
     render() {
         let canStartRegistration = this.props.groupName.length > 0;
-        console.log(this.props)
         return (
             <div>
                 <h1>Configure</h1>
-                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} />
-                <Button variant="raised" color="secondary" onClick={this.stopRegistration}>Stop Registration</Button>
+                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> <br/>
+                <ConfirmModal openButtonDisabled={!canStartRegistration} openButtonText="End Registration" confirmCallback={() => this.endRegistration()} 
+                    dialogContent={`Are you sure you want to end this registration session and fully log out?`} 
+                    dialogTitle={`End Registration Session?`} approveButtonText="End Session" cancelButtonText="Back"
+                />
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div>

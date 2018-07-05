@@ -130,10 +130,6 @@ export const StartRegistrationSession = () => {
     dispatch(StoreRegistrationToken(token));
     Cookies.set("registrationToken", token);
     dispatch(Logout());
-    if(process.env.NODE_ENV !== "development") {
-      // this will be a modal instead of a new window
-      window.open("https://idp.u.washington.edu/idp/profile/Logout", "_blank");
-    }
   }
 }
 

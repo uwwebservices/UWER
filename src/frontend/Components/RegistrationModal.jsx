@@ -8,18 +8,6 @@ class RegistrationModal extends React.Component {
         }
     }
     render() {
-        // confirmCallback: PropTypes.func,
-        // cancelCallback: PropTypes.func,
-        // dialogTitle: PropTypes.string,
-        // children: PropTypes.node,
-        // cancelText: PropTypes.string,
-        // approveText: PropTypes.string,
-        // approveButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
-        // openButtonText: PropTypes.string,
-        // openButtonIcon: PropTypes.string,
-        // openButtonVariant: PropTypes.string,
-        // openButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary'])
-
         let modalOpts = {
             dialogTitle: "Start Registation Mode",
             cancelText: "Back to Config",

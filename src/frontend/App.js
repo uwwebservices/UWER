@@ -12,7 +12,6 @@ import { Provider } from 'react-redux';
 import store from './Store.js';
 
 const PorousRoute = function ({ children, ...props }) {
-    console.log(props)
     return (
         <Route path={props.path}>
             <PageWrapper {...props}>
