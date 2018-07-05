@@ -39,9 +39,9 @@ class Register extends Component {
                         <a href="" onClick={() => this.endRegistration()}>End Registration</a>
                     </span>
                 )}
-                  <h1>Event Registration</h1>                  
-                  <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} />
-                  <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
+                <h1>Event Registration</h1>                  
+                <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} />
+                <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>
         )
     }
