@@ -87,7 +87,7 @@ class Configure extends Component {
         return (
             <div>
                 <h1>Configure</h1>
-                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> <br/>
+                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> &nbsp;
                 <ConfirmModal openButtonDisabled={!canStartRegistration} openButtonText="End Registration" confirmCallback={() => this.endRegistration()} 
                     dialogContent={`Are you sure you want to end this registration session and fully log out?`} 
                     dialogTitle={`End Registration Session?`} approveButtonText="End Session" cancelButtonText="Back"

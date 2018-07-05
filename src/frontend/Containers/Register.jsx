@@ -37,7 +37,10 @@ class Register extends Component {
                 )}
                 { !adminMode && (
                     <span className="righted">
-                        <ConfirmModal buttonText="End Registration" confirmCallback={() => this.endRegistration()} dialogContent={`Are you sure you want to end this registration session and fully log out?`} dialogTitle={`End Registration Session?`} />
+                        <ConfirmModal openButtonText="End Registration" confirmCallback={() => this.endRegistration()} 
+                            dialogContent={`Are you sure you want to end this registration session and fully log out?`} 
+                            dialogTitle={`End Registration Session?`} approveButtonText="End Registration"
+                        />
                     </span>
                 )}
                 <h1>Event Registration</h1>                  

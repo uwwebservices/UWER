@@ -79,7 +79,7 @@ ContentModal.propTypes = {
 ContentModal.defaultProps = {
   dialogTitle: "",
   cancelText: "Cancel",
-  cancelButtonColor: "secondary",
+  cancelButtonColor: "default",
   approveText: "Continue",
   approveButtonColor: "primary",
   openButtonText: "Open Modal",

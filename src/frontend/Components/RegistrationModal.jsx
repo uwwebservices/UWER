@@ -10,7 +10,7 @@ class RegistrationModal extends React.Component {
     render() {
         let modalOpts = {
             dialogTitle: "Start Registation Mode",
-            cancelText: "Back to Config",
+            cancelText: "Back",
             approveText: "Start Registration",
             openButtonText: "Registration Mode",
             disableBackdropClick: true,
