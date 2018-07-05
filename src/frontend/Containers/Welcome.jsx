@@ -20,9 +20,8 @@ class Welcome extends Component {
         
     }
     configure = () => {
-        // This is just for development ease, skip shib locally
         if(this.props.authenticated) {
-            this.props.history.push("/config");
+            this.props.history.push("/config"); // skip auth in dev as we are already auth'd
         } else {
             window.location = "/login?returnUrl=/config";
         }
@@ -42,9 +41,11 @@ const mapStateToProps = state => ({
     token: state.registrationToken,
     authenticated: state.authenticated
 });
-const mapDispatchToProps = dispatch => {return {
-    storeRegistrationToken: token => dispatch(StoreRegistrationToken(token)),
-    updateGroupName: groupName => dispatch(UpdateGroupName(groupName))
-}};
+const mapDispatchToProps = dispatch => {
+    return {
+        storeRegistrationToken: token => dispatch(StoreRegistrationToken(token)),
+        updateGroupName: groupName => dispatch(UpdateGroupName(groupName))
+    }
+};
  
 export default connect(mapStateToProps, mapDispatchToProps)(Welcome);
