@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
+import RegistrationModal from 'Components/RegistrationModal';
 import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
 class Configure extends Component {
@@ -62,7 +63,8 @@ class Configure extends Component {
     updateGroupName = async groupName => {
         await this.props.updateGroupName(groupName);
         this.setState({groupName: this.props.groupName});
-        await this.props.loadUsers(groupName);
+        this.props.loadUsers(groupName);
+        this.props._addNotification("Change Selected Group", `Selected group successfully changed to: ${groupName}`, "success");
     }
 
     startRegistration = async () => {
@@ -74,19 +76,19 @@ class Configure extends Component {
         await this.props.stopRegistrationSession();
         this.props.history.push("/");
     }
+    addNotification = e => {
+        e.preventDefault();
+        this.props._addNotification("hello!");
+    }
 
     render() {
         let canStartRegistration = this.props.groupName.length > 0;
+        console.log(this.props)
         return (
             <div>
                 <h1>Configure</h1>
-                <Button variant="raised" color="primary" disabled={!canStartRegistration} onClick={this.startRegistration}>Start Registration</Button>
+                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} />
                 <Button variant="raised" color="secondary" onClick={this.stopRegistration}>Stop Registration</Button>
-                {
-                    Object.keys(this.props.config).map(k => {
-                        return <div key={k}>{k}: {this.props.config[k]}</div>
-                    })
-                }
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div>

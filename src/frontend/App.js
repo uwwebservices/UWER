@@ -11,19 +11,28 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './Store.js';
 
+const PorousRoute = function ({ children, ...props }) {
+    console.log(props)
+    return (
+        <Route path={props.path}>
+            <PageWrapper {...props}>
+                {React.cloneElement(children, props)}
+            </PageWrapper>
+        </Route>
+    );
+}
+
 class App extends React.Component {
     render () {
         return (
             <Router>
                 <Provider store={store}>
                     <MuiThemeProvider theme={theme}>
-                        <PageWrapper>
                             <Switch>
-                                <Route path='/config' component={Configure} />
-                                <Route path='/register' component={Register} />
-                                <Route exact path='/' component={Welcome} />
+                                <PorousRoute path='/config'><Configure /></PorousRoute>
+                                <PorousRoute path='/register'><Register /></PorousRoute>
+                                <PorousRoute exact path='/'><Welcome /></PorousRoute>
                             </Switch>
-                        </PageWrapper>
                     </MuiThemeProvider>
                 </Provider>
             </Router>

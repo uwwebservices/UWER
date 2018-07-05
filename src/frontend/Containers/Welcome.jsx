@@ -21,7 +21,7 @@ class Welcome extends Component {
     }
     configure = () => {
         if(this.props.authenticated) {
-            this.props.history.push("/config"); // skip auth in dev as we are already auth'd
+            this.props.history.push("/config"); // skip auth in dev as we   are already auth'd
         } else {
             window.location = "/login?returnUrl=/config";
         }

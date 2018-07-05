@@ -8,7 +8,8 @@ const initialState = {
   config: {},
   subgroups: [],
   users: [],
-  registrationToken: ""
+  registrationToken: "",
+  developmentMode: process.env.NODE_ENV === "develpoment"
 };
 
 export default (state = initialState, action) => {
@@ -57,6 +58,8 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, {auth: action.auth});
     case Const.STORE_REGISTRATION_TOKEN:
       return Object.assign({}, state, {registrationToken: action.token});
+    case Const.RESET_STATE:
+      return initialState;
     default:
       return state;
   }

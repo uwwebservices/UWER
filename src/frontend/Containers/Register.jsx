@@ -11,7 +11,7 @@ class Register extends Component {
         this.props.history.push("/");
     }
     componentWillMount() {
-        if(!this.props.authenticated && !this.props.token) {
+        if(!this.props.authenticated && !this.props.token && !this.props.development) {
             this.props.history.push("/");
         }
     }
@@ -19,6 +19,10 @@ class Register extends Component {
         if(!this.props.authenticated && !this.props.token) {
             this.props.history.push("/");
         }
+    }
+    addNotification = e => {
+        e.preventDefault();
+        this.props._addNotification("hello!");
     }
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;
@@ -48,7 +52,8 @@ const mapStateToProps = state => ({
     users: state.users,
     groupNameBase: state.config.groupNameBase,
     authenticated: state.authenticated,
-    token: state.registrationToken
+    token: state.registrationToken,
+    development: state.development
  });
  const mapDispatchToProps = dispatch => {
      return {

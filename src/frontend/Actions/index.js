@@ -15,6 +15,7 @@ const ReceiveAuth = auth => { return {type: Const.RECEIVE_AUTH, auth}};
 const AddDummyUser = identifier => { return { type: Const.ADD_DUMMY_USER, identifier}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
 const DummyUserFail = identifier => { return { type: Const.FAILED_DUMMY_USER, identifier }};
+const ResetState = () => { return { type: Const.RESET_STATE }};
 
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
 
@@ -140,6 +141,7 @@ export const StopRegistrationSession = () => {
   return async dispatch => {
     Cookies.erase("registrationToken", { path: "/"});
     Cookies.erase("groupName", { path: "/"});
+    dispatch(ResetState());
   }
 }
 
