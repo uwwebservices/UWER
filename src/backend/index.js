@@ -62,7 +62,7 @@ app.use(morgan(function (tokens, req, res) {
 	} else if(req.session && req.session.user) {
 		user = req.session.user.UWNetID;
 	} else if(req.session && req.session.registrationUser) {
-		user = req.session.registrationUser.UWNetID;
+		user = "ActAs:" + req.session.registrationUser.UWNetID;
 	}
 	return [
 		tokens.date(req,res,"iso"),
