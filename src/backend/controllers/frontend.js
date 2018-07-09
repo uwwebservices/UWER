@@ -19,7 +19,7 @@ app.get(Routes.Login,
 
 app.post(Routes.ShibbolethCallback,
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
-	(req,res,next) => {
+	async (req,res,next) => {
 		console.log(req.user);
 		let admins = await Groups.GetAdmins(config.groupNameBase.slice(0,-1));
 		console.log("Admins", admins);
