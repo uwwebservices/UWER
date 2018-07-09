@@ -46,7 +46,7 @@ const Groups = {
         });
         try {
             let res = await rp(opts);
-            return SuccessResponse(res.data);
+            return SuccessResponse(res.data, res.error);
         } catch(ex) {
             return ErrorResponse(ex);
         }
@@ -58,7 +58,7 @@ const Groups = {
         try {
             let res = await rp(opts);
             let admins = res.data.admins.map((a) => a.id);
-            return SuccessResponse(admis, res.error);
+            return SuccessResponse(admins);
         } catch(ex) {
             return ErrorResponse(ex);
         }
