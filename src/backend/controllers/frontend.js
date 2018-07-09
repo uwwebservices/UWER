@@ -20,11 +20,8 @@ app.get(Routes.Login,
 app.post(Routes.ShibbolethCallback,
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
 	async (req,res,next) => {
-		console.log(req.user);
 		let admins = (await Groups.GetAdmins(config.groupNameBase.slice(0,-1))).Payload;
-		console.log("Admins", admins);
 		if(admins.indexOf(req.user.UWNetID) > -1) {
-			console.log("User is in admins group");
 			next();
 		} else {
 			console.log("User is not in the admins group, redirect to homepage and log out");

@@ -26,12 +26,17 @@ export default class Test extends React.Component {
             let showDelete = this.props.authenticated && !mem.deleting && !mem.loading;
             return (
                 <ListItem
-                    key={mem.UWNetID || mem.identifier}>
+                    key={mem.UWNetID || mem.identifier}
+                    className={mem.deleting ? "memberDeleting" : ""}>
                     <Avatar src={mem.Base64Image} />
-                    {mem.deleting && <span>OMG DELETING</span>}
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
                     { showDelete &&  (
-                        <ConfirmModal openButtonIcon="remove" openButtonText="" openButtonVariant="fab" openButtonFabMini={true} confirmCallback={() => this.removeUser(mem.UWNetID)} dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group}?`} dialogTitle={`Remove User?`} />
+                        <ConfirmModal openButtonIcon="remove" openButtonText="" 
+                            openButtonVariant="fab" openButtonFabMini={true} 
+                            confirmCallback={() => this.removeUser(mem.UWNetID)} 
+                            dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group}?`} 
+                            dialogTitle={`Remove User?`} 
+                        />
                     )}
                 </ListItem> 
             )
