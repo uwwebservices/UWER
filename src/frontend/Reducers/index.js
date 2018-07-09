@@ -9,7 +9,8 @@ const initialState = {
   subgroups: [],
   users: [],
   registrationToken: "",
-  developmentMode: process.env.NODE_ENV === "develpoment"
+  developmentMode: process.env.NODE_ENV === "develpoment",
+  notifications: []
 };
 
 export default (state = initialState, action) => {
@@ -54,12 +55,15 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, {users: userRemoved});
     case Const.USER_AUTHENTICATION:
       return Object.assign({}, state, {authenticated: action.authenticated});
-    case Const.RECEIVE_AUTH:
-      return Object.assign({}, state, {auth: action.auth});
     case Const.STORE_REGISTRATION_TOKEN:
       return Object.assign({}, state, {registrationToken: action.token});
     case Const.RESET_STATE:
       return initialState;
+    case Const.ADD_NOTIFICATION:
+      return Object.assign({}, state, { notifications: [{ messageId: action.messageId, title: action.title, message: action.message}, ...state.notifications] });
+    case Const.REMOVE_NOTIFICATION:
+      let newNotifications = state.notifications.filter(n => n.messageId != action.messageId);
+      return Object.assign({}, state, { notifications: newNotifications });
     default:
       return state;
   }

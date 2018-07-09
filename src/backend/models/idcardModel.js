@@ -31,7 +31,12 @@ const IDCard = {
         } else {
             return false;
         }
-        return card;
+        if(Number.isInteger(card.magstrip) || Number.isInteger(card.rfid)) {
+           return card; 
+        } else {
+            return false;
+        }
+        
     },
     async Get(card) {
         let opts = Object.assign({}, options, { 

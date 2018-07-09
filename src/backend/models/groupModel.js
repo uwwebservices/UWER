@@ -35,6 +35,9 @@ const Groups = {
         });
         try {
             let res = await rp(opts);
+            if(res.errors[0].notFound.length > 0) {
+                return ErrorResponse({statusCode: 404, error: {errors: "User Not Found"}});
+            }
             return SuccessResponse(res.errors[0], res.errors[0].status);
         } catch(ex) {
             return ErrorResponse(ex);

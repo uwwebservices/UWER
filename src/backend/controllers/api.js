@@ -42,10 +42,15 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	}
 	
 	let result = await Groups.AddMember(req.params.group, identifier);
-	let user = await PWS.Get(identifier);
-	user.identifier = identifier;
-	user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
-	res.status(result.Status).json(user);
+	if(result.Status === 200) {
+		let user = await PWS.Get(identifier);
+		user.identifier = identifier;
+		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
+		res.status(result.Status).json(user);
+	} else {
+		res.sendStatus(result.Status);
+	}
+	
 });
 
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {

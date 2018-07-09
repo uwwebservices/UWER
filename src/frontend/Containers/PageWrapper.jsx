@@ -26,6 +26,14 @@ class PageWrapper extends Component {
     componentDidMount() {
         this._notificationSystem = this.refs.notificationSystem;
     }
+    componentDidUpdate() {
+        // Grabs notifications from the store and turns them into toasters
+        if(this.props.notifications.length) {
+            this.props.notifications.forEach(n => {
+                this._addNotification(n.title, n.message);
+            });
+        }
+    }
 
     // level = ["success", "error", "warning", "info"]
     // position = tr (top right), tl (top left), tc (top center), br (bottom right), bl (bottom left), bc (bottom center)
@@ -72,7 +80,8 @@ const mapStateToProps = state => ({
     GroupName: state.groupName,
     GroupNameBase: state.config.groupNameBase,
     authenticated: state.authenticated,
-    token: state.registrationToken
+    token: state.registrationToken,
+    notifications: state.notifications
  });
  const mapDispatchToProps = dispatch => {
     return {

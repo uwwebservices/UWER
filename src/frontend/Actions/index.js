@@ -11,11 +11,12 @@ const ReceiveUsers = users => { return { type: Const.RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: Const.UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: Const.REMOVE_USER, user }};
 const Authenticated = authenticated => { return {type: Const.USER_AUTHENTICATION, authenticated }};
-const ReceiveAuth = auth => { return {type: Const.RECEIVE_AUTH, auth}};
 const AddDummyUser = identifier => { return { type: Const.ADD_DUMMY_USER, identifier}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
 const DummyUserFail = identifier => { return { type: Const.FAILED_DUMMY_USER, identifier }};
 const ResetState = () => { return { type: Const.RESET_STATE }};
+const AddNotification = (messageId, title, message) => { return { type: Const.ADD_NOTIFICATION, messageId, title, message }};
+const RemoveNotification = messageId => { return { type: Const.REMOVE_NOTIFICATION, messageId }};
 
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
 
@@ -25,18 +26,13 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 
 const APIRequestWithAuth = async (url, opts) => {
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
-  let res = await fetch(url, body);
-  try {
-    return await res.json();
-  } catch(ex) {
-    throw(ex);
-  }
+  return await fetch(url, body);
 }
 
 // Load config file from API into store
 export const LoadConfig = () => {
   return async dispatch => {
-    let json = await APIRequestWithAuth('/api/config');
+    let json = await (await APIRequestWithAuth('/api/config')).json();
     return await dispatch(await ConfigLoaded(json));
   }
 }
@@ -60,7 +56,7 @@ export const CreateGroup = group => {
 export const LoadSubgroups = () => {
   return async dispatch => {
     let groupNameBase = store.getState().config.groupNameBase;
-    let subgroups = await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`);
+    let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
     return await dispatch(ReceiveSubgroups(subgroups));
   }
 }
@@ -74,7 +70,7 @@ export const DestroySubgroup = group => {
 
 export const LoadUsers = group => {
   return async dispatch => {
-    let users = await APIRequestWithAuth(`/api/members/${group}`);
+    let users = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
     return await dispatch(ReceiveUsers(users));
   }
 }
@@ -84,18 +80,24 @@ export const AddUser = (group, identifier) => {
     dispatch(AddDummyUser(identifier));
     let state = store.getState();
     try {
-      let user = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
+      let res = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
         method: 'PUT', 
         body: JSON.stringify({token: state.registrationToken || Cookies.get("registrationToken")}),
         headers:{
           'Content-Type': 'application/json'
         }
       });
+      if(res.status === 404) {
+        dispatch(FlashNotification("User not found", "Could not find the specified user."));
+        return dispatch(DummyUserFail(identifier));
+      } 
+      let user = res.json();
       // GWS considers adding the same user to a group an update and returns a 200, so we have to handle the dupes..
       let dupe = state.users.find(u => {
         return u.UWRegID === user.UWRegID;
       });
       if(dupe) {
+        dispatch(FlashNotification("Duplicate User", `${user.UWNetID} has already been added to this group.`));
         dispatch(DummyUserFail(identifier));
       } else {
         dispatch(UpdateUsers(user));
@@ -136,7 +138,7 @@ export const Logout = () => {
 
 export const StartRegistrationSession = () => {
   return async dispatch => {
-    let token = (await APIRequestWithAuth('/api/getToken')).token;
+    let token = (await (await APIRequestWithAuth('/api/getToken')).json()).token;
     dispatch(StoreRegistrationToken(token));
     Cookies.set("registrationToken", token);
     dispatch(Logout());
@@ -159,5 +161,13 @@ export const InitApp = () => {
     state = store.getState();
     !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
     !state.subgroups.length && state.authenticated && dispatch(LoadSubgroups());
+  }
+}
+
+export const FlashNotification = (title = "", message = "testing notifications") => {
+  return async dispatch => {
+    let messageId = Math.floor(Math.random() * 10000).toString();
+    dispatch(AddNotification(messageId, title, message));
+    dispatch(RemoveNotification(messageId));
   }
 }
