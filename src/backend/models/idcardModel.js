@@ -33,6 +33,7 @@ const IDCard = {
         } else {
             return false;
         }
+        // make sure we didn't catch a 14/16 character netid and treat it as a card
         if(!isNaN(parseInt(card.magstrip)) || !isNaN(parseInt(card.rfid))) {
            return card; 
         } else {
@@ -46,7 +47,8 @@ const IDCard = {
         });
         try {
             let res = await rp(opts);
-            console.log(res.Current.MagStripCode, res.Current.ProxRFID, card)
+            
+            // Not doing anything with this info yet, but catching the difference
             if(res.Current.MagStripCode === card.magstrip.toString() || res.Current.ProxRFID === card.rfid.toString()) {
                 console.log("NO REDIRECT");
             } else {

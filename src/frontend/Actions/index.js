@@ -91,11 +91,12 @@ export const AddUser = (group, identifier) => {
         dispatch(FlashNotification("User not found", "Could not find the specified user."));
         return dispatch(DummyUserFail(identifier));
       } 
-      let user = res.json();
+      let user = await res.json();
       // GWS considers adding the same user to a group an update and returns a 200, so we have to handle the dupes..
       let dupe = state.users.find(u => {
         return u.UWRegID === user.UWRegID;
       });
+      console.log("DUPE", dupe)
       if(dupe) {
         dispatch(FlashNotification("Duplicate User", `${user.UWNetID || "This user"} has already been added to this group.`));
         dispatch(DummyUserFail(identifier));
