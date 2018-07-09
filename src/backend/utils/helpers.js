@@ -65,7 +65,7 @@ export const verifyAuthToken = req => {
 	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
 
 	payload = JSON.parse(payload);
-	req.session.user = payload.user;
+	req.session.registrationuser = payload.user;
 
 	return payload.expiry > (new Date()).getTime();
 }

@@ -56,8 +56,7 @@ const uwSamlStrategy = new saml.Strategy(
 passport.use(uwSamlStrategy);
 
 app.use(morgan(function (tokens, req, res) {
-	let registrationUser = req.session ? req.session.registrationUser : "Anonymous";
-	let user = req.user ? req.user.UWNetID : registrationUser;
+	let user = req.user;
 	return [
 		new Date(),
 		tokens["remote-addr"](req,res),
