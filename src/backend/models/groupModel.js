@@ -57,10 +57,7 @@ const Groups = {
         });
         try {
             let res = await rp(opts);
-            let admins = res.data.admins.map((a) => {
-                return a.id;
-            });
-            console.log(admins);
+            let admins = res.data.admins.map((a) => a.id);
             return SuccessResponse(admis, res.error);
         } catch(ex) {
             return ErrorResponse(ex);

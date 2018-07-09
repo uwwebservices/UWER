@@ -4,6 +4,7 @@ import passport from 'passport';
 import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import Groups from 'models/groupModel';
+import config from 'config/config.json';
 
 let app = Router();
 
@@ -20,14 +21,17 @@ app.post(Routes.ShibbolethCallback,
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
 	(req,res,next) => {
 		console.log(req.user);
-		let admins = Groups.GetAdmins();
+		let admins = Groups.GetAdmins(config.groupNameBase.slice(0,-1));
+		console.log("Admins", admins);
 		if(admins.indexOf(req.user.UWNetID) > -1) {
+			console.log("User is in admins group");
 			next();
 		} else {
+			console.log("User is not in the admins group, redirect to homepage and log out");
 			req.logout();
 			req.session.destroy();
 			res.clearCookie('connect.sid', {path:'/'});
-			res.send(403);
+			res.redirect("/");
 		}
 	},
 	backToUrl()
