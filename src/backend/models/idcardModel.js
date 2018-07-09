@@ -10,7 +10,9 @@ const options = {
     agentOptions: {
         pfx: fs.readFileSync(config.certificate),
         passphrase: config.passphrase,
-        securityOptions: 'SSL_OP_NO_SSLv3'
+        securityOptions: 'SSL_OP_NO_SSLv3',
+        simple: false,
+        resolveWithFullResponse: true 
     },
     json: true
 };
@@ -31,7 +33,7 @@ const IDCard = {
         } else {
             return false;
         }
-        if(Number.isInteger(card.magstrip) || Number.isInteger(card.rfid)) {
+        if(!isNaN(parseInt(card.magstrip)) || !isNaN(parseInt(card.rfid))) {
            return card; 
         } else {
             return false;
@@ -44,6 +46,12 @@ const IDCard = {
         });
         try {
             let res = await rp(opts);
+            console.log(res.Current.MagStripCode, res.Current.ProxRFID, card)
+            if(res.Current.MagStripCode === card.magstrip.toString() || res.Current.ProxRFID === card.rfid.toString()) {
+                console.log("NO REDIRECT");
+            } else {
+                console.log("REDIRECTED")
+            }
             return res.Cards[0].RegID;
         } catch(ex) {
             console.log("GetCard Error", ex);

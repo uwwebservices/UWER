@@ -35,7 +35,7 @@ api.get(API.Logout, (req,res) => {
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let identifier = req.params.identifier;
 	let validCard = IDCard.ValidCard(identifier);
-
+	
 	if(validCard){
 		identifier = await IDCard.Get(validCard);
 		identifier = (await PWS.Get(identifier)).UWNetID;

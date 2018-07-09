@@ -9,12 +9,10 @@ export default class Configure extends Component {
         super(props);
     }
     csvify = groupName => {
-      console.log("csvifying", groupName)
       let filePath = `/api/csv/${groupName}.csv`;
       var link = document.createElement('a');
       link.href = filePath;
       link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
-      console.log(link)
       link.click();
     }
     gws = groupName => {

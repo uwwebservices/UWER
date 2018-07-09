@@ -97,7 +97,7 @@ export const AddUser = (group, identifier) => {
         return u.UWRegID === user.UWRegID;
       });
       if(dupe) {
-        dispatch(FlashNotification("Duplicate User", `${user.UWNetID} has already been added to this group.`));
+        dispatch(FlashNotification("Duplicate User", `${user.UWNetID || "This user"} has already been added to this group.`));
         dispatch(DummyUserFail(identifier));
       } else {
         dispatch(UpdateUsers(user));
@@ -111,9 +111,7 @@ export const AddUser = (group, identifier) => {
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
     dispatch(MarkUserForDeletion(identifier));
-    console.log("User marked, deleting from gws");
     await APIRequestWithAuth(`/api/members/${group}/member/${identifier}`, { method: "DELETE" });
-    console.log("Deleted from GWS, removing from state");
     return dispatch(RemoveUser(identifier));
   }
 }
