@@ -51,6 +51,21 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
+    async GetAdmins(group) {
+        let opts = Object.assign({}, options, { 
+            url: `${config.groupsBaseUrl}/${group}`,
+        });
+        try {
+            let res = await rp(opts);
+            let admins = res.data.admins.map((a) => {
+                return a.id;
+            });
+            console.log(admins);
+            return SuccessResponse(admis, res.error);
+        } catch(ex) {
+            return ErrorResponse(ex);
+        }
+    },
     async RemoveMember(group, netid) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',

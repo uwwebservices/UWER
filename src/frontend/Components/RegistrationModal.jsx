@@ -16,6 +16,7 @@ class RegistrationModal extends React.Component {
             disableBackdropClick: true,
             cancelCallback: this.backToConfig
         };
+
         return (
             <ContentModal { ...Object.assign({}, modalOpts, this.props) }>
                 <div>

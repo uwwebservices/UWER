@@ -3,6 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
 import { API, Routes } from 'Routes';
+import Groups from 'models/groupModel';
 
 let app = Router();
 
@@ -16,7 +17,19 @@ app.get(Routes.Login,
 ); 
 
 app.post(Routes.ShibbolethCallback,
-	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
+	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
+	(req,res,next) => {
+		console.log(req.user);
+		let admins = Groups.GetAdmins();
+		if(admins.indexOf(req.user.UWNetID) > -1) {
+			next();
+		} else {
+			req.logout();
+			req.session.destroy();
+			res.clearCookie('connect.sid', {path:'/'});
+			res.send(403);
+		}
+	},
 	backToUrl()
 );
 
