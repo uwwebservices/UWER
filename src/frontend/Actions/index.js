@@ -91,7 +91,15 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
-      return dispatch(UpdateUsers(user));
+      // GWS considers adding the same user to a group an update and returns a 200, so we have to handle the dupes..
+      let dupe = state.users.find(u => {
+        return u.UWRegID === user.UWRegID;
+      });
+      if(dupe) {
+        dispatch(DummyUserFail(identifier));
+      } else {
+        dispatch(UpdateUsers(user));
+      }
     } catch (ex) {
       dispatch(DummyUserFail(identifier));
     }
@@ -101,8 +109,10 @@ export const AddUser = (group, identifier) => {
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
     dispatch(MarkUserForDeletion(identifier));
+    console.log("User marked, deleting from gws");
     await APIRequestWithAuth(`/api/members/${group}/member/${identifier}`, { method: "DELETE" });
-    return await dispatch(RemoveUser(identifier));
+    console.log("Deleted from GWS, removing from state");
+    return dispatch(RemoveUser(identifier));
   }
 }
 

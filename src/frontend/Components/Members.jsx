@@ -26,7 +26,7 @@ export default class Test extends React.Component {
             let showDelete = this.props.authenticated && !mem.deleting && !mem.loading;
             return (
                 <ListItem
-                    key={mem.UWNetID || mem.identifier}
+                    key={(mem.UWNetID || mem.identifier) + (Math.floor(Math.random() * 100)).toString()}
                     className={mem.deleting ? "memberDeleting" : ""}>
                     <Avatar src={mem.Base64Image} />
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
