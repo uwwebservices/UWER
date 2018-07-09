@@ -46,7 +46,7 @@ const Groups = {
         });
         try {
             let res = await rp(opts);
-            return SuccessResponse(res.data, res.error);
+            return SuccessResponse(res.data);
         } catch(ex) {
             return ErrorResponse(ex);
         }
