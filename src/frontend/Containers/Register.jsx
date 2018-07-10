@@ -9,7 +9,7 @@ import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrat
 class Register extends Component {
     componentDidUpdate() {
         if(!this.props.authenticated && !this.props.token && !this.props.development) {
-            console.log("willupdate denied")
+            console.log("willupdate denied", this.props.authenticated, this.props.token, this.props.development)
             this.props.history.push("/");
         }
     }
