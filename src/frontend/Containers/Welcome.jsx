@@ -6,7 +6,6 @@ import { UpdateGroupName } from '../Actions';
 
 class Welcome extends Component {
     componentDidMount() {
-        // throw at end of stack to give authentication some time -- may need tweaking
         setTimeout(() => {
             if (this.props.authenticated) {
                 // Comment this out to test welcome screen in dev
@@ -14,11 +13,10 @@ class Welcome extends Component {
                 return;
             }
         },0);
-        
     }
     configure = () => {
         if(this.props.authenticated) {
-            this.props.history.push("/config"); // skip auth in dev as we   are already auth'd
+            this.props.history.push("/config"); // skip auth in dev as we are already "auth"'d
         } else {
             window.location = "/login?returnUrl=/config";
         }

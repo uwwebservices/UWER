@@ -8,7 +8,6 @@ import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrat
 
 class Register extends Component {
     componentDidUpdate() {
-        console.log("willupdate denied", this.props.authenticated, this.props.token, this.props.development);
         setTimeout(() => {
             if(!this.props.authenticated && !this.props.token && !this.props.development) {
                 this.props.history.push("/");
@@ -19,14 +18,20 @@ class Register extends Component {
         this.props.stopRegistrationSession();
         this.props.history.push("/");
     }
-    addNotification = e => {
-        e.preventDefault();
-        this.props._addNotification("hello!");
+    configRedirect = () => {
+        this.props.history.push("/config");
     }
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;
+        let registrationDisabled = !this.props.groupName;
         return (
             <div>
+                { registrationDisabled && (
+                    <div>
+                        Hey! You don't have a group name set for registration &nbsp;
+                        <Button variant="raised" onClick={() => this.configRedirect()} color="primary">Finish Configuring</Button>
+                    </div>
+                )}
                 { adminMode && (
                     <div>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
@@ -42,7 +47,7 @@ class Register extends Component {
                     </span>
                 )}
                 <h1>Event Registration</h1>                  
-                <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} />
+                <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
                 <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>
         )
