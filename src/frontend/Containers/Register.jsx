@@ -8,8 +8,8 @@ import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrat
 
 class Register extends Component {
     componentDidUpdate() {
+        console.log("willupdate denied", this.props.authenticated, this.props.token, this.props.development)
         if(!this.props.authenticated && !this.props.token && !this.props.development) {
-            console.log("willupdate denied", this.props.authenticated, this.props.token, this.props.development)
             this.props.history.push("/");
         }
     }
