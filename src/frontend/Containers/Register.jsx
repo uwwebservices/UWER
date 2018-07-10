@@ -7,19 +7,15 @@ import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
 class Register extends Component {
+    componentDidUpdate() {
+        if(!this.props.authenticated && !this.props.token && !this.props.development) {
+            console.log("willupdate denied")
+            this.props.history.push("/");
+        }
+    }
     endRegistration = () => {
         this.props.stopRegistrationSession();
         this.props.history.push("/");
-    }
-    componentWillMount() {
-        if(!this.props.authenticated && !this.props.token && !this.props.development) {
-            this.props.history.push("/");
-        }
-    }
-    componentWillUpdate() {
-        if(!this.props.authenticated && !this.props.token) {
-            this.props.history.push("/");
-        }
     }
     addNotification = e => {
         e.preventDefault();
