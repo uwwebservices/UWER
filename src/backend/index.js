@@ -9,6 +9,7 @@ import MemoryStore from 'memorystore';
 import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
+import helmet from 'helmet';
 
 let app = express();
 if(process.env.NODE_ENV === 'production') {
@@ -19,12 +20,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-const memStore = MemoryStore(session);
+app.use(helmet());
 
+const memStore = MemoryStore(session);
+app.set('trust proxy', 1);
 app.use(session({
 	store: new memStore({
 		checkPeriod: 86400000
 	}),
+	name: "sessionId",
 	saveUninitialized: true,
 	resave: false,
 	secret: process.env.SessionKey || "devlopment"
