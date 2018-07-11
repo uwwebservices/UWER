@@ -148,6 +148,7 @@ export const StopRegistrationSession = () => {
   return async dispatch => {
     Cookies.erase("registrationToken", { path: "/"});
     Cookies.erase("groupName", { path: "/"});
+    window.open("")
     dispatch(ResetState());
   }
 }
@@ -156,8 +157,20 @@ export const InitApp = () => {
   return async dispatch => {
     await dispatch(CheckAuthentication());
     let state = store.getState();
-    state.config && state.authenticated && await dispatch(LoadConfig());
+    !Object.keys(state.config).length && state.authenticated && dispatch(LoadConfig());
+
+    let groupName = Cookies.get('groupName');
+    if(groupName && !state.groupName) {
+        dispatch(UpdateGroupName(groupName));
+    }
+
+    let registrationToken = Cookies.get('registrationToken');
+    if(registrationToken && !props.token) {
+        dispatch(StoreRegistrationToken(registrationToken));
+    }
+
     state = store.getState();
+
     !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
     !state.subgroups.length && state.authenticated && dispatch(LoadSubgroups());
   }

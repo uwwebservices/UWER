@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
-import ConfirmModal from 'Components/ConfirmModal';
+import EndRegistrationModal from 'Components/EndRegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
@@ -27,25 +27,24 @@ class Register extends Component {
         return (
             <div>
                 { registrationDisabled && (
-                    <div>
-                        Hey! You don't have a group name set for registration &nbsp;
-                        <Button variant="raised" onClick={() => this.configRedirect()} color="primary">Finish Configuring</Button>
+                    <div className="registrationNotification">
+                        <span>
+                            Hey! You don't have a group name set for registration &nbsp;
+                            </span>
+                            <Button variant="raised" onClick={() => this.configRedirect()} color="primary">Finish Configuring</Button>
                     </div>
                 )}
                 { adminMode && (
-                    <div>
+                    <div className="registrationNotification">
+                        <span>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
+                        </span>
                         <Button variant="raised" onClick={() => this.props.startRegistrationSession()} color="primary">Start Registering</Button>
                     </div>
                 )}
-                { !adminMode && (
-                    <span className="righted">
-                        <ConfirmModal openButtonText="End Registration" confirmCallback={() => this.endRegistration()} 
-                            dialogContent={`Are you sure you want to end this registration session and fully log out?`} 
-                            dialogTitle={`End Registration Session?`} approveButtonText="End Registration"
-                        />
-                    </span>
-                )}
+                <span className="righted">
+                    <EndRegistrationModal confirmCallback={this.endRegistration} />
+                </span>
                 <h1>Event Registration</h1>                  
                 <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
                 <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />

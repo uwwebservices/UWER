@@ -10,18 +10,8 @@ import NotificationSystem from 'react-notification-system';
 class PageWrapper extends Component {
     constructor(props) {
         super(props);
-        this._notificationSystem = null;
-        let groupName = Cookies.get('groupName');
-        if(groupName && !props.GroupName) {
-            props.updateGroupName(groupName);
-        }
-        let registrationToken = Cookies.get('registrationToken');
-        if(registrationToken && !props.token) {
-            props.storeRegistrationToken(registrationToken);
-        }
-    }
-    componentWillMount() {
         this.props.initApp();
+        this._notificationSystem = null;
     }
     componentDidMount() {
         this._notificationSystem = this.refs.notificationSystem;

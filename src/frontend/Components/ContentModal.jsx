@@ -16,9 +16,7 @@ class ContentModal extends React.Component {
     };
   }
   
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
+  handleClickOpen = () => this.setState({ open: true });
 
   handleClose = confirmed => {
     this.setState({ open: false });

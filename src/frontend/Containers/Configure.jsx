@@ -4,6 +4,7 @@ import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
+import EndRegistrationModal from 'Components/EndRegistrationModal';
 import ConfirmModal from 'Components/ConfirmModal';
 import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
@@ -88,10 +89,8 @@ class Configure extends Component {
             <div>
                 <h1>Configure</h1>
                 <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> &nbsp;
-                <ConfirmModal openButtonDisabled={!canStartRegistration} openButtonText="End Registration" confirmCallback={() => this.endRegistration()} 
-                    dialogContent={`Are you sure you want to end this registration session and fully log out?`} 
-                    dialogTitle={`End Registration Session?`} approveButtonText="End Session" cancelButtonText="Back"
-                />
+                <EndRegistrationModal confirmCallback={this.endRegistration} /> &nbsp;
+               
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div>

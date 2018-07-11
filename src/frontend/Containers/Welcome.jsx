@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
-import Cookies from 'browser-cookies';
 import { UpdateGroupName } from '../Actions';
 
 class Welcome extends Component {
     componentDidMount() {
-        setTimeout(() => {
-            if (this.props.authenticated) {
-                // Comment this out to test welcome screen in dev
-                this.props.history.push("/config")
-                return;
-            }
-        },0);
+        if(!this.props.development) {
+            setTimeout(() => {
+                if (this.props.authenticated && !this.props.token) {
+                    this.props.history.push("/config")
+                    return;
+                } else if(!this.props.authenticated && this.props.token) {
+                    this.props.history.push("/register");
+                    return;
+                }
+            },0);
+        }
     }
     configure = () => {
-        if(this.props.authenticated) {
-            this.props.history.push("/config"); // skip auth in dev as we are already "auth"'d
+        if(this.props.development) {
+            this.props.history.push("/config"); // skip auth redirect in dev as we are already "auth"'d
         } else {
             window.location = "/login?returnUrl=/config";
         }
@@ -34,13 +37,11 @@ class Welcome extends Component {
 
 const mapStateToProps = state => ({
     token: state.registrationToken,
-    authenticated: state.authenticated
+    authenticated: state.authenticated,
+    development: state.development
 });
 const mapDispatchToProps = dispatch => {
-    return {
-        storeRegistrationToken: token => dispatch(StoreRegistrationToken(token)),
-        updateGroupName: groupName => dispatch(UpdateGroupName(groupName))
-    }
+    return {}
 };
  
 export default connect(mapStateToProps, mapDispatchToProps)(Welcome);

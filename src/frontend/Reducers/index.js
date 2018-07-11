@@ -9,7 +9,7 @@ const initialState = {
   subgroups: [],
   users: [],
   registrationToken: "",
-  development: process.env.NODE_ENV === "develpoment",
+  development: process.env.NODE_ENV === "development",
   notifications: []
 };
 
