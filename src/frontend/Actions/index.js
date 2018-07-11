@@ -155,18 +155,26 @@ export const StopRegistrationSession = () => {
 
 export const InitApp = () => {
   return async dispatch => {
-    await dispatch(CheckAuthentication());
     let state = store.getState();
-    !Object.keys(state.config).length && state.authenticated && dispatch(LoadConfig());
+    if(!state.authenticated) {
+      await dispatch(CheckAuthentication());
+    }
+    
+    !Object.keys(state.config).length && await dispatch(LoadConfig());
+    state = store.getState();
 
-    let groupName = Cookies.get('groupName');
-    if(groupName && !state.groupName) {
+    if(!state.groupName) {
+      let groupName = Cookies.get('groupName');
+      if(groupName) {
         dispatch(UpdateGroupName(groupName));
+      }
     }
 
-    let registrationToken = Cookies.get('registrationToken');
-    if(registrationToken && !props.token) {
+    if(!state.token) {
+      let registrationToken = Cookies.get('registrationToken');
+      if(registrationToken) {
         dispatch(StoreRegistrationToken(registrationToken));
+      }
     }
 
     state = store.getState();
@@ -176,7 +184,7 @@ export const InitApp = () => {
   }
 }
 
-export const FlashNotification = (title = "", message = "testing notifications") => {
+export const FlashNotification = (title = "", message = "") => {
   return async dispatch => {
     let messageId = Math.floor(Math.random() * 10000).toString();
     dispatch(AddNotification(messageId, title, message));

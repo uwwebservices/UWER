@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Cookies from 'browser-cookies';
-import { InitApp, StoreRegistrationToken, UpdateGroupName } from '../Actions';
+import { InitApp } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import NotificationSystem from 'react-notification-system';
@@ -10,14 +10,14 @@ import NotificationSystem from 'react-notification-system';
 class PageWrapper extends Component {
     constructor(props) {
         super(props);
-        this.props.initApp();
         this._notificationSystem = null;
     }
     componentDidMount() {
         this._notificationSystem = this.refs.notificationSystem;
     }
     componentDidUpdate() {
-        // Grabs notifications from the store and turns them into toasters
+        this.props.initApp();
+        // Grabs notifications from the store and turns them into toasts
         if(this.props.notifications.length) {
             this.props.notifications.forEach(n => {
                 this._addNotification(n.title, n.message);
@@ -65,19 +65,12 @@ class PageWrapper extends Component {
 }
 
 const mapStateToProps = state => ({
-    UWNetID: state.auth.UWNetID,
-    DisplayName: state.auth.DisplayName,
-    GroupName: state.groupName,
-    GroupNameBase: state.config.groupNameBase,
     authenticated: state.authenticated,
-    token: state.registrationToken,
     notifications: state.notifications
  });
  const mapDispatchToProps = dispatch => {
     return {
-        initApp: () => dispatch(InitApp()),
-        storeRegistrationToken: token => dispatch(StoreRegistrationToken(token)),
-        updateGroupName: groupName => dispatch(UpdateGroupName(groupName))
+        initApp: () => dispatch(InitApp())
     }
 }
  

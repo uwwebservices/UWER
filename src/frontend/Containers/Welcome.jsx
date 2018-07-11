@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
-import { UpdateGroupName } from '../Actions';
 
 class Welcome extends Component {
     componentDidMount() {
