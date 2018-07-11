@@ -1,13 +1,14 @@
 import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
+
+export const developmentMode = process.env.NODE_ENV === 'development';
 	
 export const ensureAuth = (returnUrl = "/") => {
 	return function (req, res, next) {
 		if (req.isAuthenticated()) {
 			return next();
-		} else if(process.env.NODE_ENV === 'development') {
+		} else if(developmentMode) {
 			console.log("Running in development mode - Auth Disabled");
-			req.session.user = { UWNetID: "Developer"}
 			return next();
 		}
 		else {
@@ -33,7 +34,7 @@ export const backToUrl = (url = Routes.Register) => {
 };
 
 export const ensureAPIAuth = (req, res, next) => {
-	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
+	if(req.isAuthenticated() || developmentMode) {
 		return next();
 	} else {
 		res.sendStatus(401);
@@ -41,7 +42,7 @@ export const ensureAPIAuth = (req, res, next) => {
 }
 
 export const ensureAuthOrToken = (req, res, next) => {
-	if(process.env.NODE_ENV === 'development' || req.isAuthenticated() || verifyAuthToken(req)) {
+	if(developmentMode || req.isAuthenticated() || verifyAuthToken(req)) {
 		return next();
 	} else {
 		res.sendStatus(401);
@@ -49,7 +50,7 @@ export const ensureAuthOrToken = (req, res, next) => {
 }
 
 export const getAuthToken = (req, uriEncode = true) => {
-	if(!req.user && process.env.NODE_ENV !== "development") { return false; }
+	if(!req.user && !developmentMode) { return false; }
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setHours(now.getHours() + 1);

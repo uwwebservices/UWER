@@ -74,7 +74,7 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.CheckAuth, (req, res) => {
-	if(req.isAuthenticated() || process.env.NODE_ENV === 'development') {
+	if(req.isAuthenticated()) {
 		return res.sendStatus(200);
 	} else {
 		// using 202 because 4xx throws a dumb error in the chrome console,

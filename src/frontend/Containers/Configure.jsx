@@ -5,7 +5,6 @@ import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
-import ConfirmModal from 'Components/ConfirmModal';
 import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 
 class Configure extends Component {
@@ -14,7 +13,7 @@ class Configure extends Component {
         this.state = { newSubgroup: "", message: "", loadingSubGroups: false, loadingConfigPage: true };
     }
     async componentWillMount() {
-        if(!this.props.authenticated) {
+        if(!this.props.authenticated && !this.props.development) {
             await this.props.checkAuth();
             if(!this.props.authenticated) {
                 window.location = "/login?returnUrl=/config";
@@ -119,7 +118,8 @@ const mapStateToProps = state => ({
    groupName: state.groupName,
    config: state.config,
    subgroups: state.subgroups,
-   authenticated: state.authenticated
+   authenticated: state.authenticated,
+   development: state.development
 });
 const mapDispatchToProps = dispatch => {
     return {

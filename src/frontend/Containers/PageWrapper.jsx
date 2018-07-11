@@ -10,6 +10,7 @@ import NotificationSystem from 'react-notification-system';
 class PageWrapper extends Component {
     constructor(props) {
         super(props);
+        this.props.initApp();
         this._notificationSystem = null;
     }
     componentDidMount() {
@@ -40,7 +41,7 @@ class PageWrapper extends Component {
 
 
     render () {
-        const showHeader = this.props.authenticated;
+        const showHeader = this.props.authenticated || this.props.development;
         const pages = showHeader && [
             { isNavigable: true, path: "/register", display: "Register" },
             { isNavigable: true, path: "/config", display: "Config"}
@@ -66,7 +67,8 @@ class PageWrapper extends Component {
 
 const mapStateToProps = state => ({
     authenticated: state.authenticated,
-    notifications: state.notifications
+    notifications: state.notifications,
+    development: state.development
  });
  const mapDispatchToProps = dispatch => {
     return {

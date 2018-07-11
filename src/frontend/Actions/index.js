@@ -156,7 +156,7 @@ export const StopRegistrationSession = () => {
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-    if(!state.authenticated) {
+    if(!state.authenticated && !state.development) {
       await dispatch(CheckAuthentication());
     }
     
@@ -180,7 +180,7 @@ export const InitApp = () => {
     state = store.getState();
 
     !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && state.authenticated && dispatch(LoadSubgroups());
+    !state.subgroups.length && (state.authenticated || state.development) && dispatch(LoadSubgroups());
   }
 }
 
