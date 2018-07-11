@@ -28,7 +28,7 @@ app.post(Routes.ShibbolethCallback,
 			req.logout();
 			req.session.destroy();
 			res.clearCookie('connect.sid', {path:'/'});
-			res.redirect("/");
+			res.redirect("/notAuthorized");
 		}
 	},
 	backToUrl()

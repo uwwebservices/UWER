@@ -7,6 +7,7 @@ import Register from 'Containers/Register';
 import Configure from 'Containers/Configure';
 import Welcome from 'Containers/Welcome';
 import PageWrapper from 'Containers/PageWrapper';
+import NotAuthorized from 'Containers/NotAuthorized';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './Store.js';
@@ -30,6 +31,7 @@ class App extends React.Component {
                             <Switch>
                                 <PorousRoute path='/config'><Configure /></PorousRoute>
                                 <PorousRoute path='/register'><Register /></PorousRoute>
+                                <PorousRoute path='/notAuthorized'><NotAuthorized /></PorousRoute>
                                 <PorousRoute exact path='/'><Welcome /></PorousRoute>
                             </Switch>
                     </MuiThemeProvider>

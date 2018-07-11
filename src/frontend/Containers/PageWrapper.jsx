@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import Cookies from 'browser-cookies';
 import { InitApp } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';

@@ -15,13 +15,14 @@ class EndRegistrationModal extends React.Component {
             openButtonText: "End Registration",
             disableBackdropClick: true,
             cancelCallback: this.backToConfig,
-            openButtonColor: "secondary"
+            openButtonColor: "secondary",
+            modalText: "Are you sure you want to end this registration session and fully log out?"
         };
 
         return (
             <ContentModal { ...Object.assign({}, modalOpts, this.props) }>
                 <div>
-                    <span>Are you sure you want to end this registration session and fully log out?</span>
+                    <span>{this.props.modalText || modalOpts.modalText}</span>
                     <iframe src="https://idp.u.washington.edu/idp/profile/Logout" height="335px" width="450px"></iframe>
                 </div>
             </ContentModal>
