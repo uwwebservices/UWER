@@ -49,7 +49,7 @@ export const UpdateGroupName = groupName => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    await APIRequestWithAuth(`/api/subgroups/${group}?synchronized=true`, { method: "POST"});
+    await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "POST"});
   }
 }
 

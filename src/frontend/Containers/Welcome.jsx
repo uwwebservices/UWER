@@ -27,7 +27,7 @@ class Welcome extends Component {
         return (
             <div>
                 <h1>Welcome to Event Registry</h1>            
-                <div>To get started, log in with your UWNetID and configure the application.</div>
+                <div>To get started, log in with your UWNetID and configure the application.</div><br />
                 <Button variant="raised" color="primary" type="submit" onClick={this.configure}>Start Configuration</Button>
             </div>
         )

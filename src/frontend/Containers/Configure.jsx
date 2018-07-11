@@ -28,8 +28,6 @@ class Configure extends Component {
             setTimeout(() => {
                 this.setState({"message": ""});
             }, 2500);
-        } else {
-            this.setState({"message": "Group is being created..."});
         }
         return valid;
     }
@@ -37,10 +35,6 @@ class Configure extends Component {
         this.setState({loadingSubGroups: true});
         await this.props.loadSubgroups(this.props.groupName);
         this.setState({loadingSubGroups: false});
-    };
-
-    deleteSubGroup = async subgroup => {
-        await this.props.destroySubgroup(subgroup);
     };
 
     handleChange = e => {
@@ -52,18 +46,19 @@ class Configure extends Component {
         }
     }
 
-    createSubgroup = async () => {
+    createSubgroup = async e => {
+        e.preventDefault();
         if(this.validateGroupName(this.state.newSubgroup)) {
+            this.setState({"creatingGroup": true });
             await this.props.createGroup(this.state.newSubgroup);
             this.props.loadSubgroups(this.props.groupName);
-            this.setState({"message": ""});
+            this.setState({"creatingGroup": false });
             this.setState({newSubgroup: this.props.config.groupNameBase});
         }
     }
 
     updateGroupName = async groupName => {
         await this.props.updateGroupName(groupName);
-        this.setState({groupName: this.props.groupName});
         this.props.loadUsers(groupName);
         this.props._addNotification("Change Selected Group", `Selected group successfully changed to: ${groupName}`, "success");
     }
@@ -94,21 +89,27 @@ class Configure extends Component {
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div>
                         {
-                            this.props.subgroups.map(subgroups => {
-                                return <Subgroup key={subgroups.id} groupName={subgroups.id} deleteCallback={this.deleteSubGroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
+                            this.props.subgroups.map(subgroup => {
+                                return <Subgroup key={subgroup.id} subgroup={subgroup} deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
                             })
                         }
                     </div>
                 </div>
-                <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
-                <input type="text" className="newSubgroup" 
-                    name="newSubgroup"
-                    onChange={this.handleChange}
-                    value={this.state.newSubgroup}
-                    onClick={this.defaultSubgroup}
-                />
-                <Button variant="raised" color="primary" type="submit" onClick={this.createSubgroup}>Create New Subgroup</Button>
-                <div>{this.state.message}</div>
+                <form className="form" onSubmit={this.createSubgroup}>
+                    <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
+                    <input type="text" className="newSubgroup" 
+                        name="newSubgroup"
+                        onChange={this.handleChange}
+                        value={this.state.newSubgroup}
+                        onClick={this.defaultSubgroup}
+                        disabled={this.state.creatingGroup}
+                    />
+                    
+                    <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
+                        {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
+                    </Button>
+                    <div>{this.state.message}</div>
+                </form>
             </div>
         )
     }

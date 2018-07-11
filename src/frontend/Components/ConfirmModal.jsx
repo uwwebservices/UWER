@@ -26,8 +26,10 @@ class AlertDialog extends React.Component {
   render() {
     return (
       <span>
-        <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} color={this.props.openButtonColor} size="small" mini={this.props.openButtonFabMini} size={this.props.openButtonSize} onClick={() => this.setState({ open: true })}>
-          {this.props.openButtonIcon && <FA name="remove" />}{this.props.openButtonText}
+        <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} 
+          color={this.props.openButtonColor} size="small" mini={this.props.openButtonFabMini} 
+          size={this.props.openButtonSize} onClick={() => this.setState({ open: true })}>
+            {this.props.openButtonIcon && <FA name={this.props.openButtonIcon} spin={this.props.openButtonIconSpin} />}&nbsp;{this.props.openButtonText}
         </Button>
         <Dialog
           open={this.state.open}
@@ -60,6 +62,7 @@ AlertDialog.propTypes = {
   confirmCallback: PropTypes.func,
   openButtonIcon: PropTypes.string,
   openButtonText: PropTypes.string,
+  openButtonDisabled: PropTypes.bool,
   dialogTitle: PropTypes.string,
   dialogContent: PropTypes.string,
   cancelButtonText: PropTypes.string,
@@ -71,6 +74,8 @@ AlertDialog.propTypes = {
   disableBackdropClick: PropTypes.bool,
   openButtonVariant: PropTypes.string,
   openButtonSize: PropTypes.string,
+  openButtonIcon: PropTypes.string,
+  openButtonIconSpin: PropTypes.bool,
   openButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
   openButtonFabMini: PropTypes.bool,
   openButtonDisabled: PropTypes.bool
@@ -87,7 +92,10 @@ AlertDialog.defaultProps = {
   approveButtonVariant: "raised",
   disableBackdropClick: true,
   openButtonVariant: "raised",
+  openButtonDisabled: false,
   openButtonSize: "medium",
+  openButtonIcon: "remove",
+  openButtonIconSpin: false,
   openButtonColor: "secondary",
   openButtonFabMini: false,
   openButtonDisabled: false
