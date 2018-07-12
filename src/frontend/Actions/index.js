@@ -139,7 +139,7 @@ export const StartRegistrationSession = () => {
   return async dispatch => {
     let token = (await (await APIRequestWithAuth('/api/getToken')).json()).token;
     dispatch(StoreRegistrationToken(token));
-    Cookies.set("registrationToken", token, { expires: 1/24 });
+    g("registrationToken", token, { expires: 1/24 });
     dispatch(Logout());
   }
 }
@@ -148,7 +148,6 @@ export const StopRegistrationSession = () => {
   return async dispatch => {
     Cookies.erase("registrationToken", { path: "/"});
     Cookies.erase("groupName", { path: "/"});
-    window.open("")
     dispatch(ResetState());
   }
 }

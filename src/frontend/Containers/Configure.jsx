@@ -72,10 +72,6 @@ class Configure extends Component {
         await this.props.stopRegistrationSession();
         this.props.history.push("/");
     }
-    addNotification = e => {
-        e.preventDefault();
-        this.props._addNotification("hello!");
-    }
 
     render() {
         let canStartRegistration = this.props.groupName.length > 0;
