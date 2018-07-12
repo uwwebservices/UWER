@@ -139,7 +139,7 @@ export const StartRegistrationSession = () => {
   return async dispatch => {
     let token = (await (await APIRequestWithAuth('/api/getToken')).json()).token;
     dispatch(StoreRegistrationToken(token));
-    Cookies.set("registrationToken", token);
+    Cookies.set("registrationToken", token, { expires: 1/24 });
     dispatch(Logout());
   }
 }
