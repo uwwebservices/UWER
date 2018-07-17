@@ -148,6 +148,7 @@ export const StopRegistrationSession = () => {
   return async dispatch => {
     Cookies.erase("registrationToken", { path: "/"});
     Cookies.erase("groupName", { path: "/"});
+    dispatch(Logout());
     dispatch(ResetState());
   }
 }
