@@ -16,7 +16,6 @@ module.exports = {
   entry: './src/frontend/App.js',
   output: {
     path: path.resolve(__dirname + '/dist/'),
-    publicPath: '/',
     filename: 'assets/bundle.js'
   },
   optimization: {
