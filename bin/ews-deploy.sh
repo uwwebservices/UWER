@@ -5,8 +5,8 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_BRANCH" == "develop" ]; then
     
     case "$TRAVIS_BRANCH" in
-      "master") TAG="latest";TASK_DEF=$TASK_DEFINITION ;;
-      "develop") TAG="develop";TASK_DEF=$DEV_TASK_DEFINITION ;;
+      "master") TAG="latest";TASK_DEF=$TASK_DEFINITION;SERVICE=$SERVICE ;;
+      "develop") TAG="develop";TASK_DEF=$EVAL_TASK_DEFINITION;TASK_DEF=$EVAL_SERVICE ;;
     esac
 
     echo "Branch: $TRAVIS_BRANCH, TASK: $TASK_DEF, Cluster: $CLUSTER, Service: $SERVICE, Image: $REMOTE_IMAGE_URL:$TAG"
