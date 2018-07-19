@@ -32,7 +32,7 @@ class App extends React.Component {
                                 <PorousRoute path='/config'><Configure /></PorousRoute>
                                 <PorousRoute path='/register'><Register /></PorousRoute>
                                 <PorousRoute path='/notAuthorized'><NotAuthorized /></PorousRoute>
-                                <PorousRoute exact path='/'><Welcome /></PorousRoute>
+                                <PorousRoute path='/'><Welcome /></PorousRoute>
                             </Switch>
                     </MuiThemeProvider>
                 </Provider>
