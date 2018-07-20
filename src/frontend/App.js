@@ -25,7 +25,7 @@ const PorousRoute = function ({ children, ...props }) {
 class App extends React.Component {
     render () {
         return (
-            <Router basename={process.env.BASE_URL}>
+            <Router>
                 <Provider store={store}>
                     <MuiThemeProvider theme={theme}>
                             <Switch>
