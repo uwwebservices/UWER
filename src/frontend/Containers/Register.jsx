@@ -10,16 +10,16 @@ class Register extends Component {
     componentDidUpdate() {
         setTimeout(() => {
             if(!this.props.authenticated && !this.props.token && !this.props.development) {
-                this.props.history.push("/");
+                this.props.history.push("");
             }
         }, 0);
     }
     endRegistration = () => {
         this.props.stopRegistrationSession();
-        this.props.history.push("/");
+        this.props.history.push("");
     }
     configRedirect = () => {
-        this.props.history.push("/config");
+        this.props.history.push("config");
     }
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;

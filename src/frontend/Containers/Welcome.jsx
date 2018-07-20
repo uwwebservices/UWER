@@ -7,10 +7,10 @@ class Welcome extends Component {
         if(!this.props.development) {
             setTimeout(() => {
                 if (this.props.authenticated && !this.props.token) {
-                    this.props.history.push("/config")
+                    this.props.history.push("config")
                     return;
                 } else if(!this.props.authenticated && this.props.token) {
-                    this.props.history.push("/register");
+                    this.props.history.push("register");
                     return;
                 }
             },0);
@@ -18,9 +18,9 @@ class Welcome extends Component {
     }
     configure = () => {
         if(this.props.development) {
-            this.props.history.push("/config"); // skip auth redirect in dev as we are already "auth"'d
+            this.props.history.push("config"); // skip auth redirect in dev as we are already "auth"'d
         } else {
-            window.location = "/login?returnUrl=/config";
+            window.location = "login?returnUrl=config";
         }
     }
     render() {

@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 class NotAuthorized extends Component {
     endRegistration = () => {
         this.props.stopRegistrationSession();
-        this.props.history.push("/");
+        this.props.history.push("");
     }
     gws = () => {
         let groupName = this.props.groupNameBase.slice(0,-1);

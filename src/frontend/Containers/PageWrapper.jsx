@@ -42,8 +42,8 @@ class PageWrapper extends Component {
     render () {
         const showHeader = this.props.authenticated || this.props.development;
         const pages = showHeader && [
-            { isNavigable: true, path: "/register", display: "Register" },
-            { isNavigable: true, path: "/config", display: "Config"}
+            { isNavigable: true, path: "register", display: "Register" },
+            { isNavigable: true, path: "config", display: "Config"}
         ] || [];
 
         const childrenWithProps = React.Children.map(this.props.children, child => React.cloneElement(child, { 
