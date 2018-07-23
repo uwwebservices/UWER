@@ -25,7 +25,7 @@ const PorousRoute = function ({ children, ...props }) {
 class App extends React.Component {
     render () {
         return (
-            <Router basename="/idcard-eval/">
+            <Router basename={`${window.location.pathname}/`}>
                 <Provider store={store}>
                     <MuiThemeProvider theme={theme}>
                             <Switch>

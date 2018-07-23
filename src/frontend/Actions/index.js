@@ -25,6 +25,9 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 // Thunks - Async Actions
 
 const APIRequestWithAuth = async (url, opts) => {
+  console.log("path", window.location.pathname.split('/')[1]);
+  let path = window.location.pathname.split('/')[1];
+  url = `${path}/${url}`;
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
   return await fetch(url, body);
 }
@@ -119,7 +122,7 @@ export const DeleteUser = (group, identifier) => {
 export const CheckAuthentication = () => {
   return async dispatch => {
     try {
-      let res = await fetch('api/checkAuth', { credentials: "same-origin" });
+      let res = await APIRequestWithAuth('api/checkAuth');
       dispatch(Authenticated(res.status === 200));
     } catch(ex) {
       dispatch(Authenticated(false));
@@ -129,7 +132,7 @@ export const CheckAuthentication = () => {
 
 export const Logout = () => {
   return async dispatch => {
-    await fetch('api/logout', { credentials: "same-origin" });
+    await APIRequestWithAuth('api/logout');
     dispatch(Authenticated(false));
   }
 }
