@@ -19,7 +19,7 @@ class Configure extends Component {
                 let path = window.location.pathname.split('/')[1];
                 path = path.replace('config', '').replace('register', '');
                 path = path ? "/"+path : path;
-                window.location = `login?returnUrl=${subpath}/config`;
+                window.location = `login?returnUrl=${path}/config`;
             }
         }
         this.setState({groupName: this.props.groupName});
