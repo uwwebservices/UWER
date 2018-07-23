@@ -20,7 +20,8 @@ class Welcome extends Component {
         if(this.props.development) {
             this.props.history.push("config"); // skip auth redirect in dev as we are already "auth"'d
         } else {
-            window.location = "login?returnUrl=/config";
+            let subpath = window.location.pathname;
+            window.location = `login?returnUrl=${subpath}config`;
         }
     }
     render() {
