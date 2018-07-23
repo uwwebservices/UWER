@@ -39,8 +39,7 @@ class PageWrapper extends Component {
     }
 
     render () {
-        let path = window.location.pathname.split('/')[1];
-        path = path.replace('config', '').replace('register', '');
+        let path = window.location.pathname.split('/')[1].replace('config', '').replace('register', '');
         const showHeader = this.props.authenticated || this.props.development;
         const pages = showHeader && [
             { isNavigable: true, path: `/register`, display: "Register" },

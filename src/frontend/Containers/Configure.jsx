@@ -16,8 +16,10 @@ class Configure extends Component {
         if(!this.props.authenticated && !this.props.development) {
             await this.props.checkAuth();
             if(!this.props.authenticated) {
-                let subpath = window.location.pathname.replace('config', '');
-                window.location = `login?returnUrl=${subpath}config`;
+                let path = window.location.pathname.split('/')[1];
+                path = path.replace('config', '').replace('register', '');
+                path = path ? "/"+path : path;
+                window.location = `login?returnUrl=${subpath}/config`;
             }
         }
         this.setState({groupName: this.props.groupName});
