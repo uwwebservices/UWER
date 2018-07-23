@@ -26,7 +26,11 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 
 const APIRequestWithAuth = async (url, opts) => {
   let path = window.location.pathname.split('/')[1];
+  // console.log("dirty path", path);
+  path = path.replace('config', '').replace('register', '');
+  // console.log("clean path", path)
   url = `${path ? "/"+path : path}${url}`;
+  console.log("URL", url);
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
   return await fetch(url, body);
 }

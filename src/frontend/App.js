@@ -24,8 +24,10 @@ const PorousRoute = function ({ children, ...props }) {
 
 class App extends React.Component {
     render () {
+        let basepath = window.location.pathname;
+        basepath = basepath ? `/${basepath}/` : "/";
         return (
-            <Router basename={`${window.location.pathname}/`}>
+            <Router basename={`${window.location.pathname}`}>
                 <Provider store={store}>
                     <MuiThemeProvider theme={theme}>
                             <Switch>

@@ -38,12 +38,13 @@ class PageWrapper extends Component {
         });
     }
 
-
     render () {
+        let path = window.location.pathname.split('/')[1];
+        path = path.replace('config', '').replace('register', '');
         const showHeader = this.props.authenticated || this.props.development;
         const pages = showHeader && [
-            { isNavigable: true, path: "register", display: "Register" },
-            { isNavigable: true, path: "config", display: "Config"}
+            { isNavigable: true, path: `/register`, display: "Register" },
+            { isNavigable: true, path: `/config`, display: "Config"}
         ] || [];
 
         const childrenWithProps = React.Children.map(this.props.children, child => React.cloneElement(child, { 
