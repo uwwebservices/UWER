@@ -18,12 +18,12 @@ class Welcome extends Component {
     }
     configure = () => {
         let path = window.location.pathname.split('/')[1];
-        console.log(`${path ? "/"+path : path}/login?returnUrl=${path}/config`)
         if(this.props.development) {
             this.props.history.push("config"); // skip auth redirect in dev as we are already "auth"'d
         } else {
             let path = window.location.pathname.split('/')[1];
-            window.location = `${path ? "/"+path : path}/login?returnUrl=${path}config`;
+            path = path ? "/"+path : path;
+            window.location = `${path}/login?returnUrl=${path}config`;
         }
     }
     render() {
