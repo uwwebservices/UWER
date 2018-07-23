@@ -16,7 +16,7 @@ module.exports = {
   entry: './src/frontend/App.js',
   output: {
     path: path.resolve(__dirname + '/dist/'),
-    publicPath: "/idcard-eval/",
+    publicPath: "/",
     filename: 'assets/bundle.js'
   },
   optimization: {
