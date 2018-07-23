@@ -96,7 +96,6 @@ export const AddUser = (group, identifier) => {
       let dupe = state.users.find(u => {
         return u.UWRegID === user.UWRegID;
       });
-      console.log("DUPE", dupe)
       if(dupe) {
         dispatch(FlashNotification("Duplicate User", `${user.UWNetID || "This user"} has already been added to this group.`));
         dispatch(DummyUserFail(identifier));
