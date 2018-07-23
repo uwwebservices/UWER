@@ -10,25 +10,16 @@ class Register extends Component {
     componentDidUpdate() {
         setTimeout(() => {
             if(!this.props.authenticated && !this.props.token && !this.props.development) {
-                let path = window.location.pathname.split('/')[1];
-                path = path.replace('config', '').replace('register', '');
-                path = path ? "/"+path : path;
-                this.props.history.push(`${path}/`);
+                this.props.history.push("/");
             }
         }, 0);
     }
     endRegistration = () => {
         this.props.stopRegistrationSession();
-        let path = window.location.pathname.split('/')[1];
-        path = path.replace('config', '').replace('register', '');
-        path = path ? "/"+path : path;
-        this.props.history.push(`${path}/`);
+        this.props.history.push("/");
     }
     configRedirect = () => {
-        let path = window.location.pathname.split('/')[1];
-        path = path.replace('config', '').replace('register', '');
-        path = path ? "/"+path : path;
-        this.props.history.push(`${path}/config`);
+        this.props.history.push("/config");
     }
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;

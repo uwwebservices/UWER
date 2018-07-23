@@ -25,12 +25,6 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 // Thunks - Async Actions
 
 const APIRequestWithAuth = async (url, opts) => {
-  let path = window.location.pathname.split('/')[1];
-  // console.log("dirty path", path);
-  path = path.replace('config', '').replace('register', '').replace('notAuthorized', '');
-  // console.log("clean path", path)
-  url = `${path ? "/"+path : path}${url}`;
-  console.log("URL", url);
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
   return await fetch(url, body);
 }

@@ -16,10 +16,7 @@ class Configure extends Component {
         if(!this.props.authenticated && !this.props.development) {
             await this.props.checkAuth();
             if(!this.props.authenticated) {
-                let path = window.location.pathname.split('/')[1];
-                path = path.replace('config', '').replace('register', '');
-                path = path ? "/"+path : path;
-                window.location = `login?returnUrl=${path}/config`;
+                window.location = "/login?returnUrl=/config";
             }
         }
         this.setState({groupName: this.props.groupName});
@@ -68,12 +65,12 @@ class Configure extends Component {
 
     startRegistration = async () => {
         await this.props.startRegistrationSession();
-        this.props.history.push("register");
+        this.props.history.push("/register");
     }
 
     endRegistration = async () => {
         await this.props.stopRegistrationSession();
-        this.props.history.push("");
+        this.props.history.push("/");
     }
 
     render() {

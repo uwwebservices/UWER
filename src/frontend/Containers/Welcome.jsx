@@ -6,14 +6,11 @@ class Welcome extends Component {
     componentDidMount() {
         if(!this.props.development) {
             setTimeout(() => {
-                let path = window.location.pathname.split('/')[1];
-                path = path.replace('config', '').replace('register', '');
-                path = path ? "/"+path : path;
                 if (this.props.authenticated && !this.props.token) {
-                    this.props.history.push(`${path}/config`)
+                    this.props.history.push("/config")
                     return;
                 } else if(!this.props.authenticated && this.props.token) {
-                    this.props.history.push(`${path}/register`);
+                    this.props.history.push("/register");
                     return;
                 }
             },0);
@@ -23,10 +20,7 @@ class Welcome extends Component {
         if(this.props.development) {
             this.props.history.push("/config"); // skip auth redirect in dev as we are already "auth"'d
         } else {
-            let path = window.location.pathname.split('/')[1];
-            path = path.replace('config', '').replace('register', '');
-            path = path ? "/"+path : path;
-            window.location = `${path}/login?returnUrl=${path}/config`;
+            window.location = "/login?returnUrl=/config";
         }
     }
     render() {
