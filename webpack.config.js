@@ -18,6 +18,7 @@ module.exports = {
     path: path.resolve(__dirname + '/dist/'),
     publicPath: "/",
     filename: 'assets/bundle.js'
+    
   },
   optimization: {
     minimizer: [
