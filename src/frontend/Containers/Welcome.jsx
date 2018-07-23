@@ -6,24 +6,27 @@ class Welcome extends Component {
     componentDidMount() {
         if(!this.props.development) {
             setTimeout(() => {
+                let path = window.location.pathname.split('/')[1];
+                path = path.replace('config', '').replace('register', '');
+                path = path ? "/"+path : path;
                 if (this.props.authenticated && !this.props.token) {
-                    this.props.history.push("/config")
+                    this.props.history.push(`${path}/config`)
                     return;
                 } else if(!this.props.authenticated && this.props.token) {
-                    this.props.history.push("/register");
+                    this.props.history.push(`${path}/register`);
                     return;
                 }
             },0);
         }
     }
     configure = () => {
-        let path = window.location.pathname.split('/')[1];
         if(this.props.development) {
-            this.props.history.push("config"); // skip auth redirect in dev as we are already "auth"'d
+            this.props.history.push("/config"); // skip auth redirect in dev as we are already "auth"'d
         } else {
             let path = window.location.pathname.split('/')[1];
+            path = path.replace('config', '').replace('register', '');
             path = path ? "/"+path : path;
-            window.location = `${path}/login?returnUrl=${path}config`;
+            window.location = `${path}/login?returnUrl=${path}/config`;
         }
     }
     render() {
