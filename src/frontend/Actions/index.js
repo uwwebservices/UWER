@@ -25,9 +25,8 @@ export const StoreRegistrationToken = token => { return { type: Const.STORE_REGI
 // Thunks - Async Actions
 
 const APIRequestWithAuth = async (url, opts) => {
-  console.log("path", window.location.pathname.split('/')[1]);
   let path = window.location.pathname.split('/')[1];
-  url = `${path}/${url}`;
+  url = `${path ? "/"+path : path}${url}`;
   let body = Object.assign({ method: "GET", credentials: "same-origin"}, opts);
   return await fetch(url, body);
 }
@@ -35,7 +34,7 @@ const APIRequestWithAuth = async (url, opts) => {
 // Load config file from API into store
 export const LoadConfig = () => {
   return async dispatch => {
-    let json = await (await APIRequestWithAuth('api/config')).json();
+    let json = await (await APIRequestWithAuth('/api/config')).json();
     return await dispatch(await ConfigLoaded(json));
   }
 }
@@ -52,28 +51,28 @@ export const UpdateGroupName = groupName => {
 
 export const CreateGroup = group => {
   return async dispatch => {
-    await APIRequestWithAuth(`api/subgroups/${group}`, { method: "POST"});
+    await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "POST"});
   }
 }
 
 export const LoadSubgroups = () => {
   return async dispatch => {
     let groupNameBase = store.getState().config.groupNameBase;
-    let subgroups = await (await APIRequestWithAuth(`api/subgroups/${groupNameBase}`)).json();
+    let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
     return await dispatch(ReceiveSubgroups(subgroups));
   }
 }
 
 export const DestroySubgroup = group => {
   return async dispatch => {
-    await APIRequestWithAuth(`api/subgroups/${group}`, { method: "DELETE" });
+    await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "DELETE" });
     return await dispatch(DeleteSubgroup(group));
   }
 }
 
 export const LoadUsers = group => {
   return async dispatch => {
-    let users = await (await APIRequestWithAuth(`api/members/${group}`)).json();
+    let users = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
     return await dispatch(ReceiveUsers(users));
   }
 }
@@ -83,7 +82,7 @@ export const AddUser = (group, identifier) => {
     dispatch(AddDummyUser(identifier));
     let state = store.getState();
     try {
-      let res = await APIRequestWithAuth(`api/members/${group}/${identifier}`, { 
+      let res = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
         method: 'PUT', 
         body: JSON.stringify({token: state.registrationToken || Cookies.get("registrationToken")}),
         headers:{
@@ -114,7 +113,7 @@ export const AddUser = (group, identifier) => {
 export const DeleteUser = (group, identifier) => {
   return async dispatch => {
     dispatch(MarkUserForDeletion(identifier));
-    await APIRequestWithAuth(`api/members/${group}/member/${identifier}`, { method: "DELETE" });
+    await APIRequestWithAuth(`/api/members/${group}/member/${identifier}`, { method: "DELETE" });
     return dispatch(RemoveUser(identifier));
   }
 }
@@ -122,7 +121,7 @@ export const DeleteUser = (group, identifier) => {
 export const CheckAuthentication = () => {
   return async dispatch => {
     try {
-      let res = await APIRequestWithAuth('api/checkAuth');
+      let res = await APIRequestWithAuth('/api/checkAuth');
       dispatch(Authenticated(res.status === 200));
     } catch(ex) {
       dispatch(Authenticated(false));
@@ -132,14 +131,14 @@ export const CheckAuthentication = () => {
 
 export const Logout = () => {
   return async dispatch => {
-    await APIRequestWithAuth('api/logout');
+    await APIRequestWithAuth('/api/logout');
     dispatch(Authenticated(false));
   }
 }
 
 export const StartRegistrationSession = () => {
   return async dispatch => {
-    let token = (await (await APIRequestWithAuth('api/getToken')).json()).token;
+    let token = (await (await APIRequestWithAuth('/api/getToken')).json()).token;
     dispatch(StoreRegistrationToken(token));
     Cookies.set("registrationToken", token, { expires: 1/24 });
     dispatch(Logout());
