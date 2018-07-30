@@ -4,7 +4,6 @@ Project to demonstrate an event registration application.  The idea being, with 
 
 This project is also intended to be a reference on how to use various APIs, see src/backend/models for the various APIs as examples.
 
-
 ## Requirements
 - UWCA x509 certificate, authorized for IDCard/PWS/Groups
 - node.js and npm/yarn
