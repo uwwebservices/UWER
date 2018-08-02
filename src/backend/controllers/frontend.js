@@ -2,7 +2,7 @@ import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
 import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
-import { API, Routes } from 'Routes';
+import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
 import config from 'config/config.json';
 
@@ -17,7 +17,7 @@ app.get(Routes.Login,
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
 ); 
 
-app.post(Routes.ShibbolethCallback,
+app.post("/login/callback",
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
 	async (req,res,next) => {
 		let admins = (await Groups.GetAdmins(config.groupNameBase.slice(0,-1))).Payload;
@@ -27,8 +27,8 @@ app.post(Routes.ShibbolethCallback,
 			console.log("User is not in the admins group, redirect to homepage and log out");
 			req.logout();
 			req.session.destroy();
-			res.clearCookie('connect.sid', {path:'/'});
-			res.redirect("/notAuthorized");
+			res.clearCookie('connect.sid', {path: Routes.Welcome});
+			res.redirect(Routes.NotAuthorized);
 		}
 	},
 	backToUrl()
@@ -69,7 +69,7 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 if(process.env.NODE_ENV === 'production') {
-	app.get([Routes.Welcome, Routes.Register, API.Config], (req, res) => {
+	app.get([...Routes], (req, res) => {
 		res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
 	});
 }

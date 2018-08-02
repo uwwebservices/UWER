@@ -5,7 +5,7 @@ import PWS from 'models/pwsModel';
 import config from 'config/config.json';
 import csv from 'csv-express';
 import { ensureAPIAuth, ensureAuthOrToken, getAuthToken } from '../utils/helpers';
-import { API } from 'Routes';
+import { API, Routes } from 'Routes';
 
 let api = Router();
 
@@ -28,7 +28,7 @@ api.get(API.GetToken, (req, res) => {
 api.get(API.Logout, (req,res) => {	
 	req.logout();
 	req.session.destroy();
-	res.clearCookie('connect.sid', {path:'/'});
+	res.clearCookie('connect.sid', {path: Routes.Welcome});
 	res.sendStatus(200);
 });
 

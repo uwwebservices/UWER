@@ -1,3 +1,5 @@
+
+// Prefixed with /api/
 export const API = {
     "GetMembers": "/members/:group",
 	"RegisterMember": "/members/:group/:identifier",
@@ -12,10 +14,10 @@ export const API = {
 	"Logout": "/logout"
 };
 
+// Page Routes
 export const Routes = {
 	"Welcome": "/",
 	"Register": "/register",
 	"Login": "/login",
-    "ShibbolethMetadata": "/Shibboleth.sso/Metadata",
-    "ShibbolethCallback": "/login/callback",
+	"NotAuthorized": "/notAuthorized"
 };
