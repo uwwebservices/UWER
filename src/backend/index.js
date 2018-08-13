@@ -80,8 +80,8 @@ app.use(morgan(function (tokens, req, res) {
 		tokens.status(req,res),
 		tokens['response-time'](req, res),
 		tokens["remote-addr"](req,res),
-		tokens['user-agent'](req,res),
 		user,
+		tokens['user-agent'](req,res),
 	].join('|');
 }));
 
