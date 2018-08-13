@@ -86,6 +86,16 @@ strong {
     .buttonize {
         background-color: $uw-purple !important;
     }
+    .registrationTable {
+        display: grid;
+        grid-template-columns:75% 25%;
+    }
+    .endRegistration {
+        margin-top: 22px;
+        margin-bottom: 10.5px;
+        
+    }
+
     .subgroupList {
         margin-bottom: 20px;
     }
