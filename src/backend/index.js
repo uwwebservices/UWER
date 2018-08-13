@@ -59,6 +59,10 @@ const uwSamlStrategy = new saml.Strategy(
 
 passport.use(uwSamlStrategy);
 
+// date, host, method, url,response,time taken,remote host, remote ip, user agent
+// 2018-08-13T17:01:10.498Z ::ffff:10.0.2.176 Anonymous GET / 200 ELB-HealthChecker/2.0 0.882 ms
+// 2018-08-13T13:49:45.054|webservices.washington.edu|GET|/favicon.ico|404|5|10.0.2.176|10.0.2.176|Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134
+
 app.use(morgan(function (tokens, req, res) {
 	let user = "Anonymous";
 	if(req.user) {
@@ -70,14 +74,15 @@ app.use(morgan(function (tokens, req, res) {
 	}
 	return [
 		tokens.date(req,res,"iso"),
-		tokens["remote-addr"](req,res),
-		user,
+		req.headers.host,
 		tokens.method(req,res),
 		tokens.url(req,res),
 		tokens.status(req,res),
+		tokens['response-time'](req, res),
+		tokens["remote-addr"](req,res),
 		tokens['user-agent'](req,res),
-		tokens['response-time'](req, res), 'ms'
-	].join(' ');
+		user,
+	].join('|');
 }));
 
 app.server = http.createServer(app);
