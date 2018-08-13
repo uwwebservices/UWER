@@ -48,10 +48,10 @@ export default class Configure extends Component {
       );
       return (
         <div className="subgroupItem">
-          <div className="subgroupName">{groupName}</div>
-          <div className="subgroupButtons">
-            {SelectButton}
-          </div>
+            <div className="subgroupName">{groupName}</div>
+            <div className="subgroupButtons">
+              {SelectButton}
+            </div>
         </div>
       )
     }

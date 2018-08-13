@@ -7,6 +7,7 @@ $uw-purple: #4b2e83;
 
 body {
     background-color: $cream-color;
+    font-family: "Open Sans",sans-serif;
 }
 strong {
     font-weight: 600;
@@ -31,6 +32,7 @@ strong {
         grid-area: 2 /2 / 3 / 3;
         background-color: white;
         padding: 20px;
+        max-width: 800px;
     }
 
     footer {
@@ -87,16 +89,21 @@ strong {
     .subgroupList {
         margin-bottom: 20px;
     }
+    .subgroupTable{
+        display:grid;        
+    }
     .subgroupName {
-        display: inline-block;
+        // display: inline-block;
         min-width: 320px;
     }
     .subgroupItem {
-        display: block;
+        display: grid;        
+        grid-template-columns:50% 50%;
         margin-top: 3px;
     }
     .subgroupButtons {
-        display: inline-block;
+       // display: inline-block;
+       text-align: right;
         button {
             width: 100px;
             margin: 0 2px;

@@ -83,7 +83,7 @@ class Configure extends Component {
                
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
-                    <div>
+                    <div className="subgroupTable">
                         {
                             this.props.subgroups.map(subgroup => {
                                 return <Subgroup key={subgroup.id} subgroup={subgroup} deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
