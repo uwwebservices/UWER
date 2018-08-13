@@ -79,7 +79,7 @@ app.use(morgan(function (tokens, req, res) {
 		tokens.url(req,res),
 		tokens.status(req,res),
 		tokens['response-time'](req, res),
-		tokens["remote-addr"](req,res),
+		(tokens["remote-addr"](req,res)).replace("::ffff:", ""),
 		user,
 		tokens['user-agent'](req,res),
 	].join('|');
