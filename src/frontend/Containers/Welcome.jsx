@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
+import background from 'Containers/oragami.jpg';
 
 class Welcome extends Component {
     componentDidMount() {
@@ -26,9 +27,23 @@ class Welcome extends Component {
     render() {
         return (
             <div>
-                <h1>Welcome to Event Registry</h1>            
-                <div>To get started, log in with your UWNetID and configure the application.</div><br />
-                <Button variant="raised" color="primary" type="submit" onClick={this.configure}>Start Configuration</Button>
+                <div className="welcomeHeader">
+                    <img src={background} className="background"/>
+                    <h1>Welcome to Event Registration</h1>            
+                </div>
+                <div className="welcomeTable">
+                    <div>
+                        <p>To get started, log in with your UW NetID and setup your event.</p>
+                        <p>
+                            Access is restricted to previously setup personnel. If you need help with your 
+                            Event Registration setup please email help@uw.edu and ask for Enterprise Web Services. 
+                        </p>
+
+                    </div>
+                    <div className="welcomeRight">
+                        <Button variant="raised" color="primary" type="submit" onClick={this.configure}>Start Event Setup</Button>              
+                    </div>
+                </div>
             </div>
         )
     }
