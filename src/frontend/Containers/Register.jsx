@@ -42,10 +42,14 @@ class Register extends Component {
                         <Button variant="raised" onClick={() => this.props.startRegistrationSession()} color="primary">Start Registering</Button>
                     </div>
                 )}
-                <span className="righted">
-                    <EndRegistrationModal confirmCallback={this.endRegistration} />
-                </span>
-                <h1>Event Registration</h1>                  
+                <div className="registrationTable">                   
+                   <div>
+                        <h1>Event Registration</h1>                  
+                   </div>
+                   <div className="endRegistration">
+                        <EndRegistrationModal confirmCallback={this.endRegistration} />
+                   </div>
+                </div>    
                 <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
                 <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>
