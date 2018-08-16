@@ -34,6 +34,7 @@ api.get(API.Logout, (req,res) => {
 
 api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let identifier = req.params.identifier;
+	let orig_identifier = req.params.identifier;
 	let validCard = IDCard.ValidCard(identifier);
 	
 	if(validCard){
@@ -44,7 +45,7 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let result = await Groups.AddMember(req.params.group, identifier);
 	if(result.Status === 200) {
 		let user = await PWS.Get(identifier);
-		user.identifier = identifier;
+		user.identifier = orig_identifier;
 		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
 		res.status(result.Status).json(user);
 	} else {
