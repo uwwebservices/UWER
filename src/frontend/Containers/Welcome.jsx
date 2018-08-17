@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
-import background from 'Containers/oragami.jpg';
+import background from 'Images/oragami.jpg';
 
 class Welcome extends Component {
     componentDidMount() {
