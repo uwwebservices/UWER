@@ -75,6 +75,15 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 
 api.get(API.CheckAuth, (req, res) => {
 	if(req.isAuthenticated()) {
+		if(req.session && !req.session.IAAAgreed)
+		{
+			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
+			if(members.indexOf(req.user.UWNetID) > -1) {
+				req.session.IAAAgreed=true;
+			}else{
+				res.redirect(config.groupNameBase)
+			}			
+		}
 		return res.sendStatus(200);
 	} else {
 		// using 202 because 4xx throws a dumb error in the chrome console,
