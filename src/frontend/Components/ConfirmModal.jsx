@@ -29,7 +29,7 @@ class AlertDialog extends React.Component {
         <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} 
           color={this.props.openButtonColor} size="small" mini={this.props.openButtonFabMini} 
           size={this.props.openButtonSize} onClick={() => this.setState({ open: true })}>
-            {this.props.openButtonIcon && <FA name={this.props.openButtonIcon} spin={this.props.openButtonIconSpin} />}&nbsp;{this.props.openButtonText}
+            {this.props.openButtonIcon && <FA name={this.props.openButtonIcon} spin={this.props.openButtonIconSpin} />}{this.props.openButtonText ? "&nbsp;" + this.props.openButtonText : ""}
         </Button>
         <Dialog
           open={this.state.open}

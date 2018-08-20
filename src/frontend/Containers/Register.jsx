@@ -51,7 +51,7 @@ class Register extends Component {
                    </div>
                 </div>    
                 <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
-                <Members members={this.props.users} reloadUsers={this.props.loadUsers} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
+                <Members members={this.props.users} reloadUsers={this.props.loadUsers} development={this.props.development} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>
         )
     }

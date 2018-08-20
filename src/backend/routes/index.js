@@ -2,7 +2,7 @@
 // Prefixed with /api/
 export const API = {
     "GetMembers": "/members/:group",
-	"RegisterMember": "/members/:group/:identifier",
+	"RegisterMember": "/members/:group",
 	"RemoveMember": "/members/:group/member/:identifier",
 	"GetSubgroups": "/subgroups/:group",
 	"RemoveSubgroup": "/subgroups/:group",
