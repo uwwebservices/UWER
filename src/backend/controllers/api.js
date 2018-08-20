@@ -74,11 +74,11 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get(API.CheckAuth, (req, res) => {
+api.get(API.CheckAuth, async (req, res) => {
 	if(req.isAuthenticated()) {
 		if(req.session && !req.session.IAAAgreed)
 		{
-			let members = Groups.GetMembers(config.idaaGroupID);
+			let members = await (Groups.GetMembers(config.idaaGroupID)).Payload;
 			if(members.indexOf(req.user.UWNetID) > -1) {
 				req.session.IAAAgreed=true;
 			}else{
