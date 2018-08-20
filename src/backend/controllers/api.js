@@ -78,7 +78,7 @@ api.get(API.CheckAuth, (req, res) => {
 	if(req.isAuthenticated()) {
 		if(req.session && !req.session.IAAAgreed)
 		{
-			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
+			let members = Groups.GetMembers(config.idaaGroupID);
 			if(members.indexOf(req.user.UWNetID) > -1) {
 				req.session.IAAAgreed=true;
 			}else{
