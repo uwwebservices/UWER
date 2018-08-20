@@ -23,7 +23,7 @@ export default class Test extends React.Component {
     }
     render() {
         const listItems = this.props.members.map(mem => {
-            let showDelete = this.props.authenticated && !mem.deleting && !mem.loading;
+            let showDelete = (this.props.authenticated || this.props.development) && !mem.deleting && !mem.loading;
             return (
                 <ListItem
                     key={(mem.UWNetID || mem.identifier) + (Math.floor(Math.random() * 100)).toString()}

@@ -27,15 +27,14 @@ export default (state = initialState, action) => {
     case Const.RECEIVE_USERS:
       return Object.assign({}, state, {users: action.users});
     case Const.ADD_DUMMY_USER:
-      let dummy = { identifier: action.identifier, Base64Image: defaultUser, loading: true };
+      let dummy = { displayId: action.displayId, Base64Image: defaultUser, loading: true };
       return Object.assign({}, state, { users: [dummy, ...state.users]});
     case Const.FAILED_DUMMY_USER:
-      let noDummy = state.users.filter(u => u.identifier !== action.identifier);
+      let noDummy = state.users.filter(u => u.displayId !== action.displayId);
       return Object.assign({}, state, { users: noDummy });
     case Const.UPDATE_USERS:
       let newUsers = state.users.map(u => {
-        if(u.identifier && u.identifier === action.user.identifier) {
-          delete action.user.identifier;
+        if(u.displayId && u.displayId === action.user.displayId) {
           return action.user;
         } else {
           return u;

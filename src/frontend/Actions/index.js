@@ -11,9 +11,9 @@ const ReceiveUsers = users => { return { type: Const.RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: Const.UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: Const.REMOVE_USER, user }};
 const Authenticated = authenticated => { return {type: Const.USER_AUTHENTICATION, authenticated }};
-const AddDummyUser = identifier => { return { type: Const.ADD_DUMMY_USER, identifier}};
+const AddDummyUser = displayId => { return { type: Const.ADD_DUMMY_USER, displayId}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
-const DummyUserFail = identifier => { return { type: Const.FAILED_DUMMY_USER, identifier }};
+const DummyUserFail = displayId => { return { type: Const.FAILED_DUMMY_USER, displayId }};
 const ResetState = () => { return { type: Const.RESET_STATE }};
 const AddNotification = (messageId, title, message) => { return { type: Const.ADD_NOTIFICATION, messageId, title, message }};
 const RemoveNotification = messageId => { return { type: Const.REMOVE_NOTIFICATION, messageId }};
@@ -77,19 +77,25 @@ export const LoadUsers = group => {
 
 export const AddUser = (group, identifier) => {
   return async dispatch => {
-    dispatch(AddDummyUser(identifier));
     let state = store.getState();
+    let displayId = Math.floor(Math.random()*1000000).toString(16);
+    dispatch(AddDummyUser(displayId));
+    let body = {
+      token: state.registrationToken || Cookies.get("registrationToken"),
+      displayId,
+      identifier
+    };
     try {
-      let res = await APIRequestWithAuth(`/api/members/${group}/${identifier}`, { 
+      let res = await APIRequestWithAuth(`/api/members/${group}`, { 
         method: 'PUT', 
-        body: JSON.stringify({token: state.registrationToken || Cookies.get("registrationToken")}),
+        body: JSON.stringify(body),
         headers:{
           'Content-Type': 'application/json'
         }
       });
       if(res.status === 404) {
         dispatch(FlashNotification("User not found", "Could not find the specified user."));
-        return dispatch(DummyUserFail(identifier));
+        return dispatch(DummyUserFail(displayId));
       } 
       let user = await res.json();
       // GWS considers adding the same user to a group an update and returns a 200, so we have to handle the dupes..
@@ -98,12 +104,12 @@ export const AddUser = (group, identifier) => {
       });
       if(dupe) {
         dispatch(FlashNotification("Duplicate User", `${user.UWNetID || "This user"} has already been added to this group.`));
-        dispatch(DummyUserFail(identifier));
+        dispatch(DummyUserFail(displayId));
       } else {
         dispatch(UpdateUsers(user));
       }
     } catch (ex) {
-      dispatch(DummyUserFail(identifier));
+      dispatch(DummyUserFail(displayId));
     }
   }
 }
