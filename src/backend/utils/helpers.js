@@ -53,7 +53,7 @@ export const getAuthToken = (req, uriEncode = true) => {
 	if(!req.user && !developmentMode) { return false; }
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
-	let expiry = now.setHours(now.getHours() + 1);
+	let expiry = now.setHours(now.getHours() + 3);
 	let token = AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase).toString();
 	return uriEncode ? encodeURIComponent(token) : token;
 }

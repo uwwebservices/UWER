@@ -79,9 +79,11 @@ export const AddUser = (group, identifier) => {
   return async dispatch => {
     let state = store.getState();
     let displayId = Math.floor(Math.random()*1000000).toString(16);
+    let token = state.registrationToken || Cookies.get("registrationToken");
+    token && resetTokenCookie(token);
     dispatch(AddDummyUser(displayId));
     let body = {
-      token: state.registrationToken || Cookies.get("registrationToken"),
+      token,
       displayId,
       identifier
     };
@@ -111,6 +113,7 @@ export const AddUser = (group, identifier) => {
     } catch (ex) {
       dispatch(DummyUserFail(displayId));
     }
+
   }
 }
 
@@ -144,7 +147,7 @@ export const StartRegistrationSession = () => {
   return async dispatch => {
     let token = (await (await APIRequestWithAuth('/api/getToken')).json()).token;
     dispatch(StoreRegistrationToken(token));
-    Cookies.set("registrationToken", token, { expires: 1/24 });
+    resetTokenCookie(token);
     dispatch(Logout());
   }
 }
@@ -177,9 +180,8 @@ export const InitApp = () => {
 
     if(!state.token) {
       let registrationToken = Cookies.get('registrationToken');
-      if(registrationToken) {
-        dispatch(StoreRegistrationToken(registrationToken));
-      }
+      resetTokenCookie(registrationToken);
+      registrationToken && dispatch(StoreRegistrationToken(registrationToken));
     }
 
     state = store.getState();
@@ -194,5 +196,14 @@ export const FlashNotification = (title = "", message = "") => {
     let messageId = Math.floor(Math.random() * 10000).toString();
     dispatch(AddNotification(messageId, title, message));
     dispatch(RemoveNotification(messageId));
+  }
+}
+
+const resetTokenCookie = (token, expires=3/24) => {
+  if(token) {
+    if(Cookies.get("registrationToken", { path: "/"})) {
+      Cookies.erase("registrationToken", { path: "/"});
+    }
+    Cookies.set("registrationToken", token, { expires });
   }
 }
