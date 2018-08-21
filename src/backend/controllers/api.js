@@ -80,7 +80,7 @@ api.get(API.CheckAuth, async (req, res) => {
 
 	if(!req.session)
 	{
-		res.status(500).send("Chris Cloud(tm)");
+		return res.status(500).send("Chris Cloud(tm)");
 	}
 	
 	if(req.isAuthenticated()) {
