@@ -10,7 +10,7 @@ import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", message: "", loadingSubGroups: false, loadingConfigPage: true };
+        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true };
     }
     async componentWillMount() {
         if(!this.props.authenticated && !this.props.development) {
@@ -26,15 +26,16 @@ class Configure extends Component {
         }
         this.setState({groupName: this.props.groupName});
     }
-    validateGroupName(groupName) {
-        let valid = groupName.indexOf(this.props.config.groupNameBase) >= 0;
-        if(!valid) {
-            this.setState({ "message": "Invalid Group Name, should begin with " + this.props.config.groupNameBase});
-            setTimeout(() => {
-                this.setState({"message": ""});
-            }, 2500);
+    validateGroupString(groupName) {
+        var RegExpression = /^[a-zA-Z0-9\s]*$/; 
+        if(RegExpression.test(groupName)) {
+            return true;
         }
-        return valid;
+        return false;
+    }
+    generateGroupName(groupString) {
+        groupString = groupString.replace(/\s+/g, '-').toLowerCase();
+        return this.props.groupNameBase + groupString;
     }
     loadSubGroups = async () => {
         this.setState({loadingSubGroups: true});
@@ -45,29 +46,28 @@ class Configure extends Component {
     handleChange = e => {
         this.setState({[e.target.name]: e.target.value});
     }
-    defaultSubgroup = (e) => {
-        if(!e.target.value) {
-            this.setState({newSubgroup: this.props.config.groupNameBase});
-        }
-    }
 
     createSubgroup = async e => {
         e.preventDefault();
-        if(this.validateGroupName(this.state.newSubgroup)) {
+        if(this.validateGroupString(this.state.newSubgroup)) {
             this.setState({"creatingGroup": true });
-            await this.props.createGroup(this.state.newSubgroup);
+            await this.props.createGroup(this.generateGroupName(this.state.newSubgroup));
             this.props.loadSubgroups(this.props.groupName);
-            this.setState({"creatingGroup": false });
-            this.setState({newSubgroup: this.props.config.groupNameBase});
+            this.setState({"creatingGroup": false, "newSubgroup": "" });
+            this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
+        } else {
+            this.props._addNotification("Create Registration Group Failed", "Group name can only contain numbers, letters and spaces.");
         }
     }
 
     updateGroupName = async groupName => {
         await this.props.updateGroupName(groupName);
         this.props.loadUsers(groupName);
-        this.props._addNotification("Change Selected Group", `Selected group successfully changed to: ${groupName}`, "success");
+        this.props._addNotification("Change Selected Group", `Selected group successfully changed to: ${this.displayGroupName(groupName)}`, "success");
     }
-
+    displayGroupName = groupName => {
+        return groupName.replace(this.props.groupNameBase, "").replace(/-/g, ' ');
+    }
     startRegistration = async () => {
         await this.props.startRegistrationSession();
         this.props.history.push("/register");
@@ -95,6 +95,7 @@ class Configure extends Component {
                                       deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} 
                                       updateGroupName={this.updateGroupName} 
                                       groupNameBase={this.props.groupNameBase}
+                                      displayGroupName={this.displayGroupName}
                                     />
                             })
                         }
@@ -106,14 +107,12 @@ class Configure extends Component {
                         name="newSubgroup"
                         onChange={this.handleChange}
                         value={this.state.newSubgroup}
-                        onClick={this.defaultSubgroup}
                         disabled={this.state.creatingGroup}
                     />
                     
                     <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
                         {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
                     </Button>
-                    <div>{this.state.message}</div>
                 </form>
             </div>
         )
