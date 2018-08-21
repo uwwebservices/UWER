@@ -131,13 +131,19 @@ strong {
         display:grid;        
     }
     .subgroupName {
-        // display: inline-block;
         min-width: 320px;
+        padding-left: 10px;
     }
     .subgroupItem {
         display: grid;        
         grid-template-columns:50% 50%;
-        margin-top: 3px;
+        margin: 3px 5px 0 5px;
+        height: 2.5em;
+        line-height: 2.4em;
+        border-radius: 5px;
+        &.selected {
+            background-color: #eee;
+        }
     }
     .subgroupButtons {
        // display: inline-block;

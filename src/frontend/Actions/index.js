@@ -161,11 +161,6 @@ export const StopRegistrationSession = () => {
   }
 }
 
-resetTokenCookie = (token, expires=3/24) => {
-  Cookies.erase("registrationToken", { path: "/"});
-  Cookies.set("registrationToken", token, { expires });
-}
-
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
@@ -201,5 +196,14 @@ export const FlashNotification = (title = "", message = "") => {
     let messageId = Math.floor(Math.random() * 10000).toString();
     dispatch(AddNotification(messageId, title, message));
     dispatch(RemoveNotification(messageId));
+  }
+}
+
+const resetTokenCookie = (token, expires=3/24) => {
+  if(token) {
+    if(Cookies.get("registrationToken", { path: "/"})) {
+      Cookies.erase("registrationToken", { path: "/"});
+    }
+    Cookies.set("registrationToken", token, { expires });
   }
 }

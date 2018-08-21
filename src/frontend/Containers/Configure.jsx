@@ -86,7 +86,11 @@ class Configure extends Component {
                     <div className="subgroupTable">
                         {
                             this.props.subgroups.map(subgroup => {
-                                return <Subgroup key={subgroup.id} subgroup={subgroup} deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />
+                                return <Subgroup key={subgroup.id} subgroup={subgroup} 
+                                      deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} 
+                                      updateGroupName={this.updateGroupName} 
+                                      groupNameBase={this.props.groupNameBase}
+                                    />
                             })
                         }
                     </div>
@@ -116,7 +120,8 @@ const mapStateToProps = state => ({
    config: state.config,
    subgroups: state.subgroups,
    authenticated: state.authenticated,
-   development: state.development
+   development: state.development,
+   groupNameBase: state.config.groupNameBase
 });
 const mapDispatchToProps = dispatch => {
     return {
