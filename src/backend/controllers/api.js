@@ -75,22 +75,31 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.CheckAuth, async (req, res) => {
+
+	let auth = { Authenticated: false, IAAAAuth: false, IAARedirect: config.idaaCheck };
+
+	if(!req.session)
+	{
+		res.status(500).send("Chris Cloud(tm)");
+	}
+	
 	if(req.isAuthenticated()) {
-		if(req.session && !req.session.IAAAgreed)
+
+		auth.Authenticated=true;
+	
+		if(!req.session.IAAAgreed)
 		{
-			let members = await (Groups.GetMembers(config.idaaGroupID)).Payload;
+			let members = await Groups.GetMembers(config.idaaGroupID);
 			if(members.indexOf(req.user.UWNetID) > -1) {
 				req.session.IAAAgreed=true;
-			}else{
-				res.redirect(config.groupNameBase)
-			}			
-		}
-		return res.sendStatus(200);
-	} else {
-		// using 202 because 4xx throws a dumb error in the chrome console,
-		// anything but 200 is fine for this use case
-		return res.sendStatus(202);
-	}
+				auth.IAAAAuth=true;
+			}	
+		}else{
+			auth.IAAAAuth=true;
+		}	
+	} 
+
+	return res.status(200).json(auth);
 });
 
 api.get(API.Config, (req, res) => {

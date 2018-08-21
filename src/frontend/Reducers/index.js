@@ -4,6 +4,8 @@ import defaultUser from 'Assets/defaultUser';
 const initialState = {
   authenticated: null,
   auth: { UWNetID: "", DisplayName: "" },
+  iaaauth: false,
+  iaacheck: "",
   groupName: "",
   config: {},
   subgroups: [],
@@ -53,7 +55,7 @@ export default (state = initialState, action) => {
       let userRemoved = state.users.filter(u => u.UWNetID !== action.user);
       return Object.assign({}, state, {users: userRemoved});
     case Const.USER_AUTHENTICATION:
-      return Object.assign({}, state, {authenticated: action.authenticated});
+      return Object.assign({}, state, {authenticated: action.authenticated, iaaauth: action.iaaauth, iaacheck: action.iaacheck});
     case Const.STORE_REGISTRATION_TOKEN:
       return Object.assign({}, state, {registrationToken: action.token});
     case Const.RESET_STATE:

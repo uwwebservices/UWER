@@ -10,7 +10,7 @@ const DeleteSubgroup = subgroup => { return { type: Const.DELETE_SUBGROUP, subgr
 const ReceiveUsers = users => { return { type: Const.RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: Const.UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: Const.REMOVE_USER, user }};
-const Authenticated = authenticated => { return {type: Const.USER_AUTHENTICATION, authenticated }};
+const Authenticated = (authenticated, iaaauth, iaacheck) => { return {type: Const.USER_AUTHENTICATION, authenticated, iaaauth, iaacheck }};
 const AddDummyUser = displayId => { return { type: Const.ADD_DUMMY_USER, displayId}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
 const DummyUserFail = displayId => { return { type: Const.FAILED_DUMMY_USER, displayId }};
@@ -125,10 +125,10 @@ export const DeleteUser = (group, identifier) => {
 export const CheckAuthentication = () => {
   return async dispatch => {
     try {
-      let res = await APIRequestWithAuth('/api/checkAuth');
-      dispatch(Authenticated(res.status === 200));
+      let res = await APIRequestWithAuth('/api/checkAuth').json();
+      dispatch(Authenticated(res.Authenticated, res.IAAAAuth, res.IAARedirect));
     } catch(ex) {
-      dispatch(Authenticated(false));
+      dispatch(Authenticated(false, false));
     }
   }
 }
@@ -136,7 +136,7 @@ export const CheckAuthentication = () => {
 export const Logout = () => {
   return async dispatch => {
     await APIRequestWithAuth('/api/logout');
-    dispatch(Authenticated(false));
+    dispatch(Authenticated(false, false));
   }
 }
 

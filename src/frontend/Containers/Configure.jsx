@@ -18,6 +18,11 @@ class Configure extends Component {
             if(!this.props.authenticated) {
                 window.location = "/login?returnUrl=/config";
             }
+
+            if(!this.props.iaaAuth)
+            {
+                window.location = this.props.iaaCheck;
+            }
         }
         this.setState({groupName: this.props.groupName});
     }
@@ -116,7 +121,9 @@ const mapStateToProps = state => ({
    config: state.config,
    subgroups: state.subgroups,
    authenticated: state.authenticated,
-   development: state.development
+   development: state.development,
+   iaaAuth: state.iaaauth,
+   iaaCheck: state.iaacheck
 });
 const mapDispatchToProps = dispatch => {
     return {
