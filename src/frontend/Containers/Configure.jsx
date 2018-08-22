@@ -21,7 +21,9 @@ class Configure extends Component {
 
             if(!this.props.iaaAuth)
             {
-                window.location = this.props.iaaCheck;
+                setTimeout(() => {
+                    window.location = this.props.iaaCheck;
+                }, 0);
             }
         }
         this.setState({groupName: this.props.groupName});
