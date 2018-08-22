@@ -10,7 +10,7 @@ import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true };
+        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false };
     }
     async componentWillMount() {
         await this.props.checkAuth();
@@ -47,6 +47,9 @@ class Configure extends Component {
 
     handleChange = e => {
         this.setState({[e.target.name]: e.target.value});
+        if(e.target.name === "newSubgroup") {
+            this.setState({invalidSubgroup: !this.validateGroupString(e.target.value)})
+        }
     }
 
     createSubgroup = async e => {
@@ -115,6 +118,7 @@ class Configure extends Component {
                     <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
                         {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
                     </Button>
+                    { this.state.invalidSubgroup && <div className="subgroupError">Registration groups can only contain letters, numbers and spaces.</div>}
                 </form>
             </div>
         )
