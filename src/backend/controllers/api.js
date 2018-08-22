@@ -105,6 +105,9 @@ api.get(API.Config, (req, res) => {
 					obj[key] = config[key];
 					return obj;
 			}, {});
+			if(process.env.BASE_GROUP) {
+				filteredConfig.groupNameBase = process.env.BASE_GROUP;
+			}
 	res.status(200).json(filteredConfig);
 });
 
