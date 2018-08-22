@@ -2,8 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import config from 'config/config.json';
-import csv from 'csv-express';
+import config from 'config/config.json';=
 import { ensureAPIAuth, ensureAuthOrToken, getAuthToken } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 
@@ -84,13 +83,10 @@ api.get(API.CheckAuth, async (req, res) => {
 	}
 	
 	if(req.isAuthenticated()) {
-		console.log("Session", req.session);
 		if(!req.session.IAAAgreed)
 		{
-			console.log("IDAA GROUP ID", config.idaaGroupID);
-			let members = await Groups.GetMembers(config.idaaGroupID);
-			console.log("MEMBERS", members);
-			if(members.indexOf(req.user.UWNetID) > -1) {
+			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
+			if(members.find(u => u.id === req.user.UWNetID)) {
 				req.session.IAAAgreed=true;
 				auth.IAAAAuth=true;
 			}	
