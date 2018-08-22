@@ -13,6 +13,7 @@ class Configure extends Component {
         this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true };
     }
     async componentWillMount() {
+        await this.props.checkAuth();
         if(!this.props.authenticated && !this.props.development) {
             await this.props.checkAuth();
             if(!this.props.authenticated) {
@@ -21,9 +22,8 @@ class Configure extends Component {
 
             if(!this.props.iaaAuth)
             {
-                setTimeout(() => {
-                    window.location = this.props.iaaCheck;
-                }, 0);
+                console.log(this.props.iaaCheck)
+                window.location = this.props.iaaCheck;
             }
         }
         this.setState({groupName: this.props.groupName});

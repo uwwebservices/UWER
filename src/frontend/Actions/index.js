@@ -128,8 +128,8 @@ export const DeleteUser = (group, identifier) => {
 export const CheckAuthentication = () => {
   return async dispatch => {
     try {
-      let res = await APIRequestWithAuth('/api/checkAuth').json();
-      dispatch(Authenticated(res.Authenticated, res.IAAAAuth, res.IAARedirect));
+      let json = await (await APIRequestWithAuth('/api/checkAuth')).json();
+      dispatch(Authenticated(json.Authenticated, json.IAAAAuth, json.IAARedirect));
     } catch(ex) {
       dispatch(Authenticated(false, false));
     }
