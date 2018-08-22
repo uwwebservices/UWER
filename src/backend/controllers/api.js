@@ -3,7 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, currentUrl } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 
 let api = Router();
@@ -74,7 +74,8 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.CheckAuth, async (req, res) => {
-	let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: config.idaaCheck };
+	let redirectBack = config.idaaCheck + encodeURI(currentUrl(req));
+	let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
 
 	if(!req.session)
 	{
