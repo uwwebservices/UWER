@@ -33,8 +33,8 @@ export const backToUrl = (url = Routes.Register) => {
 	};
 };
 
-export const currentUrl = (req) => {
-	return req.protocol + '://' + req.get('host') + req.originalUrl;
+export const idaaRedirectUrl = (req) => {
+	return encodeURI(req.protocol + '://' + req.get('host') + '/config');
 }
 
 export const ensureAPIAuth = (req, res, next) => {
