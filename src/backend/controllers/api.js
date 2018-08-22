@@ -76,7 +76,7 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 
 api.get(API.CheckAuth, async (req, res) => {
 
-	let auth = { Authenticated: false, IAAAAuth: false, IAARedirect: config.idaaCheck };
+	let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: config.idaaCheck };
 
 	if(!req.session)
 	{
@@ -84,12 +84,12 @@ api.get(API.CheckAuth, async (req, res) => {
 	}
 	
 	if(req.isAuthenticated()) {
-
-		auth.Authenticated=true;
-	
+		console.log("Session", req.session);
 		if(!req.session.IAAAgreed)
 		{
+			console.log("IDAA GROUP ID", config.idaaGroupID);
 			let members = await Groups.GetMembers(config.idaaGroupID);
+			console.log("MEMBERS", members);
 			if(members.indexOf(req.user.UWNetID) > -1) {
 				req.session.IAAAgreed=true;
 				auth.IAAAAuth=true;

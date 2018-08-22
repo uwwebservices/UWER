@@ -2,7 +2,7 @@
 
 Project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and take attendance via card swipes (magstripe/rfid). Submitting a huskycard rfid/magstrip/netid looks up users regid and passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format can be returned as well as the UW group will have the member list or download a list as a CSV.  Verbose output from the API includes various user information as well as gia base64 encoded image from their husky card.
 
-This project is also intended to be a reference on how to use various APIs, see src/backend/models for the various APIs as examples
+This project is also intended to be a reference on how to use various APIs, see src/backend/models for the various APIs as examples.
 
 ## Requirements
 - UWCA x509 certificate, authorized for IDCard/PWS/Groups
