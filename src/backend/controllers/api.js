@@ -84,11 +84,25 @@ api.get(API.CheckAuth, async (req, res) => {
 	
 	if(req.isAuthenticated()) {
 		if(!req.session.IAAAgreed) {
+			let found = false;
 			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
 			if(members.find(u => u.id === req.user.UWNetID)) {
+				found = true;
+			}	
+
+			if(!found)
+			{
+				members = (await Groups.GetMembers(config.idaaGroupID, true)).Payload;
+				if(members.find(u => u.id === req.user.UWNetID)) {
+					found = true;
+				}	
+			}
+
+			if(found)
+			{
 				req.session.IAAAgreed=true;
 				auth.IAAAAuth=true;
-			}	
+			}
 		} else {
 			auth.IAAAAuth=true;
 		}	
