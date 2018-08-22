@@ -5,6 +5,7 @@ import { createLogger } from 'redux-logger'
 
 let middleware = [thunk];
 
+console.log("REDUX_LOGGING", process.env.REDUX_LOGGING);
 if(process.env.NODE_ENV === 'development' || process.env.REDUX_LOGGING) {
     const logger = createLogger();
     middleware.push(logger);
