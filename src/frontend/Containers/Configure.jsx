@@ -13,7 +13,7 @@ class Configure extends Component {
         this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false };
     }
     async componentWillMount() {
-        await this.props.checkAuth();
+        //await this.props.checkAuth();
         if(!this.props.authenticated && !this.props.development) {
             await this.props.checkAuth();
             if(!this.props.authenticated) {
