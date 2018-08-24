@@ -12,5 +12,7 @@
   "groupAdmins": [ "adminNetids" ],
   "groupDisplayName": "UW Registration POC",
   "groupDescription": "This a test group for UW Registration POC",
-  "groupNameBase": "uw_ais_sm_ews_idcardpoc_"
+  "groupNameBase": "uw_ais_sm_ews_idcardpoc_",
+  "idaaGroupID" : "u_agreement_idaa_idcardeventregistration",
+  "idaaCheck": "https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl="
 }

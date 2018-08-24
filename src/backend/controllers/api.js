@@ -3,8 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import csv from 'csv-express';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 
 let api = Router();
@@ -74,14 +73,42 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 	return res.status(result.Status).json(result.Payload);
 });
 
-api.get(API.CheckAuth, (req, res) => {
-	if(req.isAuthenticated()) {
-		return res.sendStatus(200);
-	} else {
-		// using 202 because 4xx throws a dumb error in the chrome console,
-		// anything but 200 is fine for this use case
-		return res.sendStatus(202);
+api.get(API.CheckAuth, async (req, res) => {
+	let redirectBack = config.idaaCheck + idaaRedirectUrl(req);
+	let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
+
+	if(!req.session)
+	{
+		return res.status(500).send("Chris Cloud(tm)");
 	}
+	
+	if(req.isAuthenticated()) {
+		if(!req.session.IAAAgreed) {
+			let found = false;
+			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
+			if(members.find(u => u.id === req.user.UWNetID)) {
+				found = true;
+			}	
+
+			if(!found)
+			{
+				members = (await Groups.GetMembers(config.idaaGroupID, true)).Payload;
+				if(members.find(u => u.id === req.user.UWNetID)) {
+					found = true;
+				}	
+			}
+
+			if(found)
+			{
+				req.session.IAAAgreed=true;
+				auth.IAAAAuth=true;
+			}
+		} else {
+			auth.IAAAAuth=true;
+		}	
+	} 
+
+	return res.status(200).json(auth);
 });
 
 api.get(API.Config, (req, res) => {
@@ -92,6 +119,9 @@ api.get(API.Config, (req, res) => {
 					obj[key] = config[key];
 					return obj;
 			}, {});
+			if(process.env.BASE_GROUP) {
+				filteredConfig.groupNameBase = process.env.BASE_GROUP;
+			}
 	res.status(200).json(filteredConfig);
 });
 

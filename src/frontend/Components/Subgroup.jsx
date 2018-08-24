@@ -23,9 +23,6 @@ export default class Configure extends Component {
       this.setState({deleting: true});
       await this.props.deleteCallback(subgroup.id);
     }
-    displayGroupName = groupName => {
-      return groupName.replace(this.props.groupNameBase, "");
-    }
     render() {
       let groupName = this.props.subgroup.id;
       let SelectButton = groupName === this.props.selectedGroup ? (
@@ -51,7 +48,7 @@ export default class Configure extends Component {
       );
       return (
         <div className={groupName === this.props.selectedGroup ? "subgroupItem selected" : "subgroupItem"}>
-            <div className="subgroupName">{this.displayGroupName(groupName)}</div>
+            <div className="subgroupName">{this.props.displayGroupName(groupName)}</div>
             <div className="subgroupButtons">
               {SelectButton}
             </div>

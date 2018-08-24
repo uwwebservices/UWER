@@ -31,7 +31,7 @@ app.use(session({
 	name: "sessionId",
 	saveUninitialized: true,
 	resave: false,
-	secret: process.env.SessionKey || "devlopment"
+	secret: process.env.SessionKey || "development"
 }));
 
 if(process.env.SessionKey === "development") {
