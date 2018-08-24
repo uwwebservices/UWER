@@ -43,9 +43,10 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    async GetMembers(group) {
+    async GetMembers(group, force=false) {        
+        let url = `${config.groupsBaseUrl}/${group}/member` + (force?'?source=registry':'');
         let opts = Object.assign({}, options, { 
-            url: `${config.groupsBaseUrl}/${group}/member`,
+            url: url,
         });
         try {
             let res = await rp(opts);
