@@ -35,7 +35,7 @@ export default class Test extends React.Component {
                         <ConfirmModal openButtonIcon="remove" openButtonText="" 
                             openButtonVariant="fab" openButtonFabMini={true} 
                             confirmCallback={() => this.removeUser(mem.UWNetID)} 
-                            dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group}?`} 
+                            dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group.replace(this.props.groupNameBase, "").replace(/-/g, ' ')}?`} 
                             dialogTitle={`Remove User?`} 
                         />
                     )}
