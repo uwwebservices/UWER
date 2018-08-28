@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 export default class Form extends React.Component {
-    registerUser = async e => {
+    registerUser = e => {
         e.preventDefault();
         let identifier = e.target.registerCard.value;
         if(identifier.length) {
@@ -16,7 +16,7 @@ export default class Form extends React.Component {
 
     render() {
         return (
-            <form className="form" autoComplete="new-password" onSubmit={this.registerUser}>
+            <form className="form" autoComplete="new-password" onSubmit={this.registerUser} id="addUserForm">
                 <TextField type="password" autoComplete="off" name="registerCard" id="registerCard" disabled={this.props.formDisabled} placeholder="magstrip/rfid/netid"  />
                 <Button variant="raised" color="primary" type="submit" disabled={this.props.formDisabled}>Register</Button>
             </form>

@@ -52,7 +52,7 @@ const uwSamlStrategy = new saml.Strategy(
 	},
 	function(profile, done) {
 		return done(null, {
-			UWNetID: profile.nameID,
+			UWNetID: profile["urn:oid:0.9.2342.19200300.100.1.1"] || profile.nameID,
 			DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
 		})
 });

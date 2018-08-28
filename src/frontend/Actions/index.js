@@ -99,6 +99,15 @@ export const AddUser = (group, identifier) => {
         dispatch(FlashNotification("User not found", "Could not find the specified user."));
         return dispatch(DummyUserFail(displayId));
       } 
+      if(res.status === 401) {
+        if(token) {
+          dispatch(FlashNotification("Session Ended", "Your registration session has ended, please start a new session."));
+          return dispatch(DummyUserFail(displayId));
+        } else {
+          dispatch(FlashNotification("Not Authorized", "You are not authorized to register users or your registration session has ended."))
+        }
+        
+      }
       let user = await res.json();
       // GWS considers adding the same user to a group an update and returns a 200, so we have to handle the dupes..
       let dupe = state.users.find(u => {
