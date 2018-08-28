@@ -51,9 +51,8 @@ const uwSamlStrategy = new saml.Strategy(
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 	},
 	function(profile, done) {
-		console.log("OMG PROFILE", profile);
 		return done(null, {
-			UWNetID: profile.nameID,
+			UWNetID: profile["urn:oid:0.9.2342.19200300.100.1.1"] || profile.nameID,
 			DisplayName: profile["urn:oid:2.16.840.1.113730.3.1.241"]
 		})
 });
