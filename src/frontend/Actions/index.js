@@ -64,6 +64,7 @@ export const LoadSubgroups = () => {
 export const DestroySubgroup = group => {
   return async dispatch => {
     await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "DELETE" });
+    Cookies.erase("groupName", { path: "/"});
     return await dispatch(DeleteSubgroup(group));
   }
 }
