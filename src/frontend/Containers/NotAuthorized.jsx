@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import FA from 'react-fontawesome';
 import Button from '@material-ui/core/Button';
+import { StopRegistrationSession } from '../Actions';
 
 class NotAuthorized extends Component {
     endRegistration = () => {
