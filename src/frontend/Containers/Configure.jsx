@@ -13,17 +13,15 @@ class Configure extends Component {
         this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false };
     }
     async componentWillMount() {
-        //await this.props.checkAuth();
         if(!this.props.authenticated && !this.props.development) {
             await this.props.checkAuth();
             if(!this.props.authenticated) {
-                window.location = "/login?returnUrl=/config";
+                return window.location = "/login?returnUrl=/config";
             }
 
             if(!this.props.iaaAuth)
             {
-                console.log(this.props.iaaCheck)
-                window.location = this.props.iaaCheck;
+                return window.location = this.props.iaaCheck;
             }
         }
         this.setState({groupName: this.props.groupName});
