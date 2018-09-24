@@ -1,5 +1,12 @@
 # Event Registration [![Build Status](https://travis-ci.org/uwwebservices/idcard-webapp-poc.svg?branch=master)](https://travis-ci.org/uwwebservices/idcard-webapp-poc)
 
+EWS Event Registration (EWSER) is a Node.js application that utilizes Person Web Service (PWS), ID Card Web Service (IDCardWS), and Groups Web Service (GWS) to register users for an event via Husky Card swipes or RFID taps. EWSER takes advantage of the GWS ability store members in subgroups, allowing someone to setup one base group and have many subgroups for registering members to. EWSER can be setup to register to the same group from multiple locations and at the end export to a CSV file for usage in other systems.
+
+
+
+
+
+
 Project to demonstrate an event registration application.  The idea being, with this application and some minimal setup you can deploy to a device (desktop/laptop/Raspberry Pi/etc.) capable of running node.js and take attendance via card swipes (magstripe/rfid). Submitting a huskycard rfid/magstrip/netid looks up users regid and passes to PWS to get more user details, and adds users to a UW Group leaf.  After collecting users a list of registered users in plain/verbose format can be returned as well as the UW group will have the member list or download a list as a CSV.  Verbose output from the API includes various user information as well as gia base64 encoded image from their husky card.
 
 This project is also intended to be a reference on how to use various APIs, see src/backend/models for the various APIs as examples.

@@ -1,3 +1,4 @@
+import fs from 'fs';
 import http from 'http';
 import express from 'express';
 import morgan from 'morgan';
@@ -43,12 +44,15 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
+const spPrivateKey = fs.readFileSync(config.spKeyFile, { encoding: 'utf-8' });
+
 const uwSamlStrategy = new saml.Strategy(
 	{
 		callbackUrl: process.env.idpCallbackUrl,
 		entryPoint: config.IdPEntryPoint,
 		issuer: process.env.idpIssuer,
-		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+		privateKey: spPrivateKey
 	},
 	function(profile, done) {
 		return done(null, {
