@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
+import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
@@ -39,7 +40,8 @@ class Register extends Component {
                         <span>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
                         </span>
-                        <Button variant="raised" onClick={() => this.props.startRegistrationSession()} color="primary">Start Registering</Button>
+                        {/* <Button variant="raised" onClick={() => this.props.startRegistrationSession()} color="primary">Start Registering</Button> */}
+                        <RegistrationModal confirmCallback={this.props.startRegistrationSession} /> 
                     </div>
                 )}
                 <div className="registrationTable">                   
