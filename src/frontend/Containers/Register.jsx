@@ -11,7 +11,9 @@ class Register extends Component {
     componentDidUpdate() {
         setTimeout(() => {
             if(!this.props.authenticated && !this.props.token && !this.props.development) {
-                this.props.history.push("/");
+                if(!Cookies.get('registrationToken')) {
+                    this.props.history.push("/");
+                }
             }
         }, 0);
     }
