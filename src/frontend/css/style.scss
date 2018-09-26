@@ -28,10 +28,11 @@ strong {
         grid-area: 1 / 1 / 2 / 4;
     }
 
-    main {
-        /* grid-area: 2 /2 / 3 / 3; */
+    main {        
         background-color: white;
         padding: 20px;        
+        margin: 0 auto;
+        max-width: 800px;
     }
 
     footer {
