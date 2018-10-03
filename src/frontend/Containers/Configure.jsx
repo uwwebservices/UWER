@@ -125,13 +125,12 @@ class Configure extends Component {
 
 const mapStateToProps = state => ({
    groupName: state.groupName,
-   config: state.config,
    subgroups: state.subgroups,
    authenticated: state.authenticated,
    development: state.development,
    iaaAuth: state.iaaauth,
    iaaCheck: state.iaacheck,
-   groupNameBase: state.config.groupNameBase
+   groupNameBase: state.groupNameBase
 });
 const mapDispatchToProps = dispatch => {
     return {

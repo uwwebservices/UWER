@@ -10,7 +10,7 @@ const DeleteSubgroup = subgroup => { return { type: Const.DELETE_SUBGROUP, subgr
 const ReceiveUsers = users => { return { type: Const.RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: Const.UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: Const.REMOVE_USER, user }};
-const Authenticated = (authenticated, iaaauth, iaacheck) => { return {type: Const.USER_AUTHENTICATION, authenticated, iaaauth, iaacheck }};
+const Authenticated = (authenticated, iaaauth, iaacheck) => { return {type: Const.USER_AUTHENTICATION, authenticated, iaaauth}};
 const AddDummyUser = displayId => { return { type: Const.ADD_DUMMY_USER, displayId}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
 const DummyUserFail = displayId => { return { type: Const.FAILED_DUMMY_USER, displayId }};
@@ -55,7 +55,7 @@ export const CreateGroup = group => {
 
 export const LoadSubgroups = () => {
   return async dispatch => {
-    let groupNameBase = store.getState().config.groupNameBase;
+    let groupNameBase = store.getState().groupNameBase;
     let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
     return await dispatch(ReceiveSubgroups(subgroups));
   }
@@ -178,7 +178,7 @@ export const InitApp = () => {
       await dispatch(CheckAuthentication());
     }
     
-    !Object.keys(state.config).length && await dispatch(LoadConfig());
+    !Object.keys(state.groupNameBase).length && await dispatch(LoadConfig());
     state = store.getState();
 
     if(!state.groupName) {

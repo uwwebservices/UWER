@@ -7,7 +7,7 @@ const initialState = {
   iaaauth: false,
   iaacheck: "",
   groupName: "",
-  config: {},
+  groupNameBase: "",
   subgroups: [],
   users: [],
   registrationToken: "",
@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
     case Const.RECEIVE_GROUP_NAME:
       return Object.assign({}, state, { groupName: action.groupName });
     case Const.RECEIVE_CONFIG:
-      return Object.assign({}, state, { config: action.config });
+      return Object.assign({}, state, { groupNameBase: action.config.groupNameBase });
     case Const.RECEIVE_SUBGROUPS:
       return Object.assign({}, state, { subgroups: action.subgroups });
     case Const.DELETE_SUBGROUP:
@@ -36,11 +36,7 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, { users: noDummy });
     case Const.UPDATE_USERS:
       let newUsers = state.users.map(u => {
-        if(u.displayId && u.displayId === action.user.displayId) {
-          return action.user;
-        } else {
-          return u;
-        }
+        return u.displayId && u.displayId === action.user.displayId ? action.user : u;
       });
       return Object.assign({}, state, {users: newUsers});
     case Const.MARK_USER_FOR_DELETION:

@@ -113,7 +113,7 @@ api.get(API.CheckAuth, async (req, res) => {
 });
 
 api.get(API.Config, (req, res) => {
-	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameBase"];
+	let whitelist = ["groupNameBase"];
 	let filteredConfig = Object.keys(config)
 			.filter(key => whitelist.includes(key))
 			.reduce((obj, key) => {

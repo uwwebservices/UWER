@@ -64,7 +64,7 @@ class Register extends Component {
 const mapStateToProps = state => ({
     groupName: state.groupName,
     users: state.users,
-    groupNameBase: state.config.groupNameBase,
+    groupNameBase: state.groupNameBase,
     authenticated: state.authenticated,
     token: state.registrationToken,
     development: state.development

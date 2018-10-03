@@ -35,7 +35,7 @@ class NotAuthorized extends Component {
 }
 
 const mapStateToProps = state => ({
-    groupNameBase: state.config.groupNameBase
+    groupNameBase: state.groupNameBase
 });
 const mapDispatchToProps = dispatch => {
     return {

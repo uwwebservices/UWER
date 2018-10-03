@@ -56,6 +56,7 @@ class PageWrapper extends Component {
                 <NotificationSystem ref="notificationSystem" />
                 <Header pages={pages} />
                     <main>
+                        { this.props.development && <div className="developmentNotice">Development Mode</div>}
                         { childrenWithProps }
                     </main>
                 <Footer />

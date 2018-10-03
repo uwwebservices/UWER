@@ -71,6 +71,5 @@ export const verifyAuthToken = req => {
 
 	payload = JSON.parse(payload);
 	req.session.registrationUser = payload.user;
-	console.log("AUTH TOKEN EXPIRY", new Date(payload.expiry), payload.expiry > (new Date()).getTime())
 	return payload.expiry > (new Date()).getTime();
 }
