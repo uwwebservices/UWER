@@ -42,8 +42,7 @@ class Register extends Component {
                         <span>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
                         </span>
-                        {/* <Button variant="raised" onClick={() => this.props.startRegistrationSession()} color="primary">Start Registering</Button> */}
-                        <RegistrationModal confirmCallback={this.props.startRegistrationSession} /> 
+                        <RegistrationModal confirmCallback={() => { this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed) }} /> 
                     </div>
                 )}
                 <div className="registrationTable">                   
@@ -67,14 +66,15 @@ const mapStateToProps = state => ({
     groupNameBase: state.groupNameBase,
     authenticated: state.authenticated,
     token: state.registrationToken,
-    development: state.development
+    development: state.development,
+    netidAllowed: state.netidAllowed
  });
  const mapDispatchToProps = dispatch => {
      return {
         loadUsers: group => dispatch(LoadUsers(group)),
         addUser: (group, user) => dispatch(AddUser(group, user)),
         removeUser: (group, user) => dispatch(DeleteUser(group, user)),
-        startRegistrationSession: () => dispatch(StartRegistrationSession()),
+        startRegistrationSession: (groupName, netidAllowed) => dispatch(StartRegistrationSession(groupName, netidAllowed)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession())
      }
  }

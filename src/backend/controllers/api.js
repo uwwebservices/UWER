@@ -3,7 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express';
 
@@ -16,8 +16,10 @@ api.get(API.GetMembers, async (req, res) => {
 		return res.status(result.Status).json(verbose);
 });
 
-api.get(API.GetToken, (req, res) => {
-	let token = getAuthToken(req);
+api.get(API.GetToken, ensureAPIAuth, (req, res) => {
+	let groupName = req.query.groupName;
+	let netidAllowed = req.query.netidAllowed;
+	let token = getAuthToken(req, groupName, netidAllowed);
 	if(token) {
 		return res.status(200).json({token});
 	} else {
@@ -36,13 +38,28 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let identifier = req.body.identifier;
 	let displayId = req.body.displayId;
 	let validCard = IDCard.ValidCard(identifier);
+	let groupName = req.params.group;
+	let netidAllowed = req.isAuthenticated();
+
+	// if not auth'd, we force the groupname/netidauth from token
+	//if(!req.isAuthenticated() && req.body.token) {
+	if(req.body.token) {
+		let tokenData = decryptAuthToken(req.body.token);
+		groupName = tokenData.groupName;
+		netidAllowed = tokenData.netidAllowed;
+	}
 	
+	if(!validCard && netidAllowed == 'false') {
+		// if not a valid card and netid auth not allowed, 404
+		return res.sendStatus(404);
+	}
+
 	if(validCard){
 		identifier = await IDCard.Get(validCard);
 		identifier = (await PWS.Get(identifier)).UWNetID;
 	}
-	
-	let result = await Groups.AddMember(req.params.group, identifier);
+
+	let result = await Groups.AddMember(groupName, identifier);
 	if(result.Status === 200) {
 		let user = await PWS.Get(identifier);
 		user.displayId = displayId;

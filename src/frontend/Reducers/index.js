@@ -11,6 +11,7 @@ const initialState = {
   subgroups: [],
   users: [],
   registrationToken: "",
+  netidAllowed: false,
   development: process.env.NODE_ENV === "development",
   notifications: []
 };

@@ -53,23 +53,24 @@ export const ensureAuthOrToken = (req, res, next) => {
 	}
 }
 
-export const getAuthToken = (req, uriEncode = true) => {
-	if(!req.user && !developmentMode) { return false; }
+export const getAuthToken = (req, groupName, netidAllowed = false, uriEncode = true) => {
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setHours(now.getHours() + 3);
-	let token = AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase).toString();
+	let token = AES.encrypt(JSON.stringify({user: req.user, groupName, netidAllowed, expiry}), passphrase).toString();
 	return uriEncode ? encodeURIComponent(token) : token;
+}
+
+export const decryptAuthToken = token => {
+	let passphrase = process.env.SessionKey || "development";
+	let payload = AES.decrypt(decodeURIComponent(token), passphrase).toString(enc.Utf8);
+	console.log("decrypted token:", payload)
+	return JSON.parse(payload);
 }
 
 export const verifyAuthToken = req => {
 	if(!req.session.token && !req.body.token) { return false; }
 	if(!req.session.token && req.body.token) { req.session.token = decodeURIComponent(req.body.token); }
-
-	let passphrase = process.env.SessionKey || "development";
-	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
-
-	payload = JSON.parse(payload);
 	req.session.registrationUser = payload.user;
-	return payload.expiry > (new Date()).getTime();
+	return decryptAuthToken(req.session.token).expiry > (new Date()).getTime();
 }

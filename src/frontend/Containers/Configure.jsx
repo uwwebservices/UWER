@@ -72,7 +72,7 @@ class Configure extends Component {
         return groupName.replace(this.props.groupNameBase, "").replace(/-/g, ' ');
     }
     startRegistration = async () => {
-        await this.props.startRegistrationSession();
+        await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed);
         this.props.history.push("/register");
     }
 
@@ -130,7 +130,8 @@ const mapStateToProps = state => ({
    development: state.development,
    iaaAuth: state.iaaauth,
    iaaCheck: state.iaacheck,
-   groupNameBase: state.groupNameBase
+   groupNameBase: state.groupNameBase,
+   netidAllowed: state.netidAllowed
 });
 const mapDispatchToProps = dispatch => {
     return {
@@ -140,7 +141,7 @@ const mapDispatchToProps = dispatch => {
         loadUsers: group => dispatch(LoadUsers(group)),
         createGroup: group => dispatch(CreateGroup(group)),
         checkAuth: () => dispatch(CheckAuthentication()),
-        startRegistrationSession: () => dispatch(StartRegistrationSession()),
+        startRegistrationSession: (groupName, netidAllowed) => dispatch(StartRegistrationSession(groupName, netidAllowed)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession())
     }
 }
