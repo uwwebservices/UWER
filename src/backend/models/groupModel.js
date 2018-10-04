@@ -79,7 +79,8 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    async CreateGroup(group) {
+    async CreateGroup(group, privateGroup) {
+        let classification = privateGroup == "false" ? "u" : "r"
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
@@ -90,7 +91,8 @@ const Groups = {
                     "description": config.groupDescription, 
                     "admins": config.groupAdmins.map(admin => {
                         return {"id": admin, "type": "dns" };
-                    })
+                    }),
+                    classification
                 }
             }
         });

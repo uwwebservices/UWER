@@ -48,9 +48,9 @@ export const UpdateGroupName = groupName => {
   }
 }
 
-export const CreateGroup = group => {
+export const CreateGroup = (group, privateGroup=true) => {
   return async dispatch => {
-    await APIRequestWithAuth(`/api/subgroups/${group}`, { method: "POST"});
+    await APIRequestWithAuth(`/api/subgroups/${group}?privateGroup=${privateGroup}`, { method: "POST"});
   }
 }
 

@@ -86,7 +86,8 @@ api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
-	let result = await Groups.CreateGroup(req.params.group);
+	let privateGroup = req.query.privateGroup;
+	let result = await Groups.CreateGroup(req.params.group, privateGroup);
 	return res.status(result.Status).json(result.Payload);
 });
 

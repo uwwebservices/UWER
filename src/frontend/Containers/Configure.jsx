@@ -11,7 +11,7 @@ import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false };
+        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false, privateGroup: true };
     }
     async componentWillMount() {
         if(!this.props.authenticated && !this.props.development) {
@@ -55,9 +55,9 @@ class Configure extends Component {
         e.preventDefault();
         if(this.validateGroupString(this.state.newSubgroup)) {
             this.setState({"creatingGroup": true });
-            await this.props.createGroup(this.generateGroupName(this.state.newSubgroup));
+            await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.privateGroup);
             this.props.loadSubgroups(this.props.groupName);
-            this.setState({"creatingGroup": false, "newSubgroup": "" });
+            this.setState({"creatingGroup": false, "newSubgroup": "", "privateGroup": true });
             this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
         } else {
             this.props._addNotification("Create Registration Group Failed", "Group name can only contain numbers, letters and spaces.");
@@ -105,20 +105,25 @@ class Configure extends Component {
                         }
                     </div>
                 </div>
-                <form className="form" onSubmit={this.createSubgroup}>
-                    <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
-                    <input type="text" className="newSubgroup" 
-                        name="newSubgroup"
-                        onChange={this.handleChange}
-                        value={this.state.newSubgroup}
-                        disabled={this.state.creatingGroup}
-                    />
-                    
-                    <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
-                        {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
-                    </Button>
-                    { this.state.invalidSubgroup && <div className="subgroupError">Registration groups can only contain letters, numbers and spaces.</div>}
-                </form>
+                <div className="createGroupForm">
+                    <form className="form" onSubmit={this.createSubgroup}>
+                        <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
+                        <input type="text" className="newSubgroup" 
+                            name="newSubgroup"
+                            onChange={this.handleChange}
+                            value={this.state.newSubgroup}
+                            disabled={this.state.creatingGroup}
+                        />
+                        <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
+                            {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
+                        </Button>
+                        { this.state.invalidSubgroup && <div className="subgroupError">Registration groups can only contain letters, numbers and spaces.</div>}
+                        <span className="privateGroupToggle">
+                            <input type="checkbox" id="privateGroup" onChange={() => {this.setState({privateGroup: !this.state.privateGroup})}} checked={this.state.privateGroup} /> 
+                            <label htmlFor="privateGroup">Private Group</label>
+                        </span>
+                    </form>
+                </div>
             </div>
         )
     }
@@ -140,7 +145,7 @@ const mapDispatchToProps = dispatch => {
         loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
         destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
         loadUsers: group => dispatch(LoadUsers(group)),
-        createGroup: group => dispatch(CreateGroup(group)),
+        createGroup: (group, privateGroup) => dispatch(CreateGroup(group, privateGroup)),
         checkAuth: () => dispatch(CheckAuthentication()),
         startRegistrationSession: (groupName, netidAllowed) => dispatch(StartRegistrationSession(groupName, netidAllowed)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession()),

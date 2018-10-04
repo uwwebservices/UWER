@@ -146,12 +146,18 @@ strong {
             background-color: #eee;
         }
     }
+    .createGroupForm {
+        margin-left: 5px;
+    }
     .subgroupButtons {
        text-align: right;
         button {
             width: 100px;
             margin: 0 2px;
         }
+    }
+    .privateGroupToggle {
+        margin-left: 10px;
     }
     .newSubgroup {
         width: 300px;
