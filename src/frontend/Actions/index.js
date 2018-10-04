@@ -19,6 +19,7 @@ const AddNotification = (messageId, title, message) => { return { type: Const.AD
 const RemoveNotification = messageId => { return { type: Const.REMOVE_NOTIFICATION, messageId }};
 
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
+export const ToggleNetIDAllowed = () => { return { type: Const.TOGGLE_NETID_ALLOWED }};
 
 
 // -----------------------

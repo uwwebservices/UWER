@@ -62,6 +62,8 @@ export default (state = initialState, action) => {
     case Const.REMOVE_NOTIFICATION:
       let newNotifications = state.notifications.filter(n => n.messageId != action.messageId);
       return Object.assign({}, state, { notifications: newNotifications });
+    case Const.TOGGLE_NETID_ALLOWED:
+      return Object.assign({}, state, { netidAllowed: !state.netidAllowed });
     default:
       return state;
   }

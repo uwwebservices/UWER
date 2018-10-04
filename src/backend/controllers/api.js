@@ -42,8 +42,7 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let netidAllowed = req.isAuthenticated();
 
 	// if not auth'd, we force the groupname/netidauth from token
-	//if(!req.isAuthenticated() && req.body.token) {
-	if(req.body.token) {
+	if(!req.isAuthenticated() && req.body.token) {
 		let tokenData = decryptAuthToken(req.body.token);
 		groupName = tokenData.groupName;
 		netidAllowed = tokenData.netidAllowed;
@@ -97,7 +96,7 @@ api.get(API.CheckAuth, async (req, res) => {
 
 	if(!req.session)
 	{
-		return res.status(500).send("Chris Cloud(tm)");
+		return res.sendStatus(500);
 	}
 	
 	if(req.isAuthenticated()) {
@@ -114,10 +113,7 @@ api.get(API.CheckAuth, async (req, res) => {
 				if(members.find(u => u.id === req.user.UWNetID)) {
 					found = true;
 				}	
-			}
-
-			if(found)
-			{
+			} else {
 				req.session.IAAAgreed=true;
 				auth.IAAAAuth=true;
 			}

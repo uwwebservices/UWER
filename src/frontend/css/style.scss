@@ -187,4 +187,18 @@ strong {
     .addMemberButton {
         margin-left: 5px;
     }
+    .configOptions {
+        margin-top: 15px;
+        border: 1px dashed #ccc;
+        padding: 5px;
+        input {
+            margin: 0 10px;
+        }
+        label {
+            font-size: 14px;
+        }
+        h2 {
+            margin: 0 0 5px 2px;
+        }
+    }
 }

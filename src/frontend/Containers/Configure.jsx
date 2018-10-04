@@ -5,7 +5,8 @@ import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
+import ConfigOptions from 'Components/ConfigOptions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -88,7 +89,7 @@ class Configure extends Component {
                 <h1>Configure</h1>
                 <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> &nbsp;
                 <EndRegistrationModal confirmCallback={this.endRegistration} /> &nbsp;
-               
+                <ConfigOptions netidAllowed={this.props.netidAllowed} handleChange={this.props.toggleNetIDAllowed} />
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div className="subgroupTable">
@@ -142,7 +143,8 @@ const mapDispatchToProps = dispatch => {
         createGroup: group => dispatch(CreateGroup(group)),
         checkAuth: () => dispatch(CheckAuthentication()),
         startRegistrationSession: (groupName, netidAllowed) => dispatch(StartRegistrationSession(groupName, netidAllowed)),
-        stopRegistrationSession: () => dispatch(StopRegistrationSession())
+        stopRegistrationSession: () => dispatch(StopRegistrationSession()),
+        toggleNetIDAllowed: () => dispatch(ToggleNetIDAllowed())
     }
 }
 
