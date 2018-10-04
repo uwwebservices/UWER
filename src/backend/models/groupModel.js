@@ -50,6 +50,7 @@ const Groups = {
         });
         try {
             let res = await rp(opts);
+            console.log(res.data)
             return SuccessResponse(res.data, res.error);
         } catch(ex) {
             return ErrorResponse(ex);
