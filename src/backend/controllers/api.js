@@ -10,9 +10,9 @@ import csv from 'csv-express';
 let api = Router();
 
 api.get(API.GetMembers, ensureAuthOrToken, async (req, res) => {
-	// if !auth && token, need to check if group is private before returning members
-	let confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
 	req.session.group = { groupName: req.params.group, confidential: confidentialGroup };
+	let confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
+
 	if(confidentialGroup && !req.isAuthenticated() && !developmentMode) {
 		return res.status(200).json([]);
 	}
@@ -46,8 +46,20 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let validCard = IDCard.ValidCard(identifier);
 	let groupName = req.params.group;
 	let netidAllowed = req.isAuthenticated();
-	let confidentialGroup = req.session.group && req.session.group.groupName === groupName ? req.session.group.confidential : await Groups.IsConfidentialGroup(req.params.group);
-	confidentialGroup = !req.isAuthenticated() || !developmentMode ? confidentialGroup : false;
+	let confidentialGroup = true;
+
+	// check the session for a cached response
+	if(req.session.group && req.session.group.groupName === groupName && req.session.group.confidentialGroup) {
+		confidentialGroup = req.session.group.confidential;
+	} else {
+		confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
+		req.session.group = { groupName, confidential: confidentialGroup };
+	}
+
+	// Admins and Developers can see confidential group members
+	if(req.isAuthenticated() || developmentMode) {
+		confidentialGroup = false;
+	}
 
 	// if not auth'd, we force the groupname/netidauth from token
 	if(!req.isAuthenticated() && req.body.token) {
