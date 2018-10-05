@@ -3,17 +3,23 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken, developmentMode } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express';
 
 let api = Router();
 
-api.get(API.GetMembers, async (req, res) => {
-		let result = await Groups.GetMembers(req.params.group);
-		let members = await PWS.GetMany(result.Payload);
-		let verbose = await IDCard.GetManyPhotos(members);
-		return res.status(result.Status).json(verbose);
+api.get(API.GetMembers, ensureAuthOrToken, async (req, res) => {
+	// if !auth && token, need to check if group is private before returning members
+	let confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
+	req.session.group = { groupName: req.params.group, confidential: confidentialGroup };
+	if(confidentialGroup && !req.isAuthenticated() && !developmentMode) {
+		return res.status(200).json([]);
+	}
+	let result = await Groups.GetMembers(req.params.group);
+	let members = await PWS.GetMany(result.Payload);
+	let verbose = await IDCard.GetManyPhotos(members);
+	return res.status(result.Status).json(verbose);
 });
 
 api.get(API.GetToken, ensureAPIAuth, (req, res) => {
@@ -40,6 +46,8 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	let validCard = IDCard.ValidCard(identifier);
 	let groupName = req.params.group;
 	let netidAllowed = req.isAuthenticated();
+	let confidentialGroup = req.session.group && req.session.group.groupName === groupName ? req.session.group.confidential : await Groups.IsConfidentialGroup(req.params.group);
+	confidentialGroup = !req.isAuthenticated() || !developmentMode ? confidentialGroup : false;
 
 	// if not auth'd, we force the groupname/netidauth from token
 	if(!req.isAuthenticated() && req.body.token) {
@@ -59,7 +67,12 @@ api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
 	}
 
 	let result = await Groups.AddMember(groupName, identifier);
-	if(result.Status === 200) {
+	
+	if(result.Status === 200 && confidentialGroup) {
+		res.sendStatus(201);
+	}
+
+	if(result.Status === 200 && !confidentialGroup) {
 		let user = await PWS.Get(identifier);
 		user.displayId = displayId;
 		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);

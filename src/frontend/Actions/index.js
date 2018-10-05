@@ -97,6 +97,9 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
+      if(res.status === 201) {
+        dispatch(FlashNotification("Successfully Added User", "Group Membership is Private"))
+      }
       if(res.status === 404) {
         dispatch(FlashNotification("User not found", "Could not find the specified user."));
         return dispatch(DummyUserFail(displayId));

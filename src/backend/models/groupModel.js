@@ -27,7 +27,51 @@ const ErrorResponse = ex => {
     }
 };
 
+// Sample GetGroup Response
+// { regid: '75fbe2c29f954b7d9c8815f45c45067e',
+//   id: 'uw_ais_sm_ews_registration_dev_chris-test-group',
+//   displayName: 'UW Registration POC',
+//   description: 'This a test group for UW Registration POC',
+//   created: 1535558330366,
+//   lastModified: 1535558333614,
+//   lastMemberModified: 1538661821973,
+//   contact: '',
+//   authnFactor: '1',
+//   classification: 'u',
+//   dependsOn: '',
+//   gid: '534598',
+//   affiliates: [ { name: 'email', status: 'inactive', senders: [] } ],
+//   admins:
+//    [ { type: 'dns',
+//        name: 'aisdev.cac.washington.edu',
+//        id: 'aisdev.cac.washington.edu' } ],
+//   updaters: [],
+//   creators: [],
+//   readers: [ { type: 'set', id: 'all' } ],
+//   optins: [],
+//   optouts: [] }
+
+const GetGroupInfo = async group => {
+    let opts = Object.assign({}, options, { 
+        method: 'GET',
+        url: `${config.groupsBaseUrl}/${group}`
+    });
+    try {
+        let res = await rp(opts);
+        return res.data;
+    } catch(ex) {
+        throw new Exception(ex);
+    }
+};
+
+
 const Groups = {
+    async IsConfidentialGroup(group) {
+        return (await GetGroupInfo(group)).classification === "c";
+    },
+    async UpdateGroup(group) {
+        return false;
+    },
     async AddMember(group, identifier) {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
@@ -44,25 +88,20 @@ const Groups = {
         }
     },
     async GetMembers(group, force=false) {        
-        let url = `${config.groupsBaseUrl}/${group}/member` + (force?'?source=registry':'');
         let opts = Object.assign({}, options, { 
-            url: url,
+            url: `${config.groupsBaseUrl}/${group}/member${force ? '?source=registry' : ''}`
         });
         try {
             let res = await rp(opts);
-            console.log(res.data)
             return SuccessResponse(res.data, res.error);
         } catch(ex) {
             return ErrorResponse(ex);
         }
     },
     async GetAdmins(group) {
-        let opts = Object.assign({}, options, { 
-            url: `${config.groupsBaseUrl}/${group}`,
-        });
         try {
-            let res = await rp(opts);
-            let admins = res.data.admins.map((a) => a.id);
+            let g = await GetGroupInfo(group);
+            let admins = g.admins.map((a) => a.id);
             return SuccessResponse(admins);
         } catch(ex) {
             return ErrorResponse(ex);
@@ -81,7 +120,7 @@ const Groups = {
         }
     },
     async CreateGroup(group, privateGroup) {
-        let classification = privateGroup == "false" ? "u" : "r"
+        let classification = privateGroup == "false" ? "u" : "c"
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
