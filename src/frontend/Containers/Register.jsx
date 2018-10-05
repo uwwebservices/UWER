@@ -6,6 +6,7 @@ import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
+import Cookies from 'browser-cookies';
 
 class Register extends Component {
     componentDidUpdate() {
