@@ -69,8 +69,11 @@ export const decryptAuthToken = token => {
 }
 
 export const verifyAuthToken = req => {
-	if(!req.session.token && !req.body.token) { return false; }
-	if(!req.session.token && req.body.token) { req.session.token = decodeURIComponent(req.body.token); }
-	req.session.registrationUser = payload.user;
-	return decryptAuthToken(req.session.token).expiry > (new Date()).getTime();
+	if(!req.session.token && !req.body.token && !req.query.token) { return false; }
+	if(!req.session.token && (req.body.token || req.query.token)) { 
+		req.session.token = req.body.token ? decodeURIComponent(req.body.token) : decodeURIComponent(req.query.token); 
+	}
+	let tokenData = decryptAuthToken(req.session.token)
+	req.session.registrationUser = tokenData.user;
+	return tokenData.expiry > (new Date()).getTime();
 }

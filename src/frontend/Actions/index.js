@@ -72,7 +72,11 @@ export const DestroySubgroup = group => {
 
 export const LoadUsers = group => {
   return async dispatch => {
-    let users = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
+    let state = store.getState();
+    let token = state.registrationToken || Cookies.get("registrationToken");
+    token && resetTokenCookie(token);
+    
+    let users = await (await APIRequestWithAuth(`/api/members/${group}${token ? "?token="+token : "" }`)).json();
     return await dispatch(ReceiveUsers(users));
   }
 }
