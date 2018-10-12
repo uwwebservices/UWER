@@ -17,7 +17,7 @@ export default class Form extends React.Component {
     render() {
         return (
             <form className="form" autoComplete="new-password" onSubmit={this.registerUser} id="addUserForm">
-                <TextField type="password" autoComplete="off" name="registerCard" id="registerCard" disabled={this.props.formDisabled} placeholder="magstrip/rfid/netid"  />
+                <TextField type="password" autoComplete="off" name="registerCard" id="registerCard" disabled={this.props.formDisabled}   />
                 <Button variant="raised" className="addMemberButton" color="primary" type="submit" disabled={this.props.formDisabled}>Register</Button>
             </form>
         )
