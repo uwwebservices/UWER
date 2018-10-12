@@ -17,6 +17,7 @@ const DummyUserFail = displayId => { return { type: Const.FAILED_DUMMY_USER, dis
 const ResetState = () => { return { type: Const.RESET_STATE }};
 const AddNotification = (messageId, title, message) => { return { type: Const.ADD_NOTIFICATION, messageId, title, message }};
 const RemoveNotification = messageId => { return { type: Const.REMOVE_NOTIFICATION, messageId }};
+const PrivateGroup = privateGroup => { return { type: Const.PRIVATE_GROUP, privateGroup }};
 
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
 export const ToggleNetIDAllowed = () => { return { type: Const.TOGGLE_NETID_ALLOWED }};
@@ -50,7 +51,8 @@ export const UpdateGroupName = groupName => {
 
 export const CreateGroup = (group, privateGroup=true) => {
   return async dispatch => {
-    await APIRequestWithAuth(`/api/subgroups/${group}?privateGroup=${privateGroup}`, { method: "POST"});
+    let res = await APIRequestWithAuth(`/api/subgroups/${group}?privateGroup=${privateGroup}`, { method: "POST"});
+    return res.status === 200;
   }
 }
 
@@ -76,8 +78,9 @@ export const LoadUsers = group => {
     let token = state.registrationToken || Cookies.get("registrationToken");
     token && resetTokenCookie(token);
     
-    let users = await (await APIRequestWithAuth(`/api/members/${group}${token ? "?token="+token : "" }`)).json();
-    return await dispatch(ReceiveUsers(users));
+    let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? "?token="+token : "" }`)).json();
+    dispatch(PrivateGroup(groupInfo.privateGroup));
+    return await dispatch(ReceiveUsers(groupInfo.members));
   }
 }
 

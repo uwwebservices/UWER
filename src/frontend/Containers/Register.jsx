@@ -51,7 +51,7 @@ class Register extends Component {
                         <h1>Event Registration</h1>                  
                    </div>
                    <div className="endRegistration">
-                        <EndRegistrationModal confirmCallback={this.endRegistration} />
+                        <EndRegistrationModal confirmCallback={this.endRegistration} showCancelButton={false} />
                    </div>
                 </div>    
                 <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />

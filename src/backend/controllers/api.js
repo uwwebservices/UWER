@@ -10,8 +10,8 @@ import csv from 'csv-express';
 let api = Router();
 
 api.get(API.GetMembers, ensureAuthOrToken, async (req, res) => {
-	req.session.group = { groupName: req.params.group, confidential: confidentialGroup };
 	let confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
+	req.session.group = { groupName: req.params.group, confidential: confidentialGroup };
 
 	if(confidentialGroup && !req.isAuthenticated() && !developmentMode) {
 		return res.status(200).json([]);
@@ -19,7 +19,12 @@ api.get(API.GetMembers, ensureAuthOrToken, async (req, res) => {
 	let result = await Groups.GetMembers(req.params.group);
 	let members = await PWS.GetMany(result.Payload);
 	let verbose = await IDCard.GetManyPhotos(members);
-	return res.status(result.Status).json(verbose);
+	let response = {
+		groupName: req.params.group,
+		privateGroup: confidentialGroup,
+		members: verbose,
+	};
+	return res.status(result.Status).json(response);
 });
 
 api.get(API.GetToken, ensureAPIAuth, (req, res) => {

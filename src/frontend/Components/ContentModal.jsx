@@ -46,6 +46,7 @@ class ContentModal extends React.Component {
             { ...this.props.children }
           </DialogContent>
           <DialogActions>
+            { this.props.showCancelButton &&
             <Button onClick={() => this.handleClose(false)} variant="raised" color={this.props.cancelButtonColor}>
               { this.props.cancelText }
             </Button>}
@@ -65,6 +66,7 @@ ContentModal.propTypes = {
   dialogTitle: PropTypes.string,
   children: PropTypes.node,
   cancelText: PropTypes.string,
+  showCancelButton: PropTypes.bool,
   approveText: PropTypes.string,
   approveButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
   openButtonText: PropTypes.string,
@@ -78,6 +80,7 @@ ContentModal.defaultProps = {
   dialogTitle: "",
   cancelText: "Cancel",
   cancelButtonColor: "default",
+  showCancelButton: true,
   approveText: "Continue",
   approveButtonColor: "primary",
   openButtonText: "Open Modal",

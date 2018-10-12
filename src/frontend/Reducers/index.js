@@ -12,6 +12,7 @@ const initialState = {
   users: [],
   registrationToken: "",
   netidAllowed: false,
+  privateGroup: false,
   development: process.env.NODE_ENV === "development",
   notifications: []
 };
@@ -64,6 +65,8 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, { notifications: newNotifications });
     case Const.TOGGLE_NETID_ALLOWED:
       return Object.assign({}, state, { netidAllowed: !state.netidAllowed });
+    case Const.PRIVATE_GROUP:
+      return Object.assign({}, state, { privateGroup: action.privateGroup });
     default:
       return state;
   }

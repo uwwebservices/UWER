@@ -29,7 +29,7 @@ class Configure extends Component {
     }
     validateGroupString(groupName) {
         var RegExpression = /^[a-zA-Z0-9\s]*$/; 
-        if(RegExpression.test(groupName)) {
+        if(RegExpression.test(groupName) && groupName.length > 2) {
             return true;
         }
         return false;
@@ -55,10 +55,14 @@ class Configure extends Component {
         e.preventDefault();
         if(this.validateGroupString(this.state.newSubgroup)) {
             this.setState({"creatingGroup": true });
-            await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.privateGroup);
-            this.props.loadSubgroups(this.props.groupName);
+            let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.privateGroup);
             this.setState({"creatingGroup": false, "newSubgroup": "", "privateGroup": true });
-            this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
+            if(success) {
+                this.props.loadSubgroups(this.props.groupName);
+                this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
+            } else {
+                this.props._addNotification("Create Registration Group Failed", "Group creation failed, does this group already exist?");
+            }
         } else {
             this.props._addNotification("Create Registration Group Failed", "Group name can only contain numbers, letters and spaces.");
         }
@@ -108,16 +112,17 @@ class Configure extends Component {
                 <div className="createGroupForm">
                     <form className="form" onSubmit={this.createSubgroup}>
                         <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
+                        { this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>}
                         <input type="text" className="newSubgroup" 
                             name="newSubgroup"
                             onChange={this.handleChange}
                             value={this.state.newSubgroup}
                             disabled={this.state.creatingGroup}
+                            placeholder="Group Name: letters, numbers and spaces"
                         />
-                        <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
+                        <Button disabled={this.state.creatingGroup || this.state.newSubgroup.length < 3} variant="raised" color="primary" type="submit">
                             {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
                         </Button>
-                        { this.state.invalidSubgroup && <div className="subgroupError">Registration groups can only contain letters, numbers and spaces.</div>}
                         <span className="privateGroupToggle">
                             <input type="checkbox" id="privateGroup" onChange={() => {this.setState({privateGroup: !this.state.privateGroup})}} checked={this.state.privateGroup} /> 
                             <label htmlFor="privateGroup">Private Group</label>
