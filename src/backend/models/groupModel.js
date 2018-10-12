@@ -60,7 +60,7 @@ const GetGroupInfo = async group => {
         let res = await rp(opts);
         return res.data;
     } catch(ex) {
-        throw new Exception(ex);
+        throw ex;
     }
 };
 
@@ -93,6 +93,7 @@ const Groups = {
         });
         try {
             let res = await rp(opts);
+            
             return SuccessResponse(res.data, res.error);
         } catch(ex) {
             return ErrorResponse(ex);

@@ -28,6 +28,7 @@ const PWS = {
         let opts = Object.assign({}, options, { 
             url: `${config.pwsBaseUrl}/${identifier}/full.json`,
         });
+        
         let res = await rp(opts);
         return FilterPWSModel(res,whitelist);
     },

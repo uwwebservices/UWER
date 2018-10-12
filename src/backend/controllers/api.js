@@ -9,21 +9,55 @@ import csv from 'csv-express';
 
 let api = Router();
 
-api.get(API.GetMembers, ensureAuthOrToken, async (req, res) => {
-	let confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
-	req.session.group = { groupName: req.params.group, confidential: confidentialGroup };
+const tokenToSession = async (req, res, next) => {
+	// if user is not authenticated and presented a token, update session
+	let groupName = req.params.group;
+	let confidentialGroup = !req.isAuthenticated();
+	let netidAllowed = req.isAuthenticated();
 
-	if(confidentialGroup && !req.isAuthenticated() && !developmentMode) {
-		return res.status(200).json([]);
+	if(!req.isAuthenticated() && !developmentMode && req.body.token) {
+		let tokenData = decryptAuthToken(req.body.token);
+		groupName = tokenData.groupName;
+		netidAllowed = tokenData.netidAllowed;
 	}
-	let result = await Groups.GetMembers(req.params.group);
+
+	if(!req.session.group || req.session.group.groupName !== groupName) {
+		confidentialGroup = await Groups.IsConfidentialGroup(groupName);
+	} else if (req.session.group) {
+		confidentialGroup = req.session.group.confidentialGroup;
+	}
+
+
+	// Admins and Developers can see confidential group members
+	if(req.isAuthenticated() || developmentMode) {
+		confidentialGroup = false;
+	}
+	
+	req.session.group = {
+		groupName: groupName,
+		confidential: confidentialGroup,
+		netidAllowed: netidAllowed
+	};
+	
+	next();
+}
+
+api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
+	let groupName = req.session.group.groupName;
+	let privateGroup = req.session.confidentialGroup;
+	let response = {
+		groupName,
+		privateGroup,
+		members: []
+	}
+
+	if(privateGroup && !req.isAuthenticated() && !developmentMode) {
+		return res.status(200).json(response);
+	}
+	let result = await Groups.GetMembers(groupName);
 	let members = await PWS.GetMany(result.Payload);
 	let verbose = await IDCard.GetManyPhotos(members);
-	let response = {
-		groupName: req.params.group,
-		privateGroup: confidentialGroup,
-		members: verbose,
-	};
+	response.members = verbose;
 	return res.status(result.Status).json(response);
 });
 
@@ -45,33 +79,13 @@ api.get(API.Logout, (req,res) => {
 	res.sendStatus(200);
 });
 
-api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
+api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) => {
 	let identifier = req.body.identifier;
 	let displayId = req.body.displayId;
 	let validCard = IDCard.ValidCard(identifier);
-	let groupName = req.params.group;
-	let netidAllowed = req.isAuthenticated();
-	let confidentialGroup = true;
-
-	// check the session for a cached response
-	if(req.session.group && req.session.group.groupName === groupName && req.session.group.confidentialGroup) {
-		confidentialGroup = req.session.group.confidential;
-	} else {
-		confidentialGroup = await Groups.IsConfidentialGroup(req.params.group);
-		req.session.group = { groupName, confidential: confidentialGroup };
-	}
-
-	// Admins and Developers can see confidential group members
-	if(req.isAuthenticated() || developmentMode) {
-		confidentialGroup = false;
-	}
-
-	// if not auth'd, we force the groupname/netidauth from token
-	if(!req.isAuthenticated() && req.body.token) {
-		let tokenData = decryptAuthToken(req.body.token);
-		groupName = tokenData.groupName;
-		netidAllowed = tokenData.netidAllowed;
-	}
+	let groupName = req.session.group.groupName;
+	let netidAllowed = req.session.group.netidAllowed;
+	let confidentialGroup = req.session.group.privateGroup;
 	
 	if(!validCard && netidAllowed == 'false') {
 		// if not a valid card and netid auth not allowed, 404
