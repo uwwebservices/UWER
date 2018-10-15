@@ -108,6 +108,6 @@ export const tokenToSession = async (req, res, next) => {
 		confidential,
 		netidAllowed
 	};
-	console.log(req.session.group)
+	
 	next();
 }
