@@ -83,7 +83,7 @@ export const verifyAuthToken = req => {
 export const tokenToSession = async (req, res, next) => {
 	// if user is not authenticated and presented a token, update session
 	let groupName = req.params.group;
-	let confidentialGroup = !req.isAuthenticated();
+	let confidential = !req.isAuthenticated();
 	let netidAllowed = req.isAuthenticated();
 
 	if(!req.isAuthenticated() && !developmentMode && req.body.token) {
@@ -93,20 +93,20 @@ export const tokenToSession = async (req, res, next) => {
 	}
 
 	if(!req.session.group || req.session.group.groupName !== groupName) {
-		confidentialGroup = await Groups.IsConfidentialGroup(groupName);
+		confidential = await Groups.IsConfidentialGroup(groupName);
 	} else if (req.session.group) {
-		confidentialGroup = req.session.group.confidentialGroup;
+		confidential = req.session.group.confidential;
 	}
 
 	// Admins and Developers can see confidential group members
 	if(req.isAuthenticated() || developmentMode) {
-		confidentialGroup = false;
+		confidential = false;
 	}
 	
 	req.session.group = {
-		groupName: groupName,
-		confidential: confidentialGroup,
-		netidAllowed: netidAllowed
+		groupName,
+		confidential,
+		netidAllowed
 	};
 	console.log(req.session.group)
 	next();
