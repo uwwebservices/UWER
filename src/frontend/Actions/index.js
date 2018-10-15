@@ -166,9 +166,9 @@ export const StartRegistrationSession = (groupName, netidAllowed=false, tokenTTL
   return async dispatch => {
     let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
-    dispatch(LoadUsers(groupName));
     resetTokenCookie(token, tokenTTL);
-    dispatch(Logout());
+    await dispatch(Logout());
+    dispatch(LoadUsers(groupName));
   }
 }
 
