@@ -1,5 +1,6 @@
 import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
+import Groups from 'models/groupModel';
 
 export const developmentMode = process.env.NODE_ENV === 'development';
 	
@@ -76,4 +77,36 @@ export const verifyAuthToken = req => {
 	let tokenData = decryptAuthToken(req.session.token)
 	req.session.registrationUser = tokenData.user;
 	return tokenData.expiry > (new Date()).getTime();
+}
+
+export const tokenToSession = async (req, res, next) => {
+	// if user is not authenticated and presented a token, update session
+	let groupName = req.params.group;
+	let confidentialGroup = !req.isAuthenticated();
+	let netidAllowed = req.isAuthenticated();
+
+	if(!req.isAuthenticated() && !developmentMode && req.body.token) {
+		let tokenData = decryptAuthToken(req.body.token);
+		groupName = tokenData.groupName;
+		netidAllowed = tokenData.netidAllowed;
+	}
+
+	if(!req.session.group || req.session.group.groupName !== groupName) {
+		confidentialGroup = await Groups.IsConfidentialGroup(groupName);
+	} else if (req.session.group) {
+		confidentialGroup = req.session.group.confidentialGroup;
+	}
+
+	// Admins and Developers can see confidential group members
+	if(req.isAuthenticated() || developmentMode) {
+		confidentialGroup = false;
+	}
+	
+	req.session.group = {
+		groupName: groupName,
+		confidential: confidentialGroup,
+		netidAllowed: netidAllowed
+	};
+	
+	next();
 }

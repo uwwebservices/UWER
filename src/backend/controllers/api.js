@@ -3,44 +3,11 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken, developmentMode } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken, developmentMode, tokenToSession } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express';
 
 let api = Router();
-
-const tokenToSession = async (req, res, next) => {
-	// if user is not authenticated and presented a token, update session
-	let groupName = req.params.group;
-	let confidentialGroup = !req.isAuthenticated();
-	let netidAllowed = req.isAuthenticated();
-
-	if(!req.isAuthenticated() && !developmentMode && req.body.token) {
-		let tokenData = decryptAuthToken(req.body.token);
-		groupName = tokenData.groupName;
-		netidAllowed = tokenData.netidAllowed;
-	}
-
-	if(!req.session.group || req.session.group.groupName !== groupName) {
-		confidentialGroup = await Groups.IsConfidentialGroup(groupName);
-	} else if (req.session.group) {
-		confidentialGroup = req.session.group.confidentialGroup;
-	}
-
-
-	// Admins and Developers can see confidential group members
-	if(req.isAuthenticated() || developmentMode) {
-		confidentialGroup = false;
-	}
-	
-	req.session.group = {
-		groupName: groupName,
-		confidential: confidentialGroup,
-		netidAllowed: netidAllowed
-	};
-	
-	next();
-}
 
 api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
 	let groupName = req.session.group.groupName;
@@ -59,24 +26,6 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
 	let verbose = await IDCard.GetManyPhotos(members);
 	response.members = verbose;
 	return res.status(result.Status).json(response);
-});
-
-api.get(API.GetToken, ensureAPIAuth, (req, res) => {
-	let groupName = req.query.groupName;
-	let netidAllowed = req.query.netidAllowed;
-	let token = getAuthToken(req, groupName, netidAllowed);
-	if(token) {
-		return res.status(200).json({token});
-	} else {
-		return res.status(401).json({token: ""});
-	}
-});
-
-api.get(API.Logout, (req,res) => {	
-	req.logout();
-	req.session.destroy();
-	res.clearCookie('connect.sid', {path: Routes.Welcome});
-	res.sendStatus(200);
 });
 
 api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) => {
@@ -112,6 +61,24 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 		res.sendStatus(result.Status);
 	}
 	
+});
+
+api.get(API.GetToken, ensureAPIAuth, (req, res) => {
+	let groupName = req.query.groupName;
+	let netidAllowed = req.query.netidAllowed;
+	let token = getAuthToken(req, groupName, netidAllowed);
+	if(token) {
+		return res.status(200).json({token});
+	} else {
+		return res.status(401).json({token: ""});
+	}
+});
+
+api.get(API.Logout, (req,res) => {	
+	req.logout();
+	req.session.destroy();
+	res.clearCookie('connect.sid', {path: Routes.Welcome});
+	res.sendStatus(200);
 });
 
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
