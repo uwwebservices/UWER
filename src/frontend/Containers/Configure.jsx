@@ -95,12 +95,14 @@ class Configure extends Component {
                 <div className="righted inline"><EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" /></div>
                 <h1 className="inline">Configure</h1>
                 
-                <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange}>
-                    <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registration Mode" /> &nbsp;
+                <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange}>                   
                 </ConfigOptions>
-                <div className="subgroupList">
-                    <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
-                    <div className="subgroupTable">
+                <br />
+                <div className="card">
+                    <div className="card-header">
+                         <h2>Select a Registration Group <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>                
+                    </div>
+                    <div className="card-body">                                      
                         {
                             this.props.subgroups.map(subgroup => {
                                 return <Subgroup key={subgroup.id} subgroup={subgroup} 
@@ -110,28 +112,40 @@ class Configure extends Component {
                                       displayGroupName={this.displayGroupName}
                                     />
                             })
-                        }
+                        }   
                     </div>
                 </div>
-                <div className="createGroupForm">
-                    <form className="form" onSubmit={this.createSubgroup}>
-                        <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
-                        { this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>}
-                        <input type="text" className="newSubgroup" 
-                            name="newSubgroup"
-                            onChange={this.handleChange}
-                            value={this.state.newSubgroup}
-                            disabled={this.state.creatingGroup}
-                            placeholder="Group Name: letters, numbers and spaces"
-                        />
-                        <Button disabled={this.state.creatingGroup || this.state.newSubgroup.length < 3} variant="raised" color="primary" type="submit">
-                            {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
-                        </Button>
-                        <span className="privateGroupToggle">
-                            <input type="checkbox" id="privateGroup" onChange={() => {this.setState({confidential: !this.state.confidential})}} checked={this.state.confidential} /> 
-                            <label htmlFor="privateGroup">Private Group</label>
-                        </span>
-                    </form>
+                <br />
+                <div className="card">
+                    <div className="card-header">
+                         <h2>Create a New Registration Group</h2>                
+                    </div>
+                    <div className="card-body">                           
+                        <div className="createGroupForm">
+                            <form className="form" onSubmit={this.createSubgroup}>
+                                <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
+                                { this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>}
+                                <input type="text" className="newSubgroup" 
+                                    name="newSubgroup"
+                                    onChange={this.handleChange}
+                                    value={this.state.newSubgroup}
+                                    disabled={this.state.creatingGroup}
+                                    placeholder="Group Name: letters, numbers and spaces"
+                                />
+                                <Button disabled={this.state.creatingGroup || this.state.newSubgroup.length < 3} variant="raised" color="primary" type="submit">
+                                    {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
+                                </Button>
+                                <span className="privateGroupToggle">
+                                    <input type="checkbox" id="privateGroup" onChange={() => {this.setState({confidential: !this.state.confidential})}} checked={this.state.confidential} /> 
+                                    <label htmlFor="privateGroup">Private Group</label>
+                                </span>
+                            </form>
+                        </div>
+                    </div>
+                </div>       
+                <br />
+                <div className="startRegistration">
+                    <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
                 </div>
             </div>
         )
