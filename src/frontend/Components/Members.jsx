@@ -16,9 +16,11 @@ export default class Test extends React.Component {
         document.getElementById("registerCard").focus();
     }
     reload = async () => {
-        this.setState({loadingUsers: true});
-        await this.props.reloadUsers(this.props.group);
-        this.setState({loadingUsers: false});
+        if(this.props.group){
+            this.setState({loadingUsers: true});
+            await this.props.reloadUsers(this.props.group);
+            this.setState({loadingUsers: false});
+        }
     }
     render() {
         const listItems = this.props.members.map(mem => {

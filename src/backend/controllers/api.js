@@ -66,7 +66,9 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 api.get(API.GetToken, ensureAPIAuth, (req, res) => {
 	let groupName = req.query.groupName;
 	let netidAllowed = req.query.netidAllowed;
-	let token = getAuthToken(req, groupName, netidAllowed);
+	let tokenTTL = req.query.tokenTTL;
+
+	let token = getAuthToken(req, groupName, netidAllowed, tokenTTL);
 	if(token) {
 		return res.status(200).json({token});
 	} else {

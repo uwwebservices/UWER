@@ -20,7 +20,6 @@ const RemoveNotification = messageId => { return { type: Const.REMOVE_NOTIFICATI
 const PrivateGroup = privateGroup => { return { type: Const.PRIVATE_GROUP, privateGroup }};
 
 export const StoreRegistrationToken = token => { return { type: Const.STORE_REGISTRATION_TOKEN, token }};
-export const ToggleNetIDAllowed = () => { return { type: Const.TOGGLE_NETID_ALLOWED }};
 
 
 // -----------------------
@@ -76,7 +75,6 @@ export const LoadUsers = group => {
   return async dispatch => {
     let state = store.getState();
     let token = state.registrationToken || Cookies.get("registrationToken");
-    token && resetTokenCookie(token);
     
     let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? "?token="+token : "" }`)).json();
     dispatch(PrivateGroup(groupInfo.privateGroup));
@@ -89,7 +87,7 @@ export const AddUser = (group, identifier) => {
     let state = store.getState();
     let displayId = Math.floor(Math.random()*1000000).toString(16);
     let token = state.registrationToken || Cookies.get("registrationToken");
-    token && resetTokenCookie(token);
+
     dispatch(AddDummyUser(displayId));
     let body = {
       token,
@@ -164,12 +162,12 @@ export const Logout = () => {
   }
 }
 
-export const StartRegistrationSession = (groupName, netidAllowed=false) => {
+export const StartRegistrationSession = (groupName, netidAllowed=false, tokenTTL=180) => {
   return async dispatch => {
-    let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}`)).json()).token;
+    let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
     dispatch(LoadUsers());
-    resetTokenCookie(token);
+    resetTokenCookie(token, tokenTTL);
     dispatch(Logout());
   }
 }
@@ -202,7 +200,6 @@ export const InitApp = () => {
 
     if(!state.token) {
       let registrationToken = Cookies.get('registrationToken');
-      resetTokenCookie(registrationToken);
       registrationToken && dispatch(StoreRegistrationToken(registrationToken));
     }
 
@@ -221,7 +218,9 @@ export const FlashNotification = (title = "", message = "") => {
   }
 }
 
-const resetTokenCookie = (token, expires=3/24) => {
+const resetTokenCookie = (token, expires) => {
+  expires = expires / 60 / 24;
+  console.log(expires)
   if(token) {
     if(Cookies.get("registrationToken", { path: "/"})) {
       Cookies.erase("registrationToken", { path: "/"});

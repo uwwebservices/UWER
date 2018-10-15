@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
-import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
@@ -30,20 +29,15 @@ class Register extends Component {
         let registrationDisabled = !this.props.groupName;
         return (
             <div>
-                { registrationDisabled && (
+                { (registrationDisabled || adminMode) && (
                     <div className="registrationNotification">
-                        <span>
+                        { registrationDisabled && <span>
                             Hey! You don't have a group name set for registration &nbsp;
-                            </span>
-                            <Button variant="raised" onClick={() => this.configRedirect()} color="primary">Finish Configuring</Button>
-                    </div>
-                )}
-                { adminMode && (
-                    <div className="registrationNotification">
-                        <span>
+                        </span>}
+                        { adminMode &&  <span>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
-                        </span>
-                        <RegistrationModal confirmCallback={() => { this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed) }} /> 
+                        </span>}
+                        <Button variant="raised" onClick={() => this.configRedirect()} color="primary">Finish Configuring</Button>
                     </div>
                 )}
                 <div className="registrationTable">                   

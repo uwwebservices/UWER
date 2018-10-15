@@ -11,7 +11,7 @@ import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false, privateGroup: true };
+        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false, privateGroup: true, netidAllowed: false, tokenTTL: 180 };
     }
     async componentWillMount() {
         if(!this.props.authenticated && !this.props.development) {
@@ -45,9 +45,11 @@ class Configure extends Component {
     };
 
     handleChange = e => {
-        this.setState({[e.target.name]: e.target.value});
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        this.setState({[e.target.name]: value});
+
         if(e.target.name === "newSubgroup") {
-            this.setState({invalidSubgroup: !this.validateGroupString(e.target.value)})
+            this.setState({invalidSubgroup: !this.validateGroupString(value)})
         }
     }
 
@@ -77,7 +79,7 @@ class Configure extends Component {
         return groupName.replace(this.props.groupNameBase, "").replace(/-/g, ' ');
     }
     startRegistration = async () => {
-        await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed);
+        await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL);
         this.props.history.push("/register");
     }
 
@@ -92,8 +94,8 @@ class Configure extends Component {
             <div>
                 <h1>Configure</h1>
                 <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> &nbsp;
-                <EndRegistrationModal confirmCallback={this.endRegistration} /> &nbsp;
-                <ConfigOptions netidAllowed={this.props.netidAllowed} handleChange={this.props.toggleNetIDAllowed} />
+                <EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" /> &nbsp;
+                <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange} />
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div className="subgroupTable">
@@ -141,8 +143,7 @@ const mapStateToProps = state => ({
    development: state.development,
    iaaAuth: state.iaaauth,
    iaaCheck: state.iaacheck,
-   groupNameBase: state.groupNameBase,
-   netidAllowed: state.netidAllowed
+   groupNameBase: state.groupNameBase
 });
 const mapDispatchToProps = dispatch => {
     return {
@@ -152,9 +153,8 @@ const mapDispatchToProps = dispatch => {
         loadUsers: group => dispatch(LoadUsers(group)),
         createGroup: (group, privateGroup) => dispatch(CreateGroup(group, privateGroup)),
         checkAuth: () => dispatch(CheckAuthentication()),
-        startRegistrationSession: (groupName, netidAllowed) => dispatch(StartRegistrationSession(groupName, netidAllowed)),
-        stopRegistrationSession: () => dispatch(StopRegistrationSession()),
-        toggleNetIDAllowed: () => dispatch(ToggleNetIDAllowed())
+        startRegistrationSession: (groupName, netidAllowed, tokenTTL) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL)),
+        stopRegistrationSession: () => dispatch(StopRegistrationSession())
     }
 }
 

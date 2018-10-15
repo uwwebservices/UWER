@@ -54,10 +54,11 @@ export const ensureAuthOrToken = (req, res, next) => {
 	}
 }
 
-export const getAuthToken = (req, groupName, netidAllowed = false, uriEncode = true) => {
+export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, uriEncode = true) => {
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
-	let expiry = now.setHours(now.getHours() + 3);
+	let expiry = now.setMinutes(now.getMinutes() + ttl);
+	
 	let token = AES.encrypt(JSON.stringify({user: req.user, groupName, netidAllowed, expiry}), passphrase).toString();
 	return uriEncode ? encodeURIComponent(token) : token;
 }

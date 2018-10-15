@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
+import { ensureAuth, backToUrl } from '../utils/helpers';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
 import config from 'config/config.json';
