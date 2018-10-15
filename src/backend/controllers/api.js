@@ -17,7 +17,8 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
 		confidential,
 		members: []
 	}
-
+	console.log("RESPONSE OBJ", response);
+	console.log("ifcheck", confidential, !req.isAuthenticated(), !developmentMode)
 	if(confidential && !req.isAuthenticated() && !developmentMode) {
 		return res.status(200).json(response);
 	}
