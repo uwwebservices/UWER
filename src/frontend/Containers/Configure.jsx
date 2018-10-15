@@ -92,10 +92,12 @@ class Configure extends Component {
         let canStartRegistration = this.props.groupName.length > 0;
         return (
             <div>
-                <h1>Configure</h1>
-                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> &nbsp;
-                <EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" /> &nbsp;
-                <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange} />
+                <div className="righted inline"><EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" /></div>
+                <h1 className="inline">Configure</h1>
+                
+                <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange}>
+                    <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registration Mode" /> &nbsp;
+                </ConfigOptions>
                 <div className="subgroupList">
                     <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                     <div className="subgroupTable">

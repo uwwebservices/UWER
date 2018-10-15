@@ -12,6 +12,7 @@ class RegistrationModal extends React.Component {
                     <input type="textbox" id="tokenTTL" name="tokenTTL" value={this.props.tokenTTL} onChange={this.props.handleChange} />
                     <span>minutes.</span>
                 </div>
+                {this.props.children}
             </div>
         )
     }

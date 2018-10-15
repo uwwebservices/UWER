@@ -91,6 +91,9 @@ strong {
     .righted {
         float: right;
     }
+    .inline {
+        display: inline-block;
+    }
 
     .buttonize {
         background-color: $uw-purple !important;
@@ -192,7 +195,7 @@ strong {
         border: 1px dashed #ccc;
         padding: 5px;
         .options {
-            margin-left: 10px;
+            margin: 0 0 10px 10px;
         }
         label {
             font-size: 14px;
