@@ -11,7 +11,7 @@ let api = Router();
 
 api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
 	let groupName = req.session.group.groupName;
-	let confidential = req.session.confidential;
+	let confidential = req.session.group.confidential;
 	let response = {
 		groupName,
 		confidential,
