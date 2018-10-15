@@ -11,14 +11,14 @@ let api = Router();
 
 api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
 	let groupName = req.session.group.groupName;
-	let privateGroup = req.session.confidentialGroup;
+	let confidential = req.session.confidential;
 	let response = {
 		groupName,
-		privateGroup,
+		confidential,
 		members: []
 	}
 
-	if(privateGroup && !req.isAuthenticated() && !developmentMode) {
+	if(confidential && !req.isAuthenticated() && !developmentMode) {
 		return res.status(200).json(response);
 	}
 	let result = await Groups.GetMembers(groupName);
@@ -34,7 +34,7 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 	let validCard = IDCard.ValidCard(identifier);
 	let groupName = req.session.group.groupName;
 	let netidAllowed = req.session.group.netidAllowed;
-	let confidentialGroup = req.session.group.privateGroup;
+	let confidential = req.session.group.confidential;
 	
 	if(!validCard && netidAllowed == 'false') {
 		// if not a valid card and netid auth not allowed, 404
@@ -99,8 +99,8 @@ api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
-	let privateGroup = req.query.privateGroup;
-	let result = await Groups.CreateGroup(req.params.group, privateGroup);
+	let confidential = req.query.confidential;
+	let result = await Groups.CreateGroup(req.params.group, confidential);
 	return res.status(result.Status).json(result.Payload);
 });
 

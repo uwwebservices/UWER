@@ -11,7 +11,7 @@ import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false, privateGroup: true, netidAllowed: false, tokenTTL: 180 };
+        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false, confidential: true, netidAllowed: false, tokenTTL: 180 };
     }
     async componentWillMount() {
         if(!this.props.authenticated && !this.props.development) {
@@ -57,8 +57,8 @@ class Configure extends Component {
         e.preventDefault();
         if(this.validateGroupString(this.state.newSubgroup)) {
             this.setState({"creatingGroup": true });
-            let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.privateGroup);
-            this.setState({"creatingGroup": false, "newSubgroup": "", "privateGroup": true });
+            let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential);
+            this.setState({"creatingGroup": false, "newSubgroup": "", "confidential": true });
             if(success) {
                 this.props.loadSubgroups(this.props.groupName);
                 this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
@@ -128,7 +128,7 @@ class Configure extends Component {
                             {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
                         </Button>
                         <span className="privateGroupToggle">
-                            <input type="checkbox" id="privateGroup" onChange={() => {this.setState({privateGroup: !this.state.privateGroup})}} checked={this.state.privateGroup} /> 
+                            <input type="checkbox" id="privateGroup" onChange={() => {this.setState({confidential: !this.state.confidential})}} checked={this.state.confidential} /> 
                             <label htmlFor="privateGroup">Private Group</label>
                         </span>
                     </form>
@@ -153,7 +153,7 @@ const mapDispatchToProps = dispatch => {
         loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
         destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
         loadUsers: group => dispatch(LoadUsers(group)),
-        createGroup: (group, privateGroup) => dispatch(CreateGroup(group, privateGroup)),
+        createGroup: (group, confidential) => dispatch(CreateGroup(group, confidential)),
         checkAuth: () => dispatch(CheckAuthentication()),
         startRegistrationSession: (groupName, netidAllowed, tokenTTL) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession())

@@ -120,8 +120,8 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    async CreateGroup(group, privateGroup) {
-        let classification = privateGroup == "false" ? "u" : "c"
+    async CreateGroup(group, confidential) {
+        let classification = confidential == "false" ? "u" : "c"
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}?synchronized=true`,

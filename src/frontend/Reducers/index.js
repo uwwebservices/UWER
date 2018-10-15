@@ -12,7 +12,7 @@ const initialState = {
   users: [],
   registrationToken: "",
   netidAllowed: false,
-  privateGroup: false,
+  confidential: false,
   development: process.env.NODE_ENV === "development",
   notifications: []
 };
@@ -64,7 +64,7 @@ export default (state = initialState, action) => {
       let newNotifications = state.notifications.filter(n => n.messageId != action.messageId);
       return Object.assign({}, state, { notifications: newNotifications });
     case Const.PRIVATE_GROUP:
-      return Object.assign({}, state, { privateGroup: action.privateGroup });
+      return Object.assign({}, state, { confidential: action.confidential });
     default:
       return state;
   }
