@@ -220,7 +220,6 @@ export const FlashNotification = (title = "", message = "") => {
 
 const resetTokenCookie = (token, expires) => {
   expires = expires / 60 / 24;
-  console.log(expires)
   if(token) {
     if(Cookies.get("registrationToken", { path: "/"})) {
       Cookies.erase("registrationToken", { path: "/"});

@@ -82,7 +82,7 @@ export const verifyAuthToken = req => {
 
 export const tokenToSession = async (req, res, next) => {
 	// if user is not authenticated and presented a token, update session
-	let groupName = req.query.group;
+	let groupName = req.params.group;
 	let confidentialGroup = !req.isAuthenticated();
 	let netidAllowed = req.isAuthenticated();
 
@@ -108,6 +108,6 @@ export const tokenToSession = async (req, res, next) => {
 		confidential: confidentialGroup,
 		netidAllowed: netidAllowed
 	};
-	
+	console.log(req.session.group)
 	next();
 }
