@@ -156,6 +156,11 @@ strong {
     .createGroupForm {
         margin-left: 5px;
     }
+    .createSubgroup {
+        line-height: 8px;
+        float: right;
+        margin: 5px 0;
+    }
     .subgroupButtons {
        text-align: right;
         button {
@@ -165,10 +170,6 @@ strong {
     }
     .privateGroupToggle {
         margin-left: 10px;
-    }
-    .newSubgroup {
-        width: 300px;
-        margin-right: 10px;
     }
     .memberDeleting {
         background-color: indianred;
@@ -251,4 +252,11 @@ strong {
     {
         text-align:center;
     }
+}
+
+.newSubgroup {
+    width: 300px;
+    margin-right: 10px;
+    font-size: 15px;
+    padding: 4px 6px;
 }
