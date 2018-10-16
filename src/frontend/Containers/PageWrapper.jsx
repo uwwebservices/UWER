@@ -42,7 +42,7 @@ class PageWrapper extends Component {
     render () {
         const showHeader = this.props.authenticated || this.props.development;
         const pages = showHeader && [
-            { isNavigable: true, path: "/register", display: "Register" },
+            { isNavigable: true, path: "/register", display: "View  Participants" },
             { isNavigable: true, path: "/config", display: "Config"}
         ] || [];
 
