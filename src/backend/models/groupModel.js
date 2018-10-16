@@ -169,7 +169,7 @@ const Groups = {
                 data = verboseGroups;
             }
             
-            return SuccessResponse(data.sort(function(a, b){return a.regid < b.regid}))
+            return SuccessResponse(data.sort(function(a, b){return a.id < b.id}))
         } catch(ex) {
             return ErrorResponse(ex);
         }
