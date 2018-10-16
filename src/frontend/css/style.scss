@@ -35,9 +35,9 @@ strong {
     main {        
         background-color: white;
         padding: 20px;        
-        margin: 0 auto;
-        max-width: 800px;
-        min-width: 700px;
+        // margin: 0 auto;
+        // max-width: 800px;
+        // min-width: 700px;     
     }
 
     footer {
@@ -178,10 +178,12 @@ strong {
         margin-right: 5px;
     }
     .registrationNotification {
-        display: inline-block;
+        margin:auto;       
         padding: 10px;
         background-color: lightgoldenrodyellow;
         border-radius: 10px;
+        font-weight: bold;
+        text-align:center;
     }
     .padLeft {
         padding-left: 3px;

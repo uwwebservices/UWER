@@ -32,12 +32,12 @@ class Register extends Component {
                 { (registrationDisabled || adminMode) && (
                     <div className="registrationNotification">
                         { registrationDisabled && <span>
-                            Hey! You don't have a group name set for registration &nbsp;
+                            You must first select a group to begin registration &nbsp;
                         </span>}
                         { adminMode &&  <span>
                         Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;
                         </span>}
-                        <Button variant="raised" onClick={() => this.configRedirect()} color="primary">Finish Configuring</Button>
+                        <Button variant="raised" onClick={() => this.configRedirect()} color="primary" className="righty">Finish Configuring</Button>
                     </div>
                 )}
                 <div className="registrationTable">                   
