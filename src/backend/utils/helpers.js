@@ -111,3 +111,12 @@ export const tokenToSession = async (req, res, next) => {
 	
 	next();
 }
+
+export const FilterModel = (model, whitelist) => {
+    return Object.keys(model)
+        .filter(key => whitelist.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = model[key];
+            return obj;
+        }, {});
+}

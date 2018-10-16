@@ -1,6 +1,7 @@
 import rp from 'request-promise';
 import fs from 'fs';
 import config from 'config/config.json';
+import { FilterModel } from '../utils/helpers';
 
 const options = {
     method: 'GET',
@@ -145,14 +146,30 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    async SearchGroups(group) {
+    async SearchGroups(group, verbose=false) {
         let opts = Object.assign({}, options, {
             method: 'GET',
             url: `${config.groupsSearchUrl}?name=${group}*&type=effective&scope=all`
         });
         try {
-            let res = await rp(opts);
-            return SuccessResponse(res.data)
+            let data = (await rp(opts)).data;
+            
+            if(verbose) {
+                let promises = [];
+                let verboseGroups = [];
+                await Promise.all(data.map(g => {
+                    return GetGroupInfo(g.regid).then((vg) => {
+                        verboseGroups.push(vg);
+                    });
+                }));
+                let filter = ["regid", "displayName", "id", "url", "description", "classification"];
+                verboseGroups = verboseGroups.map(vg => {
+                    return FilterModel(vg, filter);
+                });
+                data = verboseGroups;
+            }
+            
+            return SuccessResponse(data.sort(function(a, b){return a.regid < b.regid}))
         } catch(ex) {
             return ErrorResponse(ex);
         }

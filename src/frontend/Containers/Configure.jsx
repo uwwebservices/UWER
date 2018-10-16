@@ -108,6 +108,7 @@ class Configure extends Component {
                                       updateGroupName={this.updateGroupName} 
                                       groupNameBase={this.props.groupNameBase}
                                       displayGroupName={this.displayGroupName}
+                                      private={subgroup.classification != "u"}
                                     />
                             })
                         }

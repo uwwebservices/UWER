@@ -89,7 +89,7 @@ api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.GetSubgroups, ensureAPIAuth, async (req, res) => {
-	let result = await Groups.SearchGroups(req.params.group);
+	let result = await Groups.SearchGroups(req.params.group, true);
 	return res.status(result.Status).json(result.Payload);
 });
 
