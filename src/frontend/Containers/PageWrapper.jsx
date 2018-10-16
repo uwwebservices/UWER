@@ -28,7 +28,7 @@ class PageWrapper extends Component {
     // level = ["success", "error", "warning", "info"]
     // position = tr (top right), tl (top left), tc (top center), br (bottom right), bl (bottom left), bc (bottom center)
 
-    _addNotification = (title, message, level="info", position="tr", autoDismiss=5) => {
+    _addNotification = (title, message, level="info", position="tc", autoDismiss=5) => {
         this._notificationSystem.addNotification({
             title,
             message,

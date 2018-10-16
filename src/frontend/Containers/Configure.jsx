@@ -101,6 +101,7 @@ class Configure extends Component {
                     <div className="card-header">
                          <h2 className="inline">Select a Registration Group <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                         <ContentModal 
+                            openButtonText="Add a new Registration Group"
                             openButtonIcon="plus" 
                             dialogTitle="Create a New Registration Group" 
                             openButtonText="" 

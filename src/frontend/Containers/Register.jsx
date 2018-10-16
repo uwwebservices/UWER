@@ -39,15 +39,13 @@ class Register extends Component {
                         </span>}
                         <Button variant="raised" onClick={() => this.configRedirect()} color="primary" className="righty">Finish Configuring</Button>
                     </div>
-                )}
-                <div className="registrationTable">                   
-                   <div>
-                        <h1>Event Registration</h1>                  
-                   </div>
-                   <div className="endRegistration">
-                        <EndRegistrationModal confirmCallback={this.endRegistration} showCancelButton={false} />
-                   </div>
-                </div>    
+                )}                
+                <div className="righted inline">
+                    <EndRegistrationModal confirmCallback={this.endRegistration} showCancelButton={false} />
+                </div>
+                <div>
+                    <h1 className="inline">Event Registration</h1>                  
+                </div>
                 <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
                 <Members members={this.props.users} reloadUsers={this.props.loadUsers} development={this.props.development} groupNameBase={this.props.groupNameBase} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
           </div>

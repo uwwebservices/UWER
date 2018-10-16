@@ -32,7 +32,7 @@ class ContentModal extends React.Component {
       <span>
         <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} color={this.props.openButtonColor} onClick={this.handleClickOpen} mini={this.props.openButtonMini} className={this.props.openButtonClasses.join(" ")}>
           { this.props.openButtonIcon && <span><FA name={this.props.openButtonIcon} /></span>}
-          { this.props.openButtonText && <span>&nbsp; {this.props.openButtonText}</span>}
+          { this.props.openButtonText && <span> {this.props.openButtonText}</span>}
         </Button>
         <Dialog
           open={this.state.open}
