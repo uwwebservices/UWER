@@ -121,8 +121,9 @@ const Groups = {
             return ErrorResponse(ex);
         }
     },
-    async CreateGroup(group, confidential) {
-        let classification = confidential == "false" ? "u" : "c"
+    async CreateGroup(group, confidential, description, email) {
+        let classification = confidential == "false" ? "u" : "c";
+        // TODO: Figure out how to send the email flag to groups creation
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
@@ -130,7 +131,7 @@ const Groups = {
                 "data" : { 
                     "id": group, 
                     "displayName": config.groupDisplayName, 
-                    "description": config.groupDescription, 
+                    "description": description,
                     "admins": config.groupAdmins.map(admin => {
                         return {"id": admin, "type": "dns" };
                     }),

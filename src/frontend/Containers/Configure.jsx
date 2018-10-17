@@ -12,7 +12,11 @@ import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: true, confidential: true, netidAllowed: false, tokenTTL: 180 };
+        this.state = { newSubgroup: "", loadingSubGroups: false, 
+                       loadingConfigPage: true, invalidSubgroup: true, 
+                       confidential: true, netidAllowed: false, tokenTTL: 180,
+                       newSubgroupDescription: "", newSubgroupEmailEnabled: false 
+                    };
     }
     async componentWillMount() {
         if(!this.props.authenticated && !this.props.development) {
@@ -52,19 +56,20 @@ class Configure extends Component {
         if(e.target.name === "newSubgroup") {
             this.setState({invalidSubgroup: !this.validateGroupString(value)})
         }
+        console.log({[e.target.name]: value})
     }
 
     createSubgroup = async () => {
         if(this.validateGroupString(this.state.newSubgroup)) {
             this.setState({"creatingGroup": true });
-            let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential);
+            let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
             if(success) {
                 this.props.loadSubgroups(this.props.groupName);
                 this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
             } else {
                 this.props._addNotification("Create Registration Group Failed", "Group creation failed, does this group already exist?");
             }
-            this.setState({"creatingGroup": false, "newSubgroup": "", "confidential": true });
+            this.setState({"creatingGroup": false, "newSubgroup": "", "confidential": true, newSubgroupDescription: "", newSubgroupEmailEnabled: false });
         } else {
             this.props._addNotification("Create Registration Group Failed", "Group name can only contain numbers, letters and spaces.");
         }
@@ -113,20 +118,30 @@ class Configure extends Component {
                             approveButtonDisabled={this.state.invalidSubgroup || this.state.creatingGroup}
                             disableBackdropClick={true}
                         >
-                            <div>
-                                <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
-                                { this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && 
-                                    <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>
-                                }
-                                <input type="text" className="newSubgroup" 
-                                    name="newSubgroup"
-                                    onChange={this.handleChange}
-                                    value={this.state.newSubgroup}
-                                    disabled={this.state.creatingGroup}
-                                    placeholder="Group Name: letters, numbers and spaces"
-                                />
+                            <div className="createSubgroupModal">
+                                <div>
+                                    <label htmlFor="newSubgroup" className="configLabel">Event Name:</label><br />
+                                    <input type="text" className="newSubgroup" id="newSubgroup"
+                                        name="newSubgroup"
+                                        onChange={this.handleChange}
+                                        value={this.state.newSubgroup}
+                                        disabled={this.state.creatingGroup}
+                                        placeholder="Group Name: letters, numbers and spaces"
+                                    />
+                                    { this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && 
+                                        <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>
+                                    }
+                                </div>
+                                <div>
+                                    <label htmlFor="">Event Description:</label><br /> 
+                                    <input type="text" name="newSubgroupDescription" className="groupDescription" value={this.state.newSubgroupDescription} onChange={this.handleChange} />
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="newSubgroupEmailEnabled" checked={this.state.newSubgroupEmailEnabled} onChange={this.handleChange} />
+                                    <label htmlFor="">Enable Email</label>
+                                </div>
                                 <div className="privateGroupToggle">
-                                    <input type="checkbox" id="privateGroup" onChange={() => {this.setState({confidential: !this.state.confidential})}} checked={this.state.confidential} /> 
+                                    <input type="checkbox" id="privateGroup" name="confidential" onChange={this.handleChange} checked={this.state.confidential} /> 
                                     <label htmlFor="privateGroup">Private Group</label>
                                 </div>
                             </div>   
@@ -171,7 +186,7 @@ const mapDispatchToProps = dispatch => {
         loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
         destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
         loadUsers: group => dispatch(LoadUsers(group)),
-        createGroup: (group, confidential) => dispatch(CreateGroup(group, confidential)),
+        createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
         checkAuth: () => dispatch(CheckAuthentication()),
         startRegistrationSession: (groupName, netidAllowed, tokenTTL) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession())

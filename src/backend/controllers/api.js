@@ -101,7 +101,10 @@ api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
 
 api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 	let confidential = req.query.confidential;
-	let result = await Groups.CreateGroup(req.params.group, confidential);
+	let description = req.query.description;
+	let email = req.query.email;
+
+	let result = await Groups.CreateGroup(req.params.group, confidential, description, email);
 	return res.status(result.Status).json(result.Payload);
 });
 
