@@ -56,7 +56,6 @@ class Configure extends Component {
         if(e.target.name === "newSubgroup") {
             this.setState({invalidSubgroup: !this.validateGroupString(value)})
         }
-        console.log({[e.target.name]: value})
     }
 
     createSubgroup = async () => {

@@ -50,7 +50,6 @@ export const UpdateGroupName = groupName => {
 
 export const CreateGroup = (group, confidential=true, description, email) => {
   return async dispatch => {
-    console.log(description, email)
     let res = await APIRequestWithAuth(`/api/subgroups/${group}?confidential=${confidential}&description=${description}&email=${email}`, { method: "POST"});
     return res.status === 200;
   }
