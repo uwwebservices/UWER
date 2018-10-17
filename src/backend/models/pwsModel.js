@@ -25,12 +25,16 @@ const FilterPWSModel = (model, whitelist = defaultWhiteList) => {
 
 const PWS = {
     async Get(identifier, whitelist) {
+        let res;
         let opts = Object.assign({}, options, { 
             url: `${config.pwsBaseUrl}/${identifier}/full.json`,
         });
-        
-        let res = await rp(opts);
-        return FilterPWSModel(res,whitelist);
+        try {
+            res = await rp(opts);
+        } catch (ex) {
+            res = { "UWNetID": "User Registered", "DisplayName": "Details Not Found", "UWRegID": ""};
+        }
+        return FilterPWSModel(res, whitelist);
     },
     async GetMany(memberList, whitelist) {
         let members = [];

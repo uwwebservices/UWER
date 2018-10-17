@@ -48,12 +48,13 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 
 	let result = await Groups.AddMember(groupName, identifier);
 	
-	if(result.Status === 200 && confidentialGroup) {
+	if(result.Status === 200 && confidential) {
 		res.sendStatus(201);
 	}
 
-	if(result.Status === 200 && !confidentialGroup) {
+	if(result.Status === 200 && !confidential) {
 		let user = await PWS.Get(identifier);
+		
 		user.displayId = displayId;
 		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
 		res.status(result.Status).json(user);
