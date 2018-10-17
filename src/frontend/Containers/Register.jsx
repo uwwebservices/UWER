@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
+import PrivateMembers from 'Components/PrivateMembers';
 import Button from '@material-ui/core/Button';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import { connect } from 'react-redux';
@@ -27,6 +28,7 @@ class Register extends Component {
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;
         let registrationDisabled = !this.props.groupName;
+        let confidential = this.props.confidential;
         return (
             <div>
                 { (registrationDisabled || adminMode) && (
@@ -44,16 +46,33 @@ class Register extends Component {
                     <EndRegistrationModal confirmCallback={this.endRegistration} showCancelButton={false} />
                 </div>
                 <div>
-                    <h1 className="inline">Event Registration</h1>                  
+                    <h1 className="inline">Event Registration</h1>               
                 </div>
-                <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
-                <Members members={this.props.users} reloadUsers={this.props.loadUsers} development={this.props.development} groupNameBase={this.props.groupNameBase} removeUser={this.props.removeUser} group={this.props.groupName} authenticated={this.props.authenticated} />
+                <AddMemberForm 
+                    addUser={this.props.addUser} 
+                    group={this.props.groupName} 
+                    formDisabled={registrationDisabled} />
+               { !this.props.confidential ? (  
+                        <Members 
+                            members={this.props.users} 
+                            reloadUsers={this.props.loadUsers} 
+                            development={this.props.development} 
+                            groupNameBase={this.props.groupNameBase} 
+                            removeUser={this.props.removeUser} 
+                            group={this.props.groupName} 
+                            authenticated={this.props.authenticated} />
+                    ) : (
+                        <PrivateMembers 
+                            members={this.props.users}  />
+                    )
+                }
           </div>
         )
     }
 }
 
 const mapStateToProps = state => ({
+    confidential: state.confidential,
     groupName: state.groupName,
     users: state.users,
     groupNameBase: state.groupNameBase,

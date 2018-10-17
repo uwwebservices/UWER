@@ -10,11 +10,7 @@ export default class Test extends React.Component {
     constructor(props) {
         super(props);
         this.state = {loadingUsers: false};
-    }
-    removeUser = netid => {
-        this.props.removeUser(this.props.group, netid);
-        document.getElementById("registerCard").focus();
-    }
+    }    
     reload = async () => {
         if(this.props.group){
             this.setState({loadingUsers: true});
@@ -24,28 +20,20 @@ export default class Test extends React.Component {
     }
     render() {
         const listItems = this.props.members.map(mem => {
-            let showDelete = (this.props.authenticated || this.props.development) && !mem.deleting && !mem.loading;
+            
             return (
                 <ListItem
                     key={(mem.UWNetID || mem.identifier) + (Math.floor(Math.random() * 100)).toString()}
-                    className={mem.deleting ? "memberDeleting" : ""}>
+                    >
                     <Avatar src={mem.Base64Image} />
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
-                    { (mem.deleting || mem.loading) && <span className="loadSpinner"><FA name="spinner" spin={true} size="2x" /></span> }
-                    { showDelete &&  (
-                        <ConfirmModal openButtonIcon="remove" openButtonText="" 
-                            openButtonVariant="fab" openButtonFabMini={true} 
-                            confirmCallback={() => this.removeUser(mem.UWNetID)} 
-                            dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group.replace(this.props.groupNameBase, "").replace(/-/g, ' ')}?`} 
-                            dialogTitle={`Remove User?`} 
-                        />
-                    )}
+                    { (mem.deleting || mem.loading) && <span className="loadSpinner"><FA name="spinner" spin={true} size="2x" /></span> 
+                    }                   
                 </ListItem> 
             )
         })
         return (                   
-                <div className="memberList">                    
-                    <h2>Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers}/></h2>
+                <div className="memberList">                         
                     <List>
                         {listItems}
                     </List>
