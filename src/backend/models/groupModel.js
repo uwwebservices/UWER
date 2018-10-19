@@ -141,12 +141,11 @@ const Groups = {
         
         try {
             let res = await rp(opts);
-            if(email) {
-               let res2 = await rp(Object.assign({}, options, {
+            if(email === "true") {
+               rp(Object.assign({}, options, {
                     method: 'PUT',
                     url: `${config.groupsBaseUrl}/${group}/affiliate/google?status=active&sender=member`
                 }));
-                console.log(res2);
             }
             return SuccessResponse(res.data)
         } catch(ex) {
