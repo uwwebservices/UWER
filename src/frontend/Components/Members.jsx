@@ -44,11 +44,15 @@ export default class Test extends React.Component {
             )
         })
         return (                   
-                <div className="memberList">                    
-                    <h2>Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers}/></h2>
-                    <List>
-                        {listItems}
-                    </List>
+                <div className="memberList">    
+                    { this.props.members.length > 0 && 
+                        <div>
+                        <h2>Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers}/></h2>
+                        <List>
+                            {listItems}
+                        </List>
+                        </div>
+                    }
                 </div>         
         )        
     }
