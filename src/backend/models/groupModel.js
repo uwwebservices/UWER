@@ -123,7 +123,6 @@ const Groups = {
     },
     async CreateGroup(group, confidential, description, email) {
         let classification = confidential == "false" ? "u" : "c";
-        // TODO: Figure out how to send the email flag to groups creation
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
@@ -142,6 +141,13 @@ const Groups = {
         
         try {
             let res = await rp(opts);
+            if(email) {
+               let res2 = await rp(Object.assign({}, options, {
+                    method: 'PUT',
+                    url: `${config.groupsBaseUrl}/${group}/affiliate/google?status=active&sender=member`
+                }));
+                console.log(res2);
+            }
             return SuccessResponse(res.data)
         } catch(ex) {
             return ErrorResponse(ex);
