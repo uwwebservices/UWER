@@ -155,6 +155,7 @@ class Configure extends Component {
                                       groupNameBase={this.props.groupNameBase}
                                       displayGroupName={this.displayGroupName}
                                       private={subgroup.classification != "u"}
+                                      email={subgroup.email}
                                     />
                             })
                         }   

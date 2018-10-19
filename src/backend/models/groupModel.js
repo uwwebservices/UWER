@@ -165,10 +165,13 @@ const Groups = {
                 let verboseGroups = [];
                 await Promise.all(data.map(g => {
                     return GetGroupInfo(g.regid).then((vg) => {
+                        if(vg.affiliates.length > 1) {
+                            vg.email = `${vg.id}@uw.edu`;
+                        }
                         verboseGroups.push(vg);
                     });
                 }));
-                let filter = ["regid", "displayName", "id", "url", "description", "classification"];
+                let filter = ["regid", "displayName", "id", "url", "description", "classification", "email"];
                 verboseGroups = verboseGroups.map(vg => {
                     return FilterModel(vg, filter);
                 });
