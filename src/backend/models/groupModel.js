@@ -106,6 +106,8 @@ const Groups = {
         try {
             let g = await GetGroupInfo(group);
             let admins = g.admins.map((a) => a.id);
+            console.log("Group", g);
+            console.log("Admins", admins);
             return SuccessResponse(admins);
         } catch(ex) {
             console.log(ex)
