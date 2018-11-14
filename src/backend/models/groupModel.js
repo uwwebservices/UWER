@@ -106,6 +106,7 @@ const Groups = {
             let admins = g.admins.map((a) => a.id);
             return SuccessResponse(admins);
         } catch(ex) {
+            console.log(ex)
             return ErrorResponse(ex);
         }
     },
