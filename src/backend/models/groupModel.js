@@ -7,7 +7,10 @@ const options = {
     method: 'GET',
     url: "",
     json: true,
-    //ca: [fs.readFileSync(config.uwca, { encoding: 'utf-8' })],    //UW CA not trusted by nodejs so we must include the UW CA on our request
+    ca: [
+            fs.readFileSync(config.uwca, { encoding: 'utf-8' }),
+            fs.readFileSync(config.incommon, { encoding: 'utf-8' })
+        ],    
     agentOptions: {
         pfx: fs.readFileSync(config.certificate),
         passphrase: config.passphrase,
