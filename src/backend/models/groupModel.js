@@ -8,8 +8,7 @@ const options = {
     url: "",
     json: true,
     ca: [
-            fs.readFileSync(config.uwca, { encoding: 'utf-8' }),
-            fs.readFileSync(config.incommon, { encoding: 'utf-8' })
+            fs.readFileSync(config.incommon, { encoding: 'utf-8'})
         ],    
     agentOptions: {
         pfx: fs.readFileSync(config.certificate),
