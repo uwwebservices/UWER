@@ -106,8 +106,6 @@ const Groups = {
         try {
             let g = await GetGroupInfo(group);
             let admins = g.admins.map((a) => a.id);
-            console.log("Group", g);
-            console.log("Admins", admins);
             return SuccessResponse(admins);
         } catch(ex) {
             console.log(ex)
@@ -162,9 +160,9 @@ const Groups = {
             method: 'GET',
             url: `${config.groupsSearchUrl}?name=${group}*&type=effective&scope=all`
         });
+        console.log(opts.url)
         try {
             let data = (await rp(opts)).data;
-            
             if(verbose) {
                 let promises = [];
                 let verboseGroups = [];
@@ -182,7 +180,6 @@ const Groups = {
                 });
                 data = verboseGroups;
             }
-            
             return SuccessResponse(data.sort(function(a, b){return a.id < b.id}))
         } catch(ex) {
             return ErrorResponse(ex);

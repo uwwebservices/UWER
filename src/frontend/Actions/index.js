@@ -148,6 +148,7 @@ export const CheckAuthentication = () => {
   return async dispatch => {
     try {
       let json = await (await APIRequestWithAuth('/api/checkAuth')).json();
+      console.log("Auth json", json);
       dispatch(Authenticated(json.Authenticated, json.IAAAAuth, json.IAARedirect));
     } catch(ex) {
       dispatch(Authenticated(false, false));

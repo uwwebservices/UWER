@@ -139,7 +139,7 @@ api.get(API.CheckAuth, async (req, res) => {
 			auth.IAAAAuth=true;
 		}	
 	} 
-
+	console.log("auth info", auth);
 	return res.status(200).json(auth);
 });
 
