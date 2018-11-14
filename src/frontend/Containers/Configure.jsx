@@ -24,7 +24,7 @@ class Configure extends Component {
             if(!this.props.authenticated) {
                 return window.location = "/login?returnUrl=/config";
             }
-            
+            console.log(this.props);
             if(!this.props.iaaAuth)
             {
                 return window.location = this.props.iaaCheck;
