@@ -14,3 +14,8 @@ then
   echo "Coping UWCA Cert"
   cp config_base/uwca.pem config/uwca.pem
 fi
+if [ ! -e config/incommon.pem ]
+then
+  echo "Coping Incommon Cert"
+  cp config_base/incommon.pem config/incommon.pem
+fi
