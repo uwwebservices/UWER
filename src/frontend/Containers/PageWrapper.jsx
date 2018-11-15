@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { InitApp } from '../Actions';
+import { InitApp, CheckAuthentication } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import Authorization from 'Components/Authorization';

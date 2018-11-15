@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { CheckAuthentication } from '../Actions';
 import FA from 'react-fontawesome';
 
 class Authorization extends React.Component {
