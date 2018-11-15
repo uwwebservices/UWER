@@ -32,16 +32,4 @@ class Authorization extends React.Component {
     }
 }
 
-const mapStateToProps = state => ({
-    authenticated: state.authenticated,
-    development: state.development,
-    iaaAuth: state.iaaAuth,
-    iaaCheck: state.iaacheck
- });
- const mapDispatchToProps = dispatch => {
-    return {
-        checkAuthentication: () => dispatch(CheckAuthentication())
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Authorization);
+export default Authorization;

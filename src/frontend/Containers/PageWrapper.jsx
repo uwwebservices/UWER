@@ -59,7 +59,11 @@ class PageWrapper extends Component {
                 <Header pages={pages} />
                     <main>
                         { (loginRequired && !authenticated) ? 
-                                <Authorization /> :
+                                <Authorization authenticated={this.props.authenticated} 
+                                    iaaAuth={this.props.iaaAuth} 
+                                    iaaCheck={this.props.iaaCheck} 
+                                    checkAuthentication={this.props.checkAuthentication}
+                                /> :
                                 childrenWithProps  
                         }
                     </main>
@@ -72,11 +76,14 @@ class PageWrapper extends Component {
 const mapStateToProps = state => ({
     authenticated: state.authenticated,
     notifications: state.notifications,
-    development: state.development
+    development: state.development,
+    iaaAuth: state.iaaAuth,
+    iaaCheck: state.iaacheck
  });
  const mapDispatchToProps = dispatch => {
     return {
-        initApp: () => dispatch(InitApp())
+        initApp: () => dispatch(InitApp()),
+        checkAuthentication: () => dispatch(CheckAuthentication())
     }
 }
  

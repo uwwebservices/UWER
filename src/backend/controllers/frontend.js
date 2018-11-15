@@ -21,7 +21,7 @@ app.post("/login/callback",
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
 	async (req,res,next) => {
 		let admins = (await Groups.GetAdmins(config.groupNameBase.slice(0,-1))).Payload;
-		if(admins.indexOf(req.user.UWNetID) > -1) {
+		if(admins && admins.indexOf(req.user.UWNetID) > -1) {
 			next();
 		} else {
 			console.log("User is not in the admins group, redirect to homepage and log out");
