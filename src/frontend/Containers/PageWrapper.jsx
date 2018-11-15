@@ -61,7 +61,6 @@ class PageWrapper extends Component {
                         { (loginRequired && !authenticated) ? 
                                 <Authorization /> :
                                 childrenWithProps  
-
                         }
                     </main>
                 <Footer />

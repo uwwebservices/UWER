@@ -5,14 +5,21 @@ import FA from 'react-fontawesome';
 
 class Authorization extends React.Component {
     async componentDidMount() {
-        if(!this.props.authenticated && !this.props.development) {
+        if(!this.props.development) {
             await this.props.checkAuthentication();
             if(!this.props.authenticated) {
-                return window.location = "/login?returnUrl=/config";
+                console.log("not authenticated", this.props);
+                setTimeout(() => {
+                    return window.location = "/login?returnUrl=/config";
+                }, 5000);
             }
             if(!this.props.iaaAuth)
             {
-                return window.location = this.props.iaaCheck;
+                console.log("not IAA", this.props);
+                setTimeout(() => {
+                   return window.location = this.props.iaaCheck; 
+                }, 5000)
+                
             }
         }
     }
