@@ -4,6 +4,7 @@ import { withRouter } from 'react-router';
 import { InitApp } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
+import Authorization from 'Components/Authorization';
 import NotificationSystem from 'react-notification-system';
 
 class PageWrapper extends Component {
@@ -40,8 +41,9 @@ class PageWrapper extends Component {
 
 
     render () {
-        const showHeader = this.props.authenticated || this.props.development;
-        const pages = showHeader && [
+        const loginRequired = this.props.loginRequired;
+        const authenticated = this.props.authenticated || this.props.development;
+        const pages = authenticated && [
             { isNavigable: true, path: "/register", display: "View  Participants" },
             { isNavigable: true, path: "/config", display: "Config"}
         ] || [];
@@ -50,13 +52,17 @@ class PageWrapper extends Component {
             _addNotification: this._addNotification,
             ...this.props
         }));
-
+        console.log(loginRequired, authenticated)
         return (
             <div className="pageWrapper">
                 <NotificationSystem ref="notificationSystem" />
                 <Header pages={pages} />
                     <main>
-                        { childrenWithProps }
+                        { (loginRequired && !authenticated) ? 
+                                <Authorization /> :
+                                childrenWithProps  
+
+                        }
                     </main>
                 <Footer />
             </div>

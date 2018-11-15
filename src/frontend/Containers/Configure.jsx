@@ -7,7 +7,7 @@ import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
@@ -18,18 +18,7 @@ class Configure extends Component {
                        newSubgroupDescription: "", newSubgroupEmailEnabled: false 
                     };
     }
-    async componentWillMount() {
-        if(!this.props.authenticated && !this.props.development) {
-            await this.props.checkAuth();
-            if(!this.props.authenticated) {
-                return window.location = "/login?returnUrl=/config";
-            }
-            console.log(this.props);
-            if(!this.props.iaaAuth)
-            {
-                return window.location = this.props.iaaCheck;
-            }
-        }
+    async componentDidMount() {
         this.setState({groupName: this.props.groupName});
     }
     validateGroupString(groupName) {
@@ -174,10 +163,6 @@ class Configure extends Component {
 const mapStateToProps = state => ({
    groupName: state.groupName,
    subgroups: state.subgroups,
-   authenticated: state.authenticated,
-   development: state.development,
-   iaaAuth: state.iaaauth,
-   iaaCheck: state.iaacheck,
    groupNameBase: state.groupNameBase
 });
 const mapDispatchToProps = dispatch => {
@@ -187,7 +172,6 @@ const mapDispatchToProps = dispatch => {
         destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
         loadUsers: group => dispatch(LoadUsers(group)),
         createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
-        checkAuth: () => dispatch(CheckAuthentication()),
         startRegistrationSession: (groupName, netidAllowed, tokenTTL) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession())
     }

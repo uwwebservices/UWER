@@ -1,6 +1,6 @@
 import React from 'react';
 
-class RegistrationModal extends React.Component {
+class ConfigOptions extends React.Component {
     render() {
         return (
             <div className="card">
@@ -26,4 +26,4 @@ class RegistrationModal extends React.Component {
     }
 }
 
-export default RegistrationModal;
+export default ConfigOptions;

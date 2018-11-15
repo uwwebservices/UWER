@@ -32,7 +32,7 @@ export default class Test extends React.Component {
                     <Avatar src={mem.Base64Image} />
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
                     { (mem.deleting || mem.loading) && <span className="loadSpinner"><FA name="spinner" spin={true} size="2x" /></span> }
-                    { showDelete &&  (
+                    { showDelete && (
                         <ConfirmModal openButtonIcon="remove" openButtonText="" 
                             openButtonVariant="fab" openButtonFabMini={true} 
                             confirmCallback={() => this.removeUser(mem.UWNetID)} 
