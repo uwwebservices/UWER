@@ -6,7 +6,7 @@ import FA from 'react-fontawesome';
 class Authorization extends React.Component {
     async componentDidMount() {
         if(!this.props.authenticated && !this.props.development) {
-            await this.props.checkAuth();
+            await this.props.checkAuthentication();
             if(!this.props.authenticated) {
                 return window.location = "/login?returnUrl=/config";
             }
