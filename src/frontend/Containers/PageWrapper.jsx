@@ -52,14 +52,14 @@ class PageWrapper extends Component {
             _addNotification: this._addNotification,
             ...this.props
         }));
-        console.log(loginRequired, authenticated)
         return (
             <div className="pageWrapper">
                 <NotificationSystem ref="notificationSystem" />
                 <Header pages={pages} />
                     <main>
                         { (loginRequired && !authenticated) ? 
-                                <Authorization authenticated={this.props.authenticated} 
+                                <Authorization 
+                                    authenticated={this.props.authenticated} 
                                     iaaAuth={this.props.iaaAuth} 
                                     iaaCheck={this.props.iaaCheck} 
                                     checkAuthentication={this.props.checkAuthentication}
