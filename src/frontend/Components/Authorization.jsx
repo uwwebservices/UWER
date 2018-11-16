@@ -15,12 +15,12 @@ class Authorization extends React.Component {
             }
             console.log("iaa", iaaRequired, iaaAuth)
             if(iaaRequired && !iaaAuth) {
-                window.location = iaaCheck; 
+                window.location = iaaCheck || "https://uwnetid.washington.edu/agree/?accept=idaa&…ame=&appurl=https://idcard-eval.api.uw.edu/config"; 
             }
         }
        
 
-        let shouldRenderChildren = development || (iaaAuth && authenticated);
+        let shouldRenderChildren = development || (authenticated !== null && ((iaaRequired && iaaAuth) && authenticated));
         
         return (
             shouldRenderChildren ? (
