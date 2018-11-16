@@ -20,7 +20,7 @@ class Authorization extends React.Component {
         }
        
 
-        let shouldRenderChildren = development || (iaa && auth);
+        let shouldRenderChildren = development || (iaaAuth && authenticated);
         
         return (
             shouldRenderChildren ? (
