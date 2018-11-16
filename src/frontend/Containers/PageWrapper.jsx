@@ -63,7 +63,8 @@ class PageWrapper extends Component {
                             iaaCheck={this.props.iaaCheck} 
                             iaaRequired={this.props.iaaRequired}
                             checkAuthentication={this.props.checkAuthentication}
-                            development={this.props.development}>
+                            development={this.props.development}
+                            path={this.props.location.pathname}>
                                 {childrenWithProps}
                         </Authorization>
                     </main>
