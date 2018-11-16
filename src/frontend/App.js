@@ -31,9 +31,9 @@ class App extends React.Component {
                     <MuiThemeProvider theme={theme}>
                             <Switch>
                                 <PorousRoute path='/config' loginRequired={true} iaaRequired={true}><Configure /></PorousRoute>
-                                <PorousRoute path='/register' loginRequired={false}><Register /></PorousRoute>
-                                <PorousRoute path='/notAuthorized' loginRequired={false}><NotAuthorized /></PorousRoute>
-                                <PorousRoute path='/' loginRequired={false}><Welcome /></PorousRoute>
+                                <PorousRoute path='/register' loginRequired={false} iaaRequired={false}><Register /></PorousRoute>
+                                <PorousRoute path='/notAuthorized' loginRequired={false} iaaRequired={false}><NotAuthorized /></PorousRoute>
+                                <PorousRoute path='/' loginRequired={false} iaaRequired={false}><Welcome /></PorousRoute>
                             </Switch>
                     </MuiThemeProvider>
                 </Provider>
