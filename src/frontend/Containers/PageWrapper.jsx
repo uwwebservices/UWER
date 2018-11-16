@@ -41,7 +41,6 @@ class PageWrapper extends Component {
 
 
     render () {
-        const loginRequired = this.props.loginRequired;
         const authenticated = this.props.authenticated || this.props.development;
         const pages = authenticated && [
             { isNavigable: true, path: "/register", display: "View  Participants" },
@@ -57,15 +56,16 @@ class PageWrapper extends Component {
                 <NotificationSystem ref="notificationSystem" />
                 <Header pages={pages} />
                     <main>
-                        { (loginRequired && !authenticated) ? 
-                                <Authorization 
-                                    authenticated={this.props.authenticated} 
-                                    iaaAuth={this.props.iaaAuth} 
-                                    iaaCheck={this.props.iaaCheck} 
-                                    checkAuthentication={this.props.checkAuthentication}
-                                /> :
-                                childrenWithProps  
-                        }
+                        <Authorization 
+                            authenticated={this.props.authenticated}
+                            loginRequired={this.props.loginRequired}
+                            iaaAuth={this.props.iaaAuth} 
+                            iaaCheck={this.props.iaaCheck} 
+                            iaaRequired={this.props.iaaRequired}
+                            checkAuthentication={this.props.checkAuthentication}
+                            development={this.props.development}>
+                                {childrenWithProps}
+                        </Authorization>
                     </main>
                 <Footer />
             </div>
