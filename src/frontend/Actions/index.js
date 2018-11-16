@@ -10,8 +10,7 @@ const DeleteSubgroup = subgroup => { return { type: Const.DELETE_SUBGROUP, subgr
 const ReceiveUsers = users => { return { type: Const.RECEIVE_USERS, users }};
 const UpdateUsers = user => { return { type: Const.UPDATE_USERS, user }};
 const RemoveUser = user => { return { type: Const.REMOVE_USER, user }};
-// iaacheck not being used?
-const Authenticated = (authenticated, iaaAuth, iaacheck) => { return {type: Const.USER_AUTHENTICATION, authenticated, iaaAuth}};
+const Authenticated = (authenticated, iaaAuth, iaacheck) => { return {type: Const.USER_AUTHENTICATION, authenticated, iaaAuth, iaacheck}};
 const AddDummyUser = displayId => { return { type: Const.ADD_DUMMY_USER, displayId}};
 const MarkUserForDeletion = identifier => { return { type: Const.MARK_USER_FOR_DELETION, identifier }};
 const DummyUserFail = displayId => { return { type: Const.FAILED_DUMMY_USER, displayId }};
