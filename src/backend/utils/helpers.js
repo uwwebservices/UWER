@@ -66,7 +66,6 @@ export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, ur
 export const decryptAuthToken = token => {
 	let passphrase = process.env.SessionKey || "development";
 	let payload = AES.decrypt(decodeURIComponent(token), passphrase).toString(enc.Utf8);
-	console.log("decrypted token:", payload)
 	return JSON.parse(payload);
 }
 

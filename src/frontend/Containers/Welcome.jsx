@@ -6,6 +6,7 @@ import background from 'Images/oragami.jpg';
 class Welcome extends Component {
     componentDidMount() {
         if(!this.props.development) {
+            // probably unnecessary after Authorization wrapper component
             setTimeout(() => {
                 if (this.props.authenticated && !this.props.token) {
                     this.props.history.push("/config")

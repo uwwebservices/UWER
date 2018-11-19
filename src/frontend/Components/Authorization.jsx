@@ -1,8 +1,12 @@
 import React from 'react';
 import FA from 'react-fontawesome';
+import Button from '@material-ui/core/Button';
 
 class Authorization extends React.Component {
    componentDidMount() {
+        this.props.checkAuthentication();
+    }
+    retryAuth() {
         this.props.checkAuthentication();
     }
     render() {
@@ -10,15 +14,13 @@ class Authorization extends React.Component {
 
         if(!development) {
         // before checkAuth has returned, auth/iaa are set to null, once returned they are true/false
-        // maker sure checkAuth has returned before shipping someone off to shib/iaa
+        // make sure checkAuth has returned before shipping someone off to shib/iaa
             if(authenticated !== null && iaaAuth !== null) {
                 if(loginRequired && !authenticated) {
-                    console.log("redirecting to login");
                     window.location = `/login?returnUrl=${this.props.path}`;
                 }
                 
                 if(authenticated && iaaRequired && !iaaAuth) {
-                    console.log("redirecting to idaa");
                     window.location = iaaCheck; 
                 }
             }
@@ -27,21 +29,15 @@ class Authorization extends React.Component {
         let shouldRenderChildren = loginRequired ? authenticated : true;
         shouldRenderChildren = iaaRequired ? iaaAuth : true;
         shouldRenderChildren = authenticated === null || iaaAuth === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
-        //shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode
-
-        console.log("ShouldRenderChildren?", shouldRenderChildren);
-        console.log("loginRequired", loginRequired);
-        console.log("development", development);
-        console.log("authenticated", authenticated);
-        console.log("iaaRequired", iaaRequired);
-        console.log("iaaAuth", iaaAuth);
+        shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode
         
         return (
             shouldRenderChildren ? (
                 children
             ) : (
                 <div>
-                    This is the loading page. Checking auth. <FA name="spinner" spin={true} />
+                    This is the loading page. Checking auth. <FA name="spinner" spin={true} /> <br />
+                    <Button variant="raised" onClick={() => this.retryAuth()} color="primary" className="righty">Retry</Button>
                 </div> 
             )
         )
