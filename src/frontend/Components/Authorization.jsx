@@ -10,16 +10,20 @@ class Authorization extends React.Component {
 
         if(authenticated !== null && iaaAuth !== null) {
             if(loginRequired && !authenticated) {
-                window.location = `/login?returnUrl=${this.props.path}`;
+                return window.location = `/login?returnUrl=${this.props.path}`;
             }
             // this isn't working as expected...seems to always be false
-            if(iaaRequired && !iaaAuth) {
-                window.location = iaaCheck; 
+            if(authenticated && iaaRequired && !iaaAuth) {
+                return window.location = iaaCheck; 
             }
         }
        
         // this needs some tweaking
-        let shouldRenderChildren = development || (authenticated !== null && ((iaaRequired && iaaAuth) && authenticated));
+        let shouldRenderChildren = ((iaaRequired && iaaAuth) && authenticated);
+
+        shouldRenderChildren = authenticated === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
+        //shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode
+
         console.log("ShouldRenderChildren?", shouldRenderChildren);
         console.log("loginRequired", loginRequired);
         console.log("development", development);
