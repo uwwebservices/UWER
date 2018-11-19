@@ -121,7 +121,7 @@ api.get(API.CheckAuth, async (req, res) => {
 		if(!req.session.IAAAgreed) {
 			let found = false;
 			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
-			console.log("idaa members", members)
+			console.log("idaa members", members, config.idaaGroupID)
 			if(members.find(u => u.id === req.user.UWNetID)) {
 				found = true;
 			}	
