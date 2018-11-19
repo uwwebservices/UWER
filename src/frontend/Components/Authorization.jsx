@@ -8,13 +8,13 @@ class Authorization extends React.Component {
         this.state = { showRetry: false };
     }
     componentDidMount() {
-        this.props.checkAuthentication();
+        this.checkAuth();
     }
-    retryAuth() {
+    checkAuth() {
         this.props.checkAuthentication();
     }
     render() {
-        const { loginRequired, authenticated, development, iaaAuth, iaaCheck, iaaRequired, children } = this.props;
+        const { loginRequired, authenticated, development, iaaAuth, iaaCheck, iaaRequired, children, path } = this.props;
 
         // if we've been stuck on this page for 5s, give option to retry
         setTimeout(() => this.setState({showRetry: true}), 5000)
@@ -24,7 +24,7 @@ class Authorization extends React.Component {
         // make sure checkAuth has returned before shipping someone off to shib/iaa
             if(authenticated !== null && iaaAuth !== null) {
                 if(loginRequired && !authenticated) {
-                    window.location = `/login?returnUrl=${this.props.path}`;
+                    window.location = `/login?returnUrl=${path}`;
                 }
                 
                 if(authenticated && iaaRequired && !iaaAuth) {
@@ -45,7 +45,7 @@ class Authorization extends React.Component {
                 <div>
                     This is the loading page. Checking auth. <FA name="spinner" spin={true} /> <br />
                     { this.state.showRetry && (
-                        <Button variant="raised" onClick={() => this.retryAuth()} color="primary" className="righty">Retry</Button>
+                        <Button variant="raised" onClick={() => this.checkAuth()} color="primary" className="righty">Retry</Button>
                     )}
                 </div> 
             )
