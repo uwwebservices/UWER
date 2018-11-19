@@ -9,18 +9,23 @@ class Authorization extends React.Component {
         const { loginRequired, authenticated, development, iaaAuth, iaaCheck, iaaRequired, children } = this.props;
 
         if(authenticated !== null && iaaAuth !== null) {
-            // need to wait for authenticated and iaaAuth to get back...
             if(loginRequired && !authenticated) {
                 window.location = `/login?returnUrl=${this.props.path}`;
             }
-            console.log("iaa", iaaRequired, iaaAuth)
+            // this isn't working as expected...seems to always be false
             if(iaaRequired && !iaaAuth) {
                 window.location = iaaCheck; 
             }
         }
        
-
+        // this needs some tweaking
         let shouldRenderChildren = development || (authenticated !== null && ((iaaRequired && iaaAuth) && authenticated));
+        console.log("ShouldRenderChildren?", shouldRenderChildren);
+        console.log("loginRequired", loginRequired);
+        console.log("development", development);
+        console.log("authenticated", authenticated);
+        console.log("iaaRequired", iaaRequired);
+        console.log("iaaAuth", iaaAuth);
         
         return (
             shouldRenderChildren ? (
