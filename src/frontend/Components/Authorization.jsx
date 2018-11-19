@@ -8,17 +8,22 @@ class Authorization extends React.Component {
     render() {
         const { loginRequired, authenticated, development, iaaAuth, iaaCheck, iaaRequired, children } = this.props;
 
-        if(authenticated !== null && iaaAuth !== null) {
-            if(loginRequired && !authenticated) {
-                return window.location = `/login?returnUrl=${this.props.path}`;
-            }
-            // this isn't working as expected...seems to always be false
-            if(authenticated && iaaRequired && !iaaAuth) {
-                return window.location = iaaCheck; 
+        if(!development) {
+        // before checkAuth has returned, auth/iaa are set to null, once returned they are true/false
+        // maker sure checkAuth has returned before shipping someone off to shib/iaa
+            if(authenticated !== null && iaaAuth !== null) {
+                if(loginRequired && !authenticated) {
+                    console.log("redirecting to login");
+                    window.location = `/login?returnUrl=${this.props.path}`;
+                }
+                
+                if(authenticated && iaaRequired && !iaaAuth) {
+                    console.log("redirecting to idaa");
+                    window.location = iaaCheck; 
+                }
             }
         }
        
-        // this needs some tweaking
         let shouldRenderChildren = ((iaaRequired && iaaAuth) && authenticated);
 
         shouldRenderChildren = authenticated === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
