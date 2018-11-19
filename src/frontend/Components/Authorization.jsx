@@ -24,9 +24,9 @@ class Authorization extends React.Component {
             }
         }
        
-        let shouldRenderChildren = ((iaaRequired && iaaAuth) && authenticated);
-
-        shouldRenderChildren = authenticated === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
+        let shouldRenderChildren = loginRequired ? authenticated : true;
+        shouldRenderChildren = iaaRequired ? iaaAuth : true;
+        shouldRenderChildren = authenticated === null || iaaAuth === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
         //shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode
 
         console.log("ShouldRenderChildren?", shouldRenderChildren);
