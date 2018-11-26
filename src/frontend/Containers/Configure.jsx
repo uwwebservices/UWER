@@ -104,6 +104,7 @@ class Configure extends Component {
                             confirmCallback={this.createSubgroup}
                             approveText={this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
                             approveButtonDisabled={this.state.invalidSubgroup || this.state.creatingGroup}
+                            cancelButtonDisabled={this.state.invalidSubgroup || this.state.creatingGroup}
                             disableBackdropClick={true}
                         >
                             <div className="createSubgroupModal">

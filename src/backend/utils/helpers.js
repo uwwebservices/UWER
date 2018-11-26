@@ -47,7 +47,7 @@ export const ensureAPIAuth = (req, res, next) => {
 }
 
 export const ensureAuthOrToken = (req, res, next) => {
-	if(developmentMode || req.isAuthenticated() || verifyAuthToken(req)) {
+	if(req.isAuthenticated() || verifyAuthToken(req) || developmentMode) {
 		return next();
 	} else {
 		res.sendStatus(401);
@@ -58,7 +58,6 @@ export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, ur
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setMinutes(now.getMinutes() + ttl);
-	
 	let token = AES.encrypt(JSON.stringify({user: req.user, groupName, netidAllowed, expiry}), passphrase).toString();
 	return uriEncode ? encodeURIComponent(token) : token;
 }
@@ -74,7 +73,9 @@ export const verifyAuthToken = req => {
 	if(!req.session.token && (req.body.token || req.query.token)) { 
 		req.session.token = req.body.token ? decodeURIComponent(req.body.token) : decodeURIComponent(req.query.token); 
 	}
-	let tokenData = decryptAuthToken(req.session.token)
+	let tokenData = decryptAuthToken(req.session.token);
+	console.log("verify, token expires:", new Date(tokenData.expiry));
+	console.log("now", new Date());
 	req.session.registrationUser = tokenData.user;
 	return tokenData.expiry > (new Date()).getTime();
 }

@@ -22,7 +22,6 @@ class Authorization extends React.Component {
         if(!development) {
         // before checkAuth has returned, auth/iaa are set to null, once returned they are true/false
         // make sure checkAuth has returned before shipping someone off to shib/iaa
-            console.log("props", this.props);
             if(authenticated !== null && iaaAuth !== null) {
                 if(loginRequired && !authenticated) {
                     window.location = `/login?returnUrl=${path}`;

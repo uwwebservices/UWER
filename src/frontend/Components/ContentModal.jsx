@@ -47,7 +47,7 @@ class ContentModal extends React.Component {
           </DialogContent>
           <DialogActions>
             { this.props.showCancelButton &&
-              <Button onClick={() => this.handleClose(false)} variant="raised" color={this.props.cancelButtonColor}>
+              <Button onClick={() => this.handleClose(false)} variant="raised" color={this.props.cancelButtonColor} disabled={this.props.cancelButtonDisabled}>
                 { this.props.cancelText }
               </Button>
             }
