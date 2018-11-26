@@ -22,9 +22,10 @@ class Authorization extends React.Component {
         if(!development) {
         // before checkAuth has returned, auth/iaa are set to null, once returned they are true/false
         // make sure checkAuth has returned before shipping someone off to shib/iaa
+            console.log("props", this.props);
             if(authenticated !== null && iaaAuth !== null) {
                 if(loginRequired && !authenticated) {
-                    window.location = `/login?returnUrl=${path}`;
+                    //window.location = `/login?returnUrl=${path}`;
                 }
                 
                 if(authenticated && iaaRequired && !iaaAuth) {
@@ -34,9 +35,9 @@ class Authorization extends React.Component {
         }
        
         let shouldRenderChildren = loginRequired ? authenticated : true;
-        shouldRenderChildren = iaaRequired ? iaaAuth : true;
+        shouldRenderChildren = iaaRequired ? iaaAuth : true; // must be auth'd to be iaa'd, this override should be fine
         shouldRenderChildren = authenticated === null || iaaAuth === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
-        shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode
+        shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode, comment to test loading page
         
         return (
             shouldRenderChildren ? (
