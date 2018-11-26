@@ -25,7 +25,7 @@ class Authorization extends React.Component {
             console.log("props", this.props);
             if(authenticated !== null && iaaAuth !== null) {
                 if(loginRequired && !authenticated) {
-                    //window.location = `/login?returnUrl=${path}`;
+                    window.location = `/login?returnUrl=${path}`;
                 }
                 
                 if(authenticated && iaaRequired && !iaaAuth) {

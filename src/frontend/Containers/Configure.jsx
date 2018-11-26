@@ -71,8 +71,9 @@ class Configure extends Component {
         return groupName.replace(this.props.groupNameBase, "").replace(/-/g, ' ');
     }
     startRegistration = async () => {
-        await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL);
         this.props.history.push("/register");
+        await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL);
+        
     }
 
     endRegistration = async () => {
