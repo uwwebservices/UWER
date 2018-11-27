@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import { ensureAuth, backToUrl, getAuthToken } from '../utils/helpers';
+import { ensureAuth, backToUrl } from '../utils/helpers';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
 import config from 'config/config.json';
@@ -21,7 +21,7 @@ app.post("/login/callback",
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
 	async (req,res,next) => {
 		let admins = (await Groups.GetAdmins(config.groupNameBase.slice(0,-1))).Payload;
-		if(admins.indexOf(req.user.UWNetID) > -1) {
+		if(admins && admins.indexOf(req.user.UWNetID) > -1) {
 			next();
 		} else {
 			console.log("User is not in the admins group, redirect to homepage and log out");

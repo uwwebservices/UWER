@@ -1,34 +1,28 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, CheckAuthentication, StartRegistrationSession, StopRegistrationSession } from '../Actions';
+import ConfigOptions from 'Components/ConfigOptions';
+import ContentModal from 'Components/ContentModal';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
 
 class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { newSubgroup: "", loadingSubGroups: false, loadingConfigPage: true, invalidSubgroup: false };
+        this.state = { newSubgroup: "", loadingSubGroups: false, 
+                       loadingConfigPage: true, invalidSubgroup: true, 
+                       confidential: true, netidAllowed: false, tokenTTL: 180,
+                       newSubgroupDescription: "", newSubgroupEmailEnabled: false 
+                    };
     }
-    async componentWillMount() {
-        if(!this.props.authenticated && !this.props.development) {
-            await this.props.checkAuth();
-            if(!this.props.authenticated) {
-                return window.location = "/login?returnUrl=/config";
-            }
-
-            if(!this.props.iaaAuth)
-            {
-                return window.location = this.props.iaaCheck;
-            }
-        }
+    async componentDidMount() {
         this.setState({groupName: this.props.groupName});
     }
     validateGroupString(groupName) {
         var RegExpression = /^[a-zA-Z0-9\s]*$/; 
-        if(RegExpression.test(groupName)) {
+        if(RegExpression.test(groupName) && groupName.length > 2) {
             return true;
         }
         return false;
@@ -44,20 +38,25 @@ class Configure extends Component {
     };
 
     handleChange = e => {
-        this.setState({[e.target.name]: e.target.value});
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        this.setState({[e.target.name]: value});
+
         if(e.target.name === "newSubgroup") {
-            this.setState({invalidSubgroup: !this.validateGroupString(e.target.value)})
+            this.setState({invalidSubgroup: !this.validateGroupString(value)})
         }
     }
 
-    createSubgroup = async e => {
-        e.preventDefault();
+    createSubgroup = async () => {
         if(this.validateGroupString(this.state.newSubgroup)) {
             this.setState({"creatingGroup": true });
-            await this.props.createGroup(this.generateGroupName(this.state.newSubgroup));
-            this.props.loadSubgroups(this.props.groupName);
-            this.setState({"creatingGroup": false, "newSubgroup": "" });
-            this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
+            let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
+            if(success) {
+                this.props.loadSubgroups(this.props.groupName);
+                this.props._addNotification("Registration Group Created", `Successfully created registration group: ${this.state.newSubgroup}`)
+            } else {
+                this.props._addNotification("Create Registration Group Failed", "Group creation failed, does this group already exist?");
+            }
+            this.setState({"creatingGroup": false, "newSubgroup": "", "confidential": true, newSubgroupDescription: "", newSubgroupEmailEnabled: false });
         } else {
             this.props._addNotification("Create Registration Group Failed", "Group name can only contain numbers, letters and spaces.");
         }
@@ -72,8 +71,9 @@ class Configure extends Component {
         return groupName.replace(this.props.groupNameBase, "").replace(/-/g, ' ');
     }
     startRegistration = async () => {
-        await this.props.startRegistrationSession();
         this.props.history.push("/register");
+        await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL);
+        
     }
 
     endRegistration = async () => {
@@ -85,13 +85,58 @@ class Configure extends Component {
         let canStartRegistration = this.props.groupName.length > 0;
         return (
             <div>
-                <h1>Configure</h1>
-                <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} /> &nbsp;
-                <EndRegistrationModal confirmCallback={this.endRegistration} /> &nbsp;
-               
-                <div className="subgroupList">
-                    <h2>Subgroups <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
-                    <div className="subgroupTable">
+                <div className="righted inline"><EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" /></div>
+                <h1 className="inline">Configure</h1>
+                
+                <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange} />
+                <br />
+                <div className="card">
+                    <div className="card-header">
+                         <h2 className="inline">Select a Registration Group <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
+                        <ContentModal 
+                            openButtonText="Add a new Registration Group"
+                            openButtonIcon="plus" 
+                            dialogTitle="Create a New Registration Group" 
+                            openButtonText="" 
+                            openButtonVariant="fab" 
+                            openButtonMini={true} 
+                            openButtonClasses={["createSubgroup"]}
+                            confirmCallback={this.createSubgroup}
+                            approveText={this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
+                            approveButtonDisabled={this.state.invalidSubgroup || this.state.creatingGroup}
+                            cancelButtonDisabled={this.state.invalidSubgroup || this.state.creatingGroup}
+                            disableBackdropClick={true}
+                        >
+                            <div className="createSubgroupModal">
+                                <div>
+                                    <label htmlFor="newSubgroup" className="configLabel">Event Name:</label><br />
+                                    <input type="text" className="newSubgroup" id="newSubgroup"
+                                        name="newSubgroup"
+                                        onChange={this.handleChange}
+                                        value={this.state.newSubgroup}
+                                        disabled={this.state.creatingGroup}
+                                        placeholder="Group Name: letters, numbers and spaces"
+                                    />
+                                    { this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && 
+                                        <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>
+                                    }
+                                </div>
+                                <div>
+                                    <label htmlFor="">Event Description:</label><br /> 
+                                    <input type="text" name="newSubgroupDescription" className="groupDescription" value={this.state.newSubgroupDescription} onChange={this.handleChange} />
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="newSubgroupEmailEnabled" checked={this.state.newSubgroupEmailEnabled} onChange={this.handleChange} />
+                                    <label htmlFor="">Enable Email</label>
+                                </div>
+                                <div className="privateGroupToggle">
+                                    <input type="checkbox" id="privateGroup" name="confidential" onChange={this.handleChange} checked={this.state.confidential} /> 
+                                    <label htmlFor="privateGroup">Private Group</label>
+                                </div>
+                            </div>   
+                        </ContentModal>
+                    </div>
+                    <div className="card-body">                                      
                         {
                             this.props.subgroups.map(subgroup => {
                                 return <Subgroup key={subgroup.id} subgroup={subgroup} 
@@ -99,25 +144,18 @@ class Configure extends Component {
                                       updateGroupName={this.updateGroupName} 
                                       groupNameBase={this.props.groupNameBase}
                                       displayGroupName={this.displayGroupName}
+                                      private={subgroup.classification != "u"}
+                                      email={subgroup.email}
                                     />
                             })
-                        }
+                        }   
                     </div>
                 </div>
-                <form className="form" onSubmit={this.createSubgroup}>
-                    <label htmlFor={this.props.itemName} className="configLabel">{this.props.itemName}</label>
-                    <input type="text" className="newSubgroup" 
-                        name="newSubgroup"
-                        onChange={this.handleChange}
-                        value={this.state.newSubgroup}
-                        disabled={this.state.creatingGroup}
-                    />
-                    
-                    <Button disabled={this.state.creatingGroup} variant="raised" color="primary" type="submit">
-                        {this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
-                    </Button>
-                    { this.state.invalidSubgroup && <div className="subgroupError">Registration groups can only contain letters, numbers and spaces.</div>}
-                </form>
+                <br />
+                
+                <div className="startRegistration">
+                    <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
+                </div>
             </div>
         )
     }
@@ -125,13 +163,8 @@ class Configure extends Component {
 
 const mapStateToProps = state => ({
    groupName: state.groupName,
-   config: state.config,
    subgroups: state.subgroups,
-   authenticated: state.authenticated,
-   development: state.development,
-   iaaAuth: state.iaaauth,
-   iaaCheck: state.iaacheck,
-   groupNameBase: state.config.groupNameBase
+   groupNameBase: state.groupNameBase
 });
 const mapDispatchToProps = dispatch => {
     return {
@@ -139,9 +172,8 @@ const mapDispatchToProps = dispatch => {
         loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
         destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
         loadUsers: group => dispatch(LoadUsers(group)),
-        createGroup: group => dispatch(CreateGroup(group)),
-        checkAuth: () => dispatch(CheckAuthentication()),
-        startRegistrationSession: () => dispatch(StartRegistrationSession()),
+        createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
+        startRegistrationSession: (groupName, netidAllowed, tokenTTL) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL)),
         stopRegistrationSession: () => dispatch(StopRegistrationSession())
     }
 }

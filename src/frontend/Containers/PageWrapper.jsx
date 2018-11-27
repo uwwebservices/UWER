@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { InitApp } from '../Actions';
+import { InitApp, CheckAuthentication } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
+import Authorization from 'Components/Authorization';
 import NotificationSystem from 'react-notification-system';
 
 class PageWrapper extends Component {
@@ -28,7 +29,7 @@ class PageWrapper extends Component {
     // level = ["success", "error", "warning", "info"]
     // position = tr (top right), tl (top left), tc (top center), br (bottom right), bl (bottom left), bc (bottom center)
 
-    _addNotification = (title, message, level="info", position="tr", autoDismiss=5) => {
+    _addNotification = (title, message, level="info", position="tc", autoDismiss=5) => {
         this._notificationSystem.addNotification({
             title,
             message,
@@ -40,9 +41,9 @@ class PageWrapper extends Component {
 
 
     render () {
-        const showHeader = this.props.authenticated || this.props.development;
-        const pages = showHeader && [
-            { isNavigable: true, path: "/register", display: "Register" },
+        const authenticated = this.props.authenticated || this.props.development;
+        const pages = authenticated && [
+            { isNavigable: true, path: "/register", display: "View  Participants" },
             { isNavigable: true, path: "/config", display: "Config"}
         ] || [];
 
@@ -50,13 +51,22 @@ class PageWrapper extends Component {
             _addNotification: this._addNotification,
             ...this.props
         }));
-
         return (
             <div className="pageWrapper">
                 <NotificationSystem ref="notificationSystem" />
                 <Header pages={pages} />
                     <main>
-                        { childrenWithProps }
+                        <Authorization 
+                            authenticated={this.props.authenticated}
+                            loginRequired={this.props.loginRequired}
+                            iaaAuth={this.props.iaaAuth} 
+                            iaaCheck={this.props.iaaCheck} 
+                            iaaRequired={this.props.iaaRequired}
+                            checkAuthentication={this.props.checkAuthentication}
+                            development={this.props.development}
+                            path={this.props.location.pathname}>
+                                {childrenWithProps}
+                        </Authorization>
                     </main>
                 <Footer />
             </div>
@@ -67,11 +77,14 @@ class PageWrapper extends Component {
 const mapStateToProps = state => ({
     authenticated: state.authenticated,
     notifications: state.notifications,
-    development: state.development
+    development: state.development,
+    iaaAuth: state.iaaAuth,
+    iaaCheck: state.iaacheck
  });
  const mapDispatchToProps = dispatch => {
     return {
-        initApp: () => dispatch(InitApp())
+        initApp: () => dispatch(InitApp()),
+        checkAuthentication: () => dispatch(CheckAuthentication())
     }
 }
  

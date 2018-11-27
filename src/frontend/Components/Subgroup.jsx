@@ -48,7 +48,7 @@ export default class Configure extends Component {
       );
       return (
         <div className={groupName === this.props.selectedGroup ? "subgroupItem selected" : "subgroupItem"}>
-            <div className="subgroupName">{this.props.displayGroupName(groupName)}</div>
+            <div className="subgroupName">{this.props.displayGroupName(groupName)} {this.props.private && <FA name="lock" />} {this.props.email && <FA name="envelope" />}</div>
             <div className="subgroupButtons">
               {SelectButton}
             </div>

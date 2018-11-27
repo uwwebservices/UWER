@@ -1,5 +1,6 @@
 import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
+import Groups from 'models/groupModel';
 
 export const developmentMode = process.env.NODE_ENV === 'development';
 	
@@ -46,31 +47,76 @@ export const ensureAPIAuth = (req, res, next) => {
 }
 
 export const ensureAuthOrToken = (req, res, next) => {
-	if(developmentMode || req.isAuthenticated() || verifyAuthToken(req)) {
+	if(req.isAuthenticated() || verifyAuthToken(req) || developmentMode) {
 		return next();
 	} else {
 		res.sendStatus(401);
 	}
 }
 
-export const getAuthToken = (req, uriEncode = true) => {
-	if(!req.user && !developmentMode) { return false; }
+export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, uriEncode = true) => {
 	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
-	let expiry = now.setHours(now.getHours() + 3);
-	let token = AES.encrypt(JSON.stringify({user: req.user, expiry}), passphrase).toString();
+	let expiry = now.setMinutes(now.getMinutes() + ttl);
+	let token = AES.encrypt(JSON.stringify({user: req.user, groupName, netidAllowed, expiry}), passphrase).toString();
 	return uriEncode ? encodeURIComponent(token) : token;
 }
 
-export const verifyAuthToken = req => {
-	if(!req.session.token && !req.body.token) { return false; }
-	if(!req.session.token && req.body.token) { req.session.token = decodeURIComponent(req.body.token); }
-
+export const decryptAuthToken = token => {
 	let passphrase = process.env.SessionKey || "development";
-	let payload = AES.decrypt(req.session.token, passphrase).toString(enc.Utf8);
+	let payload = AES.decrypt(decodeURIComponent(token), passphrase).toString(enc.Utf8);
+	return JSON.parse(payload);
+}
 
-	payload = JSON.parse(payload);
-	req.session.registrationUser = payload.user;
-	console.log("AUTH TOKEN EXPIRY", new Date(payload.expiry), payload.expiry > (new Date()).getTime())
-	return payload.expiry > (new Date()).getTime();
+export const verifyAuthToken = req => {
+	if(!req.session.token && !req.body.token && !req.query.token) { return false; }
+	if(!req.session.token && (req.body.token || req.query.token)) { 
+		req.session.token = req.body.token ? decodeURIComponent(req.body.token) : decodeURIComponent(req.query.token); 
+	}
+	let tokenData = decryptAuthToken(req.session.token);
+	console.log("verify, token expires:", new Date(tokenData.expiry));
+	console.log("now", new Date());
+	req.session.registrationUser = tokenData.user;
+	return tokenData.expiry > (new Date()).getTime();
+}
+
+export const tokenToSession = async (req, res, next) => {
+	// if user is not authenticated and presented a token, update session
+	let groupName = req.params.group;
+	let confidential = !req.isAuthenticated();
+	let netidAllowed = req.isAuthenticated();
+
+	if(!req.isAuthenticated() && !developmentMode && req.body.token) {
+		let tokenData = decryptAuthToken(req.body.token);
+		groupName = tokenData.groupName;
+		netidAllowed = tokenData.netidAllowed;
+	}
+
+	if(!req.session.group || req.session.group.groupName !== groupName) {
+		confidential = await Groups.IsConfidentialGroup(groupName);
+	} else if (req.session.group) {
+		confidential = req.session.group.confidential;
+	}
+
+	// Admins and Developers can see confidential group members
+	if(req.isAuthenticated() || developmentMode) {
+		confidential = false;
+	}
+	
+	req.session.group = {
+		groupName,
+		confidential,
+		netidAllowed
+	};
+	
+	next();
+}
+
+export const FilterModel = (model, whitelist) => {
+    return Object.keys(model)
+        .filter(key => whitelist.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = model[key];
+            return obj;
+        }, {});
 }

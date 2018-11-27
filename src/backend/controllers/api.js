@@ -3,21 +3,73 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken, developmentMode, tokenToSession } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express';
 
 let api = Router();
 
-api.get(API.GetMembers, async (req, res) => {
-		let result = await Groups.GetMembers(req.params.group);
-		let members = await PWS.GetMany(result.Payload);
-		let verbose = await IDCard.GetManyPhotos(members);
-		return res.status(result.Status).json(verbose);
+api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
+	let groupName = req.session.group.groupName;
+	let confidential = req.session.group.confidential;
+	let response = {
+		groupName,
+		confidential,
+		members: []
+	}
+	
+	if(confidential && !req.isAuthenticated() && !developmentMode) {
+		return res.status(200).json(response);
+	}
+	let result = await Groups.GetMembers(groupName);
+	let members = await PWS.GetMany(result.Payload);
+	let verbose = await IDCard.GetManyPhotos(members);
+	response.members = verbose;
+	return res.status(result.Status).json(response);
 });
 
-api.get(API.GetToken, (req, res) => {
-	let token = getAuthToken(req);
+api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) => {
+	let identifier = req.body.identifier;
+	let displayId = req.body.displayId;
+	let validCard = IDCard.ValidCard(identifier);
+	let groupName = req.session.group.groupName;
+	let netidAllowed = req.session.group.netidAllowed;
+	let confidential = req.session.group.confidential;
+	
+	if(!validCard && netidAllowed == 'false') {
+		// if not a valid card and netid auth not allowed, 404
+		return res.sendStatus(404);
+	}
+
+	if(validCard){
+		identifier = await IDCard.Get(validCard);
+		identifier = (await PWS.Get(identifier)).UWNetID;
+	}
+
+	let result = await Groups.AddMember(groupName, identifier);
+	
+	if(result.Status === 200 && confidential) {
+		res.sendStatus(201);
+	}
+
+	if(result.Status === 200 && !confidential) {
+		let user = await PWS.Get(identifier);
+		
+		user.displayId = displayId;
+		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
+		res.status(result.Status).json(user);
+	} else {
+		res.sendStatus(result.Status);
+	}
+	
+});
+
+api.get(API.GetToken, ensureAPIAuth, (req, res) => {
+	let groupName = req.query.groupName;
+	let netidAllowed = req.query.netidAllowed;
+	let tokenTTL = req.query.tokenTTL;
+
+	let token = getAuthToken(req, groupName, netidAllowed, tokenTTL);
 	if(token) {
 		return res.status(200).json({token});
 	} else {
@@ -32,35 +84,13 @@ api.get(API.Logout, (req,res) => {
 	res.sendStatus(200);
 });
 
-api.put(API.RegisterMember, ensureAuthOrToken, async (req, res) => {
-	let identifier = req.body.identifier;
-	let displayId = req.body.displayId;
-	let validCard = IDCard.ValidCard(identifier);
-	
-	if(validCard){
-		identifier = await IDCard.Get(validCard);
-		identifier = (await PWS.Get(identifier)).UWNetID;
-	}
-	
-	let result = await Groups.AddMember(req.params.group, identifier);
-	if(result.Status === 200) {
-		let user = await PWS.Get(identifier);
-		user.displayId = displayId;
-		user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
-		res.status(result.Status).json(user);
-	} else {
-		res.sendStatus(result.Status);
-	}
-	
-});
-
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
 	let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
 	return res.status(result.Status).json(result.Payload);
 });
 
 api.get(API.GetSubgroups, ensureAPIAuth, async (req, res) => {
-	let result = await Groups.SearchGroups(req.params.group);
+	let result = await Groups.SearchGroups(req.params.group, true);
 	return res.status(result.Status).json(result.Payload);
 });
 
@@ -70,7 +100,11 @@ api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
-	let result = await Groups.CreateGroup(req.params.group);
+	let confidential = req.query.confidential;
+	let description = req.query.description;
+	let email = req.query.email;
+
+	let result = await Groups.CreateGroup(req.params.group, confidential, description, email);
 	return res.status(result.Status).json(result.Payload);
 });
 
@@ -80,7 +114,7 @@ api.get(API.CheckAuth, async (req, res) => {
 
 	if(!req.session)
 	{
-		return res.status(500).send("Chris Cloud(tm)");
+		return res.sendStatus(500);
 	}
 	
 	if(req.isAuthenticated()) {
@@ -97,10 +131,7 @@ api.get(API.CheckAuth, async (req, res) => {
 				if(members.find(u => u.id === req.user.UWNetID)) {
 					found = true;
 				}	
-			}
-
-			if(found)
-			{
+			} else {
 				req.session.IAAAgreed=true;
 				auth.IAAAAuth=true;
 			}
@@ -108,12 +139,11 @@ api.get(API.CheckAuth, async (req, res) => {
 			auth.IAAAAuth=true;
 		}	
 	} 
-
 	return res.status(200).json(auth);
 });
 
 api.get(API.Config, (req, res) => {
-	let whitelist = ["idcardBaseUrl", "pwsBaseUrl", "photoBaseUrl", "groupsBaseUrl", "groupNameBase"];
+	let whitelist = ["groupNameBase"];
 	let filteredConfig = Object.keys(config)
 			.filter(key => whitelist.includes(key))
 			.reduce((obj, key) => {

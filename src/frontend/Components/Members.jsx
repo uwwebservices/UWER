@@ -3,7 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Button from '@material-ui/core/Button';
 import ConfirmModal from 'Components/ConfirmModal';
 import FA from 'react-fontawesome';
 
@@ -17,9 +16,11 @@ export default class Test extends React.Component {
         document.getElementById("registerCard").focus();
     }
     reload = async () => {
-        this.setState({loadingUsers: true});
-        await this.props.reloadUsers(this.props.group);
-        this.setState({loadingUsers: false});
+        if(this.props.group){
+            this.setState({loadingUsers: true});
+            await this.props.reloadUsers(this.props.group);
+            this.setState({loadingUsers: false});
+        }
     }
     render() {
         const listItems = this.props.members.map(mem => {
@@ -31,7 +32,7 @@ export default class Test extends React.Component {
                     <Avatar src={mem.Base64Image} />
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
                     { (mem.deleting || mem.loading) && <span className="loadSpinner"><FA name="spinner" spin={true} size="2x" /></span> }
-                    { showDelete &&  (
+                    { showDelete && (
                         <ConfirmModal openButtonIcon="remove" openButtonText="" 
                             openButtonVariant="fab" openButtonFabMini={true} 
                             confirmCallback={() => this.removeUser(mem.UWNetID)} 
@@ -42,13 +43,17 @@ export default class Test extends React.Component {
                 </ListItem> 
             )
         })
-        return (
-            <div className="memberList">
-                <h2>Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers}/></h2>
-                <List>
-                    {listItems}
-                </List>
-            </div>
-        )
+        return (                   
+                <div className="memberList">    
+                    { this.props.members.length > 0 && 
+                        <div>
+                        <h2>Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers}/></h2>
+                        <List>
+                            {listItems}
+                        </List>
+                        </div>
+                    }
+                </div>         
+        )        
     }
 }

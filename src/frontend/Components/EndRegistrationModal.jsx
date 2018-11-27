@@ -10,13 +10,14 @@ class EndRegistrationModal extends React.Component {
     render() {
         let modalOpts = {
             dialogTitle: "End Registation Mode",
+            showCancelButton: this.showCancelButton,
             cancelText: "Back",
-            approveText: "End Registration",
+            approveText: "Done",
             openButtonText: "End Registration",
             disableBackdropClick: true,
             cancelCallback: this.backToConfig,
             openButtonColor: "secondary",
-            modalText: "Are you sure you want to end this registration session and fully log out?"
+            modalText: "Your registration session has been successfully ended."
         };
 
         return (
