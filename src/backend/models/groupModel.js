@@ -126,6 +126,7 @@ const Groups = {
     },
     async CreateGroup(group, confidential, description, email) {
         let classification = confidential == "false" ? "u" : "c";
+        let readers = confidential == "false" ? [] : [ { "type": "set", "id": "none"} ]; 
         let opts = Object.assign({}, options, { 
             method: 'PUT',
             url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
@@ -135,8 +136,14 @@ const Groups = {
                     "displayName": config.groupDisplayName, 
                     "description": description,
                     "admins": config.groupAdmins.map(admin => {
-                        return {"id": admin, "type": "dns" };
+                        if(admin.indexOf('.edu') > -1) {
+                            return {"id": admin, "type": "dns" };
+                        } else {
+                            return {"id": admin, "type": "uwnetid"};
+                        }
+                        
                     }),
+                    "readers": readers,
                     classification
                 }
             }
