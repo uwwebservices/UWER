@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import ConfirmModal from 'Components/ConfirmModal';
+import Tooltip from '@material-ui/core/Tooltip';
 import FA from 'react-fontawesome';
-
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Button from '@material-ui/core/Button';
 
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { deleting: false }
+        this.state = { deleting: false, open: false, emailTooltipText: "Group Email Copied" }
+    }
+    groupEmailCopied = copiedText => {
+      this.setState({open: true});
+      setTimeout(() => {
+        this.setState({open: false});
+      }, 2000);
     }
     csvify = groupName => {
       let filePath = `/api/csv/${groupName}.csv`;
@@ -48,7 +55,32 @@ export default class Configure extends Component {
       );
       return (
         <div className={groupName === this.props.selectedGroup ? "subgroupItem selected" : "subgroupItem"}>
-            <div className="subgroupName">{this.props.displayGroupName(groupName)} {this.props.private && <FA name="lock" />} {this.props.email && <FA name="envelope" />}</div>
+            <div className="subgroupName">{this.props.displayGroupName(groupName)} 
+              {this.props.private && 
+                <Tooltip
+                title="Private Group - Member list hidden"
+                placement="top-start"
+                onClose={this.handleTooltipClose}
+                >
+                  <span className="subgroupPrivate">
+                    <FA name="lock" />
+                  </span>
+                </Tooltip>
+              } 
+              {this.props.email &&
+                <Tooltip
+                  open={this.state.open}
+                  title={this.state.emailTooltipText}
+                  placement="right-start"
+                  onClose={this.handleTooltipClose}
+                >
+                  <span className="subgroupEmail">
+                    <CopyToClipboard text={this.props.email} onCopy={this.groupEmailCopied}>
+                      <FA name="envelope" />
+                    </CopyToClipboard>
+                  </span>
+                </Tooltip>}
+            </div>
             <div className="subgroupButtons">
               {SelectButton}
             </div>

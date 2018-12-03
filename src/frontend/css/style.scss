@@ -194,6 +194,21 @@ strong {
         color: #aa0000;
         margin-bottom: 5px;
     }
+    .subgroupEmail {
+        margin-left: 5px;
+        span {
+            cursor: pointer;
+        }
+    }
+    #subgroupEmailText {
+        display: none;
+    }
+    .subgroupPrivate {
+        margin-left: 5px;
+        span {
+            cursor: pointer;
+        }
+    }
     .addMemberButton {
         margin-left: 5px;
     }
