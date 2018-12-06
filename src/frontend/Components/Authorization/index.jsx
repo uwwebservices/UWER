@@ -37,7 +37,7 @@ class Authorization extends React.Component {
         let shouldRenderChildren = loginRequired ? authenticated : true;
         shouldRenderChildren = iaaRequired ? iaaAuth : true; // must be auth'd to be iaa'd, this override should be fine
         shouldRenderChildren = authenticated === null || iaaAuth === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
-        //shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode, comment to test loading page
+        shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode, comment to test loading page
 
         return (
             shouldRenderChildren ? (
