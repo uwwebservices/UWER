@@ -26,6 +26,7 @@ strong {
         grid-template-columns: 1fr 5fr 1fr;
         grid-template-rows: 55px 1fr 55px;
         grid-row-gap: 20px;
+        overflow: scroll;
     }
 
     nav {
