@@ -1,11 +1,12 @@
 import React from 'react';
 import FA from 'react-fontawesome';
 import Button from '@material-ui/core/Button';
+import './style.scss';
 
 class Authorization extends React.Component {
     constructor() {
         super();
-        this.state = { showRetry: false };
+        this.state = { showRetry: false, retries: 0 };
     }
     componentDidMount() {
         this.checkAuth();
@@ -37,16 +38,19 @@ class Authorization extends React.Component {
         shouldRenderChildren = iaaRequired ? iaaAuth : true; // must be auth'd to be iaa'd, this override should be fine
         shouldRenderChildren = authenticated === null || iaaAuth === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
         shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode, comment to test loading page
-        
+
         return (
             shouldRenderChildren ? (
                 children
             ) : (
                 <div>
-                    This is the loading page. Checking auth. <FA name="spinner" spin={true} /> <br />
                     { this.state.showRetry && (
-                        <Button variant="raised" onClick={() => this.checkAuth()} color="primary" className="righty">Retry</Button>
+                        <Button variant="raised" onClick={() => this.checkAuth()} color="primary" className="righted">Retry</Button>
                     )}
+                    <h2>Verifying Authorization</h2>
+                    <p>This should only take a second...</p>
+                    
+                    <div id="loader"><div></div><div></div><div></div><div></div></div>
                 </div> 
             )
         )
