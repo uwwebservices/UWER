@@ -10,8 +10,8 @@ const options = {
     url: "",
     agentOptions: {
         pfx: fs.readFileSync(CERTIFICATEFILE),
-        passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf-8'}).toString(),
-        securityOptions: 'SSL_OP_NO_SSLv3'
+        passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf8'}).toString(), // WHY IS THERE A \n after?! fix this.
+        securityOptions: 'SSL_OP_NO_SSLv3' 
     },
     json: true
 };

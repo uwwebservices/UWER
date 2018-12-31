@@ -51,7 +51,7 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-const spPrivateKey = SPKEYFILE ? fs.readFileSync(SPKEYFILE, { encoding: 'utf-8' }) : "";
+const spPrivateKey = SPKEYFILE ? fs.readFileSync(SPKEYFILE, { encoding: 'utf8' }) : "";
 
 const uwSamlStrategy = new saml.Strategy(
 	{

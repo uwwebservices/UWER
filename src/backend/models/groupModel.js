@@ -14,11 +14,11 @@ const options = {
     url: "",
     json: true,
     ca: [
-            fs.readFileSync(INCOMMONFILE, { encoding: 'utf-8'})
+            fs.readFileSync(INCOMMONFILE, { encoding: 'utf8'})
         ],    
     agentOptions: {
         pfx: fs.readFileSync(CERTIFICATEFILE),
-        passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf-8'}).toString(),
+        passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf8'}).toString(),
         securityOptions: 'SSL_OP_NO_SSLv3'
     }
 };
