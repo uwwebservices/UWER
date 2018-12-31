@@ -7,7 +7,7 @@ const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
 const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
 const INCOMMONFILE = process.env.INCOMMONFILE;
 const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
-const GROUPADMINS = process.env.GROUPADMINS.split(',');
+const GROUPADMINS = process.env.GROUPADMINS ? process.env.GROUPADMINS.split(',') : [];
 
 const options = {
     method: 'GET',
