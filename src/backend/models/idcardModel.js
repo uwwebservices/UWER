@@ -13,7 +13,7 @@ const options = {
     url: "",
     agentOptions: {
         pfx: fs.readFileSync(CERTIFICATEFILE),
-        passphrase: fs.readFileSync(PASSPHRASEFILE),
+        passphrase: fs.readFileSync(PASSPHRASEFILE).toString(),
         securityOptions: 'SSL_OP_NO_SSLv3',
         simple: false,
         resolveWithFullResponse: true 

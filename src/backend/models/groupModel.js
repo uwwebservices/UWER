@@ -18,7 +18,7 @@ const options = {
         ],    
     agentOptions: {
         pfx: fs.readFileSync(CERTIFICATEFILE),
-        passphrase: fs.readFileSync(PASSPHRASEFILE),
+        passphrase: fs.readFileSync(PASSPHRASEFILE).toString(),
         securityOptions: 'SSL_OP_NO_SSLv3'
     }
 };
