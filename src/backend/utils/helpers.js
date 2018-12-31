@@ -2,6 +2,8 @@ import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
 
+const SESSIONKEY = process.env.SESSIONKEY;
+
 export const developmentMode = process.env.NODE_ENV === 'development';
 	
 export const ensureAuth = (returnUrl = "/") => {
@@ -55,16 +57,14 @@ export const ensureAuthOrToken = (req, res, next) => {
 }
 
 export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, uriEncode = true) => {
-	let passphrase = process.env.SessionKey || "development";
 	let now = new Date();
 	let expiry = now.setMinutes(now.getMinutes() + ttl);
-	let token = AES.encrypt(JSON.stringify({user: req.user, groupName, netidAllowed, expiry}), passphrase).toString();
+	let token = AES.encrypt(JSON.stringify({user: req.user, groupName, netidAllowed, expiry}), SESSIONKEY).toString();
 	return uriEncode ? encodeURIComponent(token) : token;
 }
 
 export const decryptAuthToken = token => {
-	let passphrase = process.env.SessionKey || "development";
-	let payload = AES.decrypt(decodeURIComponent(token), passphrase).toString(enc.Utf8);
+	let payload = AES.decrypt(decodeURIComponent(token), SESSIONKEY).toString(enc.Utf8);
 	return JSON.parse(payload);
 }
 

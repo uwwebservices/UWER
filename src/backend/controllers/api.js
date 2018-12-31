@@ -2,12 +2,15 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import config from 'config/config.json';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, decryptAuthToken, developmentMode, tokenToSession } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, developmentMode, tokenToSession } from '../utils/helpers';
 import { API, Routes } from 'Routes';
-import csv from 'csv-express';
+import csv from 'csv-express'; // required for csv route even though shown as unused
 
 let api = Router();
+
+const IDAACHECK = process.env.IDAACHECK;
+const IDAAGROUPID = process.env.IDAAGROUPID;
+const BASE_GROUP = process.env.BASE_GROUP;
 
 api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
 	let groupName = req.session.group.groupName;
@@ -109,7 +112,7 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.CheckAuth, async (req, res) => {
-	let redirectBack = config.idaaCheck + idaaRedirectUrl(req);
+	let redirectBack = IDAACHECK + idaaRedirectUrl(req);
 	let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
 
 	if(!req.session)
@@ -120,14 +123,14 @@ api.get(API.CheckAuth, async (req, res) => {
 	if(req.isAuthenticated()) {
 		if(!req.session.IAAAgreed) {
 			let found = false;
-			let members = (await Groups.GetMembers(config.idaaGroupID)).Payload;
+			let members = (await Groups.GetMembers(IDAAGROUPID)).Payload;
 			if(members.find(u => u.id === req.user.UWNetID)) {
 				found = true;
 			}	
 
 			if(!found)
 			{
-				members = (await Groups.GetMembers(config.idaaGroupID, true)).Payload;
+				members = (await Groups.GetMembers(IDAAGROUPID, true)).Payload;
 				if(members.find(u => u.id === req.user.UWNetID)) {
 					found = true;
 				}	
@@ -143,17 +146,7 @@ api.get(API.CheckAuth, async (req, res) => {
 });
 
 api.get(API.Config, (req, res) => {
-	let whitelist = ["groupNameBase"];
-	let filteredConfig = Object.keys(config)
-			.filter(key => whitelist.includes(key))
-			.reduce((obj, key) => {
-					obj[key] = config[key];
-					return obj;
-			}, {});
-			if(process.env.BASE_GROUP) {
-				filteredConfig.groupNameBase = process.env.BASE_GROUP;
-			}
-	res.status(200).json(filteredConfig);
+	res.status(200).json({ "groupNameBase": BASE_GROUP });
 });
 
 api.get(API.CSV, async (req, res) => {

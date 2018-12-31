@@ -48,7 +48,7 @@
     "express-session": "^1.15.6",
     "helmet": "^3.12.1",
     "memorystore": "^1.6.0",
-    "morgan": "^1.8.0",
+    "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "passport-saml": "^0.33.0",
     "react": "^16.6.3",
@@ -63,7 +63,7 @@
     "redux-thunk": "^2.2.0",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
-    "webpack": "^4.12.1"
+    "webpack": "^4.28.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

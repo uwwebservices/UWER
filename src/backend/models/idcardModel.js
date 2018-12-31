@@ -2,14 +2,18 @@ import request from 'request';
 import rp from 'request-promise';
 import fs from 'fs';
 import DefaultUser from 'Assets/defaultUser';
-import config from 'config/config.json';
+
+const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
+const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
+const IDCARDBASEURL = process.env.IDCARDBASEURL;
+const PHOTOBASEURL = process.env.PHOTOBASEURL;
 
 const options = {
     method: 'GET',
     url: "",
     agentOptions: {
-        pfx: fs.readFileSync(config.certificate),
-        passphrase: config.passphrase,
+        pfx: fs.readFileSync(CERTIFICATEFILE),
+        passphrase: fs.readFileSync(PASSPHRASEFILE),
         securityOptions: 'SSL_OP_NO_SSLv3',
         simple: false,
         resolveWithFullResponse: true 
@@ -43,7 +47,7 @@ const IDCard = {
     },
     async Get(card) {
         let opts = Object.assign({}, options, { 
-            url: `${config.idcardBaseUrl}?mag_strip_code=${card.magstrip}&prox_rfid=${card.rfid}`,
+            url: `${IDCARDBASEURL}?mag_strip_code=${card.magstrip}&prox_rfid=${card.rfid}`,
         });
         try {
             let res = await rp(opts);
@@ -72,7 +76,7 @@ const IDCard = {
     },
     async GetPhoto(regid) {
         let opts = Object.assign({}, options, { 
-            url: `${config.photoBaseUrl}/${regid}-large.jpg`,
+            url: `${PHOTOBASEURL}/${regid}-large.jpg`,
             encoding: null
         });
         try {

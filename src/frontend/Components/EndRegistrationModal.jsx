@@ -1,9 +1,11 @@
 import React from 'react';
 import ContentModal from 'Components/ContentModal';
 
+const NODE_ENV = process.env.NODE_ENV;
+
 class EndRegistrationModal extends React.Component {
     backToConfig() {
-        if(process.env.NODE_ENV !== "development") {
+        if(NODE_ENV !== "development") {
             window.location = "/login?returnUrl=/config";
         }
     }

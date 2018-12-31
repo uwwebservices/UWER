@@ -1,13 +1,16 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import config from 'config/config.json';
+
+const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
+const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
+const PWSBASEURL = process.env.PWSBASEURL;
 
 const options = {
     method: 'GET',
     url: "",
     agentOptions: {
-        pfx: fs.readFileSync(config.certificate),
-        passphrase: config.passphrase,
+        pfx: fs.readFileSync(CERTIFICATEFILE),
+        passphrase: fs.readFileSync(PASSPHRASEFILE),
         securityOptions: 'SSL_OP_NO_SSLv3'
     },
     json: true
@@ -27,7 +30,7 @@ const PWS = {
     async Get(identifier, whitelist) {
         let res;
         let opts = Object.assign({}, options, { 
-            url: `${config.pwsBaseUrl}/${identifier}/full.json`,
+            url: `${PWSBASEURL}/${identifier}/full.json`,
         });
         try {
             res = await rp(opts);

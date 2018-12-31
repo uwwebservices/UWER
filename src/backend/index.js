@@ -5,15 +5,22 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
-import config from 'config/config.json';
 import MemoryStore from 'memorystore';
 import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
 
+const SPKEYFILE = process.env.SPKEYFILE;
+const IDPENTRYPOINT = process.env.IDPENTRYPOINT;
+const IDPCALLBACKURL = process.env.IDPCALLBACKURL;
+const IDPISSUER = process.env.IDPISSUER;
+const PORT = process.env.PORT || 1111;
+const NODE_ENV = process.env.NODE_ENV;
+const SESSIONKEY = process.env.SESSIONKEY;
+
 let app = express();
-if(process.env.NODE_ENV === 'production') {
+if(NODE_ENV === 'production') {
 	app.use("/assets", express.static('dist/assets'))
 }
 app.use(bodyParser.urlencoded({
@@ -32,10 +39,10 @@ app.use(session({
 	name: "sessionId",
 	saveUninitialized: true,
 	resave: false,
-	secret: process.env.SessionKey || "development"
+	secret: SESSIONKEY || "development"
 }));
 
-if(process.env.SessionKey === "development") {
+if(SESSIONKEY === "development") {
 	console.error("Session is not secured, SessionKey environment variable must be set.");
 }
 app.use(passport.initialize());
@@ -44,13 +51,13 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-const spPrivateKey = config.spKeyFile ? fs.readFileSync(config.spKeyFile, { encoding: 'utf-8' }) : "";
+const spPrivateKey = SPKEYFILE ? fs.readFileSync(SPKEYFILE, { encoding: 'utf-8' }) : "";
 
 const uwSamlStrategy = new saml.Strategy(
 	{
-		callbackUrl: process.env.idpCallbackUrl,
-		entryPoint: config.IdPEntryPoint,
-		issuer: process.env.idpIssuer,
+		callbackUrl: IDPCALLBACKURL,
+		entryPoint: IDPENTRYPOINT,
+		issuer: IDPISSUER,
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 		privateKey: spPrivateKey
 	},
@@ -101,12 +108,12 @@ app.get('/Shibboleth.sso/metadata',
 app.use('/api', api);
 app.use(['/','/config'], frontend);
 
-app.server.listen(process.env.PORT || config.port || 1111, () => {
-	console.log(`Started on port ${app.server.address().port} in '${process.env.NODE_ENV}' environment.`);
+app.server.listen(PORT, () => {
+	console.log(`Started on port ${app.server.address().port} in '${NODE_ENV}' environment.`);
 });
 
 // add some spiffy colors to the console output so it stands out
-if(process.env.NODE_ENV === 'development') {
+if(NODE_ENV === 'development') {
 	[
 		['warn', '\x1b[43m\x1b[1m\x1b[37m'],
 		['error', '\x1b[41m\x1b[1m\x1b[37m'],
