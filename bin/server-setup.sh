@@ -1,4 +1,7 @@
 #!/bin/sh
+# make the config directory if it doesn't exist
+mkdir -p config
+
 if [ ! -e config/cert.pfx ]
 then
   echo "Copying dummy cert.pfx"
@@ -7,7 +10,7 @@ fi
 if [ ! -e config/passphrase.key ]
 then
   echo "Copying dummy passphrase.key"
-  cp config_base/passphrase.key  config/passphrase.key 
+  cp config_base/passphrase.key config/passphrase.key 
 fi
 if [ ! -e config/incommon.pem ]
 then
