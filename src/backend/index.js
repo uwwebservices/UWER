@@ -12,7 +12,6 @@ import saml from 'passport-saml';
 import helmet from 'helmet';
 
 const SPKEYFILE = process.env.SPKEYFILE;
-const IDPENTRYPOINT = process.env.IDPENTRYPOINT;
 const IDPCALLBACKURL = process.env.IDPCALLBACKURL;
 const IDPISSUER = process.env.IDPISSUER;
 const PORT = process.env.PORT || 1111;
@@ -56,7 +55,7 @@ const spPrivateKey = SPKEYFILE ? fs.readFileSync(SPKEYFILE, { encoding: 'utf-8' 
 const uwSamlStrategy = new saml.Strategy(
 	{
 		callbackUrl: IDPCALLBACKURL,
-		entryPoint: IDPENTRYPOINT,
+		entryPoint: IDPISSUER,
 		issuer: IDPISSUER,
 		identifierFormat: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 		privateKey: spPrivateKey
