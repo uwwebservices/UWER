@@ -1,18 +1,24 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import config from 'config/config.json';
 import { FilterModel } from '../utils/helpers';
+
+const GROUPSBASEURL = process.env.GROUPSBASEURL;
+const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
+const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
+const INCOMMONFILE = process.env.INCOMMONFILE;
+const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
+const GROUPADMINS = process.env.GROUPADMINS ? process.env.GROUPADMINS.split(',') : [];
 
 const options = {
     method: 'GET',
     url: "",
     json: true,
     ca: [
-            fs.readFileSync(config.incommon, { encoding: 'utf-8'})
+            fs.readFileSync(INCOMMONFILE, { encoding: 'utf8'})
         ],    
     agentOptions: {
-        pfx: fs.readFileSync(config.certificate),
-        passphrase: config.passphrase,
+        pfx: fs.readFileSync(CERTIFICATEFILE),
+        passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf8'}).toString(),
         securityOptions: 'SSL_OP_NO_SSLv3'
     }
 };
@@ -30,34 +36,10 @@ const ErrorResponse = ex => {
     }
 };
 
-// Sample GetGroup Response
-// { regid: '75fbe2c29f954b7d9c8815f45c45067e',
-//   id: 'uw_ais_sm_ews_registration_dev_chris-test-group',
-//   displayName: 'UW Registration POC',
-//   description: 'This a test group for UW Registration POC',
-//   created: 1535558330366,
-//   lastModified: 1535558333614,
-//   lastMemberModified: 1538661821973,
-//   contact: '',
-//   authnFactor: '1',
-//   classification: 'u',
-//   dependsOn: '',
-//   gid: '534598',
-//   affiliates: [ { name: 'email', status: 'inactive', senders: [] } ],
-//   admins:
-//    [ { type: 'dns',
-//        name: 'aisdev.cac.washington.edu',
-//        id: 'aisdev.cac.washington.edu' } ],
-//   updaters: [],
-//   creators: [],
-//   readers: [ { type: 'set', id: 'all' } ],
-//   optins: [],
-//   optouts: [] }
-
 const GetGroupInfo = async group => {
     let opts = Object.assign({}, options, { 
         method: 'GET',
-        url: `${config.groupsBaseUrl}/${group}`
+        url: `${GROUPSBASEURL}/group/${group}`
     });
     try {
         let res = await rp(opts);
@@ -78,7 +60,7 @@ const Groups = {
     async AddMember(group, identifier) {
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: `${config.groupsBaseUrl}/${group}/member/${identifier}`
+            url: `${GROUPSBASEURL}/group/${group}/member/${identifier}`
         });
         try {
             let res = await rp(opts);
@@ -92,7 +74,7 @@ const Groups = {
     },
     async GetMembers(group, force=false) {        
         let opts = Object.assign({}, options, { 
-            url: `${config.groupsBaseUrl}/${group}/member${force ? '?source=registry' : ''}`
+            url: `${GROUPSBASEURL}/group/${group}/member${force ? '?source=registry' : ''}`
         });
         try {
             let res = await rp(opts);
@@ -115,7 +97,7 @@ const Groups = {
     async RemoveMember(group, netid) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: `${config.groupsBaseUrl}/${group}/member/${netid}?synchronized=true`
+            url: `${GROUPSBASEURL}/group/${group}/member/${netid}?synchronized=true`
         });
         try {
             let res = await rp(opts);
@@ -125,17 +107,18 @@ const Groups = {
         }
     },
     async CreateGroup(group, confidential, description, email) {
+        console.log("GROUP ADMINS", GROUPADMINS)
         let classification = confidential == "false" ? "u" : "c";
         let readers = confidential == "false" ? [] : [ { "type": "set", "id": "none"} ]; 
         let opts = Object.assign({}, options, { 
             method: 'PUT',
-            url: `${config.groupsBaseUrl}/${group}?synchronized=true`,
+            url: `${GROUPSBASEURL}/group/${group}?synchronized=true`,
             body: {
                 "data" : { 
                     "id": group, 
-                    "displayName": config.groupDisplayName, 
+                    "displayName": GROUPDISPLAYNAME,
                     "description": description,
-                    "admins": config.groupAdmins.map(admin => {
+                    "admins": GROUPADMINS.map(admin => {
                         if(admin.indexOf('.edu') > -1) {
                             return {"id": admin, "type": "dns" };
                         } else {
@@ -154,32 +137,32 @@ const Groups = {
             if(email === "true") {
                rp(Object.assign({}, options, {
                     method: 'PUT',
-                    url: `${config.groupsBaseUrl}/${group}/affiliate/google?status=active&sender=member`
+                    url: `${GROUPSBASEURL}/group/${group}/affiliate/google?status=active&sender=member`
                 }));
             }
             return SuccessResponse(res.data)
         } catch(ex) {
+            console.log(ex);
             return ErrorResponse(ex);
         }
     },
     async SearchGroups(group, verbose=false) {
         let opts = Object.assign({}, options, {
             method: 'GET',
-            url: `${config.groupsSearchUrl}?name=${group}*&type=effective&scope=all`
+            url: `${GROUPSBASEURL}/search?name=${group}*&type=effective&scope=all`
         });
-        console.log(opts.url)
+
         try {
             let data = (await rp(opts)).data;
             if(verbose) {
                 let promises = [];
                 let verboseGroups = [];
-                await Promise.all(data.map(g => {
-                    return GetGroupInfo(g.regid).then((vg) => {
-                        if(vg.affiliates.length > 1) {
-                            vg.email = `${vg.id}@uw.edu`;
-                        }
-                        verboseGroups.push(vg);
-                    });
+                await Promise.all(data.map(async g => {
+                    let vg = await GetGroupInfo(g.regid)
+                    if(vg.affiliates.length > 1) {
+                        vg.email = `${vg.id}@uw.edu`;
+                    }
+                    verboseGroups.push(vg);
                 }));
                 let filter = ["regid", "displayName", "id", "url", "description", "classification", "email"];
                 verboseGroups = verboseGroups.map(vg => {
@@ -195,7 +178,7 @@ const Groups = {
     async DeleteGroup(group) {
         let opts = Object.assign({}, options, { 
             method: 'DELETE',
-            url: `${config.groupsBaseUrl}/${group}?synchronized=true`
+            url: `${GROUPSBASEURL}/group/${group}?synchronized=true`
         });
         try {
             let res = await rp(opts);

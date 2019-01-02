@@ -4,9 +4,11 @@ import passport from 'passport';
 import { ensureAuth, backToUrl } from '../utils/helpers';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
-import config from 'config/config.json';
 
 let app = Router();
+
+const BASE_GROUP = process.env.BASE_GROUP;
+const NODE_ENV = process.env.NODE_ENV;
 
 // Shibboleth Routes
 app.get(Routes.Login, 
@@ -20,7 +22,7 @@ app.get(Routes.Login,
 app.post("/login/callback",
 	passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }), 
 	async (req,res,next) => {
-		let admins = (await Groups.GetAdmins(config.groupNameBase.slice(0,-1))).Payload;
+		let admins = (await Groups.GetAdmins(BASE_GROUP.slice(0,-1))).Payload;
 		if(admins && admins.indexOf(req.user.UWNetID) > -1) {
 			next();
 		} else {
@@ -34,11 +36,11 @@ app.post("/login/callback",
 	backToUrl()
 );
 
-if(process.env.NODE_ENV === 'development') {
+if(NODE_ENV === 'development') {
 	const webpack = require('webpack');
 	const webpackDevMiddleware = require('webpack-dev-middleware');
 	const webpackHotMiddleware = require('webpack-hot-middleware');
-	const webpackConfig = require('../../../webpack.dev.config');
+	const webpackConfig = require('../../../webpack.dev.config')(process.env);
 	let compiler = webpack(webpackConfig);
 	
 	app.use(webpackDevMiddleware(compiler, {
