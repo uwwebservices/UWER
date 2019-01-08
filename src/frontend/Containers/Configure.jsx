@@ -156,6 +156,21 @@ class Configure extends Component {
                 <div className="startRegistration">
                     <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
                 </div>
+                <br />
+
+                <div className="card">
+                    <div className="card-header">
+                        <h2>Terms of Use</h2>                 
+                    </div>
+                    <div className="card-body">                                      
+                            <ul className="TOS">
+                                <li>Application administrators are expected to have read and agreed to the <a target="_blank" href="https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration">UW Institutional Data Access agreement</a>. Privacy expectations and appropriate use are the responsibility of the application administrators.</li>
+                                <li>The functionality contained in this application is explicitly for the use of capturing event participants. Any other use of Husky Card data elements (Name, NetID, Photo, Magstrip, RFID) and information captured is explicitly prohibited. </li>
+                                <li>The use of the “Allow NetID Registration” feature should always be accompanied by a secondary form of identification (e.g. drivers license). The use of the “Allow NetID Registration” feature without secondary identification <u>and</u> the registrant physical presence is explicitly prohibited. </li>
+                                <li>When the “Private Group” feature is used, only application administrators should be given access to view the event participants. </li>
+                                <li>Event participants’ information is to <u>only</u> be used for the event the participant registered for. Aggregation or secondary use of event participant information is explicitly prohibited. </li> </ul>
+                    </div>
+                </div>            
             </div>
         )
     }

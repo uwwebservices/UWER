@@ -204,6 +204,13 @@ strong {
     #subgroupEmailText {
         display: none;
     }
+    .TOS {
+        list-style: disc;
+        margin-left:20px;        
+    }
+    .TOS li{
+        padding-bottom:1em;
+    }
     .subgroupPrivate {
         margin-left: 5px;
         span {
