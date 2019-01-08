@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ConfirmModal from 'Components/ConfirmModal';
 import Tooltip from '@material-ui/core/Tooltip';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import FA from 'react-fontawesome';
 import Button from '@material-ui/core/Button';
 import ContentModal from 'Components/ContentModal';
@@ -9,7 +8,7 @@ import ContentModal from 'Components/ContentModal';
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { deleting: false, closeTooltips: null }
+        this.state = { deleting: false }
     }
     csvify = groupName => {
       let filePath = `/api/csv/${groupName}.csv`;
@@ -19,6 +18,7 @@ export default class Configure extends Component {
       link.click();
     }
     gws = groupName => {
+      // TODO: this should use the groups url from env in case of eval
       window.open(`https://groups.uw.edu/group/${groupName}`, "_blank")
     }
     deleteSubgroup = async subgroup => {
