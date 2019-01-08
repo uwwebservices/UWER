@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
 import ConfirmModal from 'Components/ConfirmModal';
-import Email from 'Components/Email';
 import Tooltip from '@material-ui/core/Tooltip';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import FA from 'react-fontawesome';
-//import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Button from '@material-ui/core/Button';
+import ContentModal from 'Components/ContentModal';
 
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { deleting: false, open: false, emailTooltipText: "Group Email Copied" }
-    }
-    groupEmailCopied = copiedText => {
-      this.setState({open: true});
-      setTimeout(() => {
-        this.setState({open: false});
-      }, 2000);
+        this.state = { deleting: false, closeTooltips: null }
     }
     csvify = groupName => {
       let filePath = `/api/csv/${groupName}.csv`;
@@ -59,9 +53,9 @@ export default class Configure extends Component {
             <div className="subgroupName">{this.props.displayGroupName(groupName)} 
               {this.props.private && 
                 <Tooltip
-                title="Private Group - Member list hidden"
-                placement="top-start"
-                onClose={this.handleTooltipClose}
+                  title="Private Group - Member list hidden"
+                  placement="top"
+                  onClose={this.handleTooltipClose}
                 >
                   <span className="subgroupPrivate">
                     <FA name="lock" />
@@ -70,12 +64,21 @@ export default class Configure extends Component {
               } 
               {this.props.email && 
                 <span className="subgroupPrivate">
-                <Email emailText={this.props.email}></Email>
-               </span>
+                  <ContentModal 
+                    openWithIcon={true} 
+                    dialogTitle="Group Email" 
+                    showCancelButton={false} 
+                    approveButtonColor="default" 
+                    approveButtonText="Close" 
+                    openButtonIcon="envelope-o"
+                    iconButtonTitle="Group Email Enabled"
+                  >
+                    <div>{this.props.email}</div>
+                  </ContentModal>
+                </span>
               }             
             </div>
             <div className="subgroupButtons">
-              
               {SelectButton}
             </div>
         </div>

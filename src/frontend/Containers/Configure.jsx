@@ -94,6 +94,7 @@ class Configure extends Component {
                     <div className="card-header">
                          <h2 className="inline">Select a Registration Group <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} /></h2>
                         <ContentModal 
+                            openWithButton={true}
                             openButtonText="Add a new Registration Group"
                             openButtonIcon="plus" 
                             dialogTitle="Create a New Registration Group" 
@@ -102,7 +103,7 @@ class Configure extends Component {
                             openButtonMini={true} 
                             openButtonClasses={["createSubgroup"]}
                             confirmCallback={this.createSubgroup}
-                            approveText={this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
+                            approveButtonText={this.state.creatingGroup ? <span><FA name="spinner" spin={true} /> Creating</span> : "Create New Subgroup"}
                             approveButtonDisabled={this.state.invalidSubgroup || this.state.creatingGroup}
                             cancelButtonDisabled={this.state.creatingGroup}
                             disableBackdropClick={true}

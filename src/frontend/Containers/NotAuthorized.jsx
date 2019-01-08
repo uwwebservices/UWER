@@ -26,8 +26,8 @@ class NotAuthorized extends Component {
                     confirmCallback={this.endRegistration} 
                     openButtonText="Logout"
                     modalText=" "
-                    approveText="Back to Home"
-                    cancelText="Cancel" />&nbsp;
+                    approveButtonText="Back to Home"
+                    cancelButtonText="Cancel" />&nbsp;
                 <Button color="primary" variant="raised" onClick={() => this.gws()}><FA name="group" />&nbsp;Groups WS</Button>
             </div>
         )
