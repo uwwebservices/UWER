@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import ConfirmModal from 'Components/ConfirmModal';
+import Email from 'Components/Email';
 import Tooltip from '@material-ui/core/Tooltip';
 import FA from 'react-fontawesome';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+//import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Button from '@material-ui/core/Button';
 
 export default class Configure extends Component {
@@ -64,24 +65,17 @@ export default class Configure extends Component {
                 >
                   <span className="subgroupPrivate">
                     <FA name="lock" />
-                  </span>
+                  </span>                  
                 </Tooltip>
               } 
-              {this.props.email &&
-                <Tooltip
-                  open={this.state.open}
-                  title={this.state.emailTooltipText}
-                  placement="right-start"
-                  onClose={this.handleTooltipClose}
-                >
-                  <span className="subgroupEmail">
-                    <CopyToClipboard text={this.props.email} onCopy={this.groupEmailCopied}>
-                      <FA name="envelope" />
-                    </CopyToClipboard>
-                  </span>
-                </Tooltip>}
+              {this.props.email && 
+                <span className="subgroupPrivate">
+                <Email emailText={this.props.email}></Email>
+               </span>
+              }             
             </div>
             <div className="subgroupButtons">
+              
               {SelectButton}
             </div>
         </div>

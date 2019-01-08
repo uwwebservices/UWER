@@ -52,7 +52,6 @@
     "passport": "^0.4.0",
     "passport-saml": "^0.33.0",
     "react": "^16.6.3",
-    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.4.1",
     "react-fontawesome": "^1.6.1",
     "react-notification-system": "^0.2.17",
