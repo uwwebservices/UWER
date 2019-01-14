@@ -165,18 +165,18 @@ class Configure extends Component {
                     </div>
                     <div className="card-body">                                      
                             <ul className="TOS">
-                                <li>* Application administrators are expected to have read and agreed to the <a target="_blank" href="https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration">UW Institutional Data Access agreement</a>. Privacy expectations and appropriate use of personal data are the responsibility of the * application administrators.</li>
+                                <li>*Application administrators are expected to have read and agreed to the <a target="_blank" href="https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration">UW Institutional Data Access agreement</a>. Privacy expectations and appropriate use of personal data are the responsibility of the *Application administrators.</li>
 
                                 <li>The functionality contained in this application is explicitly for the use of capturing event participants. Any other use of the event participants’ information or Husky Card data elements (Name, NetID, Photo, Magstrip, RFID) information captured in the application is explicitly prohibited.</li>
 
                                 <li>The use of the “Allow NetID Registration” feature should always be accompanied by a secondary form of identification (e.g. UW or government issued ID). The use of the “Allow NetID Registration” feature without secondary identification <u>and</u> the event participant or registrant’s physical presence is explicitly prohibited.</li>
 
-                                <li>The “Private Group” feature should be used as the default setting and only * application administrators should be given access to view the event participants.</li>
+                                <li>The “Private Group” feature should be used as the default setting and only *Application administrators should be given access to view the event participants.</li>
 
                                 <li>Use of the event participants’ information is to <u>only</u> be used for purposes directly related to the specific event the participant registered for or attended.</li>
                             </ul>
                             <br />
-                            <i>* Application administrators are those individuals that have been setup to access the configruation screen and are required to login. If you are reading this message you are an application administrator.</i>
+                            <i>*<b>Application administrators</b> are those individuals that have been setup to access the configuration screen and are required to login. If you are reading this message you are an Application administrator.</i>
                     </div>
                 </div>            
             </div>
