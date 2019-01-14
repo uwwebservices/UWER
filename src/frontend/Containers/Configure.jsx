@@ -175,6 +175,7 @@ class Configure extends Component {
 
                                 <li>Use of the event participants’ information is to <u>only</u> be used for purposes directly related to the specific event the participant registered for or attended.</li>
                             </ul>
+                            <br />
                             <i>* Application administrators are those individuals that have been setup to access the configruation screen and are required to login. If you are reading this message you are an application administrator.</i>
                     </div>
                 </div>            
