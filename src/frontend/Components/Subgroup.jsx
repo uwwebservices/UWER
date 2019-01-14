@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ConfirmModal from 'Components/ConfirmModal';
 import Tooltip from '@material-ui/core/Tooltip';
 import FA from 'react-fontawesome';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Button from '@material-ui/core/Button';
+import ContentModal from 'Components/ContentModal';
 
 export default class Configure extends Component {
     constructor(props) {
@@ -24,6 +24,7 @@ export default class Configure extends Component {
       link.click();
     }
     gws = groupName => {
+      // TODO: this should use the groups url from env in case of eval
       window.open(`https://groups.uw.edu/group/${groupName}`, "_blank")
     }
     deleteSubgroup = async subgroup => {
@@ -58,28 +59,30 @@ export default class Configure extends Component {
             <div className="subgroupName">{this.props.displayGroupName(groupName)} 
               {this.props.private && 
                 <Tooltip
-                title="Private Group - Member list hidden"
-                placement="top-start"
-                onClose={this.handleTooltipClose}
+                  title="Private Group - Member list hidden"
+                  placement="top"
+                  onClose={this.handleTooltipClose}
                 >
                   <span className="subgroupPrivate">
                     <FA name="lock" />
-                  </span>
+                  </span>                  
                 </Tooltip>
               } 
-              {this.props.email &&
-                <Tooltip
-                  open={this.state.open}
-                  title={this.state.emailTooltipText}
-                  placement="right-start"
-                  onClose={this.handleTooltipClose}
-                >
-                  <span className="subgroupEmail">
-                    <CopyToClipboard text={this.props.email} onCopy={this.groupEmailCopied}>
-                      <FA name="envelope" />
-                    </CopyToClipboard>
-                  </span>
-                </Tooltip>}
+              {this.props.email && 
+                <span className="subgroupPrivate">
+                  <ContentModal 
+                    openWithIcon={true} 
+                    dialogTitle="Group Email" 
+                    showCancelButton={false} 
+                    approveButtonColor="default" 
+                    approveButtonText="Close" 
+                    openButtonIcon="envelope-o"
+                    iconButtonTitle="Group Email Enabled"
+                  >
+                    <div>{this.props.email}</div>
+                  </ContentModal>
+                </span>
+              }             
             </div>
             <div className="subgroupButtons">
               {SelectButton}

@@ -11,10 +11,11 @@ class EndRegistrationModal extends React.Component {
     }
     render() {
         let modalOpts = {
+            openWithButton: true,
             dialogTitle: "End Registation Mode",
             showCancelButton: this.showCancelButton,
-            cancelText: "Back",
-            approveText: "Done",
+            cancelButtonText: "Back",
+            approveButtonText: "Done",
             openButtonText: "End Registration",
             disableBackdropClick: true,
             cancelCallback: this.backToConfig,

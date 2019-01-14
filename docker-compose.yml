@@ -1,0 +1,28 @@
+version: '3'
+services:
+  uwer:
+    build: .
+    ports:
+      - "1111:1111"
+    volumes:
+      - "./config:/www/config"
+    environment:
+      - 'NODE_ENV=production'
+      - 'BASE_GROUP=uw_ais_sm_ews_registration_dev_'
+      - 'PORT=1111'
+      - 'SESSION_KEY=development'
+      - 'CERTIFICATEFILE=config/cert.pfx'
+      - 'PASSPHRASEFILE=config/passphrase.key'
+      - 'IDCARDBASEURL=https://wseval.s.uw.edu/idcard/v1/card.json'
+      - 'PHOTOBASEURL=https://wseval.s.uw.edu/idcard/v1/photo'
+      - 'PWSBASEURL=https://wseval.s.uw.edu/identity/v2/person'
+      - 'GROUPSBASEURL=https://groups.uw.edu/group_sws/v3'
+      - 'INCOMMONFILE=config/incommon.pem'
+      - 'GROUPDISPLAYNAME="UW Event Registration"'
+      - 'IDAAGROUPID=u_agreement_idaa_idcardeventregistration'
+      - 'IDAACHECK=https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl='
+      - 'GROUPADMINS=["ccan", "aisdev.cac.washington.edu"]'
+      - 'SPKEYFILE='
+      - 'IDPENTRYPOINT='
+      - 'IDPCALLBACKURL='
+      - 'IDPISSUER='

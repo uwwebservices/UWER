@@ -5,7 +5,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import FA from 'react-fontawesome';
 
 class ContentModal extends React.Component {
@@ -30,10 +29,17 @@ class ContentModal extends React.Component {
   render() {
     return (
       <span>
-        <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} color={this.props.openButtonColor} onClick={this.handleClickOpen} mini={this.props.openButtonMini} className={this.props.openButtonClasses.join(" ")}>
-          { this.props.openButtonIcon && <span><FA name={this.props.openButtonIcon} /></span>}
-          { this.props.openButtonText && <span> {this.props.openButtonText}</span>}
-        </Button>
+        {/* Should the modal output a button or an icon? */}
+        { this.props.openWithButton &&
+          <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} color={this.props.openButtonColor} onClick={this.handleClickOpen} mini={this.props.openButtonMini} className={this.props.openButtonClasses.join(" ")}>
+            { this.props.openButtonIcon && <span><FA name={this.props.openButtonIcon} /></span>}
+            { this.props.openButtonText && <span> {this.props.openButtonText}</span>}
+          </Button>
+        }
+        { this.props.openWithIcon &&
+          <FA name={this.props.openButtonIcon} title={this.props.iconButtonTitle} onClick={this.handleClickOpen}></FA>
+        }
+
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -48,12 +54,12 @@ class ContentModal extends React.Component {
           <DialogActions>
             { this.props.showCancelButton &&
               <Button onClick={() => this.handleClose(false)} variant="raised" color={this.props.cancelButtonColor} disabled={this.props.cancelButtonDisabled}>
-                { this.props.cancelText }
+                { this.props.cancelButtonText }
               </Button>
             }
             { this.props.showApproveButton &&
               <Button onClick={() => this.handleClose(true)} variant="raised" color={this.props.approveButtonColor} autoFocus disabled={this.props.approveButtonDisabled} >
-              { this.props.approveText}
+              { this.props.approveButtonText}
               </Button>
             }
           </DialogActions>
@@ -68,10 +74,10 @@ ContentModal.propTypes = {
   cancelCallback: PropTypes.func,
   dialogTitle: PropTypes.string,
   children: PropTypes.node,
-  cancelText: PropTypes.string,
+  cancelButtonText: PropTypes.string,
   showCancelButton: PropTypes.bool,
   showApproveButton: PropTypes.bool,
-  approveText: PropTypes.node,
+  approveButtonText: PropTypes.node,
   approveButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
   approveButtonDisabled: PropTypes.bool,
   openButtonText: PropTypes.string,
@@ -81,15 +87,18 @@ ContentModal.propTypes = {
   openButtonMini: PropTypes.bool,
   openButtonClasses: PropTypes.arrayOf(PropTypes.string),
   disableBackdropClick: PropTypes.bool,
-  openButtonDisabled: PropTypes.bool
+  openButtonDisabled: PropTypes.bool,
+  openWithButton: PropTypes.bool,
+  openWithIcon: PropTypes.bool,
+  iconButtonTitle: PropTypes.string
 };
 ContentModal.defaultProps = {
   dialogTitle: "",
-  cancelText: "Cancel",
+  cancelButtonText: "Cancel",
   cancelButtonColor: "default",
   showCancelButton: true,
   showApproveButton: true,
-  approveText: "Continue",
+  approveButtonText: "Continue",
   approveButtonColor: "primary",
   approveButtonDisabled: false,
   openButtonText: "Open Modal",
@@ -101,7 +110,10 @@ ContentModal.defaultProps = {
   confirmCallback: () => {},
   cancelCallback: () => {},
   disableBackdropClick: false,
-  openButtonDisabled: false
+  openButtonDisabled: false,
+  openWithButton: false,
+  openWithIcon: false,
+  iconButtonTitle: ""
 }
 
 export default ContentModal;
