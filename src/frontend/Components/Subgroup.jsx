@@ -8,7 +8,13 @@ import ContentModal from 'Components/ContentModal';
 export default class Configure extends Component {
     constructor(props) {
         super(props);
-        this.state = { deleting: false }
+        this.state = { deleting: false, open: false, emailTooltipText: "Group Email Copied" }
+    }
+    groupEmailCopied = copiedText => {
+      this.setState({open: true});
+      setTimeout(() => {
+        this.setState({open: false});
+      }, 2000);
     }
     csvify = groupName => {
       let filePath = `/api/csv/${groupName}.csv`;
