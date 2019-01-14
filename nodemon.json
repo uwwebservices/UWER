@@ -21,7 +21,7 @@
         "GROUPDISPLAYNAME": "UW Event Registration",
         "IDAAGROUPID": "u_agreement_idaa_idcardeventregistration",
         "IDAACHECK": "https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl=",
-        "GROUPADMINS": ["ccan", "aisdev.cac.washington.edu"],
+        "GROUPADMINS": ["ccan", "integrations.event.uw.edu"],
         "SPKEYFILE": "",
         "IDPENTRYPOINT": "",
         "IDPCALLBACKURL": "",
