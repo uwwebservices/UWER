@@ -124,7 +124,6 @@ const Groups = {
                         } else {
                             return {"id": admin, "type": "uwnetid"};
                         }
-                        
                     }),
                     "readers": readers,
                     classification
