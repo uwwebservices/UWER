@@ -165,7 +165,7 @@ class Configure extends Component {
                     </div>
                     <div className="card-body">                                      
                             <ul className="TOS">
-                                <li>*Application administrators are expected to have read and agreed to the <a target="_blank" href="https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration">UW Institutional Data Access agreement</a>. Privacy expectations and appropriate use of personal data are the responsibility of the *Application administrators.</li>
+                                <li>*Application administrators are expected to have read and agreed to the <a target="_blank" href="https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=UW%20Event%20Registration">UW Institutional Data Access agreement</a>. Privacy expectations and appropriate use of personal data are the responsibility of the *Application administrators.</li>
 
                                 <li>The functionality contained in this application is explicitly for the use of capturing event participants. Any other use of the event participants’ information or Husky Card data elements (Name, NetID, Photo, Magstrip, RFID) information captured in the application is explicitly prohibited.</li>
 
