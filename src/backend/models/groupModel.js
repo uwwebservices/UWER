@@ -7,7 +7,6 @@ const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
 const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
 const INCOMMONFILE = process.env.INCOMMONFILE;
 const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
-
 const CONTROLLING_CERTIFICATE = process.env.CONTROLLING_CERTIFICATE || 'integrations.event.uw.edu';
 const BASE_ADMIN_GROUP = process.env.BASE_ADMIN_GROUP || process.env.BASE_GROUP + '-admin';
 
@@ -47,6 +46,19 @@ const GetGroupInfo = async group => {
   } catch (ex) {
     throw ex;
   }
+};
+
+// flattens groups/subgroups into members lists recursively
+const groupsToMembers = async group => {
+  let members = (await Groups.GetMembers(group)).Payload;
+  let spread = await members.map(async m => {
+    if (m.type !== 'group') {
+      return m.id;
+    } else {
+      return await groupsToMembers(m.id);
+    }
+  });
+  return [].concat.apply([], await Promise.all(spread));
 };
 
 const Groups = {
@@ -91,13 +103,14 @@ const Groups = {
         if (admin.type !== 'group') {
           return admin.id;
         } else {
-          let members = await this.GetMembers(admin.id);
-          return members.Payload.map(m => m.id);
+          let temp = await groupsToMembers(admin.id);
+          console.log('DONE', temp);
+          return temp;
         }
       });
 
       admins = [].concat.apply([], await Promise.all(admins));
-
+      console.log('FINAL ADMIS', admins);
       return SuccessResponse(admins);
     } catch (ex) {
       console.log(ex);
