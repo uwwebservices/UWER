@@ -85,8 +85,19 @@ const Groups = {
   },
   async GetAdmins(group) {
     try {
-      let g = await GetGroupInfo(group);
-      let admins = g.admins.map(a => a.id);
+      let groupInfo = (await GetGroupInfo(group)).admins;
+
+      let admins = await groupInfo.map(async admin => {
+        if (admin.type !== 'group') {
+          return admin.id;
+        } else {
+          let members = await this.GetMembers(admin.id);
+          return members.Payload.map(m => m.id);
+        }
+      });
+
+      admins = [].concat.apply([], await Promise.all(admins));
+
       return SuccessResponse(admins);
     } catch (ex) {
       console.log(ex);
