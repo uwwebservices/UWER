@@ -11,14 +11,14 @@ class ContentModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      open: false
     };
   }
-  
+
   handleClickOpen = () => this.setState({ open: true });
 
   handleClose = async confirmed => {
-    if(confirmed) {
+    if (confirmed) {
       await this.props.confirmCallback();
     } else {
       this.props.cancelCallback();
@@ -30,15 +30,24 @@ class ContentModal extends React.Component {
     return (
       <span>
         {/* Should the modal output a button or an icon? */}
-        { this.props.openWithButton &&
-          <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} color={this.props.openButtonColor} onClick={this.handleClickOpen} mini={this.props.openButtonMini} className={this.props.openButtonClasses.join(" ")}>
-            { this.props.openButtonIcon && <span><FA name={this.props.openButtonIcon} /></span>}
-            { this.props.openButtonText && <span> {this.props.openButtonText}</span>}
+        {this.props.openWithButton && (
+          <Button
+            variant={this.props.openButtonVariant}
+            disabled={this.props.openButtonDisabled}
+            color={this.props.openButtonColor}
+            onClick={this.handleClickOpen}
+            mini={this.props.openButtonMini}
+            className={this.props.openButtonClasses.join(' ')}
+          >
+            {this.props.openButtonIcon && (
+              <span>
+                <FA name={this.props.openButtonIcon} />
+              </span>
+            )}
+            {this.props.openButtonText && <span> {this.props.openButtonText}</span>}
           </Button>
-        }
-        { this.props.openWithIcon &&
-          <FA name={this.props.openButtonIcon} title={this.props.iconButtonTitle} onClick={this.handleClickOpen}></FA>
-        }
+        )}
+        {this.props.openWithIcon && <FA name={this.props.openButtonIcon} title={this.props.iconButtonTitle} onClick={this.handleClickOpen} />}
 
         <Dialog
           open={this.state.open}
@@ -47,21 +56,25 @@ class ContentModal extends React.Component {
           aria-describedby="alert-dialog-description"
           disableBackdropClick={this.props.disableBackdropClick}
         >
-          <DialogTitle id="alert-dialog-title">{this.props.dialogTitle }</DialogTitle>
-          <DialogContent>
-            { ...this.props.children }
-          </DialogContent>
+          <DialogTitle id="alert-dialog-title">{this.props.dialogTitle}</DialogTitle>
+          <DialogContent>{...this.props.children}</DialogContent>
           <DialogActions>
-            { this.props.showCancelButton &&
+            {this.props.showCancelButton && (
               <Button onClick={() => this.handleClose(false)} variant="raised" color={this.props.cancelButtonColor} disabled={this.props.cancelButtonDisabled}>
-                { this.props.cancelButtonText }
+                {this.props.cancelButtonText}
               </Button>
-            }
-            { this.props.showApproveButton &&
-              <Button onClick={() => this.handleClose(true)} variant="raised" color={this.props.approveButtonColor} autoFocus disabled={this.props.approveButtonDisabled} >
-              { this.props.approveButtonText}
+            )}
+            {this.props.showApproveButton && (
+              <Button
+                onClick={() => this.handleClose(true)}
+                variant="raised"
+                color={this.props.approveButtonColor}
+                autoFocus
+                disabled={this.props.approveButtonDisabled}
+              >
+                {this.props.approveButtonText}
               </Button>
-            }
+            )}
           </DialogActions>
         </Dialog>
       </span>
@@ -78,12 +91,12 @@ ContentModal.propTypes = {
   showCancelButton: PropTypes.bool,
   showApproveButton: PropTypes.bool,
   approveButtonText: PropTypes.node,
-  approveButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
+  approveButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
   approveButtonDisabled: PropTypes.bool,
   openButtonText: PropTypes.string,
   openButtonIcon: PropTypes.string,
   openButtonVariant: PropTypes.oneOf(['text', 'flat', 'outlined', 'contained', 'raised', 'fab', 'extendedFab']),
-  openButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
+  openButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
   openButtonMini: PropTypes.bool,
   openButtonClasses: PropTypes.arrayOf(PropTypes.string),
   disableBackdropClick: PropTypes.bool,
@@ -93,18 +106,18 @@ ContentModal.propTypes = {
   iconButtonTitle: PropTypes.string
 };
 ContentModal.defaultProps = {
-  dialogTitle: "",
-  cancelButtonText: "Cancel",
-  cancelButtonColor: "default",
+  dialogTitle: '',
+  cancelButtonText: 'Cancel',
+  cancelButtonColor: 'default',
   showCancelButton: true,
   showApproveButton: true,
-  approveButtonText: "Continue",
-  approveButtonColor: "primary",
+  approveButtonText: 'Continue',
+  approveButtonColor: 'primary',
   approveButtonDisabled: false,
-  openButtonText: "Open Modal",
-  openButtonIcon: "",
-  openButtonVariant: "raised",
-  openButtonColor: "primary",
+  openButtonText: 'Open Modal',
+  openButtonIcon: '',
+  openButtonVariant: 'raised',
+  openButtonColor: 'primary',
   openButtonMini: false,
   openButtonClasses: [],
   confirmCallback: () => {},
@@ -113,7 +126,7 @@ ContentModal.defaultProps = {
   openButtonDisabled: false,
   openWithButton: false,
   openWithIcon: false,
-  iconButtonTitle: ""
-}
+  iconButtonTitle: ''
+};
 
 export default ContentModal;
