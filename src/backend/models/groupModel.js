@@ -48,22 +48,6 @@ const GetGroupInfo = async group => {
   }
 };
 
-// takes a group name and traverses members expanding groups
-const groupsToMembers = async group => {
-  console.log('getting members of group:', group);
-  let members = (await Groups.GetAdmins(group)).Payload;
-  console.log('members of group:', members);
-  let spread = await members.map(async m => {
-    if (m.type !== 'group') {
-      return m.id;
-    } else {
-      return await groupsToMembers(m.id);
-    }
-  });
-  console.log('spread members', spread);
-  return [].concat.apply([], await Promise.all(spread));
-};
-
 const Groups = {
   async IsConfidentialGroup(group) {
     return (await GetGroupInfo(group)).classification === 'c';
@@ -100,20 +84,21 @@ const Groups = {
   },
   async GetAdmins(group) {
     try {
-      let groupInfo = (await GetGroupInfo(group)).admins;
-
-      let admins = await groupInfo.map(async admin => {
-        if (admin.type !== 'group') {
-          return admin.id;
+      console.log('group', group);
+      let admins = [];
+      let queue = (await GetGroupInfo(group)).admins;
+      console.log('queue', queue);
+      while (queue.length > 0) {
+        let mem = queue.pop();
+        if (mem.type == 'group') {
+          let temp = (await GetGroupInfo(mem.id)).admins;
+          console.log('subgroup mems', temp);
+          queue = [...queue, ...temp];
         } else {
-          let temp = await groupsToMembers(admin.id);
-          console.log('DONE', temp);
-          return temp;
+          admins.push(mem.id);
         }
-      });
-
-      admins = [].concat.apply([], await Promise.all(admins));
-      console.log('FINAL ADMINS', admins);
+      }
+      console.log('DONE PROCESSING', admins);
       return SuccessResponse(admins);
     } catch (ex) {
       console.log(ex);
