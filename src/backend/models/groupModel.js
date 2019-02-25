@@ -50,7 +50,9 @@ const GetGroupInfo = async group => {
 
 // takes a group name and traverses members expanding groups
 const groupsToMembers = async group => {
+  console.log('getting members of group:', group);
   let members = (await Groups.GetAdmins(group)).Payload;
+  console.log('members of group:', members);
   let spread = await members.map(async m => {
     if (m.type !== 'group') {
       return m.id;
@@ -58,6 +60,7 @@ const groupsToMembers = async group => {
       return await groupsToMembers(m.id);
     }
   });
+  console.log('spread members', spread);
   return [].concat.apply([], await Promise.all(spread));
 };
 
@@ -110,7 +113,7 @@ const Groups = {
       });
 
       admins = [].concat.apply([], await Promise.all(admins));
-      console.log('FINAL ADMIS', admins);
+      console.log('FINAL ADMINS', admins);
       return SuccessResponse(admins);
     } catch (ex) {
       console.log(ex);
