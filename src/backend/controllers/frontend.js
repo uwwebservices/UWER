@@ -29,7 +29,7 @@ app.post(
     if (admins && admins.indexOf(req.user.UWNetID) > -1) {
       next();
     } else {
-      console.log('User is not in the admins group, redirect to homepage and log out');
+      console.log(`User ${req.user.UWNetID} is not in the admins group, redirect to homepage and log out`);
       req.logout();
       req.session.destroy();
       res.clearCookie('connect.sid', { path: Routes.Welcome });

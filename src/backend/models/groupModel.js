@@ -84,21 +84,18 @@ const Groups = {
   },
   async GetAdmins(group) {
     try {
-      console.log('group', group);
       let admins = [];
       let queue = (await GetGroupInfo(group)).admins;
-      console.log('queue', queue);
+      // expand all groups into admins of those groups
       while (queue.length > 0) {
         let mem = queue.pop();
         if (mem.type == 'group') {
           let temp = (await GetGroupInfo(mem.id)).admins;
-          console.log('subgroup mems', temp);
           queue = [...queue, ...temp];
         } else {
           admins.push(mem.id);
         }
       }
-      console.log('DONE PROCESSING', admins);
       return SuccessResponse(admins);
     } catch (ex) {
       console.log(ex);
