@@ -48,9 +48,9 @@ const GetGroupInfo = async group => {
   }
 };
 
-// flattens groups/subgroups into members lists recursively
+// takes a group name and traverses members expanding groups
 const groupsToMembers = async group => {
-  let members = (await Groups.GetMembers(group)).Payload;
+  let members = (await Groups.GetAdmins(group)).Payload;
   let spread = await members.map(async m => {
     if (m.type !== 'group') {
       return m.id;
@@ -170,7 +170,7 @@ const Groups = {
   async SearchGroups(group, verbose = false) {
     let opts = Object.assign({}, options, {
       method: 'GET',
-      url: `${GROUPSBASEURL}/search?stem=${group}&owner=${CONTROLLING_CERTIFICATE}&type=effective&scope=all`
+      url: `${GROUPSBASEURL}/search?name=${group}*&owner=${CONTROLLING_CERTIFICATE}&type=direct&scope=all`
     });
 
     try {

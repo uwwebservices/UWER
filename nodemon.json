@@ -6,7 +6,6 @@
     "NODE_ENV": "development",
     "PORT": 1111,
     "BASE_GROUP": "uw_event_ws-eval_",
-    "BASE_ADMIN_GROUP": "uw_event_ws-eval-admin",
     "SESSION_KEY": "development",
     "CERTIFICATEFILE": "config/cert.pfx",
     "PASSPHRASEFILE": "config/passphrase.key",
@@ -22,6 +21,7 @@
     "IDPENTRYPOINT": "",
     "IDPCALLBACKURL": "",
     "IDPISSUER": "",
-    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu"
+    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu",
+    "BASE_ADMIN_GROUP": "uw_event_ws-eval-admin"
   }
 }
