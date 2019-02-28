@@ -90,7 +90,7 @@ const Groups = {
       while (queue.length > 0) {
         let mem = queue.pop();
         if (mem.type == 'group') {
-          let temp = (await GetGroupInfo(mem.id)).admins;
+          let temp = (await this.GetMembers(mem.id)).Payload;
           queue = [...queue, ...temp];
         } else {
           admins.push(mem.id);
