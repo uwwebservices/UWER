@@ -85,13 +85,15 @@ const Groups = {
   async GetAdmins(group) {
     try {
       let admins = [];
+      let processedGroups = []; // just in case we get circular references
       let queue = (await GetGroupInfo(group)).admins;
       // expand all groups into admins of those groups
       while (queue.length > 0) {
         let mem = queue.pop();
-        if (mem.type == 'group') {
-          let temp = (await this.GetMembers(mem.id)).Payload;
-          queue = [...queue, ...temp];
+        if (mem.type == 'group' && processedGroups.indexOf(mem.id) === -1) {
+          let adminGroupMembers = (await this.GetMembers(mem.id)).Payload;
+          queue = [...queue, ...adminGroupMembers];
+          processedGroups.push(mem.id);
         } else {
           admins.push(mem.id);
         }
