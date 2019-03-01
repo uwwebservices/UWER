@@ -21,7 +21,6 @@
     "IDPENTRYPOINT": "",
     "IDPCALLBACKURL": "",
     "IDPISSUER": "",
-    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu",
-    "BASE_ADMIN_GROUP": "uw_event_ws-eval-admin"
+    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu"
   }
 }

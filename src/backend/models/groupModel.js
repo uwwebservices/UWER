@@ -7,8 +7,8 @@ const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
 const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
 const INCOMMONFILE = process.env.INCOMMONFILE;
 const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
+const BASE_GROUP = process.env.BASE_GROUP;
 const CONTROLLING_CERTIFICATE = process.env.CONTROLLING_CERTIFICATE || 'integrations.event.uw.edu';
-const BASE_ADMIN_GROUP = process.env.BASE_ADMIN_GROUP || process.env.BASE_GROUP + '-admin';
 
 const options = {
   method: 'GET',
@@ -120,7 +120,7 @@ const Groups = {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
 
-    let admins = [{ id: BASE_ADMIN_GROUP, type: 'group' }, { id: CONTROLLING_CERTIFICATE, type: 'dns' }];
+    let admins = [{ id: BASE_GROUP, type: 'group' }, { id: CONTROLLING_CERTIFICATE, type: 'dns' }];
 
     let opts = Object.assign({}, options, {
       method: 'PUT',
