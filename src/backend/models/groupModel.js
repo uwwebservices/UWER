@@ -86,7 +86,7 @@ const Groups = {
     try {
       let admins = [];
       let processedGroups = []; // just in case we get circular references
-      let queue = (await GetGroupInfo(group)).admins;
+      let queue = (await this.GetMembers(group)).Payload;
       // expand all groups into admins of those groups
       while (queue.length > 0) {
         let mem = queue.pop();
