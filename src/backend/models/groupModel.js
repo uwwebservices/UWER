@@ -82,7 +82,12 @@ const Groups = {
       return ErrorResponse(ex);
     }
   },
+  // TODO: Look into using the '/effective_member' endpoint
   async GetAdmins(group) {
+    if (group[group.length - 1] === '_') {
+      group = group.substring(0, group.length - 1);
+    }
+
     try {
       let admins = [];
       let processedGroups = []; // just in case we get circular references
@@ -119,7 +124,7 @@ const Groups = {
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
-
+    this.GetAdmins(BASE_GROUP);
     let admins = [{ id: BASE_GROUP, type: 'group' }, { id: CONTROLLING_CERTIFICATE, type: 'dns' }];
 
     let opts = Object.assign({}, options, {

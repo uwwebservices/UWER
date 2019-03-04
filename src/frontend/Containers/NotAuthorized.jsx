@@ -20,9 +20,9 @@ class NotAuthorized extends Component {
         <h1>Not Authorized</h1>
         <div>
           You are not authorized to configure registrations for &nbsp;
-          <strong>{this.props.groupNameBase}</strong>
+          <strong>{this.props.groupNameBase.slice(0, -1)}</strong>
           <br />
-          To register users for this group your UWNetID needs to be in the administrators of this group.
+          To register users for this group your UWNetID needs to be a member of this group.
         </div>
         <br />
         <EndRegistrationModal
