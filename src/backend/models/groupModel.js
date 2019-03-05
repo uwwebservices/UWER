@@ -52,8 +52,25 @@ const Groups = {
   async IsConfidentialGroup(group) {
     return (await GetGroupInfo(group)).classification === 'c';
   },
-  async UpdateGroup(group) {
-    return false;
+  async UpdateGroup(group, body) {
+    console.log('GROUP', group);
+    let g = await GetGroupInfo(group);
+    body = Object.assign({}, g, body.data);
+    let opts = Object.assign({}, options, {
+      method: 'PUT',
+      headers: {
+        'If-Match': '*'
+      },
+      url: `${GROUPSBASEURL}/group/${group}`,
+      body
+    });
+    try {
+      //let res = await rp(opts);
+      return true;
+    } catch (ex) {
+      console.log(ex);
+      return false;
+    }
   },
   async AddMember(group, identifier) {
     let opts = Object.assign({}, options, {
@@ -121,12 +138,32 @@ const Groups = {
       return ErrorResponse(ex);
     }
   },
+  async FixSubGroups(parent) {
+    let subgroups = (await this.SearchGroups(parent)).Payload;
+    for (let s of subgroups) {
+      if (s.id != parent) {
+        let body = {
+          data: {
+            admins: [{ type: 'dns', id: 'integrations.event.uw.edu' }, { type: 'group', id: parent }]
+          }
+        };
+        console.log(JSON.stringify(body));
+        console.log('UPDATING', s.id, await this.UpdateGroup(s.id, body));
+      }
+    }
+  },
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
-    this.GetAdmins(BASE_GROUP);
-    let admins = [{ id: BASE_GROUP, type: 'group' }, { id: CONTROLLING_CERTIFICATE, type: 'dns' }];
 
+    //this.FixSubGroups('uw_event_ws-eval');
+
+    let admins = [
+      { id: CONTROLLING_CERTIFICATE, type: 'dns' },
+      { id: 'uw_ais_sm_ews', type: 'group' },
+      { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }
+    ];
+    console.log(admins);
     let opts = Object.assign({}, options, {
       method: 'PUT',
       url: `${GROUPSBASEURL}/group/${group}?synchronized=true`,
