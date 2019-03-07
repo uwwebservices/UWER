@@ -26,9 +26,11 @@ export default class Test extends React.Component {
   render() {
     const listItems = this.props.members.map(mem => {
       let showDelete = (this.props.authenticated || this.props.development) && !mem.deleting && !mem.loading;
+
       let isStudent = mem.EduPersonAffiliations && mem.EduPersonAffiliations.indexOf('student') > -1;
       let isEmployee = mem.EduPersonAffiliations && mem.EduPersonAffiliations.indexOf('employee') > -1;
       let isAlum = mem.EduPersonAffiliations && mem.EduPersonAffiliations.indexOf('alum') > -1;
+
       let badges = !mem.loading && (
         <span>
           {mem.UWNetID}
@@ -37,8 +39,9 @@ export default class Test extends React.Component {
           {isAlum && <Chip label="alum" />}
         </span>
       );
+      let memberKey = (mem.UWNetID || mem.identifier) + Math.floor(Math.random() * 100).toString();
       return (
-        <ListItem key={(mem.UWNetID || mem.identifier) + Math.floor(Math.random() * 100).toString()} className={mem.deleting ? 'memberDeleting' : ''}>
+        <ListItem key={memberKey} className={mem.deleting ? 'memberDeleting' : ''}>
           <Avatar src={mem.Base64Image} />
           <ListItemText primary={badges || 'Loading...'} secondary={mem.DisplayName} />
           {(mem.deleting || mem.loading) && (

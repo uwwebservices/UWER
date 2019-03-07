@@ -52,6 +52,7 @@ const Groups = {
   async IsConfidentialGroup(group) {
     return (await GetGroupInfo(group)).classification === 'c';
   },
+  // not fully tested
   async UpdateGroup(group, body) {
     console.log('GROUP', group);
     let g = await GetGroupInfo(group);
@@ -138,6 +139,8 @@ const Groups = {
       return ErrorResponse(ex);
     }
   },
+  // An attempt to auto fix subgroup admins, a bit wonky as is GWS, not fully tested
+  //this.FixSubGroups('uw_event_ws-eval');
   async FixSubGroups(parent) {
     let subgroups = (await this.SearchGroups(parent)).Payload;
     for (let s of subgroups) {
@@ -155,8 +158,6 @@ const Groups = {
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
-
-    //this.FixSubGroups('uw_event_ws-eval');
 
     let admins = [
       { id: CONTROLLING_CERTIFICATE, type: 'dns' },
