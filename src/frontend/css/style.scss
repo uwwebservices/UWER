@@ -184,7 +184,7 @@ strong {
     background-color: indianred;
     opacity: 0.4;
   }
-  .MuiChip-root-115 {
+  .memberDisplay span div {
     height: 16px;
     font-size: 0.7rem;
     color: white;
@@ -193,7 +193,7 @@ strong {
     &:first-child {
       margin-left: 4px;
     }
-    .MuiChip-label-128 {
+    span {
       padding-left: 5px;
       padding-right: 5px;
     }

@@ -43,7 +43,7 @@ export default class Test extends React.Component {
       return (
         <ListItem key={memberKey} className={mem.deleting ? 'memberDeleting' : ''}>
           <Avatar src={mem.Base64Image} />
-          <ListItemText primary={badges || 'Loading...'} secondary={mem.DisplayName} />
+          <ListItemText primary={badges || 'Loading...'} secondary={mem.DisplayName} classes={{ primary: 'memberDisplay' }} />
           {(mem.deleting || mem.loading) && (
             <span className="loadSpinner">
               <FA name="spinner" spin={true} size="2x" />
