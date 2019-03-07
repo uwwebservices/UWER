@@ -34,7 +34,6 @@ const PWS = {
     });
     try {
       res = await rp(opts);
-      console.log(res);
     } catch (ex) {
       res = { UWNetID: 'User Registered', DisplayName: 'Details Not Found', UWRegID: '' };
     }
