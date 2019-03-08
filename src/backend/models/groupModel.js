@@ -35,34 +35,47 @@ const ErrorResponse = ex => {
   };
 };
 
-const GetGroupInfo = async group => {
-  let opts = Object.assign({}, options, {
-    method: 'GET',
-    url: `${GROUPSBASEURL}/group/${group}`
-  });
-  try {
-    let res = await rp(opts);
-    return res.data;
-  } catch (ex) {
-    throw ex;
+// Takes a parent group and updates all subgroups non-destructively
+const FixSubgroups = async parent => {
+  let subgroups = (await Groups.SearchGroups(parent)).Payload;
+  for (let s of subgroups) {
+    if (s.id != parent) {
+      let data = await Groups.GetGroupInfo(s.id);
+      // Things to update go here
+      // Extend admins section to include integrations cert and parent group members
+      data.admins = [...data.admins, { type: 'dns', id: 'integrations.event.uw.edu' }, { type: 'group', id: parent }];
+      // Format into GWS body format
+      let body = { data };
+      console.log('UPDATING', s.id, await Groups.UpdateGroup(s.id, body));
+    }
   }
 };
 
 const Groups = {
   async IsConfidentialGroup(group) {
-    return (await GetGroupInfo(group)).classification === 'c';
+    return (await this.GetGroupInfo(group)).classification === 'c';
   },
-
+  async GetGroupInfo(group) {
+    let opts = Object.assign({}, options, {
+      method: 'GET',
+      url: `${GROUPSBASEURL}/group/${group}`
+    });
+    try {
+      let res = await rp(opts);
+      return res.data;
+    } catch (ex) {
+      throw ex;
+    }
+  },
+  // Updates a group with the provided body (see: fixSubgroups for usage)
   async UpdateGroup(group, body) {
-    let g = await GetGroupInfo(group);
-    body = Object.assign({}, g, body.data);
     let opts = Object.assign({}, options, {
       method: 'PUT',
       headers: {
         'If-Match': '*'
       },
       url: `${GROUPSBASEURL}/group/${group}`,
-      body: { data: body }
+      body
     });
     try {
       let res = await rp(opts);
@@ -138,22 +151,6 @@ const Groups = {
       return ErrorResponse(ex);
     }
   },
-  // An attempt to auto fix subgroup admins, a bit wonky as is GWS, not fully tested
-  //this.FixSubGroups('uw_event_ws-eval');
-  async FixSubGroups(parent) {
-    let subgroups = (await this.SearchGroups(parent)).Payload;
-    for (let s of subgroups) {
-      if (s.id != parent) {
-        let body = {
-          data: {
-            admins: [{ type: 'dns', id: 'integrations.event.uw.edu' }, { type: 'group', id: parent }]
-          }
-        };
-        console.log(JSON.stringify(body));
-        console.log('UPDATING', s.id, await this.UpdateGroup(s.id, body));
-      }
-    }
-  },
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
@@ -163,8 +160,7 @@ const Groups = {
       { id: 'uw_ais_sm_ews', type: 'group' },
       { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }
     ];
-    //this.FixSubGroups('uw_event_cs');
-    console.log(admins);
+
     let opts = Object.assign({}, options, {
       method: 'PUT',
       url: `${GROUPSBASEURL}/group/${group}?synchronized=true`,
@@ -210,7 +206,7 @@ const Groups = {
         let verboseGroups = [];
         await Promise.all(
           data.map(async g => {
-            let vg = await GetGroupInfo(g.regid);
+            let vg = await this.GetGroupInfo(g.regid);
             if (vg.affiliates.length > 1) {
               vg.email = `${vg.id}@uw.edu`;
             }
