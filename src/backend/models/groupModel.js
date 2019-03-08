@@ -52,9 +52,8 @@ const Groups = {
   async IsConfidentialGroup(group) {
     return (await GetGroupInfo(group)).classification === 'c';
   },
-  // not fully tested
+
   async UpdateGroup(group, body) {
-    console.log('GROUP', group);
     let g = await GetGroupInfo(group);
     body = Object.assign({}, g, body.data);
     let opts = Object.assign({}, options, {
@@ -63,13 +62,13 @@ const Groups = {
         'If-Match': '*'
       },
       url: `${GROUPSBASEURL}/group/${group}`,
-      body
+      body: { data: body }
     });
     try {
-      //let res = await rp(opts);
+      let res = await rp(opts);
       return true;
     } catch (ex) {
-      console.log(ex);
+      console.log('ERROR MESSAGE', ex);
       return false;
     }
   },
@@ -164,6 +163,7 @@ const Groups = {
       { id: 'uw_ais_sm_ews', type: 'group' },
       { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }
     ];
+    //this.FixSubGroups('uw_event_cs');
     console.log(admins);
     let opts = Object.assign({}, options, {
       method: 'PUT',
