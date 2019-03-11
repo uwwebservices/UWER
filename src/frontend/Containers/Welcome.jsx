@@ -34,10 +34,9 @@ class Welcome extends Component {
                 </div>
                 <div className="welcomeTable">
                     <div>
-                        <p>To get started, log in with your UW NetID and setup your event.</p>
+                        <p>To get started: Log in with your UW NetID and setup your event.</p>
                         <p>
-                            Access is restricted to previously setup personnel. If you need help with your 
-                            Event Registration setup please email help@uw.edu and ask for Enterprise Web Services. 
+                        Access is restricted to previously setup personnel. If you need help with your Event Registration setup, please email help@uw.edu and ask for Enterprise Web Services.
                         </p>
                     </div>
                     <div className="welcomeRight">

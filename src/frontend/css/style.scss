@@ -6,290 +6,315 @@ $cream-color: #e8e3d3;
 $uw-purple: #4b2e83;
 
 body {
-    background-color: $cream-color;    
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;    
+  background-color: $cream-color;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
 }
 strong {
-    font-weight: 600;
+  font-weight: 600;
 }
 #root {
+  margin-bottom: 20px;
+
+  .pageWrapper {
+    display: grid;
+    grid-column-gap: 0;
+    height: 100vh;
+    grid-template-columns: 1fr 5fr 1fr;
+    grid-template-rows: 55px 1fr 55px;
+    grid-row-gap: 20px;
+    overflow: scroll;
+  }
+
+  nav {
+    grid-area: 1 / 1 / 2 / 4;
+  }
+
+  main {
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 800px;
+    min-width: 700px;
+  }
+
+  footer {
+    grid-area: 3 / 1 / 4 / 4;
+  }
+
+  .configForm {
+    .configLabel {
+      width: 120px;
+      margin: 4px 0 4px 20px;
+      display: inline-block;
+    }
+
+    .configLabel:after {
+      content: ': ';
+    }
+
+    .configInput {
+      width: 300px;
+    }
+
+    .submitButton {
+      margin-top: 20px;
+    }
+  }
+
+  p {
+    font-size: 17px;
+    line-height: 1.72222;
+    margin: 0 0 14.5px;
+    font-weight: 400;
+    color: #3d3d3d;
+  }
+
+  h1,
+  h2 {
+    color: $uw-purple;
+    display: block;
+  }
+
+  h1 {
+    font-size: 37px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin-top: 16px;
+    margin-bottom: 14.5px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Encode Sans Compressed', sans-serif;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .righted {
+    float: right;
+  }
+  .inline {
+    display: inline-block;
+  }
+
+  .buttonize {
+    background-color: $uw-purple !important;
+  }
+  .registrationTable {
+    display: grid;
+    grid-template-columns: 75% 25%;
+  }
+  .endRegistration {
+    margin-top: 22px;
+    margin-bottom: 10.5px;
+  }
+
+  .welcomeHeader h1 {
+    margin-top: -70px;
+    padding: 10px;
+    color: white;
+  }
+
+  .welcomeTable {
+    display: grid;
+    grid-template-columns: 75% 25%;
+  }
+
+  .welcomeRight {
+    text-align: right;
+  }
+
+  .background {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .subgroupList {
     margin-bottom: 20px;
+  }
+  .subgroupTable {
+    display: grid;
+  }
+  .subgroupName {
+    min-width: 320px;
+    padding-left: 10px;
+  }
+  .subgroupItem {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin: 3px 5px 0 5px;
+    height: 2.5em;
+    line-height: 2.4em;
+    border-radius: 5px;
+    &.selected {
+      background-color: #eee;
+    }
+  }
+  .createGroupForm {
+    margin-left: 5px;
+  }
+  .createSubgroup {
+    line-height: 8px;
+    float: right;
+    margin: 5px 0;
+  }
+  .subgroupButtons {
+    text-align: right;
+    button {
+      width: 100px;
+      margin: 0 2px;
+    }
+  }
+  .privateGroupToggle {
+    margin-left: 10px;
+  }
+  .memberDeleting {
+    background-color: indianred;
+    opacity: 0.4;
+  }
+  .memberDisplay span div {
+    padding-top: 1px;
+    padding-bottom: 0;
+    height: 16px;
+    font-size: 0.7rem;
+    color: white;
+    margin-right: 3px;
+    background-color: #9281b4;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    &:first-child {
+      margin-left: 4px;
+    }
+    span {
+      padding: 1px 5px 0 5px;
+    }
+  }
 
-    .pageWrapper {
-        display: grid;
-        grid-column-gap: 0;
-        height: 100vh;
-        grid-template-columns: 1fr 5fr 1fr;
-        grid-template-rows: 55px 1fr 55px;
-        grid-row-gap: 20px;
-        overflow: scroll;
+  .loadSpinner {
+    margin-right: 5px;
+  }
+  .registrationNotification {
+    margin: auto;
+    padding: 10px;
+    background-color: lightgoldenrodyellow;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+  }
+  .padLeft {
+    padding-left: 3px;
+  }
+  .subgroupError {
+    font-size: 0.6em;
+    color: #aa0000;
+    margin-bottom: 5px;
+  }
+  .subgroupEmail {
+    margin-left: 5px;
+    span {
+      cursor: pointer;
     }
+  }
+  #subgroupEmailText {
+    display: none;
+  }
+  .TOS {
+    list-style: disc;
+    margin-left: 20px;
+  }
+  .TOS li {
+    padding-bottom: 1em;
+  }
+  .subgroupPrivate {
+    margin-left: 5px;
+    span {
+      cursor: pointer;
+    }
+  }
+  .addMemberButton {
+    margin-left: 5px;
+  }
+  .configOptions {
+    margin-top: 15px;
+    border: 1px dashed #ccc;
+    padding: 10px;
+    .options {
+      margin: 0 0 10px 10px;
+    }
+    label {
+      font-size: 14px;
+    }
+    h2 {
+      margin: 0 0 5px 2px;
+    }
+    input[type='textbox'] {
+      width: 50px;
+      margin: 0 5px;
+    }
+    input[type='checkbox'] {
+      margin-right: 10px;
+    }
+  }
 
-    nav {
-        grid-area: 1 / 1 / 2 / 4;
-    }
+  .card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+  }
 
-    main {        
-        background-color: white;
-        padding: 20px;      
-        margin: 0 auto;
-        max-width: 800px;
-        min-width: 700px;
-    }
+  .card-header:first-child {
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+  }
 
-    footer {
-        grid-area: 3 / 1 / 4 / 4;
-    }
+  .card-header {
+    padding: 0rem 1.25rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
 
-    .configForm {
-        .configLabel {
-            width: 120px;
-            margin: 4px 0 4px 20px;
-            display: inline-block;
-        }
+  .card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+  }
 
-        .configLabel:after {
-            content: ": ";
-        }
+  .startRegistration {
+    text-align: center;
+  }
 
-        .configInput {
-            width: 300px;
-        }
-
-        .submitButton {
-            margin-top: 20px;
-        }
-    }
-
-    p {
-        font-size: 17px;
-        line-height: 1.72222;
-        margin: 0 0 14.5px;
-        font-weight: 400;
-        color: #3d3d3d;
-    }
-
-    h1, h2 {
-        color: $uw-purple;
-        display: block;
-    }
-
-    h1 {
-        font-size: 37px;
-    }
-
-    h1, h2, h3 {
-        margin-top: 16px;
-        margin-bottom: 14.5px;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        font-family: "Encode Sans Compressed",sans-serif;
-        font-weight: 800;
-        line-height: 1.3;
-    }
-
-    .righted {
-        float: right;
-    }
-    .inline {
-        display: inline-block;
-    }
-
-    .buttonize {
-        background-color: $uw-purple !important;
-    }
-    .registrationTable {
-        display: grid;
-        grid-template-columns:75% 25%;
-    }
-    .endRegistration {
-        margin-top: 22px;
-        margin-bottom: 10.5px;
-        
-    }
-
-    .welcomeHeader h1 {
-        margin-top: -70px;
-        padding:10px;
-        color:white;
-    }
-
-    .welcomeTable { 
-        display: grid;
-        grid-template-columns:75% 25%;
-    }
-
-    .welcomeRight { 
-        text-align:right;
-    }
-
-    .background {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .subgroupList {
-        margin-bottom: 20px;
-    }
-    .subgroupTable{
-        display:grid;        
-    }
-    .subgroupName {
-        min-width: 320px;
-        padding-left: 10px;
-    }
-    .subgroupItem {
-        display: grid;        
-        grid-template-columns:50% 50%;
-        margin: 3px 5px 0 5px;
-        height: 2.5em;
-        line-height: 2.4em;
-        border-radius: 5px;
-        &.selected {
-            background-color: #eee;
-        }
-    }
-    .createGroupForm {
-        margin-left: 5px;
-    }
-    .createSubgroup {
-        line-height: 8px;
-        float: right;
-        margin: 5px 0;
-    }
-    .subgroupButtons {
-       text-align: right;
-        button {
-            width: 100px;
-            margin: 0 2px;
-        }
-    }
-    .privateGroupToggle {
-        margin-left: 10px;
-    }
-    .memberDeleting {
-        background-color: indianred;
-        opacity: 0.4;
-    }
-    .loadSpinner {
-        margin-right: 5px;
-    }
-    .registrationNotification {
-        margin:auto;       
-        padding: 10px;
-        background-color: lightgoldenrodyellow;
-        border-radius: 10px;
-        font-weight: bold;
-        text-align:center;
-    }
-    .padLeft {
-        padding-left: 3px;
-    }
-    .subgroupError {
-        font-size: 0.6em;
-        color: #aa0000;
-        margin-bottom: 5px;
-    }
-    .subgroupEmail {
-        margin-left: 5px;
-        span {
-            cursor: pointer;
-        }
-    }
-    #subgroupEmailText {
-        display: none;
-    }
-    .TOS {
-        list-style: disc;
-        margin-left:20px;        
-    }
-    .TOS li{
-        padding-bottom:1em;
-    }
-    .subgroupPrivate {
-        margin-left: 5px;
-        span {
-            cursor: pointer;
-        }
-    }
-    .addMemberButton {
-        margin-left: 5px;
-    }
-    .configOptions {
-        margin-top: 15px;
-        border: 1px dashed #ccc;
-        padding: 10px;
-        .options {
-            margin: 0 0 10px 10px;
-        }
-        label {
-            font-size: 14px;
-        }
-        h2 {
-            margin: 0 0 5px 2px;
-        }
-        input[type=textbox] {
-            width: 50px;
-            margin: 0 5px;
-        }
-        input[type=checkbox] {
-            margin-right: 10px;
-        }
-    }
-
-    .card {
-        position: relative;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #fff;
-        background-clip: border-box;
-        border: 1px solid rgba(0,0,0,.125);
-        border-radius: .25rem;
-    }
-
-    .card-header:first-child {
-        border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
-    }
-    
-    .card-header {
-        padding: 0rem 1.25rem;
-        margin-bottom: 0;
-        background-color: rgba(0,0,0,.03);
-        border-bottom: 1px solid rgba(0,0,0,.125);
-    }
-
-    .card-body {
-        -ms-flex: 1 1 auto;
-        flex: 1 1 auto;
-        padding: 1.25rem;
-    }
-
-    .startRegistration
-    {
-        text-align:center;
-    }
-
-    .registerForm
-    {
-        margin:0 auto;
-        text-align: center;
-    }
+  .registerForm {
+    margin: 0 auto;
+    text-align: center;
+  }
 }
 
 .createSubgroupModal {
-    input[type=text] {
-        width: 300px;
-        margin-right: 10px;
-        font-size: 15px;
-        padding: 4px 6px;
-    }
+  input[type='text'] {
+    width: 300px;
+    margin-right: 10px;
+    font-size: 15px;
+    padding: 4px 6px;
+  }
 }

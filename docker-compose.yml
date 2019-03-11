@@ -3,9 +3,9 @@ services:
   uwer:
     build: .
     ports:
-      - "1111:1111"
+      - '1111:1111'
     volumes:
-      - "./config:/www/config"
+      - './config:/www/config'
     environment:
       - 'NODE_ENV=production'
       - 'BASE_GROUP=uw_ais_sm_ews_registration_dev_'
@@ -21,7 +21,6 @@ services:
       - 'GROUPDISPLAYNAME="UW Event Registration"'
       - 'IDAAGROUPID=u_agreement_idaa_idcardeventregistration'
       - 'IDAACHECK=https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl='
-      - 'GROUPADMINS=["ccan", "aisdev.cac.washington.edu"]'
       - 'SPKEYFILE='
       - 'IDPENTRYPOINT='
       - 'IDPCALLBACKURL='

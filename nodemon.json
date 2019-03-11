@@ -1,30 +1,26 @@
 {
-    "exec" : "babel-node src/backend",
-    "ignore": [
-        "src/frontend"
-    ],
-    "watch": [
-        "src/backend"
-    ],
-    "env": {
-        "NODE_ENV": "development",
-        "PORT": 1111,
-        "BASE_GROUP": "uw_ais_sm_ews_registration_dev_",
-        "SESSION_KEY": "development",
-        "CERTIFICATEFILE": "config/cert.pfx",
-        "PASSPHRASEFILE": "config/passphrase.key",
-        "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1/card.json",
-        "PHOTOBASEURL": "https://wseval.s.uw.edu/idcard/v1/photo",
-        "PWSBASEURL": "https://wseval.s.uw.edu/identity/v2/person",
-        "GROUPSBASEURL": "https://groups.uw.edu/group_sws/v3",
-        "INCOMMONFILE": "config/incommon.pem",
-        "GROUPDISPLAYNAME": "UW Event Registration",
-        "IDAAGROUPID": "u_agreement_idaa_idcardeventregistration",
-        "IDAACHECK": "https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl=",
-        "GROUPADMINS": ["ccan", "integrations.event.uw.edu"],
-        "SPKEYFILE": "",
-        "IDPENTRYPOINT": "",
-        "IDPCALLBACKURL": "",
-        "IDPISSUER": ""
-    }
+  "exec": "babel-node src/backend",
+  "ignore": ["src/frontend"],
+  "watch": ["src/backend"],
+  "env": {
+    "NODE_ENV": "development",
+    "PORT": 1111,
+    "BASE_GROUP": "uw_event_ws-eval_",
+    "SESSION_KEY": "development",
+    "CERTIFICATEFILE": "config/cert.pfx",
+    "PASSPHRASEFILE": "config/passphrase.key",
+    "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1/card.json",
+    "PHOTOBASEURL": "https://wseval.s.uw.edu/idcard/v1/photo",
+    "PWSBASEURL": "https://wseval.s.uw.edu/identity/v2/person",
+    "GROUPSBASEURL": "https://groups.uw.edu/group_sws/v3",
+    "INCOMMONFILE": "config/incommon.pem",
+    "GROUPDISPLAYNAME": "UW Event Registration",
+    "IDAAGROUPID": "u_agreement_idaa_idcardeventregistration",
+    "IDAACHECK": "https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl=",
+    "SPKEYFILE": "",
+    "IDPENTRYPOINT": "",
+    "IDPCALLBACKURL": "",
+    "IDPISSUER": "",
+    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu"
+  }
 }
