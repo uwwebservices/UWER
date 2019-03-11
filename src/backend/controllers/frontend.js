@@ -24,7 +24,8 @@ app.post(
   '/login/callback',
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
   async (req, res, next) => {
-    let admins = (await Groups.GetAdmins(BASE_GROUP.slice(0, -1))).Payload;
+    // admins are the effective members of the base group
+    let admins = (await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1))).Payload;
 
     if (admins && admins.indexOf(req.user.UWNetID) > -1) {
       next();

@@ -112,30 +112,17 @@ const Groups = {
       return ErrorResponse(ex);
     }
   },
-  // TODO: Look into using the '/effective_member' endpoint
-  async GetAdmins(group) {
-    if (group[group.length - 1] === '_') {
-      group = group.substring(0, group.length - 1);
-    }
-
+  // effective members gets all members of all groups
+  // must have member read permission on all subgroups (or no viewer restrictions)
+  async GetEffectiveMembers(group, force = false) {
+    let opts = Object.assign({}, options, {
+      url: `${GROUPSBASEURL}/group/${group}/effective_member${force ? '?source=registry' : ''}`
+    });
     try {
-      let admins = [];
-      let processedGroups = []; // just in case we get circular references
-      let queue = (await this.GetMembers(group)).Payload;
-      // expand all groups into admins of those groups
-      while (queue.length > 0) {
-        let mem = queue.pop();
-        if (mem.type == 'group' && processedGroups.indexOf(mem.id) === -1) {
-          let adminGroupMembers = (await this.GetMembers(mem.id)).Payload;
-          queue = [...queue, ...adminGroupMembers];
-          processedGroups.push(mem.id);
-        } else {
-          admins.push(mem.id);
-        }
-      }
-      return SuccessResponse(admins);
+      let res = await rp(opts);
+
+      return SuccessResponse(res.data.map(u => u.id), res.error);
     } catch (ex) {
-      console.log(ex);
       return ErrorResponse(ex);
     }
   },
