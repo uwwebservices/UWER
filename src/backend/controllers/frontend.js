@@ -26,8 +26,6 @@ app.post(
   async (req, res, next) => {
     // admins are the effective members of the base group
     let admins = (await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1))).Payload;
-    console.log('EFFECTIVE ADMINS', admins);
-    console.log('LOGGED IN USER', req.user.UWNetID);
 
     if (admins && admins.indexOf(req.user.UWNetID) > -1) {
       next();
