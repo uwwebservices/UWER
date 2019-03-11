@@ -113,6 +113,7 @@ const Groups = {
     }
   },
   // effective members gets all members of all groups
+  // must have member read permission on all subgroups (or no viewer restrictions)
   async GetEffectiveMembers(group, force = false) {
     let opts = Object.assign({}, options, {
       url: `${GROUPSBASEURL}/group/${group}/effective_member${force ? '?source=registry' : ''}`
