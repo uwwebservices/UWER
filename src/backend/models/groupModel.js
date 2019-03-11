@@ -144,7 +144,7 @@ const Groups = {
 
     let admins = [
       { id: CONTROLLING_CERTIFICATE, type: 'dns' },
-      { id: 'uw_ais_sm_ews', type: 'group' },
+      { id: 'uw_event', type: 'group' },
       { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }
     ];
 
