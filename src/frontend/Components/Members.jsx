@@ -34,9 +34,9 @@ export default class Test extends React.Component {
       let badges = !mem.loading && (
         <span>
           {mem.UWNetID}
-          {isStudent && <Chip label="S" />}
-          {isEmployee && <Chip label="E" />}
-          {isAlum && <Chip label="A" />}
+          {isStudent && <Chip label="S" title="Student" />}
+          {isEmployee && <Chip label="E" title="Employee" />}
+          {isAlum && <Chip label="A" title="Alum" />}
         </span>
       );
       let memberKey = (mem.UWNetID || mem.identifier) + Math.floor(Math.random() * 100).toString();
