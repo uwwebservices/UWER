@@ -6,7 +6,6 @@ CLUSTER=false
 SERVICE=false
 TASK_DEFINITION=false
 TASK_DEFINITION_ARN=false
-NEW_TASKDEF=false
 MAX_DEFINITIONS=5
 AWS_ASSUME_ROLE=false
 IMAGE=false
@@ -274,7 +273,6 @@ function getCurrentTaskDefinition() {
       TASK_DEFINITION_ARN=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION | jq -r .taskDefinition.taskDefinitionArn`
     fi
     TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
-    NEW_TASKDEF=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
 }
 
 function createNewTaskDefJson() {
@@ -329,6 +327,10 @@ function registerNewTaskDefinition() {
 function rollback() {
     echo "Rolling back to ${TASK_DEFINITION_ARN}"
     $AWS_ECS update-service --cluster $CLUSTER --service $SERVICE --task-definition $TASK_DEFINITION_ARN > /dev/null
+}
+
+function forceNewDeployment() {
+  $AWS_ECS update-service --cluster $CLUSTER --service $SERVICE --forceNewDeployment > /def/null
 }
 
 function updateService() {
@@ -583,7 +585,8 @@ if [ "$BASH_SOURCE" == "$0" ]; then
     if [ $SERVICE == false ]; then
         echo "Task definition updated successfully"
     else
-        updateService
+        #updateService
+        forceNewDeployment
 
         waitForGreenDeployment
     fi
