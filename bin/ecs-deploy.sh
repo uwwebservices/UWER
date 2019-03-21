@@ -575,17 +575,20 @@ if [ "$BASH_SOURCE" == "$0" ]; then
     getCurrentTaskDefinition
     echo "Current task definition: $TASK_DEFINITION_ARN";
     
+    ## IMPORTANT: We don't need to create a new task def because we're using a tagged version
+    #####
     # create new task definition json
     #createNewTaskDefJson
-
     # register new task definition
     #registerNewTaskDefinition
-    echo "New task definition: $NEW_TASKDEF";
+    #echo "New task definition: $NEW_TASKDEF";
 
     # update service if needed
     if [ $SERVICE == false ]; then
         echo "Task definition updated successfully"
     else
+        ## IMPORTANT: commented out update service for a simpler one that just forces a deploy
+        ## This helps solve the Terraform out of sync issues
         #updateService
         forceNewDeployment
 
