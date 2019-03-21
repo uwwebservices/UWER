@@ -273,6 +273,7 @@ function getCurrentTaskDefinition() {
       TASK_DEFINITION_ARN=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION | jq -r .taskDefinition.taskDefinitionArn`
     fi
     TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
+    NEW_TASKDEF = $TASK_DEFINITION
 }
 
 function createNewTaskDefJson() {
@@ -569,7 +570,7 @@ if [ "$BASH_SOURCE" == "$0" ]; then
     # Get current task definition
     getCurrentTaskDefinition
     echo "Current task definition: $TASK_DEFINITION_ARN";
-    NEW_TASKDEF = $TASK_DEFINITION_ARN
+    
     # create new task definition json
     #createNewTaskDefJson
 
