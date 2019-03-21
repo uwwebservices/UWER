@@ -331,7 +331,7 @@ function rollback() {
 }
 
 function forceNewDeployment() {
-  $AWS_ECS update-service --cluster $CLUSTER --service $SERVICE --forceNewDeployment > /def/null
+  $AWS_ECS update-service --cluster $CLUSTER --service $SERVICE --forceNewDeployment > /dev/null
 }
 
 function updateService() {
