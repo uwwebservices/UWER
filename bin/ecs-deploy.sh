@@ -274,7 +274,7 @@ function getCurrentTaskDefinition() {
       TASK_DEFINITION_ARN=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION | jq -r .taskDefinition.taskDefinitionArn`
     fi
     TASK_DEFINITION=`$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
-    NEW_TASKDEF = `$AWS_ECS describe-task-definition --task-def $TASK_DEFINITION_ARN`
+    NEW_TASKDEF=TASK_DEFINITION
 }
 
 function createNewTaskDefJson() {
