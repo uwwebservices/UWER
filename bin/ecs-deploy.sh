@@ -569,12 +569,12 @@ if [ "$BASH_SOURCE" == "$0" ]; then
     # Get current task definition
     getCurrentTaskDefinition
     echo "Current task definition: $TASK_DEFINITION_ARN";
-
+    $NEW_TASKDEF = $TASK_DEFINITION_ARN
     # create new task definition json
-    createNewTaskDefJson
+    #createNewTaskDefJson
 
     # register new task definition
-    registerNewTaskDefinition
+    #registerNewTaskDefinition
     echo "New task definition: $NEW_TASKDEF";
 
     # update service if needed
