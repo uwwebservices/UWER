@@ -4,9 +4,9 @@ trigger:
 - develop
 
 variables:
-- ${{ if eq(Build.SourceBranchName, 'master') }}:
+- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
   imageName: 'eventregistration-prod'
-- ${{ if eq(Build.SourceBranchName, 'develop') }}:
+- ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
   imageName: 'eventregistration-eval'
 
 
