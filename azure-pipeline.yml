@@ -32,14 +32,14 @@ steps:
     branchName: 'refs/heads/master' 
     downloadType: 'specific'
     itemPattern: '**'
-    downloadPath: '$(System.DefaultWorkingDirectory)\temp'
+    downloadPath: '$(System.DefaultWorkingDirectory)/temp'
 
 # Install the AWS CLI which we will need later
 - task: Bash@3
   displayName: 'Install AWS CLI and other dependencies'
   inputs:
     targetType: 'filePath'
-    filePath: '$(System.DefaultWorkingDirectory)\temp\scripts\InstallAWSCLI.sh'
+    filePath: '$(System.DefaultWorkingDirectory)/temp/scripts/InstallAWSCLI.sh'
 
 # Build the docker image
 - task: Docker@0
