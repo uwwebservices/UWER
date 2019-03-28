@@ -3,6 +3,9 @@ trigger:
 - master
 - develop
 
+# no PR builds
+pr: none
+
 variables:
   serviceName: 'eventregistration-eval'
   tagName: 'develop'
