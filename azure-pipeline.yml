@@ -1,0 +1,47 @@
+
+pool:
+  name: Hosted Ubuntu 1604
+
+parameters:
+- ${{ if eq(Build.SourceBranchName, 'master') }}:
+  imageName: 'eventregistration-prod'
+- ${{ if eq(Build.SourceBranchName, 'develop') }}:
+  imageName: 'eventregistration-eval'
+
+steps:
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.x'
+
+- bash: |
+   pip3 install --upgrade pip
+   sudo apt-get install -y python-setuptools jq
+   pip install  awscli
+   pip3 install awscli --upgrade
+   displayName: 'Install AWS CLI'
+
+- task: Docker@0
+  displayName: 'Build docker image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    imageName: $imageName
+    qualifyImageName: false
+    includeLatestTag: true
+
+- task: ECRPushImage@1
+  displayName: 'Push image to AWS Container Registry'
+  inputs:
+    awsCredentials: 'AWS OTIK2'
+    regionName: 'us-east-1'
+    sourceImageName: $imageName
+    repositoryName: eventregistration
+    pushTag: develop
+
+- task: AWSCLI@1
+  displayName: 'AWS CLI: ecs'
+  inputs:
+    awsCredentials: 'AWS OTIK2'
+    regionName: 'us-east-1'
+    awsCommand: ecs
+    awsSubCommand: 'update-service'
+    awsArguments: '--cluster ews-cluster --service $imageName --force-new-deployment'
+    failOnStandardError: true
