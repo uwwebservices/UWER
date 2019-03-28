@@ -4,7 +4,8 @@ trigger:
 - develop
 
 variables:
-  imageName: 'eventregistration-eval'
+  serviceName: 'eventregistration-eval'
+  tagName: 'develop'
 
 pool:
   name: Hosted Ubuntu 1604
@@ -14,12 +15,14 @@ steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.x'
 
-# Change the image name when running on master 
-- script: "echo '##vso[task.setvariable variable=imageName]eventregistration-prod'"
+# Change the service name and tag name when running on master 
+- script: "echo '##vso[task.setvariable variable=serviceName]eventregistration-prod'"
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+- script: "echo '##vso[task.setvariable variable=tagName]prod'"
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
 
 # Debug
-# - script: "echo 'my name is $(imageName)'"
+# - script: "echo 'my name is $(serviceName)'"
 
 # Download common build scripts
 - task: DownloadBuildArtifacts@0
@@ -46,7 +49,7 @@ steps:
   displayName: 'Build docker image'
   inputs:
     containerregistrytype: 'Container Registry'
-    imageName: $(imageName)
+    imageName: 'eventregistrationimage'
     qualifyImageName: false
     includeLatestTag: true
 
@@ -56,9 +59,9 @@ steps:
   inputs:
     awsCredentials: 'AWS OTIK2'
     regionName: 'us-east-1'
-    sourceImageName: $(imageName)
+    sourceImageName: 'eventregistrationimage'
     repositoryName: eventregistration
-    pushTag: develop
+    pushTag: $(tagName)
 
 # Poke the instance so it'll grab the newly uploaded image
 - task: AWSCLI@1
@@ -68,5 +71,5 @@ steps:
     regionName: 'us-east-1'
     awsCommand: ecs
     awsSubCommand: 'update-service'
-    awsArguments: '--cluster ews-cluster --service $(imageName) --force-new-deployment'
+    awsArguments: '--cluster ews-cluster --service $(serviceName) --force-new-deployment'
     failOnStandardError: true
