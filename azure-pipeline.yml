@@ -1,16 +1,17 @@
+
 trigger:
 - master
 - develop
 
-parameters:
+variables:
 - ${{ if eq(Build.SourceBranchName, 'master') }}:
   imageName: 'eventregistration-prod'
 - ${{ if eq(Build.SourceBranchName, 'develop') }}:
   imageName: 'eventregistration-eval'
 
+
 pool:
   name: Hosted Ubuntu 1604
-
 steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.x'
