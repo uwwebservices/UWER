@@ -1,0 +1,78 @@
+# Only run for develop and master branches
+trigger:
+- master
+- develop
+
+# no PR builds
+pr: none
+
+variables:
+  serviceName: 'eventregistration-eval'
+  tagName: 'develop'
+
+pool:
+  name: Hosted Ubuntu 1604
+
+steps:
+# Set the version of Python we want to use
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.x'
+
+# Change the service name and tag name when running on master 
+- script: "echo '##vso[task.setvariable variable=serviceName]eventregistration-prod'"
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+- script: "echo '##vso[task.setvariable variable=tagName]prod'"
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+
+# Debug
+# - script: "echo 'my name is $(serviceName)'"
+
+# Download common build scripts
+- task: DownloadBuildArtifacts@0
+  displayName: 'Download common build scripts'
+  inputs:
+    buildType: 'specific'
+    project: 'WS'
+    pipeline: 'uwwebservices.buildscripts'
+    buildVersionToDownload: 'LatestFromBranch'
+    branchName: 'refs/heads/master' 
+    downloadType: 'specific'
+    itemPattern: '**'
+    downloadPath: '$(System.DefaultWorkingDirectory)/temp'
+
+# Install the AWS CLI which we will need later
+- task: Bash@3
+  displayName: 'Install AWS CLI and other dependencies'
+  inputs:
+    targetType: 'filePath'
+    filePath: '$(System.DefaultWorkingDirectory)/temp/scripts/InstallAWSCLI.sh'
+
+# Build the docker image
+- task: Docker@0
+  displayName: 'Build docker image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    imageName: 'eventregistrationimage'
+    qualifyImageName: false
+    includeLatestTag: true
+
+# Push the new docker image up to AWS
+- task: ECRPushImage@1
+  displayName: 'Push docker image to AWS Container Registry'
+  inputs:
+    awsCredentials: 'AWS OTIK2'
+    regionName: 'us-east-1'
+    sourceImageName: 'eventregistrationimage'
+    repositoryName: eventregistration
+    pushTag: $(tagName)
+
+# Poke the instance so it'll grab the newly uploaded image
+- task: AWSCLI@1
+  displayName: 'Force a new deployment for the new docker image'
+  inputs:
+    awsCredentials: 'AWS OTIK2'
+    regionName: 'us-east-1'
+    awsCommand: ecs
+    awsSubCommand: 'update-service'
+    awsArguments: '--cluster ews-cluster --service $(serviceName) --force-new-deployment'
+    failOnStandardError: true

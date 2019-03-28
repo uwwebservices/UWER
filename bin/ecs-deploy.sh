@@ -6,6 +6,7 @@ CLUSTER=false
 SERVICE=false
 TASK_DEFINITION=false
 TASK_DEFINITION_ARN=false
+NEW_TASKDEF=false
 MAX_DEFINITIONS=5
 AWS_ASSUME_ROLE=false
 IMAGE=false
@@ -329,6 +330,10 @@ function rollback() {
     $AWS_ECS update-service --cluster $CLUSTER --service $SERVICE --task-definition $TASK_DEFINITION_ARN > /dev/null
 }
 
+function forceNewDeployment() {
+  $AWS_ECS update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment > /dev/null
+}
+
 function updateService() {
     UPDATE_SERVICE_SUCCESS="false"
     DEPLOYMENT_CONFIG=""
@@ -569,19 +574,23 @@ if [ "$BASH_SOURCE" == "$0" ]; then
     # Get current task definition
     getCurrentTaskDefinition
     echo "Current task definition: $TASK_DEFINITION_ARN";
-
+    
+    ## IMPORTANT: We don't need to create a new task def because we're using a tagged version
+    #####
     # create new task definition json
-    createNewTaskDefJson
-
+    #createNewTaskDefJson
     # register new task definition
-    registerNewTaskDefinition
-    echo "New task definition: $NEW_TASKDEF";
+    #registerNewTaskDefinition
+    #echo "New task definition: $NEW_TASKDEF";
 
     # update service if needed
     if [ $SERVICE == false ]; then
         echo "Task definition updated successfully"
     else
-        updateService
+        ## IMPORTANT: commented out update service for a simpler one that just forces a deploy
+        ## This helps solve the Terraform out of sync issues
+        #updateService
+        forceNewDeployment
 
         waitForGreenDeployment
     fi
