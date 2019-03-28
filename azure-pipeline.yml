@@ -22,8 +22,7 @@ steps:
 - script: "echo 'my name is $(imageName)'"
 
 
-- displayName: 'Installing stuff' 
-  bash: |
+- bash: |
    pip3 install --upgrade pip
    sudo apt-get install -y python-setuptools jq
    pip install  awscli
