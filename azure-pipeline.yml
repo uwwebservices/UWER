@@ -1,32 +1,34 @@
-
+# Only run for develop and master branches
 trigger:
 - master
 - develop
 
 variables:
-  imageName: 'dummy'
-
+  imageName: 'eventregistration-eval'
 
 pool:
   name: Hosted Ubuntu 1604
+
 steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.x'
 
+# Change the image name when running on master 
 - script: "echo '##vso[task.setvariable variable=imageName]eventregistration-prod'"
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
 
-- script: "echo '##vso[task.setvariable variable=imageName]eventregistration-eval'"
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'develop'))
+# Debug
+# - script: "echo 'my name is $(imageName)'"
 
-- script: "echo 'my name is $(imageName)'"
-
-
-- bash: |
-   pip3 install --upgrade pip
-   sudo apt-get install -y python-setuptools jq
-   pip install  awscli
-   pip3 install awscli --upgrade
+- task: Bash@3
+  displayName: 'Install AWS CLI and other dependencies'
+  inputs:
+    targetType: 'inline'
+    script: |
+    pip3 install --upgrade pip
+    sudo apt-get install -y python-setuptools jq
+    pip install  awscli
+    pip3 install awscli --upgrade
 
 - task: Docker@0
   displayName: 'Build docker image'
@@ -37,7 +39,7 @@ steps:
     includeLatestTag: true
 
 - task: ECRPushImage@1
-  displayName: 'Push image to AWS Container Registry'
+  displayName: 'Push docker image to AWS Container Registry'
   inputs:
     awsCredentials: 'AWS OTIK2'
     regionName: 'us-east-1'
@@ -46,7 +48,7 @@ steps:
     pushTag: develop
 
 - task: AWSCLI@1
-  displayName: 'AWS CLI: ecs'
+  displayName: 'Force a new deployment for the new docker image'
   inputs:
     awsCredentials: 'AWS OTIK2'
     regionName: 'us-east-1'
