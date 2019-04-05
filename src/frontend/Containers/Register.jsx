@@ -9,7 +9,7 @@ import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrat
 import Cookies from 'browser-cookies';
 
 class Register extends Component {
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
         setTimeout(() => {
             if(!this.props.authenticated && !this.props.token && !this.props.development) {
                 if(!Cookies.get('registrationToken')) {
@@ -17,6 +17,10 @@ class Register extends Component {
                 }
             }
         }, 0);
+
+        if (prevProps.users.length === 0 || prevProps.users.length !== this.props.users.length) {
+            this.registerCardFocus();
+        }
     }
     endRegistration = () => {
         this.props.stopRegistrationSession();
@@ -24,6 +28,9 @@ class Register extends Component {
     }
     configRedirect = () => {
         this.props.history.push("/config");
+    }
+    registerCardFocus = () => {
+        document.getElementById("registerCard").focus({ preventScroll: true });
     }
     render() {
         let adminMode = this.props.authenticated && this.props.groupName;
@@ -59,6 +66,7 @@ class Register extends Component {
                             development={this.props.development} 
                             groupNameBase={this.props.groupNameBase} 
                             removeUser={this.props.removeUser} 
+                            keepUser={this.registerCardFocus}
                             group={this.props.groupName} 
                             authenticated={this.props.authenticated} />
                     ) : (

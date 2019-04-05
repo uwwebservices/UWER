@@ -12,9 +12,11 @@ export default class Test extends React.Component {
     super(props);
     this.state = { loadingUsers: false };
   }
+  keepUser = () => {
+    this.props.keepUser();
+  };
   removeUser = netid => {
     this.props.removeUser(this.props.group, netid);
-    document.getElementById('registerCard').focus();
   };
   reload = async () => {
     if (this.props.group) {
@@ -56,6 +58,7 @@ export default class Test extends React.Component {
               openButtonVariant="fab"
               openButtonFabMini={true}
               confirmCallback={() => this.removeUser(mem.UWNetID)}
+              exitedCallback={() => this.keepUser()}
               dialogContent={`Are you sure you want to remove ${mem.UWNetID} from ${this.props.group
                 .replace(this.props.groupNameBase, '')
                 .replace(/-/g, ' ')}?`}

@@ -156,6 +156,7 @@ class Configure extends Component {
                     className="newSubgroup"
                     id="newSubgroup"
                     name="newSubgroup"
+                    autoFocus={true}
                     onChange={this.handleChange}
                     value={this.state.newSubgroup}
                     disabled={this.state.creatingGroup}
