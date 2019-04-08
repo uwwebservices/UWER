@@ -18,7 +18,8 @@ class AlertDialog extends React.Component {
 
   handleClose = confirmed => {
     this.setState({ open: false });
-    if(confirmed) {
+    const espcapeKeyPressed = confirmed && confirmed.keyCode && confirmed.keyCode == 27;
+    if(confirmed && !espcapeKeyPressed) {
       this.props.confirmCallback();
     }
   };

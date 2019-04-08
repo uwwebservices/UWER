@@ -41,7 +41,7 @@ export default class Test extends React.Component {
           {isAlum && <Chip label="A" title="Alum" />}
         </span>
       );
-      let memberKey = (mem.UWNetID || mem.identifier) + Math.floor(Math.random() * 100).toString();
+      let memberKey = (mem.UWNetID || mem.identifier || Math.random().toString(36));
       return (
         <ListItem key={memberKey} className={mem.deleting ? 'memberDeleting' : ''}>
           <Avatar src={mem.Base64Image} />
