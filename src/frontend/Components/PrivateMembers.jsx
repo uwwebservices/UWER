@@ -20,11 +20,9 @@ export default class Test extends React.Component {
     }
     render() {
         const listItems = this.props.members.map(mem => {
-            
+            let memberKey = (mem.UWNetID || mem.identifier || Math.random().toString(36));
             return (
-                <ListItem
-                    key={(mem.UWNetID || mem.identifier) + (Math.floor(Math.random() * 100)).toString()}
-                    >
+                <ListItem key={memberKey}>
                     <Avatar src={mem.Base64Image} />
                     <ListItemText primary={mem.loading ? "Loading..." : mem.UWNetID} secondary={mem.DisplayName} />
                     { (mem.deleting || mem.loading) && <span className="loadSpinner"><FA name="spinner" spin={true} size="2x" /></span> 
