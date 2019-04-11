@@ -6,6 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ConfirmModal from 'Components/ConfirmModal';
 import Chip from '@material-ui/core/Chip';
 import FA from 'react-fontawesome';
+import DefaultUser from 'Assets/defaultUser';
 
 export default class Test extends React.Component {
   constructor(props) {
@@ -42,9 +43,21 @@ export default class Test extends React.Component {
         </span>
       );
       let memberKey = (mem.UWNetID || mem.identifier || Math.random().toString(36));
+      
+      let loadRealImg = true;
+      const loadImgOnce = (e) => {
+        if (loadRealImg) {
+          loadRealImg = false;
+          e.target.src = mem.Base64Image;
+        }
+      };
+      const errImg = (e) => {
+        e.target.src = DefaultUser;
+      };
+
       return (
         <ListItem key={memberKey} className={mem.deleting ? 'memberDeleting' : ''}>
-          <Avatar src={mem.Base64Image} />
+          <Avatar onLoad={loadImgOnce} onError={errImg} src={DefaultUser} />
           <ListItemText primary={badges || 'Loading...'} secondary={mem.DisplayName} classes={{ primary: 'memberDisplay' }} />
           {(mem.deleting || mem.loading) && (
             <span className="loadSpinner">
