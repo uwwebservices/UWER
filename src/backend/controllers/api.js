@@ -150,7 +150,8 @@ api.get(API.CSV, async (req, res) => {
   let members = await Groups.GetMembers(req.params.group);
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
   let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
-  res.csv(verboseMembers, true);
+  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, req.params.group);
+  res.csv(mergedMembers, true);
 });
 
 export default api;

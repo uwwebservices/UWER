@@ -226,7 +226,55 @@ const Groups = {
     } catch (ex) {
       return ErrorResponse(ex);
     }
-  }
+  },
+  async GetHistory(group) {
+    let history = [];
+    let start = 0;
+    let fetchHistory = true;
+    let res;
+
+    while (fetchHistory) {
+      let opts = Object.assign({}, options, {
+        url: `${GROUPSBASEURL}/group/${group}/history?activity=membership&order=a&start=${start}`
+      });
+      try {
+        res = await rp(opts);
+
+        // Breakout if no data available
+        if (!res || !res.data || res.data.length == 0) {
+          fetchHistory = false;
+          break;
+        }
+
+        history = history.concat(res.data);
+        start = res.data.reduce((prev, current) => {
+          return (prev > current.timestamp) ? prev : current.timestamp + 1;
+        }, start);
+
+      } catch (ex) {
+        return ErrorResponse(ex);
+      }
+    }
+
+    return SuccessResponse(history, res.error);
+  },
+  async GetMemberHistory(memberList, group) {
+    const membershipHistory = await this.GetHistory(group, memberList.length);
+    const usefulMembershipHistory = membershipHistory
+      .Payload
+      .filter((e, i) => e && e.description && e.description.indexOf('add member') !== -1)
+      .map((e, i) => ({
+        UWNetID: e.description.match(/^add member: '(.*)'$/)[1],
+        Registered: new Date(e.timestamp).toLocaleString(),
+      }));
+
+    const merged = memberList.map(src => ({
+      ...usefulMembershipHistory.find((dst) => (dst.UWNetID === src.UWNetID) && dst),
+      ...src,
+    }));
+
+    return merged;
+  },
 };
 
 export default Groups;
