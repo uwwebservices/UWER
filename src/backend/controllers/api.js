@@ -146,7 +146,7 @@ api.get(API.Config, (req, res) => {
   res.status(200).json({ groupNameBase: BASE_GROUP });
 });
 
-api.get(API.CSV, async (req, res) => {
+api.get(API.CSV, ensureAPIAuth, async (req, res) => {
   let members = await Groups.GetMembers(req.params.group);
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
   let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
