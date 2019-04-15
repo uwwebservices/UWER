@@ -3,6 +3,7 @@ import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import PrivateMembers from 'Components/PrivateMembers';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
@@ -47,7 +48,6 @@ class Register extends Component {
   render() {
     let adminMode = this.props.authenticated && this.props.groupName;
     let registrationDisabled = !this.props.groupName;
-    let confidential = this.props.confidential;
     return (
       <div>
         {(registrationDisabled || adminMode) && (
@@ -73,19 +73,21 @@ class Register extends Component {
               <h2>
                 Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers} />
               </h2>
-              {!this.props.confidential ? (
-                <Members
-                  members={this.props.users}
-                  development={this.props.development}
-                  groupNameBase={this.props.groupNameBase}
-                  removeUser={this.props.removeUser}
-                  keepUser={this.registerCardFocus}
-                  group={this.props.groupName}
-                  authenticated={this.props.authenticated}
-                />
-              ) : (
-                <PrivateMembers members={this.props.users} />
-              )}
+              <List>
+                {!this.props.confidential ? (
+                  <Members
+                    members={this.props.users}
+                    development={this.props.development}
+                    groupNameBase={this.props.groupNameBase}
+                    removeUser={this.props.removeUser}
+                    keepUser={this.registerCardFocus}
+                    group={this.props.groupName}
+                    authenticated={this.props.authenticated}
+                  />
+                ) : (
+                  <PrivateMembers members={this.props.users} />
+                )}
+              </List>
             </div>
           )}
         </div>

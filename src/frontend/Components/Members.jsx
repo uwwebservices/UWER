@@ -1,6 +1,5 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ConfirmModal from 'Components/ConfirmModal';
@@ -16,7 +15,7 @@ export default class Test extends React.Component {
     this.props.removeUser(this.props.group, netid);
   };
   render() {
-    const listItems = this.props.members.map(mem => {
+    return this.props.members.map(mem => {
       let showDelete = (this.props.authenticated || this.props.development) && !mem.deleting && !mem.loading;
 
       let isStudent = mem.EduPersonAffiliations && mem.EduPersonAffiliations.indexOf('student') > -1;
@@ -70,7 +69,5 @@ export default class Test extends React.Component {
         </ListItem>
       );
     });
-
-    return <List>{listItems}</List>;
   }
 }

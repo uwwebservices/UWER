@@ -9,10 +9,7 @@ const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
 const IDCARDBASEURL = process.env.IDCARDBASEURL;
 const PHOTOBASEURL = process.env.PHOTOBASEURL;
 
-const DefaultUserBuffer = new Buffer(
-  DefaultUser.replace('data:image/jpeg;base64,',''),
-  'base64'
-);
+const DefaultUserBuffer = new Buffer.from(DefaultUser.replace('data:image/jpeg;base64,', ''), 'base64');
 
 const options = {
   method: 'GET',
@@ -76,9 +73,7 @@ const IDCard = {
     return memberList;
   },
   async GetOnePhoto(groupName, uwRegID) {
-    return 'api' + API.GetMemberPhoto
-      .replace(':group', groupName)
-      .replace(':identifier', uwRegID);
+    return 'api' + API.GetMemberPhoto.replace(':group', groupName).replace(':identifier', uwRegID);
   },
   async GetPhoto(regid) {
     let opts = Object.assign({}, options, {
