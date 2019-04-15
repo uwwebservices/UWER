@@ -2,11 +2,17 @@ import request from 'request';
 import rp from 'request-promise';
 import fs from 'fs';
 import DefaultUser from 'Assets/defaultUser';
+import { API } from '../routes';
 
 const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
 const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
 const IDCARDBASEURL = process.env.IDCARDBASEURL;
 const PHOTOBASEURL = process.env.PHOTOBASEURL;
+
+const DefaultUserBuffer = new Buffer(
+  DefaultUser.replace('data:image/jpeg;base64,',''),
+  'base64'
+);
 
 const options = {
   method: 'GET',
@@ -63,28 +69,28 @@ const IDCard = {
       return '';
     }
   },
-  async GetManyPhotos(memberList) {
-    let promises = [];
+  async GetManyPhotos(groupName, memberList) {
     for (let mem of memberList) {
-      promises.push(
-        this.GetPhoto(mem.UWRegID).then(img => {
-          mem.Base64Image = img;
-          return mem;
-        })
-      );
+      mem.Base64Image = await this.GetOnePhoto(groupName, mem.UWRegID);
     }
-    return await Promise.all(promises);
+    return memberList;
+  },
+  async GetOnePhoto(groupName, uwRegID) {
+    return 'api' + API.GetMemberPhoto
+      .replace(':group', groupName)
+      .replace(':identifier', uwRegID);
   },
   async GetPhoto(regid) {
     let opts = Object.assign({}, options, {
       url: `${PHOTOBASEURL}/${regid}-large.jpg`,
       encoding: null
     });
+
     try {
       let res = await rp(opts);
-      return `data:image/jpeg;base64,${new Buffer.from(res).toString('base64')}`;
+      return new Buffer.from(res);
     } catch (ex) {
-      return DefaultUser;
+      return DefaultUserBuffer;
     }
   }
 };

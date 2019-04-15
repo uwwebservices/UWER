@@ -1,3 +1,5 @@
+// This component needs to be broken into two: List of Members Component and a Member Component
+
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -6,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ConfirmModal from 'Components/ConfirmModal';
 import Chip from '@material-ui/core/Chip';
 import FA from 'react-fontawesome';
+import DefaultUser from 'Assets/defaultUser';
 
 export default class Test extends React.Component {
   constructor(props) {
@@ -41,10 +44,22 @@ export default class Test extends React.Component {
           {isAlum && <Chip label="A" title="Alum" />}
         </span>
       );
-      let memberKey = (mem.UWNetID || mem.identifier || Math.random().toString(36));
+      let memberKey = mem.UWNetID || mem.identifier || Math.random().toString(36);
+
+      let loadRealImg = true;
+      const loadImgOnce = e => {
+        if (loadRealImg) {
+          loadRealImg = false;
+          e.target.src = mem.Base64Image;
+        }
+      };
+      const errImg = e => {
+        e.target.src = DefaultUser;
+      };
+
       return (
         <ListItem key={memberKey} className={mem.deleting ? 'memberDeleting' : ''}>
-          <Avatar src={mem.Base64Image} />
+          <Avatar onLoad={loadImgOnce} onError={errImg} src={DefaultUser} />
           <ListItemText primary={badges || 'Loading...'} secondary={mem.DisplayName} classes={{ primary: 'memberDisplay' }} />
           {(mem.deleting || mem.loading) && (
             <span className="loadSpinner">
@@ -68,6 +83,7 @@ export default class Test extends React.Component {
         </ListItem>
       );
     });
+
     return (
       <div className="memberList">
         {this.props.members.length > 0 && (
