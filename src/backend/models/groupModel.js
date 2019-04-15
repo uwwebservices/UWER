@@ -263,6 +263,7 @@ const Groups = {
     const usefulMembershipHistory = membershipHistory
       .Payload
       .filter((e, i) => e && e.description && e.description.indexOf('add member') !== -1)
+      .sort((a, b) => b.timestamp - a.timestamp)
       .map((e, i) => ({
         UWNetID: e.description.match(/^add member: '(.*)'$/)[1],
         Registered: new Date(e.timestamp).toLocaleString(),
