@@ -1,3 +1,5 @@
+// This component needs to be broken into two: List of Members Component and a Member Component
+
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -42,16 +44,16 @@ export default class Test extends React.Component {
           {isAlum && <Chip label="A" title="Alum" />}
         </span>
       );
-      let memberKey = (mem.UWNetID || mem.identifier || Math.random().toString(36));
-      
+      let memberKey = mem.UWNetID || mem.identifier || Math.random().toString(36);
+
       let loadRealImg = true;
-      const loadImgOnce = (e) => {
+      const loadImgOnce = e => {
         if (loadRealImg) {
           loadRealImg = false;
           e.target.src = mem.Base64Image;
         }
       };
-      const errImg = (e) => {
+      const errImg = e => {
         e.target.src = DefaultUser;
       };
 
@@ -81,6 +83,7 @@ export default class Test extends React.Component {
         </ListItem>
       );
     });
+
     return (
       <div className="memberList">
         {this.props.members.length > 0 && (
