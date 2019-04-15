@@ -90,6 +90,7 @@ const IDCard = {
       let res = await rp(opts);
       return new Buffer.from(res);
     } catch (ex) {
+      console.log(`Error fetching photo: ${ex}`);
       return DefaultUserBuffer;
     }
   }
