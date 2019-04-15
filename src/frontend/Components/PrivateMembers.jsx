@@ -20,9 +20,19 @@ export default class Test extends React.Component {
   render() {
     return this.props.members.map(mem => {
       let memberKey = mem.UWNetID || mem.identifier || Math.random().toString(36);
+      let loadRealImg = true;
+      const loadImgOnce = e => {
+        if (loadRealImg) {
+          loadRealImg = false;
+          e.target.src = mem.Base64Image;
+        }
+      };
+      const errImg = e => {
+        e.target.src = DefaultUser;
+      };
       return (
         <ListItem key={memberKey}>
-          <Avatar src={DefaultUser} />
+          <Avatar onLoad={loadImgOnce} onError={errImg} src={DefaultUser} />
           <ListItemText primary={mem.loading ? 'Loading...' : mem.UWNetID} secondary={mem.DisplayName} />
           {(mem.deleting || mem.loading) && (
             <span className="loadSpinner">
