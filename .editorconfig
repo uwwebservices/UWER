@@ -1,0 +1,5 @@
+[*.{js,jsx}]
+max_line_length = 240
+quote_type = single
+indent_style = space
+indent_size = 2
