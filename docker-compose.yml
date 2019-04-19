@@ -10,7 +10,7 @@ services:
       - 'NODE_ENV=production'
       - 'BASE_GROUP=uw_ais_sm_ews_registration_dev_'
       - 'PORT=1111'
-      - 'SESSION_KEY=development'
+      - 'SESSIONKEY=development'
       - 'CERTIFICATEFILE=config/cert.pfx'
       - 'PASSPHRASEFILE=config/passphrase.key'
       - 'IDCARDBASEURL=https://wseval.s.uw.edu/idcard/v1/card.json'

@@ -18,7 +18,8 @@ class ContentModal extends React.Component {
   handleClickOpen = () => this.setState({ open: true });
 
   handleClose = async confirmed => {
-    if (confirmed) {
+    const espcapeKeyPressed = confirmed && confirmed.keyCode && confirmed.keyCode == 27;
+    if (confirmed && !espcapeKeyPressed) {
       await this.props.confirmCallback();
     } else {
       this.props.cancelCallback();

@@ -26,7 +26,7 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
   }
   let result = await Groups.GetMembers(groupName);
   let members = await PWS.GetMany(result.Payload);
-  let verbose = await IDCard.GetManyPhotos(members);
+  let verbose = await IDCard.GetManyPhotos(groupName, members);
   response.members = verbose;
   return res.status(result.Status).json(response);
 });
@@ -59,11 +59,30 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
     let user = await PWS.Get(identifier);
 
     user.displayId = displayId;
-    user.Base64Image = await IDCard.GetPhoto(user.UWRegID);
+    user.Base64Image = await IDCard.GetOnePhoto(groupName, user.UWRegID);
     res.status(result.Status).json(user);
   } else {
     res.sendStatus(result.Status);
   }
+});
+
+api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
+  let groupName = req.params.group;
+  let identifier = req.params.identifier;
+  
+  // Should we validate the identifier is part of the group?
+  // This srsly slows things down...
+  // let result = await Groups.GetMembers(groupName);
+  // let members = await PWS.GetMany(result.Payload);
+  // let found = members.filter(x => x.UWRegID === identifier).length === 1;
+
+  // if (!found) {
+  //   identifier = "placeholder"; 
+  // }
+
+  let image = await IDCard.GetPhoto(identifier);
+  res.header('Content-Type', 'image/jpeg');
+  return res.status(200).send(image);
 });
 
 api.get(API.GetToken, ensureAPIAuth, (req, res) => {
@@ -146,11 +165,12 @@ api.get(API.Config, (req, res) => {
   res.status(200).json({ groupNameBase: BASE_GROUP });
 });
 
-api.get(API.CSV, async (req, res) => {
+api.get(API.CSV, ensureAPIAuth, async (req, res) => {
   let members = await Groups.GetMembers(req.params.group);
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
   let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
-  res.csv(verboseMembers, true);
+  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, req.params.group);
+  res.csv(mergedMembers, true);
 });
 
 export default api;

@@ -3,6 +3,7 @@
 export const API = {
     "GetMembers": "/members/:group",
 	"RegisterMember": "/members/:group",
+	"GetMemberPhoto": "/members/:group/photo/:identifier",
 	"RemoveMember": "/members/:group/member/:identifier",
 	"GetSubgroups": "/subgroups/:group",
 	"RemoveSubgroup": "/subgroups/:group",

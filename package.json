@@ -11,7 +11,7 @@
     "dev": "nodemon --inspect --config nodemon.json",
     "prebuild": "rm -rf dist",
     "build": "cross-env NODE_ENV=production babel src/backend -s -D -d dist/backend && cross-env NODE_ENV=production webpack --config webpack.config.js",
-    "start": "cross-env NODE_ENV=production node dist/backend",
+    "start": "node dist/backend",
     "test": "eslint src && cross-env NODE_ENV=test mocha --require babel-core/register test/*.js"
   },
   "eslintConfig": {

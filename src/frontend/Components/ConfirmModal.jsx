@@ -18,9 +18,14 @@ class AlertDialog extends React.Component {
 
   handleClose = confirmed => {
     this.setState({ open: false });
-    if(confirmed) {
+    const espcapeKeyPressed = confirmed && confirmed.keyCode && confirmed.keyCode == 27;
+    if(confirmed && !espcapeKeyPressed) {
       this.props.confirmCallback();
     }
+  };
+
+  handleExited = () => {
+    this.props.exitedCallback();
   };
 
   render() {
@@ -34,6 +39,7 @@ class AlertDialog extends React.Component {
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
+          onExited={this.handleExited}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           disableBackdropClick={this.props.disableBackdropClick}
@@ -60,6 +66,7 @@ class AlertDialog extends React.Component {
 
 AlertDialog.propTypes = {
   confirmCallback: PropTypes.func,
+  exitedCallback: PropTypes.func,
   openButtonIcon: PropTypes.string,
   openButtonText: PropTypes.string,
   openButtonDisabled: PropTypes.bool,
@@ -81,6 +88,7 @@ AlertDialog.propTypes = {
   openButtonDisabled: PropTypes.bool
 };
 AlertDialog.defaultProps = {
+  exitedCallback: (() => {}),
   openButtonText: "Delete",
   dialogTitle: "",
   dialogContent: "Are you sure?",

@@ -6,7 +6,7 @@
     "NODE_ENV": "development",
     "PORT": 1111,
     "BASE_GROUP": "uw_event_ws-eval_",
-    "SESSION_KEY": "development",
+    "SESSIONKEY": "development",
     "CERTIFICATEFILE": "config/cert.pfx",
     "PASSPHRASEFILE": "config/passphrase.key",
     "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1/card.json",
