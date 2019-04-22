@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, developmentMode, tokenToSession } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, tokenToSession } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -21,7 +21,7 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
     members: []
   };
 
-  if (confidential && !req.isAuthenticated() && !developmentMode) {
+  if (confidential && !req.isAuthenticated()) {
     return res.status(200).json(response);
   }
   let result = await Groups.GetMembers(groupName);
@@ -64,16 +64,6 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
   let groupName = req.params.group;
   let identifier = req.params.identifier;
-
-  // Should we validate the identifier is part of the group?
-  // This srsly slows things down...
-  // let result = await Groups.GetMembers(groupName);
-  // let members = await PWS.GetMany(result.Payload);
-  // let found = members.filter(x => x.UWRegID === identifier).length === 1;
-
-  // if (!found) {
-  //   identifier = "placeholder";
-  // }
 
   let image = await IDCard.GetPhoto(identifier);
   res.header('Content-Type', 'image/jpeg');

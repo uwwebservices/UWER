@@ -1,22 +1,17 @@
 import webpack from 'webpack';
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = function(env) {
-  
   return {
-    mode: "development",
+    mode: 'development',
     devtool: '#source-map',
-    node: { 
+    node: {
       fs: 'empty',
       net: 'empty',
       module: 'empty'
     },
-    entry: [
-      'webpack/hot/dev-server',
-      'webpack-hot-middleware/client?path=//localhost:' + (env.PORT || 1111) + '/__webpack_hmr&reload=true',
-      './src/frontend/App.js'
-    ],
+    entry: ['webpack/hot/dev-server', 'webpack-hot-middleware/client?path=//localhost:' + (env.PORT || 1111) + '/__webpack_hmr&reload=true', './src/frontend/App.js'],
     output: {
       path: path.resolve(__dirname + '/src/frontend'),
       publicPath: '/',
@@ -24,36 +19,39 @@ module.exports = function(env) {
     },
     module: {
       rules: [
-        { test: /\.jsx?$/, 
-          loader: 'babel-loader', 
+        {
+          test: /\.jsx?$/,
+          loader: 'babel-loader',
           exclude: /node_modules/,
           options: {
             babelrc: true
           }
         },
-        { test: /\.css$/, loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]'},
+        { test: /\.css$/, loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]' },
         { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader' },
         {
-              test: /\.(png|jp(e*)g)$/,
-              use: [{
-                  loader: 'url-loader',
-                  options: {
-                      limit: 8000, // Convert images < 8kb to base64 strings
-                      name: 'frontend/img/[hash]-[name].[ext]'
-                  }
-              }]
-          },
-          {
-              test: /\.(eot|svg|ttf|woff|woff2)$/,
-              use: [
-                  {
-                      loader: 'file-loader',
-                      options: {
-                          name: 'frontend/fonts/[path][name].[ext]'
-                      }
-                  }
-              ]            
-          }
+          test: /\.(png|jp(e*)g)$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 8000, // Convert images < 8kb to base64 strings
+                name: 'frontend/img/[hash]-[name].[ext]'
+              }
+            }
+          ]
+        },
+        {
+          test: /\.(eot|svg|ttf|woff|woff2)$/,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: 'frontend/fonts/[path][name].[ext]'
+              }
+            }
+          ]
+        }
       ]
     },
     plugins: [
@@ -68,15 +66,15 @@ module.exports = function(env) {
     resolve: {
       modules: ['node_modules'],
       alias: {
-        "Components": path.resolve("./src/frontend/Components"),
-        "Containers": path.resolve("./src/frontend/Containers"),
-        "css": path.resolve("./src/frontend/css"),
-        "Images": path.resolve("./src/frontend/images"),
-        "Assets": path.resolve("./src/backend/assets"),
-        "Routes": path.resolve("./src/backend/routes")
+        Components: path.resolve('./src/frontend/Components'),
+        Containers: path.resolve('./src/frontend/Containers'),
+        css: path.resolve('./src/frontend/css'),
+        Images: path.resolve('./src/frontend/images'),
+        Assets: path.resolve('./src/backend/assets'),
+        Routes: path.resolve('./src/backend/routes')
       },
       extensions: ['.js', '.jsx', '.json', '.css', '.scss']
     },
     target: 'web'
-  }
+  };
 };

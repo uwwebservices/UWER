@@ -40,7 +40,7 @@ class PageWrapper extends Component {
   };
 
   render() {
-    const authenticated = this.props.authenticated || this.props.development;
+    const authenticated = this.props.authenticated;
     const pages = (authenticated && [{ isNavigable: true, path: '/register', display: 'View  Participants' }, { isNavigable: true, path: '/config', display: 'Config' }]) || [];
 
     const childrenWithProps = React.Children.map(this.props.children, child =>
@@ -61,7 +61,6 @@ class PageWrapper extends Component {
             iaaCheck={this.props.iaaCheck}
             iaaRequired={this.props.iaaRequired}
             checkAuthentication={this.props.checkAuthentication}
-            development={this.props.development}
             path={this.props.location.pathname}
           >
             {childrenWithProps}
@@ -76,7 +75,6 @@ class PageWrapper extends Component {
 const mapStateToProps = state => ({
   authenticated: state.authenticated,
   notifications: state.notifications,
-  development: state.development,
   iaaAuth: state.iaaAuth,
   iaaCheck: state.iaacheck
 });

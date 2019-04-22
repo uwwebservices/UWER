@@ -15,29 +15,24 @@ class Authorization extends React.Component {
     this.props.checkAuthentication();
   }
   render() {
-    const { loginRequired, authenticated, development, iaaAuth, iaaCheck, iaaRequired, children, path } = this.props;
+    const { loginRequired, authenticated, iaaAuth, iaaCheck, iaaRequired, children, path } = this.props;
 
     // if we've been stuck on this page for 5s, give option to retry
     setTimeout(() => this.setState({ showRetry: true }), 5000);
 
-    if (!development) {
-      // before checkAuth has returned, auth/iaa are set to null, once returned they are true/false
-      // make sure checkAuth has returned before shipping someone off to shib/iaa
-      if (authenticated !== null && iaaAuth !== null) {
-        if (loginRequired && !authenticated) {
-          window.location = `/login?returnUrl=${path}`;
-        }
+    if (authenticated !== null && iaaAuth !== null) {
+      if (loginRequired && !authenticated) {
+        window.location = `/login?returnUrl=${path}`;
+      }
 
-        if (authenticated && iaaRequired && !iaaAuth) {
-          window.location = iaaCheck;
-        }
+      if (authenticated && iaaRequired && !iaaAuth) {
+        window.location = iaaCheck;
       }
     }
 
     let shouldRenderChildren = loginRequired ? authenticated : true;
     shouldRenderChildren = iaaRequired ? iaaAuth : true; // must be auth'd to be iaa'd, this override should be fine
     shouldRenderChildren = authenticated === null || iaaAuth === null ? false : shouldRenderChildren; // initial load, auth is null, wait for checkAuth to return
-    shouldRenderChildren = development ? true : shouldRenderChildren; // local dev mode, comment to test loading page
 
     return shouldRenderChildren ? (
       children

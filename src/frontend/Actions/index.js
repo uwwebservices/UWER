@@ -234,7 +234,7 @@ export const StopRegistrationSession = () => {
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-    if (!state.authenticated && !state.development) {
+    if (!state.authenticated) {
       await dispatch(CheckAuthentication());
     }
 

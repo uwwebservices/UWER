@@ -16,7 +16,7 @@ export default class Test extends React.Component {
   };
   render() {
     return this.props.members.map(mem => {
-      let showDelete = (this.props.authenticated || this.props.development) && !mem.deleting && !mem.loading;
+      let showDelete = this.props.authenticated && !mem.deleting && !mem.loading;
 
       let isStudent = mem.EduPersonAffiliations && mem.EduPersonAffiliations.indexOf('student') > -1;
       let isEmployee = mem.EduPersonAffiliations && mem.EduPersonAffiliations.indexOf('employee') > -1;

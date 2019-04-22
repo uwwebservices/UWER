@@ -16,7 +16,7 @@ class Register extends Component {
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     setTimeout(() => {
-      if (!this.props.authenticated && !this.props.token && !this.props.development) {
+      if (!this.props.authenticated && !this.props.token) {
         if (!Cookies.get('registrationToken')) {
           this.props.history.push('/');
         }
@@ -76,15 +76,7 @@ class Register extends Component {
             <div>
               <List>
                 {!this.props.confidential ? (
-                  <Members
-                    members={this.props.users}
-                    development={this.props.development}
-                    groupNameBase={this.props.groupNameBase}
-                    removeUser={this.props.removeUser}
-                    keepUser={this.registerCardFocus}
-                    group={this.props.groupName}
-                    authenticated={this.props.authenticated}
-                  />
+                  <Members members={this.props.users} groupNameBase={this.props.groupNameBase} removeUser={this.props.removeUser} keepUser={this.registerCardFocus} group={this.props.groupName} authenticated={this.props.authenticated} />
                 ) : (
                   <PrivateMembers members={this.props.users} />
                 )}
@@ -105,7 +97,6 @@ const mapStateToProps = state => ({
   groupNameBase: state.groupNameBase,
   authenticated: state.authenticated,
   token: state.registrationToken,
-  development: state.development,
   netidAllowed: state.netidAllowed
 });
 const mapDispatchToProps = dispatch => {

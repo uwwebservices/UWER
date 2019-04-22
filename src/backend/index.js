@@ -49,11 +49,25 @@ app.use(
 if (SESSIONKEY === 'development') {
   console.error('Session is not secured, SessionKey environment variable must be set.');
 }
-app.use(passport.initialize());
-app.use(passport.session());
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+if (NODE_ENV === 'production') {
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  passport.serializeUser((user, done) => done(null, user));
+  passport.deserializeUser((user, done) => done(null, user));
+}
+
+if (NODE_ENV === 'development') {
+  // Middleware to mock a login in development mode
+  app.use(function(req, res, next) {
+    req.session = req.session || {};
+    req.isAuthenticated = () => true;
+    req.user = { UWNetID: 'steven20' };
+    req.session.IAAAgreed = true;
+    next();
+  });
+}
 
 const spPrivateKey = SPKEYFILE ? fs.readFileSync(SPKEYFILE, { encoding: 'utf8' }) : '';
 
