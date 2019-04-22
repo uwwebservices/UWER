@@ -10,7 +10,9 @@ const initialState = {
   groupNameBase: '',
   subgroups: [],
   users: [],
+  loadingUsers: false,
   registrationToken: '',
+  privGrpVisTimeout: 5,
   netidAllowed: false,
   confidential: false,
   development: process.env.NODE_ENV === 'development',
@@ -28,8 +30,10 @@ export default (state = initialState, action) => {
     case Const.DELETE_SUBGROUP:
       let subgroups = state.subgroups.filter(sg => sg.id !== action.subgroup);
       return Object.assign({}, state, { subgroups });
+    case Const.LOADING_USERS:
+      return Object.assign({}, state, { loadingUsers: true });
     case Const.RECEIVE_USERS:
-      return Object.assign({}, state, { users: action.users });
+      return Object.assign({}, state, { users: action.users, loadingUsers: false });
     case Const.ADD_DUMMY_USER:
       let dummy = { displayId: action.displayId, Base64Image: defaultUser, loading: true };
       return Object.assign({}, state, { users: [dummy, ...state.users] });
@@ -56,6 +60,8 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, { authenticated: action.authenticated, iaaAuth: action.iaaAuth, iaacheck: action.iaacheck });
     case Const.STORE_REGISTRATION_TOKEN:
       return Object.assign({}, state, { registrationToken: action.token });
+    case Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT:
+      return Object.assign({}, state, { privGrpVisTimeout: action.timeout });
     case Const.RESET_STATE:
       return initialState;
     case Const.ADD_NOTIFICATION:

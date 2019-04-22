@@ -13,7 +13,6 @@ import FA from 'react-fontawesome';
 class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = { loadingUsers: false };
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     setTimeout(() => {
@@ -30,9 +29,7 @@ class Register extends Component {
   }
   reload = async () => {
     if (this.props.groupName) {
-      this.setState({ loadingUsers: true });
       await this.props.loadUsers(this.props.groupName);
-      this.setState({ loadingUsers: false });
     }
   };
   endRegistration = () => {
@@ -68,11 +65,15 @@ class Register extends Component {
         <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
 
         <div className="memberList">
+          <h2>Registered Participants {!this.props.confidential && <FA name="refresh" onClick={this.reload} spin={this.props.loadingUsers} />}</h2>
+          {this.props.confidential && (
+            <div>
+              <p>Some text related to the fact that confidential groups do not persistently display users.</p>
+            </div>
+          )}
+          {this.props.users.length == 0 && !this.props.confidential && <div>{this.props.loadingUsers ? <p>Loading participants; please wait.</p> : <p>No registered participants.</p>}</div>}
           {this.props.users.length > 0 && (
             <div>
-              <h2>
-                Registered Participants <FA name="refresh" onClick={this.reload} spin={this.state.loadingUsers} />
-              </h2>
               <List>
                 {!this.props.confidential ? (
                   <Members
@@ -100,6 +101,7 @@ const mapStateToProps = state => ({
   confidential: state.confidential,
   groupName: state.groupName,
   users: state.users,
+  loadingUsers: state.loadingUsers,
   groupNameBase: state.groupNameBase,
   authenticated: state.authenticated,
   token: state.registrationToken,

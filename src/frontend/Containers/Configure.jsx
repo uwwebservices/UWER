@@ -19,6 +19,7 @@ class Configure extends Component {
       confidential: true,
       netidAllowed: false,
       tokenTTL: 180,
+      privGrpVisTimeout: 5,
       newSubgroupDescription: '',
       newSubgroupEmailEnabled: false
     };
@@ -84,7 +85,7 @@ class Configure extends Component {
   };
   startRegistration = async () => {
     this.props.history.push('/register');
-    await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL);
+    await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL, +this.state.privGrpVisTimeout);
   };
 
   endRegistration = async () => {
@@ -101,7 +102,7 @@ class Configure extends Component {
         </div>
         <h1 className="inline">Configure</h1>
 
-        <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} handleChange={this.handleChange} />
+        <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} privGrpVisTimeout={this.state.privGrpVisTimeout} handleChange={this.handleChange} />
         <br />
         <div className="card">
           <div className="card-header">
@@ -244,7 +245,7 @@ const mapDispatchToProps = dispatch => {
     destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
     loadUsers: group => dispatch(LoadUsers(group)),
     createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
-    startRegistrationSession: (groupName, netidAllowed, tokenTTL) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL)),
+    startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVisTimeout) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVisTimeout)),
     stopRegistrationSession: () => dispatch(StopRegistrationSession())
   };
 };

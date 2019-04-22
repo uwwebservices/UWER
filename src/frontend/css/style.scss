@@ -185,6 +185,14 @@ strong {
     background-color: indianred;
     opacity: 0.4;
   }
+  .fadeOutRemoval {
+    -webkit-transition: 5s;
+    -moz-transition: 5s;
+    -o-transition: 5s;
+    transition: 5s;
+    opacity: 0;
+    visibility: hidden;
+  }
   .memberDisplay span div {
     padding-top: 1px;
     padding-bottom: 0;

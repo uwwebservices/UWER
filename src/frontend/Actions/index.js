@@ -15,6 +15,9 @@ const ReceiveSubgroups = subgroups => {
 const DeleteSubgroup = subgroup => {
   return { type: Const.DELETE_SUBGROUP, subgroup };
 };
+const LoadingUsers = () => {
+  return { type: Const.LOADING_USERS };
+};
 const ReceiveUsers = users => {
   return { type: Const.RECEIVE_USERS, users };
 };
@@ -51,6 +54,9 @@ const PrivateGroup = confidential => {
 
 export const StoreRegistrationToken = token => {
   return { type: Const.STORE_REGISTRATION_TOKEN, token };
+};
+const StorePrivateGroupVisTimeout = timeout => {
+  return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT, timeout };
 };
 
 // -----------------------
@@ -107,6 +113,7 @@ export const LoadUsers = group => {
     let state = store.getState();
     let token = state.registrationToken || Cookies.get('registrationToken');
 
+    dispatch(LoadingUsers());
     let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
     dispatch(PrivateGroup(groupInfo.confidential));
     return await dispatch(ReceiveUsers(groupInfo.members));
@@ -133,7 +140,9 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
+      let tempDispUserForPrivacyReasons = false;
       if (res.status === 201) {
+        tempDispUserForPrivacyReasons = true;
         dispatch(FlashNotification('Successfully Added User', 'Group Membership is Private'));
       }
       if (res.status === 404) {
@@ -157,7 +166,17 @@ export const AddUser = (group, identifier) => {
         dispatch(FlashNotification('Duplicate User', `${user.UWNetID || 'This user'} has already been added to this group.`));
         dispatch(DummyUserFail(displayId));
       } else {
-        dispatch(UpdateUsers(user));
+        const fadeOutDelay = 5000; // This should match scss `.fadeOutRemoval` transition
+        const visibleDelay = state.privGrpVisTimeout * 1000;
+        await dispatch(UpdateUsers(user));
+        if (tempDispUserForPrivacyReasons) {
+          window.setTimeout(async () => {
+            await dispatch(MarkUserForDeletion(identifier));
+            window.setTimeout(async () => {
+              await dispatch(RemoveUser(user.UWNetID));
+            }, fadeOutDelay);
+          }, visibleDelay);
+        }
       }
     } catch (ex) {
       dispatch(DummyUserFail(displayId));
@@ -191,10 +210,11 @@ export const Logout = () => {
   };
 };
 
-export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180) => {
+export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privateGroupVisTimeout = 5) => {
   return async dispatch => {
     let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
+    dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
     dispatch(ReceiveUsers([]));
     resetTokenCookie(token, tokenTTL);
     await dispatch(Logout());

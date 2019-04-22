@@ -18,6 +18,11 @@ class ConfigOptions extends React.Component {
               <input type="textbox" id="tokenTTL" name="tokenTTL" value={this.props.tokenTTL} onChange={this.props.handleChange} />
               <span> minutes.</span>
             </p>
+            <p>
+              <label htmlFor="privGrpVisTimeout">Allow participants of private groups to remain visible for </label>
+              <input type="number" min="0" max="30" id="privGrpVisTimeout" name="privGrpVisTimeout" value={this.props.privGrpVisTimeout} onChange={this.props.handleChange} />
+              <span> seconds.</span>
+            </p>
           </div>
           {this.props.children}
         </div>
