@@ -46,12 +46,6 @@ if (NODE_ENV === 'development') {
   });
 }
 
-if (process.env.NODE_ENV === 'production') {
-  app.get([...Routes], (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
-  });
-}
-
 // Shibboleth Routes
 
 app.get(
@@ -82,5 +76,11 @@ app.post(
   },
   backToUrl()
 );
+
+if (process.env.NODE_ENV === 'production') {
+  app.get([...Routes], (req, res) => {
+    res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
+  });
+}
 
 export default app;
