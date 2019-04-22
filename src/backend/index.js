@@ -56,9 +56,7 @@ if (NODE_ENV === 'production') {
 
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((user, done) => done(null, user));
-}
-
-if (NODE_ENV === 'development') {
+} else {
   // Middleware to mock a login in development mode
   app.use(function(req, res, next) {
     req.session = req.session || {};
