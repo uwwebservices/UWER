@@ -142,11 +142,7 @@ const Groups = {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
 
-    let admins = [
-      { id: CONTROLLING_CERTIFICATE, type: 'dns' },
-      { id: 'uw_event', type: 'group' },
-      { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }
-    ];
+    let admins = [{ id: CONTROLLING_CERTIFICATE, type: 'dns' }, { id: 'uw_event', type: 'group' }, { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }];
 
     let opts = Object.assign({}, options, {
       method: 'PUT',
@@ -248,9 +244,8 @@ const Groups = {
 
         history = history.concat(res.data);
         start = res.data.reduce((prev, current) => {
-          return (prev > current.timestamp) ? prev : current.timestamp + 1;
+          return prev > current.timestamp ? prev : current.timestamp + 1;
         }, start);
-
       } catch (ex) {
         return ErrorResponse(ex);
       }
@@ -260,22 +255,20 @@ const Groups = {
   },
   async GetMemberHistory(memberList, group) {
     const membershipHistory = await this.GetHistory(group, memberList.length);
-    const usefulMembershipHistory = membershipHistory
-      .Payload
-      .filter((e, i) => e && e.description && e.description.indexOf('add member') !== -1)
+    const usefulMembershipHistory = membershipHistory.Payload.filter((e, i) => e && e.description && e.description.indexOf('add member') !== -1)
       .sort((a, b) => b.timestamp - a.timestamp)
       .map((e, i) => ({
         UWNetID: e.description.match(/^add member: '(.*)'$/)[1],
-        Registered: new Date(e.timestamp).toLocaleString(),
+        Registered: new Date(e.timestamp).toLocaleString()
       }));
 
     const merged = memberList.map(src => ({
-      ...usefulMembershipHistory.find((dst) => (dst.UWNetID === src.UWNetID) && dst),
-      ...src,
+      ...usefulMembershipHistory.find(dst => dst.UWNetID === src.UWNetID && dst),
+      ...src
     }));
 
     return merged;
-  },
+  }
 };
 
 export default Groups;

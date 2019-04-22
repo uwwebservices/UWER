@@ -6,16 +6,7 @@ import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
-import {
-  UpdateGroupName,
-  LoadSubgroups,
-  DestroySubgroup,
-  LoadUsers,
-  CreateGroup,
-  StartRegistrationSession,
-  StopRegistrationSession,
-  ToggleNetIDAllowed
-} from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
 
 class Configure extends Component {
   constructor(props) {
@@ -64,12 +55,7 @@ class Configure extends Component {
   createSubgroup = async () => {
     if (this.validateGroupString(this.state.newSubgroup)) {
       this.setState({ creatingGroup: true });
-      let success = await this.props.createGroup(
-        this.generateGroupName(this.state.newSubgroup),
-        this.state.confidential,
-        this.state.newSubgroupDescription,
-        this.state.newSubgroupEmailEnabled
-      );
+      let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
       if (success) {
         this.props.loadSubgroups(this.props.groupName);
         this.props._addNotification('Registration Group Created', `Successfully created registration group: ${this.state.newSubgroup}`);
@@ -162,20 +148,12 @@ class Configure extends Component {
                     disabled={this.state.creatingGroup}
                     placeholder="Group Name: letters, numbers and spaces"
                   />
-                  {this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && (
-                    <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>
-                  )}
+                  {this.state.invalidSubgroup && this.state.newSubgroup.length > 2 && <div className="subgroupError">Registration groups must be longer than 2 characters and can only contain letters, numbers and spaces.</div>}
                 </div>
                 <div>
                   <label htmlFor="">Event Description:</label>
                   <br />
-                  <input
-                    type="text"
-                    name="newSubgroupDescription"
-                    className="groupDescription"
-                    value={this.state.newSubgroupDescription}
-                    onChange={this.handleChange}
-                  />
+                  <input type="text" name="newSubgroupDescription" className="groupDescription" value={this.state.newSubgroupDescription} onChange={this.handleChange} />
                 </div>
                 <div>
                   <input type="checkbox" name="newSubgroupEmailEnabled" checked={this.state.newSubgroupEmailEnabled} onChange={this.handleChange} />
@@ -209,12 +187,7 @@ class Configure extends Component {
         <br />
 
         <div className="startRegistration">
-          <RegistrationModal
-            confirmCallback={this.startRegistration}
-            openButtonDisabled={!canStartRegistration}
-            openButtonText="Start Registering Participants"
-          />{' '}
-          &nbsp;
+          <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
         </div>
         <br />
 
@@ -233,31 +206,24 @@ class Configure extends Component {
               </li>
 
               <li>
-                The functionality contained in this application is explicitly for the use of capturing event participants. Any other use of the event
-                participants’ information or Husky Card data elements (Name, NetID, Photo, Magstrip, RFID) information captured in the application is explicitly
-                prohibited.
+                The functionality contained in this application is explicitly for the use of capturing event participants. Any other use of the event participants’ information or Husky Card data elements (Name, NetID, Photo, Magstrip, RFID)
+                information captured in the application is explicitly prohibited.
               </li>
 
               <li>
-                The use of the “Allow NetID Registration” feature should always be accompanied by a secondary form of identification (e.g. UW or government
-                issued ID). The use of the “Allow NetID Registration” feature without secondary identification <u>and</u> the event participant or registrant’s
-                physical presence is explicitly prohibited.
+                The use of the “Allow NetID Registration” feature should always be accompanied by a secondary form of identification (e.g. UW or government issued ID). The use of the “Allow NetID Registration” feature without secondary
+                identification <u>and</u> the event participant or registrant’s physical presence is explicitly prohibited.
               </li>
 
-              <li>
-                The “Private Group” feature should be used as the default setting and only *Application administrators should be given access to view the event
-                participants.
-              </li>
+              <li>The “Private Group” feature should be used as the default setting and only *Application administrators should be given access to view the event participants.</li>
 
               <li>
-                Use of the event participants’ information is to <u>only</u> be used for purposes directly related to the specific event the participant
-                registered for or attended.
+                Use of the event participants’ information is to <u>only</u> be used for purposes directly related to the specific event the participant registered for or attended.
               </li>
             </ul>
             <br />
             <i>
-              *<b>Application administrators</b> are those individuals that have been setup to access the configuration screen and are required to login. If you
-              are reading this message you are an Application administrator.
+              *<b>Application administrators</b> are those individuals that have been setup to access the configuration screen and are required to login. If you are reading this message you are an Application administrator.
             </i>
           </div>
         </div>

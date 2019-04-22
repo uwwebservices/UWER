@@ -25,13 +25,7 @@ class NotAuthorized extends Component {
           To register users for this group your UWNetID needs to be a member of this group.
         </div>
         <br />
-        <EndRegistrationModal
-          confirmCallback={this.endRegistration}
-          openButtonText="Logout"
-          modalText=" "
-          approveButtonText="Back to Home"
-          cancelButtonText="Cancel"
-        />
+        <EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" modalText=" " approveButtonText="Back to Home" cancelButtonText="Cancel" />
         &nbsp;
         <Button color="primary" variant="raised" onClick={() => this.gws()}>
           <FA name="group" />

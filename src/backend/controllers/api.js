@@ -69,7 +69,7 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
   let groupName = req.params.group;
   let identifier = req.params.identifier;
-  
+
   // Should we validate the identifier is part of the group?
   // This srsly slows things down...
   // let result = await Groups.GetMembers(groupName);
@@ -77,7 +77,7 @@ api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) 
   // let found = members.filter(x => x.UWRegID === identifier).length === 1;
 
   // if (!found) {
-  //   identifier = "placeholder"; 
+  //   identifier = "placeholder";
   // }
 
   let image = await IDCard.GetPhoto(identifier);

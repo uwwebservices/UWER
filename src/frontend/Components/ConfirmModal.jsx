@@ -12,14 +12,14 @@ class AlertDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      open: false
     };
   }
 
   handleClose = confirmed => {
     this.setState({ open: false });
     const espcapeKeyPressed = confirmed && confirmed.keyCode && confirmed.keyCode == 27;
-    if(confirmed && !espcapeKeyPressed) {
+    if (confirmed && !espcapeKeyPressed) {
       this.props.confirmCallback();
     }
   };
@@ -31,31 +31,29 @@ class AlertDialog extends React.Component {
   render() {
     return (
       <span>
-        <Button variant={this.props.openButtonVariant} disabled={this.props.openButtonDisabled} 
-          color={this.props.openButtonColor} size="small" mini={this.props.openButtonFabMini} 
-          size={this.props.openButtonSize} onClick={() => this.setState({ open: true })}>
-            {this.props.openButtonIcon && <FA name={this.props.openButtonIcon} spin={this.props.openButtonIconSpin} />}{this.props.openButtonText ? <span className="padLeft">{this.props.openButtonText}</span> : ""}
-        </Button>
-        <Dialog
-          open={this.state.open}
-          onClose={this.handleClose}
-          onExited={this.handleExited}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          disableBackdropClick={this.props.disableBackdropClick}
+        <Button
+          variant={this.props.openButtonVariant}
+          disabled={this.props.openButtonDisabled}
+          color={this.props.openButtonColor}
+          size="small"
+          mini={this.props.openButtonFabMini}
+          size={this.props.openButtonSize}
+          onClick={() => this.setState({ open: true })}
         >
+          {this.props.openButtonIcon && <FA name={this.props.openButtonIcon} spin={this.props.openButtonIconSpin} />}
+          {this.props.openButtonText ? <span className="padLeft">{this.props.openButtonText}</span> : ''}
+        </Button>
+        <Dialog open={this.state.open} onClose={this.handleClose} onExited={this.handleExited} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" disableBackdropClick={this.props.disableBackdropClick}>
           <DialogTitle id="alert-dialog-title">{this.props.dialogTitle}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {this.props.dialogContent}
-            </DialogContentText>
+            <DialogContentText id="alert-dialog-description">{this.props.dialogContent}</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => this.handleClose(false)} color={this.props.approveButtonColor} variant={this.props.approveButtonVariant} >
-              { this.props.cancelButtonText }
+            <Button onClick={() => this.handleClose(false)} color={this.props.approveButtonColor} variant={this.props.approveButtonVariant}>
+              {this.props.cancelButtonText}
             </Button>
             <Button onClick={() => this.handleClose(true)} color={this.props.cancelButtonColor} variant={this.props.cancelButtonVariant} autoFocus>
-            { this.props.approveButtonText }
+              {this.props.approveButtonText}
             </Button>
           </DialogActions>
         </Dialog>
@@ -73,38 +71,38 @@ AlertDialog.propTypes = {
   dialogTitle: PropTypes.string,
   dialogContent: PropTypes.string,
   cancelButtonText: PropTypes.string,
-  cancelButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
+  cancelButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
   cancelButtonVariant: PropTypes.string,
   approveButtonText: PropTypes.string,
-  approveButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
+  approveButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
   approveButtonVariant: PropTypes.string,
   disableBackdropClick: PropTypes.bool,
   openButtonVariant: PropTypes.string,
   openButtonSize: PropTypes.string,
   openButtonIcon: PropTypes.string,
   openButtonIconSpin: PropTypes.bool,
-  openButtonColor: PropTypes.oneOf([ 'default', 'primary', 'secondary']),
+  openButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
   openButtonFabMini: PropTypes.bool,
   openButtonDisabled: PropTypes.bool
 };
 AlertDialog.defaultProps = {
-  exitedCallback: (() => {}),
-  openButtonText: "Delete",
-  dialogTitle: "",
-  dialogContent: "Are you sure?",
-  cancelButtonText: "Cancel",
-  cancelButtonColor: "secondary",
-  cancelButtonVariant: "raised",
-  approveButtonText: "Delete",
-  approveButtonColor: "default",
-  approveButtonVariant: "raised",
+  exitedCallback: () => {},
+  openButtonText: 'Delete',
+  dialogTitle: '',
+  dialogContent: 'Are you sure?',
+  cancelButtonText: 'Cancel',
+  cancelButtonColor: 'secondary',
+  cancelButtonVariant: 'raised',
+  approveButtonText: 'Delete',
+  approveButtonColor: 'default',
+  approveButtonVariant: 'raised',
   disableBackdropClick: true,
-  openButtonVariant: "raised",
+  openButtonVariant: 'raised',
   openButtonDisabled: false,
-  openButtonSize: "medium",
-  openButtonIcon: "remove",
+  openButtonSize: 'medium',
+  openButtonIcon: 'remove',
   openButtonIconSpin: false,
-  openButtonColor: "secondary",
+  openButtonColor: 'secondary',
   openButtonFabMini: false,
   openButtonDisabled: false
 };

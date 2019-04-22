@@ -69,15 +69,7 @@ export default class Configure extends Component {
           )}
           {this.props.email && (
             <span className="subgroupPrivate">
-              <ContentModal
-                openWithIcon={true}
-                dialogTitle="Group Email"
-                showCancelButton={false}
-                approveButtonColor="default"
-                approveButtonText="Close"
-                openButtonIcon="envelope-o"
-                iconButtonTitle="Group Email Enabled"
-              >
+              <ContentModal openWithIcon={true} dialogTitle="Group Email" showCancelButton={false} approveButtonColor="default" approveButtonText="Close" openButtonIcon="envelope-o" iconButtonTitle="Group Email Enabled">
                 <div>{this.props.email}</div>
               </ContentModal>
             </span>
