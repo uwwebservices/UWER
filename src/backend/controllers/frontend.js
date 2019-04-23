@@ -47,7 +47,6 @@ if (NODE_ENV === 'development') {
 }
 
 // Shibboleth Routes
-
 app.get(
   Routes.Login,
   function(req, res, next) {
@@ -56,7 +55,6 @@ app.get(
   },
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
 );
-
 app.post(
   '/login/callback',
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),

@@ -3,7 +3,6 @@ import defaultUser from 'Assets/defaultUser';
 
 const initialState = {
   authenticated: null,
-  auth: { UWNetID: '', DisplayName: '' },
   iaaAuth: null,
   iaacheck: '',
   groupName: '',

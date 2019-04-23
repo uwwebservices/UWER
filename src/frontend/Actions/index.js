@@ -51,7 +51,6 @@ const RemoveNotification = messageId => {
 const PrivateGroup = confidential => {
   return { type: Const.PRIVATE_GROUP, confidential };
 };
-
 export const StoreRegistrationToken = token => {
   return { type: Const.STORE_REGISTRATION_TOKEN, token };
 };
