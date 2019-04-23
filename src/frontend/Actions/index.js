@@ -46,7 +46,7 @@ const ResetState = () => {
   return { type: Const.RESET_STATE };
 };
 const AddNotification = (messageId, title, message) => {
-  return { type: Const.ADD_NOTIFICATION, notifications: { messageId, title, message } };
+  return { type: Const.ADD_NOTIFICATION, notification: { messageId, title, message } };
 };
 const RemoveNotification = messageId => {
   return { type: Const.REMOVE_NOTIFICATION, messageId };

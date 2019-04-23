@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
     case Const.RECEIVE_USERS:
       return { ...state, users: action.users, loading: { ...state.loading, users: false } };
     case Const.ADD_DUMMY_USER:
-      return { ...state, users: [{ displayId: action.displayId, Base64Image: defaultUser }, ...state.users] };
+      return { ...state, users: [{ displayId: action.displayId, Base64Image: defaultUser, loading: true }, ...state.users] };
     case Const.FAILED_DUMMY_USER:
       return { ...state, users: state.users.filter(u => u.displayId !== action.displayId) };
     case Const.UPDATE_USERS:
@@ -44,13 +44,13 @@ export default (state = initialState, action) => {
       });
       return { ...state, users: newUsers };
     case Const.MARK_USER_FOR_DELETION:
-      let userMarked = state.users.map(u => {
+      let users = state.users.map(u => {
         if (u.UWNetID === action.identifier) {
           u.deleting = true;
         }
         return u;
       });
-      return { ...state, users: userMarked };
+      return { ...state, users };
     case Const.REMOVE_USER:
       let userRemoved = state.users.filter(u => u.UWNetID !== action.user);
       return { ...state, users: userRemoved };
