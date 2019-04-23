@@ -8,11 +8,6 @@ class RegistrationModal extends React.Component {
       showLogout: false
     };
   }
-  backToConfig() {
-    if (process.env.NODE_ENV !== 'development') {
-      window.location = '/login?returnUrl=/config';
-    }
-  }
   render() {
     let modalOpts = {
       openWithButton: true,
@@ -21,7 +16,6 @@ class RegistrationModal extends React.Component {
       approveButtonText: 'Start Registration',
       openButtonText: 'Registration Mode',
       disableBackdropClick: true,
-      cancelCallback: this.backToConfig,
       ...this.props
     };
     modalOpts.confirmCallback = async () => {
