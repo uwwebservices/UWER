@@ -11,8 +11,7 @@ export const API = {
   Config: '/config',
   CSV: '/csv/:group.csv',
   GetToken: '/getToken',
-  Logout: '/logout',
-  Wai: '/wai'
+  Logout: '/logout'
 };
 
 // Page Routes
