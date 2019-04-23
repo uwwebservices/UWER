@@ -46,7 +46,7 @@ const ResetState = () => {
   return { type: Const.RESET_STATE };
 };
 const AddNotification = (messageId, title, message) => {
-  return { type: Const.ADD_NOTIFICATION, messageId, title, message };
+  return { type: Const.ADD_NOTIFICATION, notifications: { messageId, title, message } };
 };
 const RemoveNotification = messageId => {
   return { type: Const.REMOVE_NOTIFICATION, messageId };
@@ -73,7 +73,7 @@ const APIRequestWithAuth = async (url, opts) => {
 export const LoadConfig = () => {
   return async dispatch => {
     let json = await (await APIRequestWithAuth('/api/config')).json();
-    return await dispatch(await ConfigLoaded(json));
+    return dispatch(ConfigLoaded(json));
   };
 };
 
@@ -118,6 +118,7 @@ export const LoadUsers = group => {
   return async dispatch => {
     let state = store.getState();
     let token = state.registrationToken || Cookies.get('registrationToken');
+    console.log('TEST THIS', state.groupName, group);
     if (!state.loading.users) {
       dispatch(LoadingUsers());
       let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
