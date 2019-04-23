@@ -13,8 +13,6 @@ class Configure extends Component {
     super(props);
     this.state = {
       newSubgroup: '',
-      loadingSubGroups: false,
-      loadingConfigPage: true,
       invalidSubgroup: true,
       confidential: true,
       netidAllowed: false,
@@ -39,9 +37,7 @@ class Configure extends Component {
     return this.props.groupNameBase + groupString;
   }
   loadSubGroups = async () => {
-    this.setState({ loadingSubGroups: true });
     await this.props.loadSubgroups(this.props.groupName);
-    this.setState({ loadingSubGroups: false });
   };
 
   handleChange = e => {
@@ -107,7 +103,7 @@ class Configure extends Component {
         <div className="card">
           <div className="card-header">
             <h2 className="inline">
-              Select a Registration Group <FA name="refresh" onClick={this.loadSubGroups} spin={this.state.loadingSubGroups} />
+              Select a Registration Group <FA name="refresh" onClick={this.loadSubGroups} spin={this.props.loadingSubgroups} />
             </h2>
             <ContentModal
               openWithButton={true}
@@ -236,7 +232,8 @@ class Configure extends Component {
 const mapStateToProps = state => ({
   groupName: state.groupName,
   subgroups: state.subgroups,
-  groupNameBase: state.groupNameBase
+  groupNameBase: state.groupNameBase,
+  loadingSubgroups: state.loading.subgroups
 });
 const mapDispatchToProps = dispatch => {
   return {

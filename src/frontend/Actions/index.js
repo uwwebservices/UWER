@@ -18,6 +18,9 @@ const DeleteSubgroup = subgroup => {
 const LoadingUsers = () => {
   return { type: Const.LOADING_USERS };
 };
+const LoadingSubgroups = () => {
+  return { type: Const.LOADING_SUBGROUPS };
+};
 const ReceiveUsers = users => {
   return { type: Const.RECEIVE_USERS, users };
 };
@@ -93,9 +96,13 @@ export const CreateGroup = (group, confidential = true, description, email) => {
 
 export const LoadSubgroups = () => {
   return async dispatch => {
-    let groupNameBase = store.getState().groupNameBase;
-    let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
-    return await dispatch(ReceiveSubgroups(subgroups));
+    let state = store.getState();
+    if (!state.loading.subgroups) {
+      dispatch(LoadingSubgroups());
+      let groupNameBase = store.getState().groupNameBase;
+      let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
+      return await dispatch(ReceiveSubgroups(subgroups));
+    }
   };
 };
 
@@ -111,11 +118,12 @@ export const LoadUsers = group => {
   return async dispatch => {
     let state = store.getState();
     let token = state.registrationToken || Cookies.get('registrationToken');
-
-    dispatch(LoadingUsers());
-    let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
-    dispatch(PrivateGroup(groupInfo.confidential));
-    return await dispatch(ReceiveUsers(groupInfo.members));
+    if (!state.loading.users) {
+      dispatch(LoadingUsers());
+      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
+      dispatch(PrivateGroup(groupInfo.confidential));
+      return await dispatch(ReceiveUsers(groupInfo.members));
+    }
   };
 };
 

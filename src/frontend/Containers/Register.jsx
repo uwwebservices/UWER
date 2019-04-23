@@ -93,7 +93,7 @@ const mapStateToProps = state => ({
   confidential: state.confidential,
   groupName: state.groupName,
   users: state.users,
-  loadingUsers: state.loadingUsers,
+  loadingUsers: state.loading.users,
   groupNameBase: state.groupNameBase,
   authenticated: state.authenticated,
   token: state.registrationToken,

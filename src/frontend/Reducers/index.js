@@ -9,7 +9,7 @@ const initialState = {
   groupNameBase: '',
   subgroups: [],
   users: [],
-  loadingUsers: false,
+  loading: { users: false, subgroups: false },
   registrationToken: '',
   privGrpVisTimeout: 5,
   netidAllowed: false,
@@ -23,17 +23,19 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, { groupName: action.groupName });
     case Const.RECEIVE_CONFIG:
       return Object.assign({}, state, { groupNameBase: action.config.groupNameBase });
+    case Const.LOADING_SUBGROUPS:
+      return Object.assign({}, state, { loading: { subgroups: true } });
     case Const.RECEIVE_SUBGROUPS:
-      return Object.assign({}, state, { subgroups: action.subgroups });
+      return Object.assign({}, state, { subgroups: action.subgroups, loading: { subgroups: false } });
     case Const.DELETE_SUBGROUP:
       let subgroups = state.subgroups.filter(sg => sg.id !== action.subgroup);
       return Object.assign({}, state, { subgroups });
     case Const.LOADING_USERS:
-      return Object.assign({}, state, { loadingUsers: true });
+      return Object.assign({}, state, { loading: { users: true } });
     case Const.RECEIVE_USERS:
-      return Object.assign({}, state, { users: action.users, loadingUsers: false });
+      return Object.assign({}, state, { users: action.users, loading: { users: false } });
     case Const.ADD_DUMMY_USER:
-      let dummy = { displayId: action.displayId, Base64Image: defaultUser, loading: true };
+      let dummy = { displayId: action.displayId, Base64Image: defaultUser };
       return Object.assign({}, state, { users: [dummy, ...state.users] });
     case Const.FAILED_DUMMY_USER:
       let noDummy = state.users.filter(u => u.displayId !== action.displayId);
