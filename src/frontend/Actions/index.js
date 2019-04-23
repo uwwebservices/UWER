@@ -132,7 +132,9 @@ export const LoadUsers = group => {
       dispatch(LoadingUsers());
       let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
+
       // fixes fast switching groups race condition
+      state = store.getState();
       if (group === state.groupName) {
         return await dispatch(ReceiveUsers(groupInfo.members));
       }
