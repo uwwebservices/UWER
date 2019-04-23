@@ -118,12 +118,24 @@ export const LoadUsers = group => {
   return async dispatch => {
     let state = store.getState();
     let token = state.registrationToken || Cookies.get('registrationToken');
-    console.log('TEST THIS', state.groupName, group);
+
+    // if we are loading a group already, and we get a request to load a different group, wait for the first to finish
+    if (state.groupName !== group) {
+      dispatch(ReceiveUsers([]));
+      while (state.loading.users) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        state = store.getState();
+      }
+    }
+
     if (!state.loading.users) {
       dispatch(LoadingUsers());
       let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
-      return await dispatch(ReceiveUsers(groupInfo.members));
+      // fixes fast switching groups race condition
+      if (group === state.groupName) {
+        return await dispatch(ReceiveUsers(groupInfo.members));
+      }
     }
   };
 };
