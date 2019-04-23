@@ -15,7 +15,6 @@ const initialState = {
   privGrpVisTimeout: 5,
   netidAllowed: false,
   confidential: false,
-  development: process.env.NODE_ENV === 'development',
   notifications: []
 };
 
