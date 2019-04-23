@@ -1,15 +1,13 @@
-@import "reset";
-@import url("https://fonts.googleapis.com/css?family=Roboto");
-@import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+@import 'reset';
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 $cream-color: #e8e3d3;
 $uw-purple: #4b2e83;
 
 body {
   background-color: $cream-color;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -55,7 +53,7 @@ strong {
     }
 
     .configLabel:after {
-      content: ": ";
+      content: ': ';
     }
 
     .configInput {
@@ -98,7 +96,7 @@ strong {
   h4,
   h5,
   h6 {
-    font-family: "Encode Sans Compressed", sans-serif;
+    font-family: 'Encode Sans Compressed', sans-serif;
     font-weight: 800;
     line-height: 1.3;
   }
@@ -217,6 +215,7 @@ strong {
   }
   .registrationNotification {
     margin: auto;
+    margin-bottom: 10px;
     padding: 10px;
     background-color: lightgoldenrodyellow;
     border-radius: 10px;
@@ -269,11 +268,11 @@ strong {
     h2 {
       margin: 0 0 5px 2px;
     }
-    input[type="textbox"] {
+    input[type='textbox'] {
       width: 50px;
       margin: 0 5px;
     }
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       margin-right: 10px;
     }
   }
@@ -320,7 +319,7 @@ strong {
 }
 
 .createSubgroupModal {
-  input[type="text"] {
+  input[type='text'] {
     width: 300px;
     margin-right: 10px;
     font-size: 15px;
