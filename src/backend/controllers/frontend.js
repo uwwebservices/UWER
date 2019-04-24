@@ -55,6 +55,7 @@ app.get(
   },
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
 );
+
 app.post(
   '/login/callback',
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),

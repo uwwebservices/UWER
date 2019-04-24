@@ -37,39 +37,39 @@ if (NODE_ENV === 'production') {
   app.use('/assets', express.static('dist/assets'));
   app.use(passport.initialize());
   app.use(passport.session());
-
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((user, done) => done(null, user));
+
+  const spPrivateKey = process.env.SPKEYFILE ? fs.readFileSync(process.env.SPKEYFILE, { encoding: 'utf8' }) : '';
+
+  passport.use(
+    new saml.Strategy(
+      {
+        callbackUrl: process.env.IDPCALLBACKURL,
+        entryPoint: process.env.IDPENTRYPOINT,
+        issuer: process.env.IDPISSUER,
+        identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
+        privateKey: spPrivateKey
+      },
+      function(profile, done) {
+        return done(null, {
+          UWNetID: profile['urn:oid:0.9.2342.19200300.100.1.1'] || profile.nameID,
+          DisplayName: profile['urn:oid:2.16.840.1.113730.3.1.241']
+        });
+      }
+    )
+  );
 } else if (NODE_ENV === 'development') {
   // Middleware to mock a login in development mode
   app.use(function(req, res, next) {
     req.session = req.session || {};
-    req.isAuthenticated = () => true;
+
     req.user = { UWNetID: 'steven20' };
     req.session.IAAAgreed = true;
+    req.isAuthenticated = () => true;
     next();
   });
 }
-
-const spPrivateKey = process.env.SPKEYFILE ? fs.readFileSync(process.env.SPKEYFILE, { encoding: 'utf8' }) : '';
-
-passport.use(
-  new saml.Strategy(
-    {
-      callbackUrl: process.env.IDPCALLBACKURL,
-      entryPoint: process.env.IDPENTRYPOINT,
-      issuer: process.env.IDPISSUER,
-      identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
-      privateKey: spPrivateKey
-    },
-    function(profile, done) {
-      return done(null, {
-        UWNetID: profile['urn:oid:0.9.2342.19200300.100.1.1'] || profile.nameID,
-        DisplayName: profile['urn:oid:2.16.840.1.113730.3.1.241']
-      });
-    }
-  )
-);
 
 // Log formatting
 app.use(

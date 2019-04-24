@@ -85,9 +85,11 @@ api.get(API.GetToken, ensureAPIAuth, (req, res) => {
 
 api.get(API.Logout, (req, res) => {
   req.logout();
-  req.session.destroy();
   res.clearCookie('connect.sid', { path: Routes.Welcome });
-  res.sendStatus(200);
+  req.session.regenerate(() => {
+    req.session.loggedOut = true;
+    res.sendStatus(200);
+  });
 });
 
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {

@@ -7,11 +7,11 @@ class Authorization extends React.Component {
     super();
     this.state = { showRetry: false, retries: 0 };
   }
-  componentDidMount() {
-    this.checkAuth();
+  async componentDidMount() {
+    await this.checkAuth();
   }
-  checkAuth() {
-    this.props.checkAuthentication();
+  async checkAuth() {
+    await this.props.checkAuthentication();
   }
   render() {
     const { loginRequired, authenticated, iaaAuth, iaaCheck, iaaRequired, children, path } = this.props;
