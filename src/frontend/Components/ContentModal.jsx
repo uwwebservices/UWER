@@ -14,6 +14,13 @@ class ContentModal extends React.Component {
       open: false
     };
   }
+  componentDidMount() {
+    this._ismounted = true;
+  }
+
+  componentWillUnmount() {
+    this._ismounted = false;
+  }
 
   handleClickOpen = () => this.setState({ open: true });
 
@@ -24,7 +31,9 @@ class ContentModal extends React.Component {
     } else {
       this.props.cancelCallback();
     }
-    this.setState({ open: false });
+    if (this._ismounted) {
+      this.setState({ open: false });
+    }
   };
 
   render() {

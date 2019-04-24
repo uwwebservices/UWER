@@ -184,7 +184,7 @@ class Configure extends Component {
         <br />
 
         <div className="startRegistration">
-          <RegistrationModal confirmCallback={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
+          <RegistrationModal startRegistration={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
         </div>
         <br />
 

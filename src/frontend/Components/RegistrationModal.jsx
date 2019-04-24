@@ -5,7 +5,10 @@ class RegistrationModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showLogout: false
+      count: 0,
+      showLogout: false,
+      showApproveButton: true,
+      showCancelButton: true
     };
   }
   render() {
@@ -16,26 +19,31 @@ class RegistrationModal extends React.Component {
       approveButtonText: 'Start Registration',
       openButtonText: 'Registration Mode',
       disableBackdropClick: true,
+      showApproveButton: this.state.showApproveButton,
+      showCancelButton: this.state.showCancelButton,
       ...this.props
     };
-    modalOpts.confirmCallback = async () => {
-      this.setState({ showLogout: true });
 
+    modalOpts.confirmCallback = async () => {
+      console.log(modalOpts.cancelButtonText);
+      this.setState({ showLogout: true, count: this.state.count + 1, showApproveButton: false, showCancelButton: false });
       // Wait until the logout works OR we've tried too many times
       // This should allow the iFrame to load
       let count = 0;
-      const maxCount = 15;
-      while (count < maxCount) {
-        count += 1;
+      const maxCount = 10;
+      while (this.state.count < 2 || count >= maxCount) {
         await new Promise(resolve => setTimeout(resolve, 1000));
+        count += 1;
       }
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      this.props.startRegistration();
     };
 
     return (
       <ContentModal {...modalOpts}>
         <div>
           {this.state.showLogout ? (
-            <iframe onLoad={this.props.confirmCallback} src="https://idp.u.washington.edu/idp/profile/Logout" height="335px" width="450px" />
+            <iframe onLoad={modalOpts.confirmCallback} src="https://idp.u.washington.edu/idp/profile/Logout" height="335px" width="450px" />
           ) : (
             <p>
               Are you sure that you want to begin registration? <br />
