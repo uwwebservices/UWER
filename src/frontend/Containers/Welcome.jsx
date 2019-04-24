@@ -4,12 +4,10 @@ import { connect } from 'react-redux';
 import background from 'Images/oragami.jpg';
 
 class Welcome extends Component {
-  componentDidMount() {
+  componentDidUpdate() {
     setTimeout(() => {
-      if (this.props.authenticated && !this.props.token) {
-        this.props.history.push('/config');
-        return;
-      } else if (!this.props.authenticated && this.props.token) {
+      console.log(this.props.authenticated, this.props.token);
+      if (!this.props.authenticated && this.props.token) {
         this.props.history.push('/register');
         return;
       }
