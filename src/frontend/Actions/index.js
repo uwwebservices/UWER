@@ -228,9 +228,9 @@ export const CheckAuthentication = () => {
   };
 };
 
-export const Logout = (retainToken = false) => {
+export const Logout = (loggedOut = false) => {
   return async dispatch => {
-    await APIRequestWithAuth('/api/logout' + (retainToken ? `?retainToken=${retainToken}` : ''));
+    await APIRequestWithAuth('/api/logout' + (loggedOut ? `?loggedOut=${loggedOut}` : ''));
     dispatch(Authenticated(false, false));
   };
 };

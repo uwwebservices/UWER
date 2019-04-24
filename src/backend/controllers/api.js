@@ -81,13 +81,11 @@ api.get(API.GetToken, ensureAPIAuth, (req, res) => {
 });
 
 api.get(API.Logout, (req, res) => {
-  let retainToken = req.query.retainToken || false;
-
+  let loggedOut = req.query.loggedOut || false;
   req.logout();
   res.clearCookie('connect.sid', { path: Routes.Welcome });
   req.session.regenerate(() => {
-    req.session.loggedOut = retainToken;
-    req.session.token = retainToken && req.session.token;
+    req.session.loggedOut = loggedOut;
     res.sendStatus(200);
   });
 });
