@@ -62,10 +62,7 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
 });
 
 api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
-  let groupName = req.params.group;
-  let identifier = req.params.identifier;
-
-  let image = await IDCard.GetPhoto(identifier);
+  let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
   return res.status(200).send(image);
 });
