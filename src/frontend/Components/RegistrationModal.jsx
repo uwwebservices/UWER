@@ -25,12 +25,13 @@ class RegistrationModal extends React.Component {
     };
 
     modalOpts.confirmCallback = async () => {
-      console.log(modalOpts.cancelButtonText);
       this.setState({ showLogout: true, count: this.state.count + 1, showApproveButton: false, showCancelButton: false });
       // Wait until the logout works OR we've tried too many times
       // This should allow the iFrame to load
       let count = 0;
       const maxCount = 10;
+      // this.state.count keeps track of renders of the modal, after it has re-rendered twice the iframe is loaded
+      // this is probaby janky but I can't think of a better way since iFrames are dumb.
       while (this.state.count < 2 || count >= maxCount) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         count += 1;
