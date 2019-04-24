@@ -6,7 +6,8 @@ const SESSIONKEY = process.env.SESSIONKEY;
 
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
-    if (req.isAuthenticated()) {
+    const devVerifiedAuthToken = process.env.NODE_ENV === 'development' && verifyAuthToken(req);
+    if (req.isAuthenticated() || devVerifiedAuthToken) {
       return next();
     } else {
       if (req.session) {

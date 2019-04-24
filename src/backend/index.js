@@ -63,10 +63,11 @@ if (NODE_ENV === 'production') {
   // Middleware to mock a login in development mode
   app.use(function(req, res, next) {
     req.session = req.session || {};
+    req.session.loggedOut = req.session.loggedOut || false;
 
     req.user = { UWNetID: 'steven20' };
     req.session.IAAAgreed = true;
-    req.isAuthenticated = () => true;
+    req.isAuthenticated = () => !req.session.loggedOut;
     next();
   });
 }

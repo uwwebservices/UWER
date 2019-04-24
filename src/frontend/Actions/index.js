@@ -225,9 +225,9 @@ export const CheckAuthentication = () => {
   };
 };
 
-export const Logout = () => {
+export const Logout = (retainToken = false) => {
   return async dispatch => {
-    await APIRequestWithAuth('/api/logout');
+    await APIRequestWithAuth('/api/logout' + (retainToken ? `?retainToken=${retainToken}` : ''));
     dispatch(Authenticated(false, false));
   };
 };
@@ -239,7 +239,7 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
     dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
     dispatch(ReceiveUsers([]));
     resetTokenCookie(token, tokenTTL);
-    await dispatch(Logout());
+    await dispatch(Logout(true));
     dispatch(LoadUsers(groupName));
   };
 };
