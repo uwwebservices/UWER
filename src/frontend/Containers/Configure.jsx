@@ -6,7 +6,7 @@ import RegistrationModal from 'Components/RegistrationModal';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, LoadUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, ClearUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
 
 class Configure extends Component {
   constructor(props) {
@@ -72,7 +72,7 @@ class Configure extends Component {
   };
 
   updateGroupName = async groupName => {
-    this.props.loadUsers(groupName);
+    this.props.clearUsers();
     await this.props.updateGroupName(groupName);
     this.props._addNotification('Change Selected Group', `Selected group successfully changed to: ${this.displayGroupName(groupName)}`, 'success');
   };
@@ -243,7 +243,7 @@ const mapDispatchToProps = dispatch => {
     updateGroupName: groupName => dispatch(UpdateGroupName(groupName)),
     loadSubgroups: groupName => dispatch(LoadSubgroups(groupName)),
     destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
-    loadUsers: group => dispatch(LoadUsers(group)),
+    clearUsers: () => dispatch(ClearUsers()),
     createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
     startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVisTimeout) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVisTimeout)),
     stopRegistrationSession: () => dispatch(StopRegistrationSession())

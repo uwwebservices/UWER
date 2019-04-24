@@ -24,6 +24,9 @@ const LoadingSubgroups = () => {
 const ReceiveUsers = users => {
   return { type: Const.RECEIVE_USERS, users };
 };
+export const ClearUsers = () => {
+  return { type: Const.RECEIVE_USERS, users: [] };
+};
 const UpdateUsers = user => {
   return { type: Const.UPDATE_USERS, user };
 };
