@@ -259,7 +259,7 @@ export const StopRegistrationSession = () => {
 export const InitApp = () => {
   return async dispatch => {
     let state = store.getState();
-    if (!state.authenticated && !state.token) {
+    if (!state.authenticated && !state.registrationToken) {
       await dispatch(CheckAuthentication());
     }
 
@@ -273,7 +273,7 @@ export const InitApp = () => {
       }
     }
 
-    if (!state.token) {
+    if (!state.registrationToken) {
       let registrationToken = Cookies.get('registrationToken');
       registrationToken && dispatch(StoreRegistrationToken(registrationToken));
     }

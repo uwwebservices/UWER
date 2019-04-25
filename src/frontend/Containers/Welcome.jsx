@@ -6,8 +6,8 @@ import background from 'Images/oragami.jpg';
 class Welcome extends Component {
   componentDidUpdate() {
     setTimeout(() => {
-      console.log(this.props.authenticated, this.props.token);
-      if (!this.props.authenticated && this.props.token) {
+      console.log(this.props.authenticated, this.props.registrationToken);
+      if (!this.props.authenticated && this.props.registrationToken) {
         this.props.history.push('/register');
         return;
       }
@@ -40,7 +40,7 @@ class Welcome extends Component {
 }
 
 const mapStateToProps = state => ({
-  token: state.registrationToken,
+  registrationToken: state.registrationToken,
   authenticated: state.authenticated
 });
 const mapDispatchToProps = dispatch => {
