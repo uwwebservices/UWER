@@ -19,20 +19,17 @@ body {
     }
     &:nth-child(2) {
       background-color: #ff9d84;
-      -webkit-animation: move 2s 150ms infinite
-        cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      -webkit-animation: move 2s 150ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
       animation: move 2s 150ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
     }
     &:nth-child(3) {
       background-color: #f0e797;
-      -webkit-animation: move 2s 300ms infinite
-        cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      -webkit-animation: move 2s 300ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
       animation: move 2s 300ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
     }
     &:nth-child(4) {
       background-color: #75b08a;
-      -webkit-animation: move 2s 450ms infinite
-        cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      -webkit-animation: move 2s 450ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
       animation: move 2s 450ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
     }
   }
