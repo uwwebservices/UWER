@@ -33,6 +33,7 @@ export default (state = initialState, action) => {
     case Const.LOADING_USERS:
       return { ...state, loading: { ...state.loading, users: true } };
     case Const.RECEIVE_USERS:
+    case Const.CLEAR_USERS:
       return { ...state, users: action.users, loading: { ...state.loading, users: false } };
     case Const.ADD_DUMMY_USER:
       return { ...state, users: [{ displayId: action.displayId, Base64Image: defaultUser, loading: true }, ...state.users] };

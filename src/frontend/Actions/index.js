@@ -1,5 +1,4 @@
 import Const from '../Constants';
-import store from '../Store';
 import Cookies from 'browser-cookies';
 
 // Action Creators
@@ -25,7 +24,7 @@ const ReceiveUsers = users => {
   return { type: Const.RECEIVE_USERS, users };
 };
 export const ClearUsers = () => {
-  return { type: Const.RECEIVE_USERS, users: [] };
+  return { type: Const.CLEAR_USERS, users: [] };
 };
 const UpdateUsers = user => {
   return { type: Const.UPDATE_USERS, user };
@@ -98,11 +97,11 @@ export const CreateGroup = (group, confidential = true, description, email) => {
 };
 
 export const LoadSubgroups = () => {
-  return async dispatch => {
-    let state = store.getState();
+  return async (dispatch, getState) => {
+    let state = getState();
     if (!state.loading.subgroups) {
       dispatch(LoadingSubgroups());
-      let groupNameBase = store.getState().groupNameBase;
+      let groupNameBase = getState().groupNameBase;
       let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
       return await dispatch(ReceiveSubgroups(subgroups));
     }
@@ -118,36 +117,25 @@ export const DestroySubgroup = group => {
 };
 
 export const LoadUsers = group => {
-  return async dispatch => {
-    let state = store.getState();
+  return async (dispatch, getState) => {
+    let state = getState();
     let token = state.registrationToken || Cookies.get('registrationToken');
 
-    // if we are loading a group already, and we get a request to load a different group, wait for the first to finish
-    if (state.groupName !== group) {
-      dispatch(ReceiveUsers([]));
-      while (state.loading.users) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        state = store.getState();
-      }
-    }
+    dispatch(LoadingUsers());
+    let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
+    dispatch(PrivateGroup(groupInfo.confidential));
 
-    if (!state.loading.users) {
-      dispatch(LoadingUsers());
-      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
-      dispatch(PrivateGroup(groupInfo.confidential));
-
-      // fixes fast switching groups race condition
-      state = store.getState();
-      if (group === state.groupName) {
-        return await dispatch(ReceiveUsers(groupInfo.members));
-      }
+    // fixes fast switching groups race condition
+    state = getState();
+    if (group === state.groupName) {
+      return await dispatch(ReceiveUsers(groupInfo.members));
     }
   };
 };
 
 export const AddUser = (group, identifier) => {
-  return async dispatch => {
-    let state = store.getState();
+  return async (dispatch, getState) => {
+    let state = getState();
     let displayId = Math.floor(Math.random() * 1000000).toString(16);
     let token = state.registrationToken || Cookies.get('registrationToken');
 
@@ -240,7 +228,7 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
     let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
     dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
-    dispatch(ReceiveUsers([]));
+    dispatch(ClearUsers());
     resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
     dispatch(LoadUsers(groupName));
@@ -257,14 +245,14 @@ export const StopRegistrationSession = () => {
 };
 
 export const InitApp = () => {
-  return async dispatch => {
-    let state = store.getState();
+  return async (dispatch, getState) => {
+    let state = getState();
     if (!state.authenticated && !state.registrationToken) {
       await dispatch(CheckAuthentication());
     }
 
     !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
-    state = store.getState();
+    state = getState();
 
     if (!state.groupName) {
       let groupName = Cookies.get('groupName');
@@ -278,10 +266,10 @@ export const InitApp = () => {
       registrationToken && dispatch(StoreRegistrationToken(registrationToken));
     }
 
-    state = store.getState();
+    state = getState();
 
-    !state.users.length && state.groupName && dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && (state.authenticated || state.development) && dispatch(LoadSubgroups());
+    !state.users.length && !state.loading.users && state.groupName && dispatch(LoadUsers(state.groupName));
+    !state.subgroups.length && !state.loading.subgroups && (state.authenticated || state.development) && dispatch(LoadSubgroups());
   };
 };
 
