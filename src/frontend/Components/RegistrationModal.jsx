@@ -7,6 +7,7 @@ class RegistrationModal extends React.Component {
     this.state = {
       count: 0,
       showLogout: false,
+      startRegistationCalled: false,
       showApproveButton: true,
       showCancelButton: true
     };
@@ -37,7 +38,13 @@ class RegistrationModal extends React.Component {
         count += 1;
       }
       await new Promise(resolve => setTimeout(resolve, 1500));
-      this.props.startRegistration();
+
+      // Make sure we only call startRegistration once
+      // Also probably janky, but consistently janky
+      if (!this.state.startRegistationCalled) {
+        this.setState({ startRegistationCalled: true });
+        this.props.startRegistration();
+      }
     };
 
     return (
