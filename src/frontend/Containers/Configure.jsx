@@ -26,7 +26,8 @@ class Configure extends Component {
     this.setState({ groupName: this.props.groupName });
   }
   componentDidUpdate() {
-    if (!this.props.subgroups.length && this.props.groupName) {
+    console.log(this.props.groupName);
+    if (!this.props.subgroups.length && this.props.groupNameBase) {
       this.loadSubGroups();
     }
   }
@@ -42,7 +43,7 @@ class Configure extends Component {
     return this.props.groupNameBase + groupString;
   }
   loadSubGroups = async () => {
-    await this.props.loadSubgroups(this.props.groupName);
+    await this.props.loadSubgroups();
   };
 
   handleChange = e => {
