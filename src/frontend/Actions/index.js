@@ -269,7 +269,6 @@ export const InitApp = () => {
     state = getState();
 
     !state.users.length && !state.loading.users && state.groupName && dispatch(LoadUsers(state.groupName));
-    !state.subgroups.length && !state.loading.subgroups && (state.authenticated || state.development) && dispatch(LoadSubgroups());
   };
 };
 

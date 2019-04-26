@@ -22,8 +22,13 @@ class Configure extends Component {
       newSubgroupEmailEnabled: false
     };
   }
-  async componentDidMount() {
+  componentDidMount() {
     this.setState({ groupName: this.props.groupName });
+  }
+  componentDidUpdate() {
+    if (!this.props.subgroups.length && this.props.groupName) {
+      this.loadSubGroups();
+    }
   }
   validateGroupString(groupName) {
     var RegExpression = /^[a-zA-Z0-9\s]*$/;
