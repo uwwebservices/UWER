@@ -231,7 +231,6 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
     dispatch(ClearUsers());
     resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
-    dispatch(LoadUsers(groupName));
   };
 };
 
@@ -265,10 +264,6 @@ export const InitApp = () => {
       let registrationToken = Cookies.get('registrationToken');
       registrationToken && dispatch(StoreRegistrationToken(registrationToken));
     }
-
-    state = getState();
-
-    !state.users.length && !state.loading.users && state.groupName && dispatch(LoadUsers(state.groupName));
   };
 };
 

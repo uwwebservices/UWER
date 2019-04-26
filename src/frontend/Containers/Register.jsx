@@ -13,6 +13,12 @@ import FA from 'react-fontawesome';
 class Register extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loadedUsers: false
+    };
+  }
+  componentDidMount() {
+    this.initialLoad();
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     setTimeout(() => {
@@ -23,10 +29,20 @@ class Register extends Component {
       }
     }, 0);
 
+    this.initialLoad();
+
     if (prevProps.users.length === 0 || prevProps.users.length !== this.props.users.length) {
       this.registerCardFocus();
     }
   }
+  initialLoad = async () => {
+    if (!this.state.loadedUsers) {
+      if (this.props.groupName) {
+        this.setState({ loadedUsers: true });
+        await this.props.loadUsers(this.props.groupName);
+      }
+    }
+  };
   reload = async () => {
     if (this.props.groupName) {
       await this.props.loadUsers(this.props.groupName);

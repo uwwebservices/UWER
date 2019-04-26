@@ -26,7 +26,6 @@ class Configure extends Component {
     this.setState({ groupName: this.props.groupName });
   }
   componentDidUpdate() {
-    console.log(this.props.groupName);
     if (!this.props.subgroups.length && this.props.groupNameBase) {
       this.loadSubGroups();
     }
@@ -86,11 +85,8 @@ class Configure extends Component {
     return groupName.replace(this.props.groupNameBase, '').replace(/-/g, ' ');
   };
   startRegistration = async () => {
-    this.props.history.push('/register');
     await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL, +this.state.privGrpVisTimeout);
-    for (let i = 0; i < 10; i++) {
-      this.props.history.push('/register');
-    }
+    this.props.history.push('/register');
   };
 
   endRegistration = async () => {

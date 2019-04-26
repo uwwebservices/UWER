@@ -56,6 +56,7 @@ class PageWrapper extends Component {
         <main>
           <Authorization
             authenticated={this.props.authenticated}
+            registrationToken={this.props.registrationToken}
             loginRequired={this.props.loginRequired}
             iaaAuth={this.props.iaaAuth}
             iaaCheck={this.props.iaaCheck}
@@ -74,6 +75,7 @@ class PageWrapper extends Component {
 
 const mapStateToProps = state => ({
   authenticated: state.authenticated,
+  registrationToken: state.registrationToken,
   notifications: state.notifications,
   iaaAuth: state.iaaAuth,
   iaaCheck: state.iaacheck
