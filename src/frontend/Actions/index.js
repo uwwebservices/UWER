@@ -116,12 +116,13 @@ export const DestroySubgroup = group => {
   };
 };
 
-export const LoadUsers = group => {
+export const LoadUsers = () => {
   return async (dispatch, getState) => {
-    let state = getState();
-    let token = state.registrationToken || Cookies.get('registrationToken');
-
+    await dispatch(cookiesToState());
     dispatch(LoadingUsers());
+    let state = getState();
+    let group = state.groupName;
+    let token = state.registrationToken;
     let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
     dispatch(PrivateGroup(groupInfo.confidential));
 
@@ -135,9 +136,10 @@ export const LoadUsers = group => {
 
 export const AddUser = (group, identifier) => {
   return async (dispatch, getState) => {
+    await dispatch(cookiesToState());
     let state = getState();
     let displayId = Math.floor(Math.random() * 1000000).toString(16);
-    let token = state.registrationToken || Cookies.get('registrationToken');
+    let token = state.registrationToken;
 
     dispatch(AddDummyUser(displayId));
     let body = {
@@ -253,17 +255,7 @@ export const InitApp = () => {
     !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
     state = getState();
 
-    if (!state.groupName) {
-      let groupName = Cookies.get('groupName');
-      if (groupName) {
-        dispatch(UpdateGroupName(groupName));
-      }
-    }
-
-    if (!state.registrationToken) {
-      let registrationToken = Cookies.get('registrationToken');
-      registrationToken && dispatch(StoreRegistrationToken(registrationToken));
-    }
+    dispatch(cookiesToState);
   };
 };
 
@@ -272,6 +264,24 @@ export const FlashNotification = (title = '', message = '') => {
     let messageId = Math.floor(Math.random() * 10000).toString();
     dispatch(AddNotification(messageId, title, message));
     dispatch(RemoveNotification(messageId));
+  };
+};
+
+const cookiesToState = () => {
+  return async (dispatch, getState) => {
+    let state = getState();
+    if (!state.groupName) {
+      let groupName = Cookies.get('groupName');
+      if (groupName) {
+        dispatch(UpdateGroupName(groupName));
+      }
+    }
+    if (!state.registrationToken) {
+      let token = Cookies.get('registrationToken');
+      if (token) {
+        dispatch(StoreRegistrationToken(token));
+      }
+    }
   };
 };
 
