@@ -14,7 +14,7 @@ class Welcome extends Component {
     }, 0);
   }
   configure = () => {
-    window.location = '/login?returnUrl=/config';
+    window.location = '/config';
   };
   render() {
     return (
