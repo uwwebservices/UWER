@@ -42,7 +42,8 @@ module.exports = function(env) {
           ]
         },
         {
-          test: /\.(eot|svg|ttf|woff|woff2)$/,
+          test: /\.(eot|ttf|svg|woff|woff2)$/,
+          exclude: [path.resolve(__dirname, 'src/frontend/images')],
           use: [
             {
               loader: 'file-loader',
@@ -51,6 +52,14 @@ module.exports = function(env) {
               }
             }
           ]
+        },
+        {
+          test: /\.svg$/,
+          include: [path.resolve(__dirname, 'src/frontend/images')],
+          loader: 'file-loader',
+          options: {
+            name: 'frontend/img/[path][name].[ext]'
+          }
         }
       ]
     },

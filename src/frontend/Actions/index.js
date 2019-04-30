@@ -119,17 +119,22 @@ export const DestroySubgroup = group => {
 export const LoadUsers = () => {
   return async (dispatch, getState) => {
     await dispatch(cookiesToState());
-    dispatch(LoadingUsers());
     let state = getState();
     let group = state.groupName;
-    let token = state.registrationToken;
-    let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}${token ? '?token=' + token : ''}`)).json();
-    dispatch(PrivateGroup(groupInfo.confidential));
+    let token = state.registrationToken || '';
+    if (group) {
+      dispatch(ClearUsers());
+      dispatch(LoadingUsers());
+      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}?token=${token}`)).json();
+      dispatch(PrivateGroup(groupInfo.confidential));
 
-    // fixes fast switching groups race condition
-    state = getState();
-    if (group === state.groupName) {
-      return await dispatch(ReceiveUsers(groupInfo.members));
+      state = getState();
+      // only receive the users for the selected group
+      // if a user switches groups a bunch, we can't cancel the API calls
+      // so we throw away the results
+      if (group === state.groupName) {
+        return await dispatch(ReceiveUsers(groupInfo.members));
+      }
     }
   };
 };

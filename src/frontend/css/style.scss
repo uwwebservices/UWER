@@ -213,6 +213,14 @@ strong {
   .loadSpinner {
     margin-right: 5px;
   }
+  .userLoader {
+    margin: 0 auto;
+    width: 40%;
+    .loadText {
+      margin: 0 auto;
+      width: 225px;
+    }
+  }
   .registrationNotification {
     margin: auto;
     margin-bottom: 10px;

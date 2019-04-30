@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 import Cookies from 'browser-cookies';
 import FA from 'react-fontawesome';
+import { Link } from 'react-router-dom';
+import LoadingUsers from 'Components/LoadingUsers';
 
 class Register extends Component {
   constructor(props) {
@@ -19,8 +21,8 @@ class Register extends Component {
   }
   async componentDidMount() {
     if (!this.state.loadedUsers) {
+      await this.props.loadUsers();
       this.setState({ loadedUsers: true });
-      await this.props.loadUsers(this.props.groupName);
     }
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -38,9 +40,7 @@ class Register extends Component {
   }
 
   reload = async () => {
-    if (this.props.groupName) {
-      await this.props.loadUsers(this.props.groupName);
-    }
+    await this.props.loadUsers();
   };
   endRegistration = () => {
     this.props.stopRegistrationSession();
@@ -81,7 +81,13 @@ class Register extends Component {
               <p>Some text related to the fact that confidential groups do not persistently display users.</p>
             </div>
           )}
-          {this.props.users.length == 0 && !this.props.confidential && <div>{this.props.loadingUsers ? <p>Loading participants; please wait.</p> : <p>No registered participants.</p>}</div>}
+          {!this.props.groupName && this.props.authenticated && (
+            <p>
+              No registration group selected, <Link to="config">choose one here.</Link>
+            </p>
+          )}
+
+          {this.props.groupName && this.props.users.length == 0 && !this.props.confidential && <div>{this.props.loadingUsers ? <LoadingUsers /> : <p>No registered participants.</p>}</div>}
           {this.props.users.length > 0 && (
             <div>
               <List>
@@ -111,7 +117,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => {
   return {
-    loadUsers: group => dispatch(LoadUsers(group)),
+    loadUsers: () => dispatch(LoadUsers()),
     addUser: (group, user) => dispatch(AddUser(group, user)),
     removeUser: (group, user) => dispatch(DeleteUser(group, user)),
     startRegistrationSession: (groupName, netidAllowed) => dispatch(StartRegistrationSession(groupName, netidAllowed)),
