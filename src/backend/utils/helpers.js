@@ -50,19 +50,28 @@ export const ensureAuthOrToken = (req, res, next) => {
   }
 };
 
-export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, uriEncode = true) => {
+export const encryptPayload = obj => {
+  return AES.encrypt(JSON.stringify(obj), SESSIONKEY).toString();
+};
+
+export const decryptCiphertext = ciphertext => {
+  return JSON.parse(AES.decrypt(ciphertext, SESSIONKEY).toString(enc.Utf8));
+};
+
+export const getAuthToken = async (req, groupName, netidAllowed = false, ttl = 180) => {
   let now = new Date();
   let expiry = now.setMinutes(now.getMinutes() + ttl);
-  let token = AES.encrypt(JSON.stringify({ user: req.user, groupName, netidAllowed, expiry }), SESSIONKEY).toString();
-  return uriEncode ? encodeURIComponent(token) : token;
+  let user = req.user;
+  let confidential = await Groups.IsConfidentialGroup(groupName);
+  let token = encryptPayload({ user, groupName, confidential, netidAllowed, expiry });
+  return token;
 };
 
 export const extractAuthToken = async (req, res, next) => {
   // Decrypt/extract the token data from the request cookie for use elsewhere in the application
   if (req.cookies && req.cookies.registrationToken) {
     try {
-      let payload = AES.decrypt(decodeURIComponent(req.cookies.registrationToken), SESSIONKEY).toString(enc.Utf8);
-      req.settings = JSON.parse(payload);
+      req.settings = decryptCiphertext(req.cookies.registrationToken);
     } catch (ex) {
       console.log('Unable to decrypt token data', ex);
     }
@@ -78,38 +87,20 @@ export const verifyAuthToken = req => {
   }
 
   console.log(`verifyAuthToken, token expires: ${new Date(req.settings.expiry)}, now: ${new Date()}`);
-  req.session.registrationUser = req.settings.user;
   return req.settings.expiry > new Date().getTime();
 };
 
-export const tokenToSession = async (req, res, next) => {
-  // if user is not authenticated and presented a token, update session
-  let groupName = req.params.group;
-  let confidential = !req.isAuthenticated();
-  let netidAllowed = req.isAuthenticated();
+export const requestSettingsOverrides = async (req, res, next) => {
+  let overrides = {};
 
-  if (!req.isAuthenticated() && req.settings) {
-    let tokenData = req.settings;
-    groupName = tokenData.groupName;
-    netidAllowed = tokenData.netidAllowed;
-  }
-
-  if (!req.session.group || req.session.group.groupName !== groupName) {
-    confidential = await Groups.IsConfidentialGroup(groupName);
-  } else if (req.session.group) {
-    confidential = req.session.group.confidential;
-  }
-
-  // Admins and Developers can see confidential group members
+  // Override the token if the user is authenticated
   if (req.isAuthenticated()) {
-    confidential = false;
+    overrides.groupName = req.params.group;
+    overrides.netidAllowed = req.isAuthenticated();
+    overrides.confidential = !req.isAuthenticated();
   }
 
-  req.session.group = {
-    groupName,
-    confidential,
-    netidAllowed
-  };
+  req.settings = { ...req.settings, ...overrides };
 
   next();
 };

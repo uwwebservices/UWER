@@ -83,10 +83,8 @@ app.use(
     let identifier = req.body.identifier || '';
     if (req.user) {
       user = req.user.UWNetID;
-    } else if (req.session && req.session.user) {
-      user = req.session.user.UWNetID;
-    } else if (req.session && req.session.registrationUser) {
-      user = 'ActAs:' + req.session.registrationUser.UWNetID;
+    } else if (req.settings && req.settings.user) {
+      user = 'ActAs:' + req.settings.user.UWNetID;
     }
 
     let logMessage = [

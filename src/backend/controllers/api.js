@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, tokenToSession } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, requestSettingsOverrides } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -12,9 +12,9 @@ const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
 const BASE_GROUP = process.env.BASE_GROUP;
 
-api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
-  let groupName = req.session.group.groupName;
-  let confidential = req.session.group.confidential;
+api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+  let groupName = req.settings.groupName;
+  let confidential = req.settings.confidential;
   let response = {
     groupName,
     confidential,
@@ -31,13 +31,13 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
   return res.status(result.Status).json(response);
 });
 
-api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) => {
+api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
   let identifier = req.body.identifier;
   let displayId = req.body.displayId;
   let validCard = IDCard.ValidCard(identifier);
-  let groupName = req.session.group.groupName;
-  let netidAllowed = req.session.group.netidAllowed;
-  let confidential = req.session.group.confidential;
+  let groupName = req.settings.groupName;
+  let netidAllowed = req.settings.netidAllowed;
+  let confidential = req.settings.confidential;
 
   if (!validCard && netidAllowed == 'false') {
     // if not a valid card and netid auth not allowed, 404
@@ -61,18 +61,18 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
   }
 });
 
-api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
+api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
   let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
   return res.status(200).send(image);
 });
 
-api.get(API.GetToken, ensureAPIAuth, (req, res) => {
+api.get(API.GetToken, ensureAPIAuth, async (req, res) => {
   let groupName = req.query.groupName;
   let netidAllowed = req.query.netidAllowed;
   let tokenTTL = req.query.tokenTTL;
 
-  let token = getAuthToken(req, groupName, netidAllowed, tokenTTL);
+  let token = await getAuthToken(req, groupName, netidAllowed, tokenTTL);
   if (token) {
     return res.status(200).json({ token });
   } else {
