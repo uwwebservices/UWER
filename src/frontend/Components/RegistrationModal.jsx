@@ -7,7 +7,7 @@ class RegistrationModal extends React.Component {
     this.state = {
       count: 0,
       showLogout: false,
-      startRegistationCalled: false,
+      executeOnce: false,
       showApproveButton: true,
       showCancelButton: true
     };
@@ -41,24 +41,19 @@ class RegistrationModal extends React.Component {
 
       // Make sure we only call startRegistration once
       // Also probably janky, but consistently janky
-      if (!this.state.startRegistationCalled) {
-        this.setState({ startRegistationCalled: true });
-        this.props.startRegistration();
+      if (!this.state.executeOnce) {
+        this.setState({ executeOnce: true });
+        if (this.props.startRegistration) {
+          this.props.startRegistration();
+        } else if (this.props.endRegistration) {
+          this.props.endRegistration();
+        }
       }
     };
 
     return (
       <ContentModal {...modalOpts}>
-        <div>
-          {this.state.showLogout ? (
-            <iframe onLoad={modalOpts.confirmCallback} src="https://idp.u.washington.edu/idp/profile/Logout" height="335px" width="450px" />
-          ) : (
-            <p>
-              Are you sure that you want to begin registration? <br />
-              This will end your UW NetID sign-in session.
-            </p>
-          )}
-        </div>
+        <div>{this.state.showLogout ? <iframe onLoad={modalOpts.confirmCallback} src="https://idp.u.washington.edu/idp/profile/Logout" height="335px" width="450px" /> : this.props.children}</div>
       </ContentModal>
     );
   }

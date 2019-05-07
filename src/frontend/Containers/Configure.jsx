@@ -3,7 +3,6 @@ import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
-import EndRegistrationModal from 'Components/EndRegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
 import { UpdateGroupName, LoadSubgroups, DestroySubgroup, ClearUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
@@ -99,7 +98,9 @@ class Configure extends Component {
     return (
       <div>
         <div className="righted inline">
-          <EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" />
+          <RegistrationModal openButtonText="Logout" endRegistration={this.endRegistration} openButtonColor="secondary" approveButtonText="Logout" approveButtonColor="secondary">
+            <p>Are you sure you want to log out?</p>
+          </RegistrationModal>
         </div>
         <h1 className="inline">Configure</h1>
 
@@ -189,7 +190,13 @@ class Configure extends Component {
         <br />
 
         <div className="startRegistration">
-          <RegistrationModal startRegistration={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
+          <RegistrationModal startRegistration={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants">
+            <p>
+              Are you sure that you want to begin registration? <br />
+              This will end your UW NetID sign-in session.
+            </p>
+          </RegistrationModal>{' '}
+          &nbsp;
         </div>
         <br />
 

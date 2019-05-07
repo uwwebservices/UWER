@@ -3,7 +3,7 @@ import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import EndRegistrationModal from 'Components/EndRegistrationModal';
+import RegistrationModal from 'Components/RegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
 import Cookies from 'browser-cookies';
@@ -66,7 +66,13 @@ class Register extends Component {
           </div>
         )}
         <div className="righted inline">
-          <EndRegistrationModal confirmCallback={this.endRegistration} showCancelButton={false} />
+          <RegistrationModal endRegistration={this.endRegistration} dialogTitle="End Registration Mode" openButtonText="End Registration Mode" cancelButtonText="Back" approveButtonText="Done" openButtonColor="secondary">
+            <p>
+              Are you sure that you want to end registration? <br />
+              This will completely log you out, to continue registering <br />
+              you will need an administration to start a new session.
+            </p>
+          </RegistrationModal>
         </div>
         <div>
           <h1 className="inline">Event Registration</h1>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import EndRegistrationModal from 'Components/EndRegistrationModal';
+import RegistrationModal from 'Components/RegistrationModal';
 import FA from 'react-fontawesome';
 import Button from '@material-ui/core/Button';
 import { StopRegistrationSession } from '../Actions';
@@ -25,7 +25,9 @@ class NotAuthorized extends Component {
           To register users for this group your UWNetID needs to be a member of this group.
         </div>
         <br />
-        <EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" modalText=" " approveButtonText="Back to Home" cancelButtonText="Cancel" />
+        <RegistrationModal openButtonText="Home" dialogTitle="Return Home" endRegistration={this.endRegistration} openButtonColor="primary" cancelButtonText="Cancel" approveButtonText="Back to Home">
+          <p>Are you sure you want to log out and return home?</p>
+        </RegistrationModal>
         &nbsp;
         <Button color="primary" variant="raised" onClick={() => this.gws()}>
           <FA name="group" />
