@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, requestSettingsOverrides } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, requestSettingsOverrides, decryptCiphertext, encryptPayload } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -118,12 +118,16 @@ api.get(API.CheckAuth, async (req, res) => {
   let redirectBack = IDAACHECK + idaaRedirectUrl(req);
   let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
 
-  if (!req.session) {
+  if (!req.cookies) {
     return res.sendStatus(500);
   }
 
   if (req.isAuthenticated()) {
-    if (!req.session.IAAAgreed) {
+    if (req.cookies.auth) {
+      auth = decryptCiphertext(req.cookies.auth);
+    }
+
+    if (!auth.IAAAgreed) {
       let found = false;
       let members = (await Groups.GetMembers(IDAAGROUPID)).Payload;
       if (members.find(u => u.id === req.user.UWNetID)) {
@@ -136,13 +140,15 @@ api.get(API.CheckAuth, async (req, res) => {
           found = true;
         }
       } else {
-        req.session.IAAAgreed = true;
+        auth.IAAAgreed = true;
         auth.IAAAAuth = true;
       }
     } else {
       auth.IAAAAuth = true;
     }
   }
+
+  res.cookie('auth', encryptPayload(auth), { path: '/' });
   return res.status(200).json(auth);
 });
 

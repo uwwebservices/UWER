@@ -11,7 +11,7 @@ import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
-import { extractAuthToken } from './utils/helpers';
+import { extractAuthToken, encryptPayload } from './utils/helpers';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -70,7 +70,10 @@ if (NODE_ENV === 'production') {
     req.session.loggedOut = req.session.loggedOut || false;
 
     req.user = { UWNetID: 'steven20' };
-    req.session.IAAAgreed = true;
+
+    req.cookies = req.cookies || {};
+    req.cookies.auth = encryptPayload({ Authenticated: !req.session.loggedOut, IAAAgreed: true });
+
     req.isAuthenticated = () => !req.session.loggedOut;
     next();
   });
