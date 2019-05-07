@@ -11,6 +11,7 @@ import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
+import { extractAuthToken } from './utils/helpers';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
+app.use(extractAuthToken);
 app.set('trust proxy', 1);
 
 const memStore = MemoryStore(session);
