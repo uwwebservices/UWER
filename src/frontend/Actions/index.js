@@ -238,6 +238,8 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
     dispatch(StoreRegistrationToken(token));
     dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
     dispatch(StoreNetidAllowed(netidAllowed));
+    Cookies.erase('netidAllowed', { path: '/' });
+    Cookies.set('netidAllowed', netidAllowed.toString(), { expires: 1 / 24 });
     dispatch(ClearUsers());
     resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
@@ -291,8 +293,8 @@ const cookiesToState = () => {
       }
     }
     if (!state.netidAllowed) {
-      let token = Cookies.get('netidAllowed');
-      if (token) {
+      let netidAllowed = Cookies.get('netidAllowed');
+      if (netidAllowed) {
         dispatch(StoreNetidAllowed(netidAllowed));
       }
     }
