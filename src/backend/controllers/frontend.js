@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import { ensureAuth, backToUrl } from '../utils/helpers';
+import { ensureAuth, extractAuthToken, backToUrl } from '../utils/helpers';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
 
@@ -33,7 +33,7 @@ if (NODE_ENV === 'development') {
     })
   );
   // If you run into a weird "No such file or directory" error here, likely an import failed somewhere
-  app.get('*', ensureAuth(), (req, res, next) => {
+  app.get('*', extractAuthToken, ensureAuth(), (req, res, next) => {
     var filename = path.join(compiler.outputPath, 'index.html');
     compiler.outputFileSystem.readFile(filename, function(err, result) {
       if (err) {

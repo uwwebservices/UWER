@@ -2,11 +2,12 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, tokenToSession } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, extractAuthToken, tokenToSession } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
 let api = Router();
+api.use(extractAuthToken);
 
 const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;

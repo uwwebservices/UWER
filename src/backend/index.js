@@ -2,6 +2,7 @@ import fs from 'fs';
 import http from 'http';
 import express from 'express';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
@@ -15,6 +16,7 @@ const NODE_ENV = process.env.NODE_ENV;
 
 let app = express();
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());

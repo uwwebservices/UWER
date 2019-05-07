@@ -57,23 +57,29 @@ export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, ur
   return uriEncode ? encodeURIComponent(token) : token;
 };
 
-export const decryptAuthToken = token => {
-  let payload = AES.decrypt(decodeURIComponent(token), SESSIONKEY).toString(enc.Utf8);
-  return JSON.parse(payload);
+export const extractAuthToken = async (req, res, next) => {
+  // Decrypt/extract the token data from the request cookie for use elsewhere in the application
+  if (req.cookies && req.cookies.registrationToken) {
+    try {
+      let payload = AES.decrypt(decodeURIComponent(req.cookies.registrationToken), SESSIONKEY).toString(enc.Utf8);
+      req.settings = JSON.parse(payload);
+    } catch (ex) {
+      console.log('Unable to decrypt token data', ex);
+    }
+  }
+
+  return next();
 };
 
 export const verifyAuthToken = req => {
-  if (!req.session.token && !req.body.token && !req.query.token) {
+  // See: extractAuthToken; if req.settings is undefined the request didn't have a token
+  if (req.settings === undefined) {
     return false;
   }
-  if (!req.session.token && (req.body.token || req.query.token)) {
-    req.session.token = req.body.token ? decodeURIComponent(req.body.token) : decodeURIComponent(req.query.token);
-  }
-  let tokenData = decryptAuthToken(req.session.token);
-  console.log('verify, token expires:', new Date(tokenData.expiry));
-  console.log('now', new Date());
-  req.session.registrationUser = tokenData.user;
-  return tokenData.expiry > new Date().getTime();
+
+  console.log(`verifyAuthToken, token expires: ${new Date(req.settings.expiry)}, now: ${new Date()}`);
+  req.session.registrationUser = req.settings.user;
+  return req.settings.expiry > new Date().getTime();
 };
 
 export const tokenToSession = async (req, res, next) => {
@@ -82,8 +88,8 @@ export const tokenToSession = async (req, res, next) => {
   let confidential = !req.isAuthenticated();
   let netidAllowed = req.isAuthenticated();
 
-  if (!req.isAuthenticated() && req.body.token) {
-    let tokenData = decryptAuthToken(req.body.token);
+  if (!req.isAuthenticated() && req.settings) {
+    let tokenData = req.settings;
     groupName = tokenData.groupName;
     netidAllowed = tokenData.netidAllowed;
   }
