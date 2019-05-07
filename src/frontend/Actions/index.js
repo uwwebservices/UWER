@@ -62,6 +62,9 @@ export const StoreRegistrationToken = token => {
 const StorePrivateGroupVisTimeout = timeout => {
   return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT, timeout };
 };
+const StoreNetidAllowed = netidAllowed => {
+  return { type: Const.STORE_NETID_ALLOWED, netidAllowed };
+};
 
 // -----------------------
 // Thunks - Async Actions
@@ -234,6 +237,7 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
     let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
     dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
+    dispatch(StoreNetidAllowed(netidAllowed));
     dispatch(ClearUsers());
     resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
@@ -284,6 +288,12 @@ const cookiesToState = () => {
       let token = Cookies.get('registrationToken');
       if (token) {
         dispatch(StoreRegistrationToken(token));
+      }
+    }
+    if (!state.netidAllowed) {
+      let token = Cookies.get('netidAllowed');
+      if (token) {
+        dispatch(StoreNetidAllowed(netidAllowed));
       }
     }
   };

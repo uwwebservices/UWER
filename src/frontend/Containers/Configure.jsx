@@ -87,7 +87,6 @@ class Configure extends Component {
     await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL, +this.state.privGrpVisTimeout);
     this.props.history.push('/register');
   };
-
   endRegistration = async () => {
     await this.props.stopRegistrationSession();
     this.props.history.push('/');

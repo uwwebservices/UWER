@@ -61,6 +61,8 @@ export default (state = initialState, action) => {
       return { ...state, registrationToken: action.token };
     case Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT:
       return { ...state, privGrpVisTimeout: action.timeout };
+    case Const.STORE_NETID_ALLOWED:
+      return { ...state, netidAllowed: action.netidAllowed };
     case Const.ADD_NOTIFICATION:
       return { ...state, notifications: [...state.notifications, action.notification] };
     case Const.REMOVE_NOTIFICATION:

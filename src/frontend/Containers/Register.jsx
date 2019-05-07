@@ -77,13 +77,13 @@ class Register extends Component {
         <div>
           <h1 className="inline">Event Registration</h1>
         </div>
-        <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
+        <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} netidAllowed={this.props.netidAllowed} formDisabled={registrationDisabled} />
 
         <div className="memberList">
           <h2>Registered Participants {!this.props.confidential && <FA name="refresh" onClick={this.reload} spin={this.props.loadingUsers} />}</h2>
           {this.props.confidential && (
             <div>
-              <p>Some text related to the fact that confidential groups do not persistently display users.</p>
+              <p>Membership for this event is private, members will only be displayed for {this.props.privGrpVisTimeout} seconds.</p>
             </div>
           )}
           {!this.props.groupName && this.props.authenticated && (
@@ -122,7 +122,8 @@ const mapStateToProps = state => ({
   groupNameBase: state.groupNameBase,
   authenticated: state.authenticated,
   token: state.registrationToken,
-  netidAllowed: state.netidAllowed
+  netidAllowed: state.netidAllowed,
+  privGrpVisTimeout: state.privGrpVisTimeout
 });
 const mapDispatchToProps = dispatch => {
   return {
