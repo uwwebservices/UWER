@@ -43,11 +43,26 @@ export default class Test extends React.Component {
         e.target.src = DefaultUser;
       };
 
+      // non-confidential group settings
+      let DeletingClassName = mem.deleting ? 'memberDeleting' : '';
+      let ShowLoadSpinner = mem.deleting || mem.loading;
+
+      // override if confidential group
+      if (this.props.confidential) {
+        DeletingClassName = mem.deleting ? 'fadeOutRemoval' : '';
+        ShowLoadSpinner = mem.deleting || mem.loading;
+      }
+
       return (
-        <ListItem key={memberKey} className={mem.deleting ? 'memberDeleting' : ''}>
+        <ListItem key={memberKey} className={DeletingClassName}>
           <Avatar onLoad={loadImgOnce} onError={errImg} src={DefaultUser} />
           <ListItemText primary={badges || 'Loading...'} secondary={mem.DisplayName} classes={{ primary: 'memberDisplay' }} />
-          {(mem.deleting || mem.loading) && (
+          {this.props.confidential && !ShowLoadSpinner && (
+            <span className="loadSpinner">
+              <FA name="user-secret" size="2x" />
+            </span>
+          )}
+          {ShowLoadSpinner && (
             <span className="loadSpinner">
               <FA name="spinner" spin={true} size="2x" />
             </span>

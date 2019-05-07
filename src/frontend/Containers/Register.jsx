@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
-import PrivateMembers from 'Components/PrivateMembers';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import EndRegistrationModal from 'Components/EndRegistrationModal';
@@ -91,11 +90,15 @@ class Register extends Component {
           {this.props.users.length > 0 && (
             <div>
               <List>
-                {!this.props.confidential ? (
-                  <Members members={this.props.users} groupNameBase={this.props.groupNameBase} removeUser={this.props.removeUser} keepUser={this.registerCardFocus} group={this.props.groupName} authenticated={this.props.authenticated} />
-                ) : (
-                  <PrivateMembers members={this.props.users} />
-                )}
+                <Members
+                  members={this.props.users}
+                  groupNameBase={this.props.groupNameBase}
+                  removeUser={this.props.removeUser}
+                  keepUser={this.registerCardFocus}
+                  group={this.props.groupName}
+                  authenticated={this.props.authenticated}
+                  confidential={this.props.confidential}
+                />
               </List>
             </div>
           )}
