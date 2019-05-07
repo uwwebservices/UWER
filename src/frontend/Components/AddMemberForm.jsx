@@ -16,7 +16,6 @@ export default class Form extends React.Component {
 
   render() {
     let placeholder = this.props.netidAllowed ? 'magstripe/rfid/netid' : 'magstripe/rfid';
-    console.log(this.props.netidAllowed);
     return (
       <form className="form" autoComplete="new-password" onSubmit={this.registerUser} id="addUserForm">
         <div className="registerForm">
