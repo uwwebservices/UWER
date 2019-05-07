@@ -66,13 +66,23 @@ class Register extends Component {
           </div>
         )}
         <div className="righted inline">
-          <RegistrationModal endRegistration={this.endRegistration} dialogTitle="End Registration Mode" openButtonText="End Registration Mode" cancelButtonText="Back" approveButtonText="Done" openButtonColor="secondary">
-            <p>
-              Are you sure that you want to end registration? <br />
-              This will completely log you out, to continue registering <br />
-              you will need an administration to start a new session.
-            </p>
-          </RegistrationModal>
+          {!this.props.authenticated && (
+            <RegistrationModal
+              endRegistration={this.endRegistration}
+              dialogTitle="End Registration"
+              openButtonText="End Registration"
+              cancelButtonText="Back"
+              approveButtonText="End Registration"
+              approveButtonColor="secondary"
+              openButtonColor="secondary"
+            >
+              <p>
+                Are you sure that you want to end registration? <br />
+                This will completely log you out, to continue registering <br />
+                you will need an administration to start a new session.
+              </p>
+            </RegistrationModal>
+          )}
         </div>
         <div>
           <h1 className="inline">Event Registration</h1>
