@@ -102,7 +102,7 @@ class Configure extends Component {
     return (
       <div>
         <div className="righted inline">
-          <RegistrationModal openButtonText="Logout" endRegistration={this.endRegistration} openButtonColor="secondary" approveButtonText="Logout" approveButtonColor="secondary">
+          <RegistrationModal openButtonText="Logout" endRegistration={this.endRegistration} dialogTitle="Logout of UWER" openButtonColor="secondary" approveButtonText="Logout" approveButtonColor="secondary">
             <p>Are you sure you want to log out?</p>
           </RegistrationModal>
         </div>
