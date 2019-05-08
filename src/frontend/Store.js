@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
-import RootReducer from './Reducers';
+import { RootReducer, initialState } from './Reducers';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 
@@ -10,4 +10,14 @@ if (process.env.NODE_ENV === 'development') {
   middleware.push(logger);
 }
 
-export default createStore(RootReducer, applyMiddleware(...middleware));
+if (!localStorage.getItem('reduxState')) {
+  localStorage.setItem('reduxState', JSON.stringify(initialState));
+}
+
+const store = createStore(RootReducer, JSON.parse(localStorage.getItem('reduxState')), applyMiddleware(...middleware));
+
+store.subscribe(() => {
+  localStorage.setItem('reduxState', JSON.stringify(store.getState()));
+});
+
+export default store;

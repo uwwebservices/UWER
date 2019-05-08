@@ -1,7 +1,7 @@
 import Const from '../Constants';
 import defaultUser from 'Assets/defaultUser';
 
-const initialState = {
+export const initialState = {
   authenticated: null,
   iaaAuth: null,
   iaacheck: '',
@@ -18,7 +18,7 @@ const initialState = {
   localStorageLoaded: false
 };
 
-export default (state = initialState, action) => {
+export const RootReducer = (state = initialState, action) => {
   switch (action.type) {
     case Const.RECEIVE_GROUP_NAME:
       return { ...state, groupName: action.groupName };
@@ -76,6 +76,7 @@ export default (state = initialState, action) => {
       console.log('UPDATING SETTINGS', action.settings);
       return { ...state, ...action.settings };
     default:
+      console.log('STATE', state);
       return state;
   }
 };

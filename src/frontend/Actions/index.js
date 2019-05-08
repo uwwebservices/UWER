@@ -77,7 +77,7 @@ export const LoadConfig = () => {
 
 export const UpdateGroupName = groupName => {
   return async dispatch => {
-    dispatch(SaveSettingsToLocalStorage({ groupName }));
+    //dispatch(SaveSettingsToLocalStorage({ groupName }));
   };
 };
 
@@ -103,14 +103,14 @@ export const LoadSubgroups = () => {
 export const DestroySubgroup = group => {
   return async dispatch => {
     await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'DELETE' });
-    dispatch(SaveSettingsToLocalStorage({ groupName: '' }));
+    //dispatch(SaveSettingsToLocalStorage({ groupName: '' }));
     return await dispatch(DeleteSubgroup(group));
   };
 };
 
 export const LoadUsers = () => {
   return async (dispatch, getState) => {
-    await dispatch(LoadSettingsFromLocalStorage());
+    //await dispatch(LoadSettingsFromLocalStorage());
     let state = getState();
     let group = state.groupName;
     let token = state.registrationToken || '';
@@ -224,7 +224,7 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
   return async dispatch => {
     let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
-    dispatch(SaveSettingsToLocalStorage({ groupName, netidAllowed, privateGroupVisTimeout, tokenTTL }));
+    //dispatch(SaveSettingsToLocalStorage({ groupName, netidAllowed, privateGroupVisTimeout, tokenTTL }));
     dispatch(ClearUsers());
     await dispatch(Logout(true));
   };
@@ -247,9 +247,7 @@ export const InitApp = () => {
 
     !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
     state = getState();
-    if (!state.localStorageLoaded) {
-      dispatch(LoadSettingsFromLocalStorage());
-    }
+    //dispatch(LoadSettingsFromLocalStorage());
   };
 };
 
@@ -261,22 +259,21 @@ export const FlashNotification = (title = '', message = '') => {
   };
 };
 
-const LoadSettingsFromLocalStorage = () => {
-  return dispatch => {
-    let settings = JSON.parse(localStorage.getItem('appSettings'));
-    settings.localStorageLoaded = true;
-    dispatch(LocalStorageToState(settings));
-    return settings;
-  };
-};
+// const LoadSettingsFromLocalStorage = () => {
+//   return dispatch => {
+//     let settings = JSON.parse(localStorage.getItem('appSettings'));
+//     dispatch(LocalStorageToState(settings));
+//     return settings;
+//   };
+// };
 
-export const SaveSettingsToLocalStorage = settings => {
-  return dispatch => {
-    let oldSettings = dispatch(LoadSettingsFromLocalStorage());
-    localStorage.setItem('appSettings', JSON.stringify({ ...oldSettings, ...settings }));
-    dispatch(LoadSettingsFromLocalStorage());
-  };
-};
+// export const SaveSettingsToLocalStorage = settings => {
+//   return dispatch => {
+//     let oldSettings = dispatch(LoadSettingsFromLocalStorage());
+//     localStorage.setItem('appSettings', JSON.stringify({ ...oldSettings, ...settings }));
+//     dispatch(LoadSettingsFromLocalStorage());
+//   };
+// };
 
 const ClearLocalStorageSettings = () => {
   localStorage.clearItem('appSettings');
