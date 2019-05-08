@@ -263,7 +263,7 @@ export const FlashNotification = (title = '', message = '') => {
 
 const LoadSettingsFromLocalStorage = () => {
   return dispatch => {
-    let settings = JSON.parse(localStorage.getItem('appSettings'));
+    let settings = JSON.parse(localStorage.getItem('appSettings')) || {};
     settings.localStorageLoaded = true;
     dispatch(LocalStorageToState(settings));
     return settings;
@@ -279,5 +279,5 @@ export const SaveSettingsToLocalStorage = settings => {
 };
 
 const ClearLocalStorageSettings = () => {
-  localStorage.clearItem('appSettings');
+  localStorage.removeItem('appSettings');
 };

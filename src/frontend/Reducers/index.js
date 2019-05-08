@@ -13,6 +13,7 @@ const initialState = {
   registrationToken: '',
   privGrpVisTimeout: 5,
   netidAllowed: false,
+  tokenTTL: 180,
   confidential: false,
   notifications: [],
   localStorageLoaded: false
