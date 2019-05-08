@@ -1,8 +1,5 @@
-import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
-
-const SESSIONKEY = process.env.SESSIONKEY;
 
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
@@ -59,27 +56,13 @@ export const getAuthToken = async (req, groupName, netidAllowed = false, ttl = 1
   return token;
 };
 
-export const extractAuthToken = async (req, res, next) => {
-  // Decrypt/extract the token data from the request cookie for use elsewhere in the application
-  if (req.signedCookies && req.signedCookies.registrationToken) {
-    try {
-      req.settings = req.signedCookies.registrationToken;
-    } catch (ex) {
-      console.log('Unable to decrypt token data', ex);
-    }
-  }
-
-  return next();
-};
-
 export const verifyAuthToken = req => {
-  // See: extractAuthToken; if req.settings is undefined the request didn't have a token
-  if (req.settings === undefined) {
+  if (!req.signedCookies.registrationToken) {
     return false;
   }
 
-  console.log(`verifyAuthToken, token expires: ${new Date(req.settings.expiry)}, now: ${new Date()}`);
-  return req.settings.expiry > new Date().getTime();
+  console.log(`verifyAuthToken, token expires: ${new Date(req.signedCookies.registrationToken.expiry)}, now: ${new Date()}`);
+  return req.signedCookies.registrationToken.expiry > new Date().getTime();
 };
 
 export const requestSettingsOverrides = async (req, res, next) => {
@@ -92,7 +75,7 @@ export const requestSettingsOverrides = async (req, res, next) => {
     overrides.confidential = !req.isAuthenticated();
   }
 
-  req.settings = { ...req.settings, ...overrides };
+  req.signedCookies.registrationToken = { ...req.signedCookies.registrationToken, ...overrides };
 
   next();
 };

@@ -13,8 +13,9 @@ const IDAAGROUPID = process.env.IDAAGROUPID;
 const BASE_GROUP = process.env.BASE_GROUP;
 
 api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
-  let groupName = req.settings.groupName;
-  let confidential = req.settings.confidential;
+  const settings = req.signedCookies.registrationToken;
+  let groupName = settings.groupName;
+  let confidential = settings.confidential;
   let response = {
     groupName,
     confidential,
@@ -32,12 +33,13 @@ api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req,
 });
 
 api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+  const settings = req.signedCookies.registrationToken;
   let identifier = req.body.identifier;
   let displayId = req.body.displayId;
   let validCard = IDCard.ValidCard(identifier);
-  let groupName = req.settings.groupName;
-  let netidAllowed = req.settings.netidAllowed;
-  let confidential = req.settings.confidential;
+  let groupName = settings.groupName;
+  let netidAllowed = settings.netidAllowed;
+  let confidential = settings.confidential;
 
   if (!validCard && netidAllowed == 'false') {
     // if not a valid card and netid auth not allowed, 404
@@ -88,7 +90,7 @@ api.get(API.Logout, (req, res) => {
   req.logout();
   res.clearCookie('connect.sid', { path: Routes.Welcome });
   if (!loggedOut) {
-    res.clearCookie('auth');
+    res.clearCookie('IAAAgreed');
     res.clearCookie('registrationToken');
   }
   req.session.regenerate(() => {
@@ -123,18 +125,16 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 
 api.get(API.CheckAuth, async (req, res) => {
   let redirectBack = IDAACHECK + idaaRedirectUrl(req);
-  let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAAAgreed: false, IAARedirect: redirectBack };
+  let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
 
   if (!req.signedCookies) {
     return res.sendStatus(500);
   }
 
   if (req.isAuthenticated()) {
-    if (req.signedCookies.auth) {
-      auth = req.signedCookies.auth;
-    }
+    const IAAAgreed = req.signedCookies.IAAAgreed || false;
 
-    if (!auth.IAAAgreed) {
+    if (!IAAAgreed) {
       let found = false;
       let members = (await Groups.GetMembers(IDAAGROUPID)).Payload;
       if (members.find(u => u.id === req.user.UWNetID)) {
@@ -147,7 +147,8 @@ api.get(API.CheckAuth, async (req, res) => {
           found = true;
         }
       } else {
-        auth.IAAAgreed = true;
+        // Re-check IAAAAuth in 1h
+        res.cookie('IAAAgreed', true, { path: '/', httpOnly: true, signed: true, maxAge: 60 * 60 * 1000 });
         auth.IAAAAuth = true;
       }
     } else {
@@ -155,8 +156,6 @@ api.get(API.CheckAuth, async (req, res) => {
     }
   }
 
-  // Re-check IAAAAuth in 1h
-  res.cookie('auth', auth, { path: '/', httpOnly: true, signed: true, maxAge: 60 * 60 * 1000 });
   return res.status(200).json(auth);
 });
 

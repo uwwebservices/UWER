@@ -11,7 +11,6 @@ import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
-import { extractAuthToken } from './utils/helpers';
 
 const NODE_ENV = process.env.NODE_ENV;
 const SECRET_KEY = process.env.SESSIONKEY || 'development';
@@ -22,7 +21,6 @@ app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
-app.use(extractAuthToken);
 app.set('trust proxy', 1);
 
 const memStore = MemoryStore(session);
@@ -71,8 +69,7 @@ if (NODE_ENV === 'production') {
     req.session.loggedOut = req.session.loggedOut || false;
 
     req.user = { UWNetID: 'steven20' };
-    req.signedCookies.auth = req.signedCookies.auth || { Authenticated: !req.session.loggedOut, IAAAgreed: true };
-
+    req.signedCookies.IAAAgreed = true;
     req.isAuthenticated = () => !req.session.loggedOut;
     next();
   });
