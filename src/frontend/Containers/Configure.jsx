@@ -83,7 +83,6 @@ class Configure extends Component {
   updateGroupName = async groupName => {
     this.props.clearUsers();
     await this.props.updateGroupName(groupName);
-    this.props._addNotification('Change Selected Group', `Selected group successfully changed to: ${this.displayGroupName(groupName)}`, 'success');
   };
   displayGroupName = groupName => {
     return groupName.replace(this.props.groupNameBase, '').replace(/-/g, ' ');
