@@ -231,7 +231,6 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
 
 export const StopRegistrationSession = () => {
   return async dispatch => {
-    ClearLocalStorageSettings();
     dispatch(Logout());
     dispatch(ResetState());
   };
@@ -253,8 +252,4 @@ export const FlashNotification = (title = '', message = '') => {
     dispatch(AddNotification(messageId, title, message));
     dispatch(RemoveNotification(messageId));
   };
-};
-
-const ClearLocalStorageSettings = () => {
-  localStorage.removeItem('appSettings');
 };
