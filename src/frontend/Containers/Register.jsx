@@ -6,7 +6,6 @@ import List from '@material-ui/core/List';
 import RegistrationModal from 'Components/RegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
-import Cookies from 'browser-cookies';
 import FA from 'react-fontawesome';
 import { Link } from 'react-router-dom';
 import LoadingUsers from 'Components/LoadingUsers';

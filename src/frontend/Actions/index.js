@@ -1,10 +1,6 @@
 import Const from '../Constants';
-import Cookies from 'browser-cookies';
 
 // Action Creators
-const ReceiveGroupName = groupName => {
-  return { type: Const.RECEIVE_GROUP_NAME, groupName };
-};
 const ConfigLoaded = config => {
   return { type: Const.RECEIVE_CONFIG, config };
 };
@@ -56,14 +52,11 @@ const RemoveNotification = messageId => {
 const PrivateGroup = confidential => {
   return { type: Const.PRIVATE_GROUP, confidential };
 };
-export const StoreRegistrationToken = token => {
+const StoreRegistrationToken = token => {
   return { type: Const.STORE_REGISTRATION_TOKEN, token };
 };
-const StorePrivateGroupVisTimeout = timeout => {
-  return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT, timeout };
-};
-const StoreNetidAllowed = netidAllowed => {
-  return { type: Const.STORE_NETID_ALLOWED, netidAllowed };
+const LocalStorageToState = settings => {
+  return { type: Const.STORE_SETTINGS, settings };
 };
 
 // -----------------------
@@ -84,11 +77,7 @@ export const LoadConfig = () => {
 
 export const UpdateGroupName = groupName => {
   return async dispatch => {
-    if (Cookies.get('groupName')) {
-      Cookies.erase('groupName');
-    }
-    Cookies.set('groupName', groupName, { expires: 1 / 24 });
-    return await dispatch(ReceiveGroupName(groupName));
+    dispatch(SaveSettingsToLocalStorage({ groupName }));
   };
 };
 
@@ -114,14 +103,14 @@ export const LoadSubgroups = () => {
 export const DestroySubgroup = group => {
   return async dispatch => {
     await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'DELETE' });
-    Cookies.erase('groupName', { path: '/' });
+    dispatch(SaveSettingsToLocalStorage({ groupName: '' }));
     return await dispatch(DeleteSubgroup(group));
   };
 };
 
 export const LoadUsers = () => {
   return async (dispatch, getState) => {
-    await dispatch(cookiesToState());
+    await dispatch(LoadSettingsFromLocalStorage());
     let state = getState();
     let group = state.groupName;
     let token = state.registrationToken || '';
@@ -144,7 +133,6 @@ export const LoadUsers = () => {
 
 export const AddUser = (group, identifier) => {
   return async (dispatch, getState) => {
-    await dispatch(cookiesToState());
     let state = getState();
     let displayId = Math.floor(Math.random() * 1000000).toString(16);
     let token = state.registrationToken;
@@ -236,20 +224,15 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
   return async dispatch => {
     let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
     dispatch(StoreRegistrationToken(token));
-    dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
-    dispatch(StoreNetidAllowed(netidAllowed));
-    Cookies.erase('netidAllowed', { path: '/' });
-    Cookies.set('netidAllowed', netidAllowed.toString(), { expires: 1 / 24 });
+    dispatch(SaveSettingsToLocalStorage({ groupName, netidAllowed, privateGroupVisTimeout, tokenTTL }));
     dispatch(ClearUsers());
-    resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
   };
 };
 
 export const StopRegistrationSession = () => {
   return async dispatch => {
-    Cookies.erase('registrationToken', { path: '/' });
-    Cookies.erase('groupName', { path: '/' });
+    ClearLocalStorageSettings();
     dispatch(Logout());
     dispatch(ResetState());
   };
@@ -264,8 +247,9 @@ export const InitApp = () => {
 
     !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
     state = getState();
-
-    dispatch(cookiesToState);
+    if (!state.localStorageLoaded) {
+      dispatch(LoadSettingsFromLocalStorage());
+    }
   };
 };
 
@@ -277,36 +261,23 @@ export const FlashNotification = (title = '', message = '') => {
   };
 };
 
-const cookiesToState = () => {
-  return async (dispatch, getState) => {
-    let state = getState();
-    if (!state.groupName) {
-      let groupName = Cookies.get('groupName');
-      if (groupName) {
-        dispatch(UpdateGroupName(groupName));
-      }
-    }
-    if (!state.registrationToken) {
-      let token = Cookies.get('registrationToken');
-      if (token) {
-        dispatch(StoreRegistrationToken(token));
-      }
-    }
-    if (!state.netidAllowed) {
-      let netidAllowed = Cookies.get('netidAllowed');
-      if (netidAllowed) {
-        dispatch(StoreNetidAllowed(netidAllowed));
-      }
-    }
+const LoadSettingsFromLocalStorage = () => {
+  return dispatch => {
+    let settings = JSON.parse(localStorage.getItem('appSettings'));
+    settings.localStorageLoaded = true;
+    dispatch(LocalStorageToState(settings));
+    return settings;
   };
 };
 
-const resetTokenCookie = (token, expires) => {
-  expires = expires / 60 / 24;
-  if (token) {
-    if (Cookies.get('registrationToken', { path: '/' })) {
-      Cookies.erase('registrationToken', { path: '/' });
-    }
-    Cookies.set('registrationToken', token, { expires });
-  }
+export const SaveSettingsToLocalStorage = settings => {
+  return dispatch => {
+    let oldSettings = dispatch(LoadSettingsFromLocalStorage());
+    localStorage.setItem('appSettings', JSON.stringify({ ...oldSettings, ...settings }));
+    dispatch(LoadSettingsFromLocalStorage());
+  };
+};
+
+const ClearLocalStorageSettings = () => {
+  localStorage.clearItem('appSettings');
 };

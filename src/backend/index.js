@@ -71,8 +71,8 @@ if (NODE_ENV === 'production') {
 
     req.user = { UWNetID: 'steven20' };
 
-    req.cookies = req.cookies || {};
-    req.cookies.auth = encryptPayload({ Authenticated: !req.session.loggedOut, IAAAgreed: true });
+    // req.cookies = req.cookies || {};
+    // req.cookies.auth = encryptPayload({ Authenticated: !req.session.loggedOut, IAAAgreed: true });
 
     req.isAuthenticated = () => !req.session.loggedOut;
     next();

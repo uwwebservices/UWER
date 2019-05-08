@@ -14,7 +14,8 @@ const initialState = {
   privGrpVisTimeout: 5,
   netidAllowed: false,
   confidential: false,
-  notifications: []
+  notifications: [],
+  localStorageLoaded: false
 };
 
 export default (state = initialState, action) => {
@@ -71,6 +72,9 @@ export default (state = initialState, action) => {
       return { ...state, confidential: action.confidential };
     case Const.RESET_STATE:
       return initialState;
+    case Const.STORE_SETTINGS:
+      console.log('UPDATING SETTINGS', action.settings);
+      return { ...state, ...action.settings };
     default:
       return state;
   }
