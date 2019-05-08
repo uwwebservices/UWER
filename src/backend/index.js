@@ -14,10 +14,11 @@ import helmet from 'helmet';
 import { extractAuthToken, encryptPayload } from './utils/helpers';
 
 const NODE_ENV = process.env.NODE_ENV;
+const SECRET_KEY = process.env.SESSIONKEY || 'development';
 
 let app = express();
 
-app.use(cookieParser());
+app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
@@ -33,7 +34,7 @@ app.use(
     name: 'sessionId',
     saveUninitialized: true,
     resave: false,
-    secret: process.env.SESSIONKEY || 'development'
+    secret: SECRET_KEY
   })
 );
 
