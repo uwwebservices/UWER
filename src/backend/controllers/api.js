@@ -22,6 +22,11 @@ api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req,
     members: []
   };
 
+  // Don't allow lookups for mismatched groups.
+  if (req.params.group !== groupName) {
+    return res.send(403).json({});
+  }
+
   if (confidential && !req.isAuthenticated()) {
     return res.status(200).json(response);
   }
@@ -40,6 +45,11 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (
   let groupName = settings.groupName;
   let netidAllowed = settings.netidAllowed;
   let confidential = settings.confidential;
+
+  // Don't allow lookups for mismatched groups.
+  if (req.params.group !== groupName) {
+    return res.sentStatus(403);
+  }
 
   if (!validCard && netidAllowed == 'false') {
     // if not a valid card and netid auth not allowed, 404
@@ -64,6 +74,14 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (
 });
 
 api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+  const settings = req.signedCookies.registrationToken;
+  let groupName = settings.groupName;
+
+  // Don't allow lookups for mismatched groups.
+  if (req.params.group !== groupName) {
+    return res.sendStatus(403);
+  }
+
   let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
   return res.status(200).send(image);
