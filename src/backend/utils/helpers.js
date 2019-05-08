@@ -55,15 +55,15 @@ export const getAuthToken = async (req, groupName, netidAllowed = false, ttl = 1
   let expiry = now.setMinutes(now.getMinutes() + ttl);
   let user = req.user;
   let confidential = await Groups.IsConfidentialGroup(groupName);
-  let token = JSON.stringify({ user, groupName, confidential, netidAllowed, expiry });
+  let token = { user, groupName, confidential, netidAllowed, expiry };
   return token;
 };
 
 export const extractAuthToken = async (req, res, next) => {
   // Decrypt/extract the token data from the request cookie for use elsewhere in the application
-  if (req.cookies && req.cookies.registrationToken) {
+  if (req.signedCookies && req.signedCookies.registrationToken) {
     try {
-      req.settings = JSON.parse(req.cookies.registrationToken);
+      req.settings = req.signedCookies.registrationToken;
     } catch (ex) {
       console.log('Unable to decrypt token data', ex);
     }

@@ -113,11 +113,10 @@ export const LoadUsers = () => {
     await dispatch(LoadSettingsFromLocalStorage());
     let state = getState();
     let group = state.groupName;
-    let token = state.registrationToken || '';
     if (group) {
       dispatch(ClearUsers());
       dispatch(LoadingUsers());
-      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}?token=${token}`)).json();
+      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
 
       state = getState();
@@ -135,11 +134,9 @@ export const AddUser = (group, identifier) => {
   return async (dispatch, getState) => {
     let state = getState();
     let displayId = Math.floor(Math.random() * 1000000).toString(16);
-    let token = state.registrationToken;
 
     dispatch(AddDummyUser(displayId));
     let body = {
-      token,
       displayId,
       identifier
     };
@@ -160,7 +157,7 @@ export const AddUser = (group, identifier) => {
         return dispatch(DummyUserFail(displayId));
       }
       if (res.status === 401) {
-        if (token) {
+        if (state.registrationToken) {
           dispatch(FlashNotification('Session Ended', 'Your registration session has ended, please start a new session.'));
           return dispatch(DummyUserFail(displayId));
         } else {
@@ -222,8 +219,8 @@ export const Logout = (loggedOut = false) => {
 
 export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privateGroupVisTimeout = 5) => {
   return async dispatch => {
-    let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
-    dispatch(StoreRegistrationToken(token));
+    await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`);
+    dispatch(StoreRegistrationToken(true));
     dispatch(SaveSettingsToLocalStorage({ groupName, netidAllowed, privateGroupVisTimeout, tokenTTL }));
     dispatch(ClearUsers());
     await dispatch(Logout(true));

@@ -10,7 +10,7 @@ const initialState = {
   subgroups: [],
   users: [],
   loading: { users: false, subgroups: false },
-  registrationToken: '',
+  registrationToken: false,
   privGrpVisTimeout: 5,
   netidAllowed: false,
   tokenTTL: 180,
