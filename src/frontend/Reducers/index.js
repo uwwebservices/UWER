@@ -10,12 +10,12 @@ export const initialState = {
   subgroups: [],
   users: [],
   loading: { users: false, subgroups: false },
-  registrationToken: '',
+  registrationToken: false,
   privGrpVisTimeout: 5,
   netidAllowed: false,
+  tokenTTL: 180,
   confidential: false,
-  notifications: [],
-  localStorageLoaded: false
+  notifications: []
 };
 
 export const RootReducer = (state = initialState, action) => {
@@ -64,6 +64,8 @@ export const RootReducer = (state = initialState, action) => {
       return { ...state, privGrpVisTimeout: action.timeout };
     case Const.STORE_NETID_ALLOWED:
       return { ...state, netidAllowed: action.netidAllowed };
+    case Const.STORE_TOKEN_TTL:
+      return { ...state, tokenTTL: action.tokenTTL };
     case Const.ADD_NOTIFICATION:
       return { ...state, notifications: [...state.notifications, action.notification] };
     case Const.REMOVE_NOTIFICATION:
@@ -73,10 +75,8 @@ export const RootReducer = (state = initialState, action) => {
     case Const.RESET_STATE:
       return initialState;
     case Const.STORE_SETTINGS:
-      console.log('UPDATING SETTINGS', action.settings);
       return { ...state, ...action.settings };
     default:
-      console.log('STATE', state);
       return state;
   }
 };

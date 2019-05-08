@@ -14,10 +14,14 @@ if (!localStorage.getItem('reduxState')) {
   localStorage.setItem('reduxState', JSON.stringify(initialState));
 }
 
-const store = createStore(RootReducer, JSON.parse(localStorage.getItem('reduxState')), applyMiddleware(...middleware));
+const persistedState = JSON.parse(localStorage.getItem('reduxState'));
+
+const store = createStore(RootReducer, persistedState, applyMiddleware(...middleware));
 
 store.subscribe(() => {
-  localStorage.setItem('reduxState', JSON.stringify(store.getState()));
+  let state = { ...store.getState() };
+  state.users = [];
+  localStorage.setItem('reduxState', JSON.stringify(state));
 });
 
 export default store;

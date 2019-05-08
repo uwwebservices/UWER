@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, ClearUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed, SaveSettingsToLocalStorage } from '../Actions';
+import { UpdateGroupName, LoadSubgroups, DestroySubgroup, ClearUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, UpdateNetidAllowed, UpdateTokenTTL, UpdatePrivateGroupVis } from '../Actions';
 
 class Configure extends Component {
   constructor(props) {
@@ -43,8 +43,15 @@ class Configure extends Component {
 
   handleChange = e => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    this.setState({ [e.target.name]: value });
-    this.props.saveSettingsToLocalStorage({ [e.target.name]: value });
+    if (e.target.name === 'netidAllowed') {
+      this.props.updateNetidAllowed(value);
+    }
+    if (e.target.name === 'tokenTTL') {
+      this.props.updateTokenTTL(value);
+    }
+    if (e.target.name === 'privGrpVisTimeout') {
+      this.props.updatePrivateGroupVis(value);
+    }
 
     if (e.target.name === 'newSubgroup') {
       this.setState({ invalidSubgroup: !this.validateGroupString(value) });
@@ -256,7 +263,9 @@ const mapDispatchToProps = dispatch => {
     createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
     startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVisTimeout) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVisTimeout)),
     stopRegistrationSession: () => dispatch(StopRegistrationSession()),
-    saveSettingsToLocalStorage: settings => dispatch(SaveSettingsToLocalStorage(settings))
+    updatePrivateGroupVis: privateGroupVis => dispatch(UpdatePrivateGroupVis(privateGroupVis)),
+    updateTokenTTL: tokenTTL => dispatch(UpdateTokenTTL(tokenTTL)),
+    updateNetidAllowed: netidAllowed => dispatch(UpdateNetidAllowed(netidAllowed))
   };
 };
 

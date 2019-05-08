@@ -50,28 +50,20 @@ export const ensureAuthOrToken = (req, res, next) => {
   }
 };
 
-export const encryptPayload = obj => {
-  return AES.encrypt(JSON.stringify(obj), SESSIONKEY).toString();
-};
-
-export const decryptCiphertext = ciphertext => {
-  return JSON.parse(AES.decrypt(ciphertext, SESSIONKEY).toString(enc.Utf8));
-};
-
 export const getAuthToken = async (req, groupName, netidAllowed = false, ttl = 180) => {
   let now = new Date();
   let expiry = now.setMinutes(now.getMinutes() + ttl);
   let user = req.user;
   let confidential = await Groups.IsConfidentialGroup(groupName);
-  let token = encryptPayload({ user, groupName, confidential, netidAllowed, expiry });
+  let token = { user, groupName, confidential, netidAllowed, expiry };
   return token;
 };
 
 export const extractAuthToken = async (req, res, next) => {
   // Decrypt/extract the token data from the request cookie for use elsewhere in the application
-  if (req.cookies && req.cookies.registrationToken) {
+  if (req.signedCookies && req.signedCookies.registrationToken) {
     try {
-      req.settings = decryptCiphertext(req.cookies.registrationToken);
+      req.settings = req.signedCookies.registrationToken;
     } catch (ex) {
       console.log('Unable to decrypt token data', ex);
     }

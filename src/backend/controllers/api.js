@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, requestSettingsOverrides, decryptCiphertext, encryptPayload } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, requestSettingsOverrides } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -74,16 +74,23 @@ api.get(API.GetToken, ensureAPIAuth, async (req, res) => {
 
   let token = await getAuthToken(req, groupName, netidAllowed, tokenTTL);
   if (token) {
-    return res.status(200).json({ token });
+    res.cookie('registrationToken', token, { path: '/', httpOnly: true, signed: true, maxAge: (tokenTTL + 30) * 60 * 1000 });
+    return res.sendStatus(200);
   } else {
-    return res.status(401).json({ token: '' });
+    res.clearCookie('registrationToken');
+    return res.sendStatus(401);
   }
 });
 
 api.get(API.Logout, (req, res) => {
+  // loggedOut 'mode' doesn't delete the token; also used in development mode
   let loggedOut = req.query.loggedOut || false;
   req.logout();
   res.clearCookie('connect.sid', { path: Routes.Welcome });
+  if (!loggedOut) {
+    res.clearCookie('auth');
+    res.clearCookie('registrationToken');
+  }
   req.session.regenerate(() => {
     req.session.loggedOut = loggedOut;
     res.sendStatus(200);
@@ -116,15 +123,15 @@ api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
 
 api.get(API.CheckAuth, async (req, res) => {
   let redirectBack = IDAACHECK + idaaRedirectUrl(req);
-  let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
+  let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAAAgreed: false, IAARedirect: redirectBack };
 
-  if (!req.cookies) {
+  if (!req.signedCookies) {
     return res.sendStatus(500);
   }
 
   if (req.isAuthenticated()) {
-    if (req.cookies.auth) {
-      auth = decryptCiphertext(req.cookies.auth);
+    if (req.signedCookies.auth) {
+      auth = req.signedCookies.auth;
     }
 
     if (!auth.IAAAgreed) {
@@ -148,7 +155,8 @@ api.get(API.CheckAuth, async (req, res) => {
     }
   }
 
-  res.cookie('auth', encryptPayload(auth), { path: '/' });
+  // Re-check IAAAAuth in 1h
+  res.cookie('auth', auth, { path: '/', httpOnly: true, signed: true, maxAge: 60 * 60 * 1000 });
   return res.status(200).json(auth);
 });
 
