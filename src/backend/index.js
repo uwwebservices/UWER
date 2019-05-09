@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
+import MemoryStore from 'memorystore';
+import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
@@ -20,6 +22,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
 app.set('trust proxy', 1);
+
+// Required for passport to setup a persistent login session
+const memStore = MemoryStore(session);
+app.use(
+  session({
+    store: new memStore({
+      checkPeriod: 86400000
+    }),
+    name: 'sessionId',
+    saveUninitialized: true,
+    resave: false,
+    secret: SECRET_KEY
+  })
+);
 
 if (NODE_ENV === 'production') {
   app.use('/assets', express.static('dist/assets'));
