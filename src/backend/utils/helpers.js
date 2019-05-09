@@ -1,14 +1,35 @@
 import { Routes } from 'Routes';
 
+const NODE_ENV = process.env.NODE_ENV;
+
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
-    const devVerifiedAuthToken = process.env.NODE_ENV === 'development' && verifyAuthToken(req);
-    if (req.isAuthenticated() || devVerifiedAuthToken) {
+    if (req.isAuthenticated() || devModeAuthenticated(req)) {
       return next();
     } else {
       res.redirect(`${Routes.Login}?returnUrl=${returnUrl}`);
     }
   };
+};
+
+export const setDevModeCookie = (res, val) => {
+  if (NODE_ENV !== 'development') {
+    return;
+  }
+
+  if (val === null) {
+    res.clearCookie('devMode', { path: '/' });
+  } else {
+    res.cookie('devMode', val, { path: '/', httpOnly: true, signed: true });
+  }
+};
+
+const devModeAuthenticated = req => {
+  if (NODE_ENV !== 'development') {
+    return false;
+  }
+
+  return req.signedCookies.devMode && (req.signedCookies.devMode == 'Authenticated' || req.signedCookies.devMode == 'Token');
 };
 
 export const backToUrl = (url = Routes.Register) => {

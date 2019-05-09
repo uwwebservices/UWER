@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides, setDevModeCookie } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -103,18 +103,19 @@ api.get(API.GetToken, ensureAPIAuth, async (req, res) => {
 });
 
 api.get(API.Logout, (req, res) => {
+  req.logout();
+
   // loggedOut 'mode' doesn't delete the token; also used in development mode
   let loggedOut = req.query.loggedOut || false;
-  req.logout();
-  res.clearCookie('connect.sid', { path: Routes.Welcome });
   if (!loggedOut) {
+    setDevModeCookie(res, null);
     res.clearCookie('IAAAgreed');
     res.clearCookie('registrationToken');
+  } else {
+    setDevModeCookie(res, 'Token');
   }
-  req.session.regenerate(() => {
-    req.session.loggedOut = loggedOut;
-    res.sendStatus(200);
-  });
+
+  res.sendStatus(200);
 });
 
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {

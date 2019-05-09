@@ -6,8 +6,6 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
-import MemoryStore from 'memorystore';
-import session from 'express-session';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
@@ -22,19 +20,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
 app.set('trust proxy', 1);
-
-const memStore = MemoryStore(session);
-app.use(
-  session({
-    store: new memStore({
-      checkPeriod: 86400000
-    }),
-    name: 'sessionId',
-    saveUninitialized: true,
-    resave: false,
-    secret: SECRET_KEY
-  })
-);
 
 if (NODE_ENV === 'production') {
   app.use('/assets', express.static('dist/assets'));
@@ -65,12 +50,11 @@ if (NODE_ENV === 'production') {
 } else if (NODE_ENV === 'development') {
   // Middleware to mock a login in development mode
   app.use(function(req, res, next) {
-    req.session = req.session || {};
-    req.session.loggedOut = req.session.loggedOut || false;
-
     req.user = { UWNetID: 'steven20' };
+    req.signedCookies.devMode = req.signedCookies.devMode || 'Authenticated';
     req.signedCookies.IAAAgreed = true;
-    req.isAuthenticated = () => !req.session.loggedOut;
+    req.isAuthenticated = () => req.signedCookies.devMode === 'Authenticated';
+
     next();
   });
 }

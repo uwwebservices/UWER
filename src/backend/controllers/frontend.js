@@ -68,8 +68,6 @@ app.post(
     } else {
       console.log(`User ${req.user.UWNetID} is not in the admins group, redirect to homepage and log out`);
       req.logout();
-      req.session.destroy();
-      res.clearCookie('connect.sid', { path: Routes.Welcome });
       res.redirect(Routes.NotAuthorized);
     }
   },
