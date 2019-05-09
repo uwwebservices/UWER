@@ -107,7 +107,6 @@ export const DestroySubgroup = group => {
   return async dispatch => {
     await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'DELETE' });
     dispatch(UpdateGroupName(''));
-    dispatch(Receive);
     return await dispatch(DeleteSubgroup(group));
   };
 };
