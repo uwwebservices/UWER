@@ -1,5 +1,4 @@
 import { Routes } from 'Routes';
-import Groups from 'models/groupModel';
 
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
@@ -36,15 +35,6 @@ export const ensureAuthOrToken = (req, res, next) => {
   } else {
     res.sendStatus(401);
   }
-};
-
-export const getAuthToken = async (req, groupName, netidAllowed = false, ttl = 180) => {
-  let now = new Date();
-  let expiry = now.setMinutes(now.getMinutes() + ttl);
-  let user = req.user;
-  let confidential = await Groups.IsConfidentialGroup(groupName);
-  let token = { user, groupName, confidential, netidAllowed, expiry };
-  return token;
 };
 
 export const verifyAuthToken = req => {

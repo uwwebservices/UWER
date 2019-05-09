@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, requestSettingsOverrides } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -88,18 +88,18 @@ api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, async (
 });
 
 api.get(API.GetToken, ensureAPIAuth, async (req, res) => {
-  let groupName = req.query.groupName;
-  let netidAllowed = req.query.netidAllowed;
-  let tokenTTL = req.query.tokenTTL;
+  const now = new Date();
+  const user = req.user;
+  const groupName = req.query.groupName;
+  const confidential = await Groups.IsConfidentialGroup(groupName);
+  const netidAllowed = req.query.netidAllowed;
+  const tokenTTL = req.query.tokenTTL;
+  const expiry = now.setMinutes(now.getMinutes() + tokenTTL);
 
-  let token = await getAuthToken(req, groupName, netidAllowed, tokenTTL);
-  if (token) {
-    res.cookie('registrationToken', token, { path: '/', httpOnly: true, signed: true, maxAge: (tokenTTL + 30) * 60 * 1000 });
-    return res.sendStatus(200);
-  } else {
-    res.clearCookie('registrationToken');
-    return res.sendStatus(401);
-  }
+  const token = { user, groupName, confidential, netidAllowed, expiry };
+  res.cookie('registrationToken', token, { path: '/', httpOnly: true, signed: true, maxAge: (tokenTTL + 30) * 60 * 1000 });
+
+  return res.sendStatus(200);
 });
 
 api.get(API.Logout, (req, res) => {
