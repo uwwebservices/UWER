@@ -42,15 +42,16 @@ class Configure extends Component {
   };
 
   handleChange = e => {
+    console.log('updating state');
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     if (e.target.name === 'netidAllowed') {
       this.props.updateNetidAllowed(value);
-    }
-    if (e.target.name === 'tokenTTL') {
+    } else if (e.target.name === 'tokenTTL') {
       this.props.updateTokenTTL(value);
-    }
-    if (e.target.name === 'privGrpVisTimeout') {
+    } else if (e.target.name === 'privGrpVisTimeout') {
       this.props.updatePrivateGroupVis(value);
+    } else {
+      this.setState({ [e.target.name]: value });
     }
 
     if (e.target.name === 'newSubgroup') {
