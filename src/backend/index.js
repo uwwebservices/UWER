@@ -11,29 +11,16 @@ import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
 
-const SPKEYFILE = process.env.SPKEYFILE;
-const IDPCALLBACKURL = process.env.IDPCALLBACKURL;
-const IDPISSUER = process.env.IDPISSUER;
-const IDPENTRYPOINT = process.env.IDPENTRYPOINT;
-const PORT = process.env.PORT || 1111;
 const NODE_ENV = process.env.NODE_ENV;
-const SESSIONKEY = process.env.SESSIONKEY;
 
 let app = express();
-if (NODE_ENV === 'production') {
-  app.use('/assets', express.static('dist/assets'));
-}
-app.use(
-  bodyParser.urlencoded({
-    extended: true
-  })
-);
-app.use(bodyParser.json());
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(helmet());
+app.set('trust proxy', 1);
 
 const memStore = MemoryStore(session);
-app.set('trust proxy', 1);
 app.use(
   session({
     store: new memStore({
@@ -42,43 +29,50 @@ app.use(
     name: 'sessionId',
     saveUninitialized: true,
     resave: false,
-    secret: SESSIONKEY || 'development'
+    secret: process.env.SESSIONKEY || 'development'
   })
 );
 
-if (SESSIONKEY === 'development') {
-  console.error('Session is not secured, SessionKey environment variable must be set.');
+if (NODE_ENV === 'production') {
+  app.use('/assets', express.static('dist/assets'));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  passport.serializeUser((user, done) => done(null, user));
+  passport.deserializeUser((user, done) => done(null, user));
+
+  const spPrivateKey = process.env.SPKEYFILE ? fs.readFileSync(process.env.SPKEYFILE, { encoding: 'utf8' }) : '';
+
+  passport.use(
+    new saml.Strategy(
+      {
+        callbackUrl: process.env.IDPCALLBACKURL,
+        entryPoint: process.env.IDPENTRYPOINT,
+        issuer: process.env.IDPISSUER,
+        identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
+        privateKey: spPrivateKey
+      },
+      function(profile, done) {
+        return done(null, {
+          UWNetID: profile['urn:oid:0.9.2342.19200300.100.1.1'] || profile.nameID,
+          DisplayName: profile['urn:oid:2.16.840.1.113730.3.1.241']
+        });
+      }
+    )
+  );
+} else if (NODE_ENV === 'development') {
+  // Middleware to mock a login in development mode
+  app.use(function(req, res, next) {
+    req.session = req.session || {};
+    req.session.loggedOut = req.session.loggedOut || false;
+
+    req.user = { UWNetID: 'steven20' };
+    req.session.IAAAgreed = true;
+    req.isAuthenticated = () => !req.session.loggedOut;
+    next();
+  });
 }
-app.use(passport.initialize());
-app.use(passport.session());
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
-
-const spPrivateKey = SPKEYFILE ? fs.readFileSync(SPKEYFILE, { encoding: 'utf8' }) : '';
-
-const uwSamlStrategy = new saml.Strategy(
-  {
-    callbackUrl: IDPCALLBACKURL,
-    entryPoint: IDPENTRYPOINT,
-    issuer: IDPISSUER,
-    identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
-    privateKey: spPrivateKey
-  },
-  function(profile, done) {
-    return done(null, {
-      UWNetID: profile['urn:oid:0.9.2342.19200300.100.1.1'] || profile.nameID,
-      DisplayName: profile['urn:oid:2.16.840.1.113730.3.1.241']
-    });
-  }
-);
-
-passport.use(uwSamlStrategy);
-
-// date, host, method, url,response,time taken,remote host, remote ip, user agent
-// 2018-08-13T17:01:10.498Z ::ffff:10.0.2.176 Anonymous GET / 200 ELB-HealthChecker/2.0 0.882 ms
-// 2018-08-13T13:49:45.054|webservices.washington.edu|GET|/favicon.ico|404|5|10.0.2.176|10.0.2.176|Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134
-
+// Log formatting
 app.use(
   morgan(function(tokens, req, res) {
     let user = 'Anonymous';
@@ -111,15 +105,10 @@ app.use(
 
 app.server = http.createServer(app);
 
-app.get('/Shibboleth.sso/metadata', function(req, res) {
-  res.type('application/xml');
-  res.status(200).send(uwSamlStrategy.generateServiceProviderMetadata());
-});
-
 app.use('/api', api);
 app.use(['/', '/config'], frontend);
 
-app.server.listen(PORT, () => {
+app.server.listen(process.env.PORT || 1111, () => {
   console.log(`Started on port ${app.server.address().port} in '${NODE_ENV}' environment.`);
 });
 

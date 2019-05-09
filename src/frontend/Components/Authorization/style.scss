@@ -1,56 +1,54 @@
-
 body {
-    overflow: hidden;
+  overflow: hidden;
 }
 #loader {
-    overflow:hidden;
-    width: 400px;
-    div {
-        width: 30px;
-        height: 30px;
-        position: absolute;
-        background-color: #ccc;
-        top: 35%;
-        border-radius: 50%;
+  overflow: hidden;
+  width: 400px;
+  div {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background-color: #ccc;
+    top: 45%;
+    border-radius: 50%;
 
-        &:nth-child(1) {
-            background-color: #FF5460;
-            -webkit-animation: move 2s infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-                    animation: move 2s infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-        }
-        &:nth-child(2) {
-            background-color: #FF9D84;
-            -webkit-animation: move 2s 150ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-                    animation: move 2s 150ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-        }
-        &:nth-child(3) {
-            background-color: #F0E797;
-            -webkit-animation: move 2s 300ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-                    animation: move 2s 300ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-        }
-        &:nth-child(4) {
-            background-color: #75B08A;
-            -webkit-animation: move 2s 450ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-                    animation: move 2s 450ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
-        }
+    &:nth-child(1) {
+      background-color: #ff5460;
+      -webkit-animation: move 2s infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      animation: move 2s infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
     }
+    &:nth-child(2) {
+      background-color: #ff9d84;
+      -webkit-animation: move 2s 150ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      animation: move 2s 150ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+    }
+    &:nth-child(3) {
+      background-color: #f0e797;
+      -webkit-animation: move 2s 300ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      animation: move 2s 300ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+    }
+    &:nth-child(4) {
+      background-color: #75b08a;
+      -webkit-animation: move 2s 450ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+      animation: move 2s 450ms infinite cubic-bezier(0.2, 0.64, 0.81, 0.23);
+    }
+  }
 }
 
 @-webkit-keyframes move {
-    0% {
-        left: 30%;
-    }
-    100% {
-        left: 70%;
-    }
-    }
-
-    @keyframes move {
-    0% {
-        left: 30%;
-    }
-    100% {
-        left: 70%;
-    }
+  0% {
+    left: 30%;
+  }
+  100% {
+    left: 70%;
+  }
 }
-  
+
+@keyframes move {
+  0% {
+    left: 30%;
+  }
+  100% {
+    left: 70%;
+  }
+}

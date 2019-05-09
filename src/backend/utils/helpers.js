@@ -4,14 +4,10 @@ import Groups from 'models/groupModel';
 
 const SESSIONKEY = process.env.SESSIONKEY;
 
-export const developmentMode = process.env.NODE_ENV === 'development';
-
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    } else if (developmentMode) {
-      console.log('Running in development mode - Auth Disabled');
+    const devVerifiedAuthToken = process.env.NODE_ENV === 'development' && verifyAuthToken(req);
+    if (req.isAuthenticated() || devVerifiedAuthToken) {
       return next();
     } else {
       if (req.session) {
@@ -39,7 +35,7 @@ export const idaaRedirectUrl = req => {
 };
 
 export const ensureAPIAuth = (req, res, next) => {
-  if (req.isAuthenticated() || developmentMode) {
+  if (req.isAuthenticated()) {
     return next();
   } else {
     res.sendStatus(401);
@@ -47,7 +43,7 @@ export const ensureAPIAuth = (req, res, next) => {
 };
 
 export const ensureAuthOrToken = (req, res, next) => {
-  if (req.isAuthenticated() || verifyAuthToken(req) || developmentMode) {
+  if (req.isAuthenticated() || verifyAuthToken(req)) {
     return next();
   } else {
     res.sendStatus(401);
@@ -86,7 +82,7 @@ export const tokenToSession = async (req, res, next) => {
   let confidential = !req.isAuthenticated();
   let netidAllowed = req.isAuthenticated();
 
-  if (!req.isAuthenticated() && !developmentMode && req.body.token) {
+  if (!req.isAuthenticated() && req.body.token) {
     let tokenData = decryptAuthToken(req.body.token);
     groupName = tokenData.groupName;
     netidAllowed = tokenData.netidAllowed;
@@ -99,7 +95,7 @@ export const tokenToSession = async (req, res, next) => {
   }
 
   // Admins and Developers can see confidential group members
-  if (req.isAuthenticated() || developmentMode) {
+  if (req.isAuthenticated()) {
     confidential = false;
   }
 

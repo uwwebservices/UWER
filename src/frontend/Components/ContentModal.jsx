@@ -14,6 +14,13 @@ class ContentModal extends React.Component {
       open: false
     };
   }
+  componentDidMount() {
+    this._ismounted = true;
+  }
+
+  componentWillUnmount() {
+    this._ismounted = false;
+  }
 
   handleClickOpen = () => this.setState({ open: true });
 
@@ -24,7 +31,9 @@ class ContentModal extends React.Component {
     } else {
       this.props.cancelCallback();
     }
-    this.setState({ open: false });
+    if (this._ismounted) {
+      this.setState({ open: false });
+    }
   };
 
   render() {
@@ -50,13 +59,7 @@ class ContentModal extends React.Component {
         )}
         {this.props.openWithIcon && <FA name={this.props.openButtonIcon} title={this.props.iconButtonTitle} onClick={this.handleClickOpen} />}
 
-        <Dialog
-          open={this.state.open}
-          onClose={this.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          disableBackdropClick={this.props.disableBackdropClick}
-        >
+        <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" disableBackdropClick={this.props.disableBackdropClick}>
           <DialogTitle id="alert-dialog-title">{this.props.dialogTitle}</DialogTitle>
           <DialogContent>{...this.props.children}</DialogContent>
           <DialogActions>
@@ -66,13 +69,7 @@ class ContentModal extends React.Component {
               </Button>
             )}
             {this.props.showApproveButton && (
-              <Button
-                onClick={() => this.handleClose(true)}
-                variant="raised"
-                color={this.props.approveButtonColor}
-                autoFocus
-                disabled={this.props.approveButtonDisabled}
-              >
+              <Button onClick={() => this.handleClose(true)} variant="raised" color={this.props.approveButtonColor} autoFocus disabled={this.props.approveButtonDisabled}>
                 {this.props.approveButtonText}
               </Button>
             )}

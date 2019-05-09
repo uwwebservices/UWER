@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, developmentMode, tokenToSession } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, tokenToSession } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -21,7 +21,7 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
     members: []
   };
 
-  if (confidential && !req.isAuthenticated() && !developmentMode) {
+  if (confidential && !req.isAuthenticated()) {
     return res.status(200).json(response);
   }
   let result = await Groups.GetMembers(groupName);
@@ -50,37 +50,19 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
   }
 
   let result = await Groups.AddMember(groupName, identifier);
-
-  if (result.Status === 200 && confidential) {
-    res.sendStatus(201);
-  }
-
-  if (result.Status === 200 && !confidential) {
+  if (result.Status === 200) {
     let user = await PWS.Get(identifier);
 
     user.displayId = displayId;
     user.Base64Image = await IDCard.GetOnePhoto(groupName, user.UWRegID);
-    res.status(result.Status).json(user);
+    res.status(confidential ? 201 : result.Status).json(user);
   } else {
     res.sendStatus(result.Status);
   }
 });
 
 api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
-  let groupName = req.params.group;
-  let identifier = req.params.identifier;
-  
-  // Should we validate the identifier is part of the group?
-  // This srsly slows things down...
-  // let result = await Groups.GetMembers(groupName);
-  // let members = await PWS.GetMany(result.Payload);
-  // let found = members.filter(x => x.UWRegID === identifier).length === 1;
-
-  // if (!found) {
-  //   identifier = "placeholder"; 
-  // }
-
-  let image = await IDCard.GetPhoto(identifier);
+  let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
   return res.status(200).send(image);
 });
@@ -99,10 +81,13 @@ api.get(API.GetToken, ensureAPIAuth, (req, res) => {
 });
 
 api.get(API.Logout, (req, res) => {
+  let loggedOut = req.query.loggedOut || false;
   req.logout();
-  req.session.destroy();
   res.clearCookie('connect.sid', { path: Routes.Welcome });
-  res.sendStatus(200);
+  req.session.regenerate(() => {
+    req.session.loggedOut = loggedOut;
+    res.sendStatus(200);
+  });
 });
 
 api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {

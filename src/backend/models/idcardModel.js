@@ -77,7 +77,7 @@ const IDCard = {
   },
   async GetPhoto(regid) {
     let opts = Object.assign({}, options, {
-      url: `${PHOTOBASEURL}/${regid}-large.jpg`,
+      url: `${PHOTOBASEURL}/${regid}-medium.jpg`,
       encoding: null
     });
 

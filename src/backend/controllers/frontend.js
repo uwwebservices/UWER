@@ -10,36 +10,6 @@ let app = Router();
 const BASE_GROUP = process.env.BASE_GROUP;
 const NODE_ENV = process.env.NODE_ENV;
 
-// Shibboleth Routes
-app.get(
-  Routes.Login,
-  function(req, res, next) {
-    req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
-    next();
-  },
-  passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
-);
-
-app.post(
-  '/login/callback',
-  passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
-  async (req, res, next) => {
-    // admins are the effective members of the base group
-    let admins = (await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1))).Payload;
-
-    if (admins && admins.indexOf(req.user.UWNetID) > -1) {
-      next();
-    } else {
-      console.log(`User ${req.user.UWNetID} is not in the admins group, redirect to homepage and log out`);
-      req.logout();
-      req.session.destroy();
-      res.clearCookie('connect.sid', { path: Routes.Welcome });
-      res.redirect(Routes.NotAuthorized);
-    }
-  },
-  backToUrl()
-);
-
 if (NODE_ENV === 'development') {
   const webpack = require('webpack');
   const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -76,6 +46,37 @@ if (NODE_ENV === 'development') {
   });
 }
 
+// Shibboleth Routes
+app.get(
+  Routes.Login,
+  function(req, res, next) {
+    req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
+    next();
+  },
+  passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
+);
+
+app.post(
+  '/login/callback',
+  passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
+  async (req, res, next) => {
+    // admins are the effective members of the base group
+    let admins = (await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1))).Payload;
+
+    if (admins && admins.indexOf(req.user.UWNetID) > -1) {
+      next();
+    } else {
+      console.log(`User ${req.user.UWNetID} is not in the admins group, redirect to homepage and log out`);
+      req.logout();
+      req.session.destroy();
+      res.clearCookie('connect.sid', { path: Routes.Welcome });
+      res.redirect(Routes.NotAuthorized);
+    }
+  },
+  backToUrl()
+);
+
+// This route must be the very last one or things get wonky in production
 if (process.env.NODE_ENV === 'production') {
   app.get([...Routes], (req, res) => {
     res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));

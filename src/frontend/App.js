@@ -11,38 +11,41 @@ import NotAuthorized from 'Containers/NotAuthorized';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './Store.js';
-     
+
 // Passes all props down to children
-const PorousRoute = function ({children, ...props }) {
-    return (
-            <Route path={props.path}>
-                <PageWrapper {...props}>
-                    { React.cloneElement(children, props) }
-                </PageWrapper>
-            </Route>
-    );
-}
+const PorousRoute = function({ children, ...props }) {
+  return (
+    <Route path={props.path}>
+      <PageWrapper {...props}>{React.cloneElement(children, props)}</PageWrapper>
+    </Route>
+  );
+};
 
 class App extends React.Component {
-    render () {
-        return (
-            <Router>
-                <Provider store={store}>
-                    <MuiThemeProvider theme={theme}>
-                            <Switch>
-                                <PorousRoute path='/config' loginRequired={true} iaaRequired={true}><Configure /></PorousRoute>
-                                <PorousRoute path='/register' loginRequired={false} iaaRequired={false}><Register /></PorousRoute>
-                                <PorousRoute path='/notAuthorized' loginRequired={false} iaaRequired={false}><NotAuthorized /></PorousRoute>
-                                <PorousRoute path='/' loginRequired={false} iaaRequired={false}><Welcome /></PorousRoute>
-                            </Switch>
-                    </MuiThemeProvider>
-                </Provider>
-            </Router>
-        )
-    }
+  render() {
+    return (
+      <Router>
+        <Provider store={store}>
+          <MuiThemeProvider theme={theme}>
+            <Switch>
+              <PorousRoute path="/config" loginRequired={true} iaaRequired={true}>
+                <Configure />
+              </PorousRoute>
+              <PorousRoute path="/register" loginRequired={false} iaaRequired={false}>
+                <Register />
+              </PorousRoute>
+              <PorousRoute path="/notAuthorized" loginRequired={false} iaaRequired={false}>
+                <NotAuthorized />
+              </PorousRoute>
+              <PorousRoute path="/" loginRequired={false} iaaRequired={false}>
+                <Welcome />
+              </PorousRoute>
+            </Switch>
+          </MuiThemeProvider>
+        </Provider>
+      </Router>
+    );
+  }
 }
 
-ReactDom.render(
-  <App />,
-  document.getElementById('root')
-);
+ReactDom.render(<App />, document.getElementById('root'));
