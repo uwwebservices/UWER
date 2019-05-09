@@ -50,7 +50,7 @@ if (NODE_ENV === 'development') {
 app.get(
   Routes.Login,
   function(req, res, next) {
-    req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
+    res.cookie('authRedirectUrl', req.query.returnUrl, { path: '/', httpOnly: true, maxAge: 5 * 60 * 1000 });
     next();
   },
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })

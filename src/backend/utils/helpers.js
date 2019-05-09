@@ -7,23 +7,14 @@ export const ensureAuth = (returnUrl = '/') => {
     if (req.isAuthenticated() || devVerifiedAuthToken) {
       return next();
     } else {
-      if (req.session) {
-        req.session.authRedirectUrl = req.originalUrl;
-      } else {
-        console.warn('passport-uwshib: No session property on request! Is your session store unreachable?');
-      }
-      res.redirect(Routes.Login);
+      res.redirect(`${Routes.Login}?returnUrl=${returnUrl}`);
     }
   };
 };
 
 export const backToUrl = (url = Routes.Register) => {
   return function(req, res) {
-    if (req.session) {
-      url = req.session.authRedirectUrl;
-      delete req.session.authRedirectUrl;
-    }
-    res.redirect(url || Routes.Register);
+    res.redirect(req.cookies.authRedirectUrl || Routes.Register);
   };
 };
 
