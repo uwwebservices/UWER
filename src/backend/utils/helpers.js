@@ -1,6 +1,7 @@
 import { Routes } from 'Routes';
 
 const NODE_ENV = process.env.NODE_ENV;
+const BASE_GROUP = process.env.BASE_GROUP;
 
 export const uwerSetCookieDefaults = { path: '/', httpOnly: true, signed: true };
 
@@ -80,6 +81,17 @@ export const requestSettingsOverrides = async (req, res, next) => {
   }
 
   req.signedCookies.registrationToken = { ...req.signedCookies.registrationToken, ...overrides };
+
+  next();
+};
+
+export const ensureValidGroupName = async (req, res, next) => {
+  const groupName = req.params.group;
+  const cookieBasedGroupName = req.signedCookies && req.signedCookies.registrationToken && req.signedCookies.registrationToken.groupName;
+
+  if (!groupName || !groupName.startsWith(BASE_GROUP) || (!!cookieBasedGroupName && groupName !== cookieBasedGroupName)) {
+    return res.sendStatus(403);
+  }
 
   next();
 };

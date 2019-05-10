@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides, setDevModeCookie, uwerSetCookieDefaults, ensureValidGroupName } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -12,7 +12,7 @@ const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
 const BASE_GROUP = process.env.BASE_GROUP;
 
-api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let groupName = settings.groupName;
   let confidential = settings.confidential;
@@ -22,14 +22,10 @@ api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req,
     members: []
   };
 
-  // Don't allow lookups for mismatched groups.
-  if (req.params.group !== groupName) {
-    return res.send(403).json({});
-  }
-
   if (confidential && !req.isAuthenticated()) {
     return res.status(200).json(response);
   }
+
   let result = await Groups.GetMembers(groupName);
   let members = await PWS.GetMany(result.Payload);
   let verbose = await IDCard.GetManyPhotos(groupName, members);
@@ -37,7 +33,7 @@ api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req,
   return res.status(result.Status).json(response);
 });
 
-api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let identifier = req.body.identifier;
   let displayId = req.body.displayId;
@@ -45,11 +41,6 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (
   let groupName = settings.groupName;
   let netidAllowed = settings.netidAllowed;
   let confidential = settings.confidential;
-
-  // Don't allow lookups for mismatched groups.
-  if (req.params.group !== groupName) {
-    return res.sentStatus(403);
-  }
 
   if (!validCard && netidAllowed == 'false') {
     // if not a valid card and netid auth not allowed, 404
@@ -73,14 +64,9 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (
   }
 });
 
-api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let groupName = settings.groupName;
-
-  // Don't allow lookups for mismatched groups.
-  if (req.params.group !== groupName) {
-    return res.sendStatus(403);
-  }
 
   let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
@@ -118,22 +104,22 @@ api.get(API.Logout, (req, res) => {
   res.sendStatus(200);
 });
 
-api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
+api.delete(API.RemoveMember, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
   let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
   return res.status(result.Status).json(result.Payload);
 });
 
 api.get(API.GetSubgroups, ensureAPIAuth, async (req, res) => {
-  let result = await Groups.SearchGroups(req.params.group, true);
+  let result = await Groups.SearchGroups(BASE_GROUP, true);
   return res.status(result.Status).json(result.Payload);
 });
 
-api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
+api.delete(API.RemoveSubgroup, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
   let result = await Groups.DeleteGroup(req.params.group);
   return res.status(result.Status).json(result.Payload);
 });
 
-api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
+api.post(API.CreateGroup, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
   let confidential = req.query.confidential;
   let description = req.query.description;
   let email = req.query.email;
@@ -178,11 +164,12 @@ api.get(API.CheckAuth, async (req, res) => {
   return res.status(200).json(auth);
 });
 
-api.get(API.Config, (req, res) => {
+// @TODO: Remove method after frontend refactor to not rely on API.GetConfig
+api.get('/config', (req, res) => {
   res.status(200).json({ groupNameBase: BASE_GROUP });
 });
 
-api.get(API.CSV, ensureAPIAuth, async (req, res) => {
+api.get(API.CSV, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
   let members = await Groups.GetMembers(req.params.group);
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
   let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
