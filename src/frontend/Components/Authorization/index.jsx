@@ -15,7 +15,6 @@ class Authorization extends React.Component {
   }
   render() {
     const { loginRequired, authenticated, registrationToken, iaaAuth, iaaCheck, iaaRequired, children, path, resetState } = this.props;
-
     // if we've been stuck on this page for 5s, give option to retry
     setTimeout(() => this.setState({ showRetry: true }), 5000);
 
