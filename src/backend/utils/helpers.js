@@ -86,10 +86,16 @@ export const requestSettingsOverrides = async (req, res, next) => {
 };
 
 export const ensureValidGroupName = async (req, res, next) => {
-  const groupName = req.params.group;
-  const cookieBasedGroupName = req.signedCookies && req.signedCookies.registrationToken && req.signedCookies.registrationToken.groupName;
+  const routeGroupName = req.params && req.params.group;
+  const cookieGroupName = req.signedCookies.registrationToken && req.signedCookies.registrationToken.groupName;
+  const queryGroupName = req.query && req.query.groupName;
 
-  if (!groupName || !groupName.startsWith(BASE_GROUP) || (!!cookieBasedGroupName && groupName !== cookieBasedGroupName)) {
+  const routeBaseMismatch = !!routeGroupName && !routeGroupName.startsWith(BASE_GROUP);
+  const cookieBaseMismatch = !!cookieGroupName && !cookieGroupName.startsWith(BASE_GROUP);
+  const queryBaseMismatch = !!queryGroupName && !queryGroupName.startsWith(BASE_GROUP);
+  const routeCookieMismatch = !!routeGroupName && !!cookieGroupName && routeGroupName !== cookieGroupName;
+
+  if (routeBaseMismatch || cookieBaseMismatch || queryBaseMismatch || routeCookieMismatch) {
     return res.sendStatus(403);
   }
 

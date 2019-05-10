@@ -73,7 +73,7 @@ api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, ensureV
   return res.status(200).send(image);
 });
 
-api.get(API.GetToken, ensureAPIAuth, async (req, res) => {
+api.get(API.GetToken, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
   const now = new Date();
   const user = req.user;
   const groupName = req.query.groupName;
