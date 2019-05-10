@@ -50,7 +50,7 @@ if (NODE_ENV === 'development') {
 app.get(
   Routes.Login,
   function(req, res, next) {
-    req.session.authRedirectUrl = req.query.returnUrl ? req.query.returnUrl : req.session.authRedirectUrl;
+    res.cookie('authRedirectUrl', req.query.returnUrl, { path: '/', httpOnly: true, maxAge: 5 * 60 * 1000 });
     next();
   },
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
@@ -68,8 +68,6 @@ app.post(
     } else {
       console.log(`User ${req.user.UWNetID} is not in the admins group, redirect to homepage and log out`);
       req.logout();
-      req.session.destroy();
-      res.clearCookie('connect.sid', { path: Routes.Welcome });
       res.redirect(Routes.NotAuthorized);
     }
   },

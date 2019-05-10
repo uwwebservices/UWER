@@ -1,10 +1,6 @@
 import Const from '../Constants';
-import Cookies from 'browser-cookies';
 
 // Action Creators
-const ReceiveGroupName = groupName => {
-  return { type: Const.RECEIVE_GROUP_NAME, groupName };
-};
 const ConfigLoaded = config => {
   return { type: Const.RECEIVE_CONFIG, config };
 };
@@ -56,14 +52,20 @@ const RemoveNotification = messageId => {
 const PrivateGroup = confidential => {
   return { type: Const.PRIVATE_GROUP, confidential };
 };
-export const StoreRegistrationToken = token => {
+const StoreRegistrationToken = token => {
   return { type: Const.STORE_REGISTRATION_TOKEN, token };
 };
-const StorePrivateGroupVisTimeout = timeout => {
+export const UpdateGroupName = groupName => {
+  return { type: Const.RECEIVE_GROUP_NAME, groupName };
+};
+export const UpdatePrivateGroupVis = timeout => {
   return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT, timeout };
 };
-const StoreNetidAllowed = netidAllowed => {
+export const UpdateNetidAllowed = netidAllowed => {
   return { type: Const.STORE_NETID_ALLOWED, netidAllowed };
+};
+export const UpdateTokenTTL = tokenTTL => {
+  return { type: Const.STORE_TOKEN_TTL, tokenTTL };
 };
 
 // -----------------------
@@ -79,16 +81,6 @@ export const LoadConfig = () => {
   return async dispatch => {
     let json = await (await APIRequestWithAuth('/api/config')).json();
     return dispatch(ConfigLoaded(json));
-  };
-};
-
-export const UpdateGroupName = groupName => {
-  return async dispatch => {
-    if (Cookies.get('groupName')) {
-      Cookies.erase('groupName');
-    }
-    Cookies.set('groupName', groupName, { expires: 1 / 24 });
-    return await dispatch(ReceiveGroupName(groupName));
   };
 };
 
@@ -114,21 +106,19 @@ export const LoadSubgroups = () => {
 export const DestroySubgroup = group => {
   return async dispatch => {
     await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'DELETE' });
-    Cookies.erase('groupName', { path: '/' });
+    dispatch(UpdateGroupName(''));
     return await dispatch(DeleteSubgroup(group));
   };
 };
 
 export const LoadUsers = () => {
   return async (dispatch, getState) => {
-    await dispatch(cookiesToState());
     let state = getState();
     let group = state.groupName;
-    let token = state.registrationToken || '';
     if (group) {
       dispatch(ClearUsers());
       dispatch(LoadingUsers());
-      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}?token=${token}`)).json();
+      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
 
       state = getState();
@@ -144,14 +134,11 @@ export const LoadUsers = () => {
 
 export const AddUser = (group, identifier) => {
   return async (dispatch, getState) => {
-    await dispatch(cookiesToState());
     let state = getState();
     let displayId = Math.floor(Math.random() * 1000000).toString(16);
-    let token = state.registrationToken;
 
     dispatch(AddDummyUser(displayId));
     let body = {
-      token,
       displayId,
       identifier
     };
@@ -172,7 +159,7 @@ export const AddUser = (group, identifier) => {
         return dispatch(DummyUserFail(displayId));
       }
       if (res.status === 401) {
-        if (token) {
+        if (state.registrationToken) {
           dispatch(FlashNotification('Session Ended', 'Your registration session has ended, please start a new session.'));
           return dispatch(DummyUserFail(displayId));
         } else {
@@ -234,22 +221,15 @@ export const Logout = (loggedOut = false) => {
 
 export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privateGroupVisTimeout = 5) => {
   return async dispatch => {
-    let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
-    dispatch(StoreRegistrationToken(token));
-    dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
-    dispatch(StoreNetidAllowed(netidAllowed));
-    Cookies.erase('netidAllowed', { path: '/' });
-    Cookies.set('netidAllowed', netidAllowed.toString(), { expires: 1 / 24 });
+    await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`);
+    dispatch(StoreRegistrationToken(true));
     dispatch(ClearUsers());
-    resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
   };
 };
 
 export const StopRegistrationSession = () => {
   return async dispatch => {
-    Cookies.erase('registrationToken', { path: '/' });
-    Cookies.erase('groupName', { path: '/' });
     dispatch(Logout());
     dispatch(ResetState());
   };
@@ -261,11 +241,7 @@ export const InitApp = () => {
     if (!state.authenticated && !state.registrationToken) {
       await dispatch(CheckAuthentication());
     }
-
     !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
-    state = getState();
-
-    dispatch(cookiesToState);
   };
 };
 
@@ -275,38 +251,4 @@ export const FlashNotification = (title = '', message = '') => {
     dispatch(AddNotification(messageId, title, message));
     dispatch(RemoveNotification(messageId));
   };
-};
-
-const cookiesToState = () => {
-  return async (dispatch, getState) => {
-    let state = getState();
-    if (!state.groupName) {
-      let groupName = Cookies.get('groupName');
-      if (groupName) {
-        dispatch(UpdateGroupName(groupName));
-      }
-    }
-    if (!state.registrationToken) {
-      let token = Cookies.get('registrationToken');
-      if (token) {
-        dispatch(StoreRegistrationToken(token));
-      }
-    }
-    if (!state.netidAllowed) {
-      let netidAllowed = Cookies.get('netidAllowed');
-      if (netidAllowed) {
-        dispatch(StoreNetidAllowed(netidAllowed));
-      }
-    }
-  };
-};
-
-const resetTokenCookie = (token, expires) => {
-  expires = expires / 60 / 24;
-  if (token) {
-    if (Cookies.get('registrationToken', { path: '/' })) {
-      Cookies.erase('registrationToken', { path: '/' });
-    }
-    Cookies.set('registrationToken', token, { expires });
-  }
 };

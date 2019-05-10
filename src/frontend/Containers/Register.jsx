@@ -6,7 +6,6 @@ import List from '@material-ui/core/List';
 import RegistrationModal from 'Components/RegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
-import Cookies from 'browser-cookies';
 import FA from 'react-fontawesome';
 import { Link } from 'react-router-dom';
 import LoadingUsers from 'Components/LoadingUsers';
@@ -87,7 +86,7 @@ class Register extends Component {
         <div>
           <h1 className="inline">Event Registration</h1>
         </div>
-        <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} netidAllowed={this.props.netidAllowed} formDisabled={registrationDisabled} />
+        <AddMemberForm addUser={this.props.addUser} authenticated={this.props.authenticated} group={this.props.groupName} netidAllowed={this.props.netidAllowed} formDisabled={registrationDisabled} />
 
         <div className="memberList">
           <h2>Registered Participants {!this.props.confidential && <FA name="refresh" onClick={this.reload} spin={this.props.loadingUsers} />}</h2>

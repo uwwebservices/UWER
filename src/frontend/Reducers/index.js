@@ -1,7 +1,7 @@
 import Const from '../Constants';
 import defaultUser from 'Assets/defaultUser';
 
-const initialState = {
+export const initialState = {
   authenticated: null,
   iaaAuth: null,
   iaacheck: '',
@@ -10,14 +10,15 @@ const initialState = {
   subgroups: [],
   users: [],
   loading: { users: false, subgroups: false },
-  registrationToken: '',
+  registrationToken: false,
   privGrpVisTimeout: 5,
   netidAllowed: false,
+  tokenTTL: 180,
   confidential: false,
   notifications: []
 };
 
-export default (state = initialState, action) => {
+export const RootReducer = (state = initialState, action) => {
   switch (action.type) {
     case Const.RECEIVE_GROUP_NAME:
       return { ...state, groupName: action.groupName };
@@ -63,6 +64,8 @@ export default (state = initialState, action) => {
       return { ...state, privGrpVisTimeout: action.timeout };
     case Const.STORE_NETID_ALLOWED:
       return { ...state, netidAllowed: action.netidAllowed };
+    case Const.STORE_TOKEN_TTL:
+      return { ...state, tokenTTL: action.tokenTTL };
     case Const.ADD_NOTIFICATION:
       return { ...state, notifications: [...state.notifications, action.notification] };
     case Const.REMOVE_NOTIFICATION:
@@ -71,6 +74,8 @@ export default (state = initialState, action) => {
       return { ...state, confidential: action.confidential };
     case Const.RESET_STATE:
       return initialState;
+    case Const.STORE_SETTINGS:
+      return { ...state, ...action.settings };
     default:
       return state;
   }
