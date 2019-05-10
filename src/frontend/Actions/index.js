@@ -40,7 +40,7 @@ const MarkUserForDeletion = identifier => {
 const DummyUserFail = displayId => {
   return { type: Const.FAILED_DUMMY_USER, displayId };
 };
-const ResetState = () => {
+export const ResetState = () => {
   return { type: Const.RESET_STATE };
 };
 const AddNotification = (messageId, title, message) => {

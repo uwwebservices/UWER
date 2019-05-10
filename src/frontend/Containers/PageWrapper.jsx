@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { InitApp, CheckAuthentication } from '../Actions';
+import { InitApp, CheckAuthentication, ResetState } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import Authorization from 'Components/Authorization';
@@ -63,6 +63,7 @@ class PageWrapper extends Component {
             iaaRequired={this.props.iaaRequired}
             checkAuthentication={this.props.checkAuthentication}
             path={this.props.location.pathname}
+            resetState={this.props.ResetState}
           >
             {childrenWithProps}
           </Authorization>
@@ -83,7 +84,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
   return {
     initApp: () => dispatch(InitApp()),
-    checkAuthentication: () => dispatch(CheckAuthentication())
+    checkAuthentication: () => dispatch(CheckAuthentication()),
+    resetState: () => dispatch(ResetState())
   };
 };
 

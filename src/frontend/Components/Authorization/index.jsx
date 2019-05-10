@@ -14,17 +14,23 @@ class Authorization extends React.Component {
     await this.props.checkAuthentication();
   }
   render() {
-    const { loginRequired, authenticated, registrationToken, iaaAuth, iaaCheck, iaaRequired, children, path } = this.props;
+    const { loginRequired, authenticated, registrationToken, iaaAuth, iaaCheck, iaaRequired, children, path, resetState } = this.props;
 
     // if we've been stuck on this page for 5s, give option to retry
     setTimeout(() => this.setState({ showRetry: true }), 5000);
 
     if (authenticated !== null && iaaAuth !== null) {
       if (loginRequired && !authenticated && !registrationToken) {
+        // because the state is persisted to localStorage and we tried authenticating already
+        // state.authenticated will be reloaded as false intead of null, causing a redirect loop
+        resetState();
         window.location = `/login?returnUrl=${path}`;
       }
 
       if (authenticated && iaaRequired && !iaaAuth) {
+        // because the state is persisted to localStorage and we tried authenticating already
+        // state.authenticated will be reloaded as false intead of null, causing a redirect loop
+        resetState();
         window.location = iaaCheck;
       }
     }
