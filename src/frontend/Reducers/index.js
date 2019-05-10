@@ -10,6 +10,7 @@ export const initialState = {
   users: [],
   loading: { users: false, subgroups: false },
   registrationToken: false,
+  privGrpVis: true,
   privGrpVisTimeout: 5,
   netidAllowed: false,
   tokenTTL: 180,
@@ -57,6 +58,8 @@ export const RootReducer = (state = initialState, action) => {
       return { ...state, authenticated: action.authenticated, iaaAuth: action.iaaAuth, iaacheck: action.iaacheck };
     case Const.STORE_REGISTRATION_TOKEN:
       return { ...state, registrationToken: action.token };
+    case Const.STORE_PRIVATE_GROUP_VISIBILITY:
+      return { ...state, privGrpVis: action.enabled };
     case Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT:
       return { ...state, privGrpVisTimeout: action.timeout };
     case Const.STORE_NETID_ALLOWED:

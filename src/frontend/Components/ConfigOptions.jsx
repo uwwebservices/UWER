@@ -19,9 +19,10 @@ class ConfigOptions extends React.Component {
               <span> minutes.</span>
             </p>
             <p>
-              <label htmlFor="privGrpVisTimeout">Allow participants of private groups to remain visible for </label>
+              <input type="checkbox" id="privGrpVis" name="privGrpVis" checked={this.props.privGrpVis} onChange={this.props.handleChange} />
+              <label htmlFor="privGrpVisTimeout">Allow private group participants to remain visible for </label>
               <input type="number" min="0" max="30" id="privGrpVisTimeout" name="privGrpVisTimeout" value={this.props.privGrpVisTimeout} onChange={this.props.handleChange} />
-              <span> seconds.</span>
+              <span> seconds, before fading away.</span>
             </p>
           </div>
           {this.props.children}

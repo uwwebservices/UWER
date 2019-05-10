@@ -5,7 +5,19 @@ import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, ClearUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, UpdateNetidAllowed, UpdateTokenTTL, UpdatePrivateGroupVis } from '../Actions';
+import {
+  UpdateGroupName,
+  LoadSubgroups,
+  DestroySubgroup,
+  ClearUsers,
+  CreateGroup,
+  StartRegistrationSession,
+  StopRegistrationSession,
+  UpdateNetidAllowed,
+  UpdateTokenTTL,
+  UpdatePrivateGroupVis,
+  UpdatePrivateGroupVisTimeout
+} from '../Actions';
 
 class Configure extends Component {
   constructor(props) {
@@ -43,8 +55,10 @@ class Configure extends Component {
       this.props.updateNetidAllowed(value);
     } else if (e.target.name === 'tokenTTL') {
       this.props.updateTokenTTL(value);
-    } else if (e.target.name === 'privGrpVisTimeout') {
+    } else if (e.target.name === 'privGrpVis') {
       this.props.updatePrivateGroupVis(value);
+    } else if (e.target.name === 'privGrpVisTimeout') {
+      this.props.updatePrivateGroupVisTimeout(value);
     } else {
       this.setState({ [e.target.name]: value });
     }
@@ -81,7 +95,7 @@ class Configure extends Component {
     await this.props.updateGroupName(groupName);
   };
   startRegistration = async () => {
-    await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed, this.props.tokenTTL, +this.props.privGrpVisTimeout);
+    await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed, this.props.tokenTTL, this.props.privGrpVis, +this.props.privGrpVisTimeout);
     this.props.history.push('/register');
   };
   endRegistration = async () => {
@@ -100,7 +114,7 @@ class Configure extends Component {
         </div>
         <h1 className="inline">Configure</h1>
 
-        <ConfigOptions netidAllowed={this.props.netidAllowed} tokenTTL={this.props.tokenTTL} privGrpVisTimeout={this.props.privGrpVisTimeout} handleChange={this.handleChange} />
+        <ConfigOptions netidAllowed={this.props.netidAllowed} tokenTTL={this.props.tokenTTL} privGrpVis={this.props.privGrpVis} privGrpVisTimeout={this.props.privGrpVisTimeout} handleChange={this.handleChange} />
         <br />
         <div className="card">
           <div className="card-header">
@@ -241,6 +255,7 @@ const mapStateToProps = state => ({
   loadingSubgroups: state.loading.subgroups,
   netidAllowed: state.netidAllowed,
   tokenTTL: state.tokenTTL,
+  privGrpVis: state.privGrpVis,
   privGrpVisTimeout: state.privGrpVisTimeout
 });
 const mapDispatchToProps = dispatch => {
@@ -253,6 +268,7 @@ const mapDispatchToProps = dispatch => {
     startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVisTimeout) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVisTimeout)),
     stopRegistrationSession: () => dispatch(StopRegistrationSession()),
     updatePrivateGroupVis: privateGroupVis => dispatch(UpdatePrivateGroupVis(privateGroupVis)),
+    updatePrivateGroupVisTimeout: privateGroupVisTimeout => dispatch(UpdatePrivateGroupVisTimeout(privateGroupVisTimeout)),
     updateTokenTTL: tokenTTL => dispatch(UpdateTokenTTL(tokenTTL)),
     updateNetidAllowed: netidAllowed => dispatch(UpdateNetidAllowed(netidAllowed))
   };

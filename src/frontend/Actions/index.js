@@ -55,7 +55,10 @@ const StoreRegistrationToken = token => {
 export const UpdateGroupName = groupName => {
   return { type: Const.RECEIVE_GROUP_NAME, groupName };
 };
-export const UpdatePrivateGroupVis = timeout => {
+export const UpdatePrivateGroupVis = enabled => {
+  return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY, enabled };
+};
+export const UpdatePrivateGroupVisTimeout = timeout => {
   return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT, timeout };
 };
 export const UpdateNetidAllowed = netidAllowed => {
@@ -164,8 +167,8 @@ export const AddUser = (group, identifier) => {
         dispatch(FlashNotification('Duplicate User', `${user.UWNetID || 'This user'} has already been added to this group.`));
         dispatch(DummyUserFail(displayId));
       } else {
-        const fadeOutDelay = 5000; // This should match scss `.fadeOutRemoval` transition
-        const visibleDelay = state.privGrpVisTimeout * 1000;
+        const fadeOutDelay = !state.privGrpVis ? 0 : 5000; // This should match scss `.fadeOutRemoval` transition
+        const visibleDelay = !state.privGrpVis ? 0 : state.privGrpVisTimeout * 1000;
         await dispatch(UpdateUsers(user));
         if (tempDispUserForPrivacyReasons) {
           window.setTimeout(async () => {
