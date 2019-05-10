@@ -78,7 +78,7 @@ class Register extends Component {
               <p>
                 Are you sure that you want to end registration? <br />
                 This will completely log you out, to continue registering <br />
-                you will need an administration to start a new session.
+                you will need an administrator to start a new session.
               </p>
             </RegistrationModal>
           )}
