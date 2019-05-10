@@ -2,6 +2,8 @@ import { Routes } from 'Routes';
 
 const NODE_ENV = process.env.NODE_ENV;
 
+export const uwerSetCookieDefaults = { path: '/', httpOnly: true, signed: true };
+
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
     if (req.isAuthenticated() || devModeAuthenticated(req)) {
@@ -20,7 +22,7 @@ export const setDevModeCookie = (res, val) => {
   if (val === null) {
     res.clearCookie('devMode', { path: '/' });
   } else {
-    res.cookie('devMode', val, { path: '/', httpOnly: true, signed: true });
+    res.cookie('devMode', val, uwerSetCookieDefaults);
   }
 };
 

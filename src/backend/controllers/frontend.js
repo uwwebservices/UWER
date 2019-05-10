@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import passport from 'passport';
-import { ensureAuth, backToUrl } from '../utils/helpers';
+import { ensureAuth, backToUrl, uwerSetCookieDefaults } from '../utils/helpers';
 import { Routes } from 'Routes';
 import Groups from 'models/groupModel';
 
@@ -50,7 +50,7 @@ if (NODE_ENV === 'development') {
 app.get(
   Routes.Login,
   function(req, res, next) {
-    res.cookie('authRedirectUrl', req.query.returnUrl, { path: '/', httpOnly: true, maxAge: 5 * 60 * 1000 });
+    res.cookie('authRedirectUrl', req.query.returnUrl, { ...uwerSetCookieDefaults, signed: false, maxAge: 5 * 60 * 1000 });
     next();
   },
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })

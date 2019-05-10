@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides, setDevModeCookie } from '../utils/helpers';
+import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 import { API, Routes } from 'Routes';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -97,7 +97,7 @@ api.get(API.GetToken, ensureAPIAuth, async (req, res) => {
   const expiry = now.setMinutes(now.getMinutes() + tokenTTL);
 
   const token = { user, groupName, confidential, netidAllowed, expiry };
-  res.cookie('registrationToken', token, { path: '/', httpOnly: true, signed: true, maxAge: (tokenTTL + 30) * 60 * 1000 });
+  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (tokenTTL + 30) * 60 * 1000 });
 
   return res.sendStatus(200);
 });
@@ -167,7 +167,7 @@ api.get(API.CheckAuth, async (req, res) => {
         }
       } else {
         // Re-check IAAAAuth in 1h
-        res.cookie('IAAAgreed', true, { path: '/', httpOnly: true, signed: true, maxAge: 60 * 60 * 1000 });
+        res.cookie('IAAAgreed', true, { ...uwerSetCookieDefaults, maxAge: 60 * 60 * 1000 });
         auth.IAAAAuth = true;
       }
     } else {
