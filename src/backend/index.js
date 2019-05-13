@@ -107,7 +107,7 @@ app.use(
 app.server = http.createServer(app);
 
 app.use('/api', api);
-app.use(['/', '/config'], frontend);
+app.use(['/'], frontend);
 
 app.server.listen(process.env.PORT || 1111, () => {
   console.log(`Started on port ${app.server.address().port} in '${NODE_ENV}' environment.`);

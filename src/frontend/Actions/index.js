@@ -1,9 +1,6 @@
 import Const from '../Constants';
 
 // Action Creators
-const ConfigLoaded = config => {
-  return { type: Const.RECEIVE_CONFIG, config };
-};
 const ReceiveSubgroups = subgroups => {
   return { type: Const.RECEIVE_SUBGROUPS, subgroups };
 };
@@ -76,14 +73,6 @@ const APIRequestWithAuth = async (url, opts) => {
   return await fetch(url, body);
 };
 
-// Load config file from API into store
-export const LoadConfig = () => {
-  return async dispatch => {
-    let json = await (await APIRequestWithAuth('/api/config')).json();
-    return dispatch(ConfigLoaded(json));
-  };
-};
-
 export const CreateGroup = (group, confidential = true, description, email) => {
   return async dispatch => {
     let res = await APIRequestWithAuth(`/api/subgroups/${group}?confidential=${confidential}&description=${description}&email=${email}`, { method: 'POST' });
@@ -94,10 +83,10 @@ export const CreateGroup = (group, confidential = true, description, email) => {
 export const LoadSubgroups = () => {
   return async (dispatch, getState) => {
     let state = getState();
+    console.log('Getting subgroups', state.loading.subgroups);
     if (!state.loading.subgroups) {
       dispatch(LoadingSubgroups());
-      let groupNameBase = getState().groupNameBase;
-      let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
+      let subgroups = await (await APIRequestWithAuth(`/api/subgroups`)).json();
       return await dispatch(ReceiveSubgroups(subgroups));
     }
   };
@@ -241,7 +230,6 @@ export const InitApp = () => {
     if (!state.authenticated && !state.registrationToken) {
       await dispatch(CheckAuthentication());
     }
-    !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
   };
 };
 

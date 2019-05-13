@@ -105,15 +105,7 @@ class Register extends Component {
           {this.props.users.length > 0 && (
             <div>
               <List>
-                <Members
-                  members={this.props.users}
-                  groupNameBase={this.props.groupNameBase}
-                  removeUser={this.props.removeUser}
-                  keepUser={this.registerCardFocus}
-                  group={this.props.groupName}
-                  authenticated={this.props.authenticated}
-                  confidential={this.props.confidential}
-                />
+                <Members members={this.props.users} removeUser={this.props.removeUser} keepUser={this.registerCardFocus} group={this.props.groupName} authenticated={this.props.authenticated} confidential={this.props.confidential} />
               </List>
             </div>
           )}
@@ -128,7 +120,6 @@ const mapStateToProps = state => ({
   groupName: state.groupName,
   users: state.users,
   loadingUsers: state.loading.users,
-  groupNameBase: state.groupNameBase,
   authenticated: state.authenticated,
   token: state.registrationToken,
   netidAllowed: state.netidAllowed,

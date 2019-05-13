@@ -20,7 +20,6 @@ export default class Configure extends Component {
     window.open(`/api/csv/${groupName}.csv`);
   };
   gws = groupName => {
-    // TODO: this should use the groups url from env in case of eval
     window.open(`https://groups.uw.edu/group/${groupName}`, '_blank');
   };
   deleteSubgroup = async subgroup => {
@@ -28,11 +27,11 @@ export default class Configure extends Component {
     await this.props.deleteCallback(subgroup.id);
   };
   render() {
-    let groupName = this.props.subgroup.id;
+    let groupName = this.props.subgroup.displayId;
     let SelectButton =
       groupName === this.props.selectedGroup ? (
         <span>
-          <Button color="primary" variant="raised" onClick={() => this.gws(groupName)} disabled={this.state.deleting}>
+          <Button color="primary" variant="raised" onClick={() => this.gws(this.props.subgroup.id)} disabled={this.state.deleting}>
             <FA name="group" />
             &nbsp;GWS
           </Button>
@@ -51,7 +50,7 @@ export default class Configure extends Component {
           </Button>
         </span>
       ) : (
-        <Button color="default" variant="raised" onClick={() => this.props.updateGroupName(this.props.subgroup.id)}>
+        <Button color="default" variant="raised" onClick={() => this.props.updateGroupName(this.props.subgroup.displayId)}>
           <FA name="check" />
           &nbsp;Select
         </Button>
@@ -59,7 +58,7 @@ export default class Configure extends Component {
     return (
       <div className={groupName === this.props.selectedGroup ? 'subgroupItem selected' : 'subgroupItem'}>
         <div className="subgroupName">
-          {this.props.displayGroupName(groupName)}
+          {this.props.subgroup.displayId}
           {this.props.private && (
             <Tooltip title="Private Group - Member list hidden" placement="top" onClose={this.handleTooltipClose}>
               <span className="subgroupPrivate">

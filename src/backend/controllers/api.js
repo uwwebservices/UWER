@@ -12,7 +12,8 @@ const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
 const BASE_GROUP = process.env.BASE_GROUP;
 
-api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName, async (req, res) => {
+//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
+api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let groupName = settings.groupName;
   let confidential = settings.confidential;
@@ -33,7 +34,8 @@ api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, ensureValid
   return res.status(result.Status).json(response);
 });
 
-api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName, async (req, res) => {
+//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
+api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let identifier = req.body.identifier;
   let displayId = req.body.displayId;
@@ -64,7 +66,8 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, ensureV
   }
 });
 
-api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName, async (req, res) => {
+//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
+api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let groupName = settings.groupName;
 
@@ -73,10 +76,11 @@ api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, ensureV
   return res.status(200).send(image);
 });
 
+//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
 api.get(API.GetToken, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
   const now = new Date();
   const user = req.user;
-  const groupName = req.query.groupName;
+  const groupName = BASE_GROUP + req.query.groupName;
   const confidential = await Groups.IsConfidentialGroup(groupName);
   const netidAllowed = req.query.netidAllowed;
   const tokenTTL = req.query.tokenTTL;
@@ -119,12 +123,13 @@ api.delete(API.RemoveSubgroup, ensureAPIAuth, ensureValidGroupName, async (req, 
   return res.status(result.Status).json(result.Payload);
 });
 
-api.post(API.CreateGroup, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
+api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
   let confidential = req.query.confidential;
   let description = req.query.description;
   let email = req.query.email;
+  let groupName = BASE_GROUP + req.params.group;
 
-  let result = await Groups.CreateGroup(req.params.group, confidential, description, email);
+  let result = await Groups.CreateGroup(groupName, confidential, description, email);
   return res.status(result.Status).json(result.Payload);
 });
 
@@ -162,11 +167,6 @@ api.get(API.CheckAuth, async (req, res) => {
   }
 
   return res.status(200).json(auth);
-});
-
-// @TODO: Remove method after frontend refactor to not rely on API.GetConfig
-api.get('/config', (req, res) => {
-  res.status(200).json({ groupNameBase: BASE_GROUP });
 });
 
 api.get(API.CSV, ensureAPIAuth, ensureValidGroupName, async (req, res) => {

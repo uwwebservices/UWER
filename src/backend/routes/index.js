@@ -4,7 +4,7 @@ export const API = {
   RegisterMember: '/members/:group',
   GetMemberPhoto: '/members/:group/photo/:identifier',
   RemoveMember: '/members/:group/member/:identifier',
-  GetSubgroups: '/subgroups/:group', // @TODO: Remove :group after frontend refactor to not rely on API.GetConfig
+  GetSubgroups: '/subgroups',
   RemoveSubgroup: '/subgroups/:group',
   CreateGroup: '/subgroups/:group',
   CheckAuth: '/checkAuth',

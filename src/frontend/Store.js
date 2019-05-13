@@ -20,7 +20,9 @@ const store = createStore(RootReducer, persistedState, applyMiddleware(...middle
 
 store.subscribe(() => {
   let state = { ...store.getState() };
-  state.users = [];
+  state.users = initialState.users;
+  state.loading = initialState.loading;
+  state.subgroups = initialState.subgroups;
   localStorage.setItem('reduxState', JSON.stringify(state));
 });
 

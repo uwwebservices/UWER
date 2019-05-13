@@ -185,7 +185,6 @@ const Groups = {
     try {
       let data = (await rp(opts)).data;
       if (verbose) {
-        let promises = [];
         let verboseGroups = [];
         await Promise.all(
           data.map(async g => {
@@ -193,10 +192,11 @@ const Groups = {
             if (vg.affiliates.length > 1) {
               vg.email = `${vg.id}@uw.edu`;
             }
+            vg.displayId = vg.id.replace(BASE_GROUP, '');
             verboseGroups.push(vg);
           })
         );
-        let filter = ['regid', 'displayName', 'id', 'url', 'description', 'classification', 'email'];
+        let filter = ['regid', 'displayName', 'id', 'url', 'description', 'classification', 'email', 'displayId'];
         verboseGroups = verboseGroups.map(vg => {
           return FilterModel(vg, filter);
         });

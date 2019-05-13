@@ -22,7 +22,7 @@ class Configure extends Component {
     this.setState({ groupName: this.props.groupName });
   }
   componentDidUpdate() {
-    if (!this.props.subgroups.length && this.props.groupNameBase) {
+    if (!this.props.subgroups.length) {
       this.loadSubGroups();
     }
   }
@@ -33,16 +33,11 @@ class Configure extends Component {
     }
     return false;
   }
-  generateGroupName(groupString) {
-    groupString = groupString.replace(/\s+/g, '-').toLowerCase();
-    return this.props.groupNameBase + groupString;
-  }
   loadSubGroups = async () => {
     await this.props.loadSubgroups();
   };
 
   handleChange = e => {
-    console.log('updating state');
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     if (e.target.name === 'netidAllowed') {
       this.props.updateNetidAllowed(value);
@@ -62,7 +57,7 @@ class Configure extends Component {
   createSubgroup = async () => {
     if (this.validateGroupString(this.state.newSubgroup)) {
       this.setState({ creatingGroup: true });
-      let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
+      let success = await this.props.createGroup(this.state.newSubgroup, this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
       if (success) {
         this.props.loadSubgroups(this.props.groupName);
         this.props._addNotification('Registration Group Created', `Successfully created registration group: ${this.state.newSubgroup}`);
@@ -84,9 +79,6 @@ class Configure extends Component {
   updateGroupName = async groupName => {
     this.props.clearUsers();
     await this.props.updateGroupName(groupName);
-  };
-  displayGroupName = groupName => {
-    return groupName.replace(this.props.groupNameBase, '').replace(/-/g, ' ');
   };
   startRegistration = async () => {
     await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed, this.props.tokenTTL, +this.props.privGrpVisTimeout);
@@ -182,8 +174,6 @@ class Configure extends Component {
                   deleteCallback={this.props.destroySubgroup}
                   selectedGroup={this.props.groupName}
                   updateGroupName={this.updateGroupName}
-                  groupNameBase={this.props.groupNameBase}
-                  displayGroupName={this.displayGroupName}
                   private={subgroup.classification != 'u'}
                   email={subgroup.email}
                 />
@@ -248,7 +238,6 @@ class Configure extends Component {
 const mapStateToProps = state => ({
   groupName: state.groupName,
   subgroups: state.subgroups,
-  groupNameBase: state.groupNameBase,
   loadingSubgroups: state.loading.subgroups,
   netidAllowed: state.netidAllowed,
   tokenTTL: state.tokenTTL,

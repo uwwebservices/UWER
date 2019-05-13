@@ -75,7 +75,7 @@ export const requestSettingsOverrides = async (req, res, next) => {
 
   // Override the token if the user is authenticated
   if (req.isAuthenticated()) {
-    overrides.groupName = req.params.group;
+    overrides.groupName = BASE_GROUP + req.params.group;
     overrides.netidAllowed = req.isAuthenticated();
     overrides.confidential = !req.isAuthenticated();
   }
@@ -85,6 +85,7 @@ export const requestSettingsOverrides = async (req, res, next) => {
   next();
 };
 
+//@TODO: the frontend does not know about the full group name, need to adjust this
 export const ensureValidGroupName = async (req, res, next) => {
   const routeGroupName = req.params && req.params.group;
   const cookieGroupName = req.signedCookies.registrationToken && req.signedCookies.registrationToken.groupName;

@@ -6,7 +6,6 @@ export const initialState = {
   iaaAuth: null,
   iaacheck: '',
   groupName: '',
-  groupNameBase: '',
   subgroups: [],
   users: [],
   loading: { users: false, subgroups: false },
@@ -22,8 +21,6 @@ export const RootReducer = (state = initialState, action) => {
   switch (action.type) {
     case Const.RECEIVE_GROUP_NAME:
       return { ...state, groupName: action.groupName };
-    case Const.RECEIVE_CONFIG:
-      return { ...state, groupNameBase: action.config.groupNameBase };
     case Const.LOADING_SUBGROUPS:
       return { ...state, loading: { ...state.loading, subgroups: true } };
     case Const.RECEIVE_SUBGROUPS:
