@@ -4,6 +4,7 @@ import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import { API } from 'Routes';
 import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
+import csv from 'csv-express'; // required for csv route even though shown as unused
 
 let api = Router();
 
