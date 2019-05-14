@@ -46,7 +46,6 @@ const FixSubgroups = async parent => {
       data.admins = [...data.admins, { type: 'dns', id: 'integrations.event.uw.edu' }, { type: 'group', id: parent }];
       // Format into GWS body format
       let body = { data };
-      console.log('UPDATING', s.id, await Groups.UpdateGroup(s.id, body));
     }
   }
 };

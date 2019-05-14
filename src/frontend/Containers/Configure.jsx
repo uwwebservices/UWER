@@ -71,7 +71,8 @@ class Configure extends Component {
   createSubgroup = async () => {
     if (this.validateGroupString(this.state.newSubgroup)) {
       this.setState({ creatingGroup: true });
-      let success = await this.props.createGroup(this.state.newSubgroup, this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
+      let formattedGroupName = this.state.newSubgroup.replace(/\s+/g, '-').toLowerCase();
+      let success = await this.props.createGroup(formattedGroupName, this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
       if (success) {
         this.props.loadSubgroups(this.props.groupName);
         this.props._addNotification('Registration Group Created', `Successfully created registration group: ${this.state.newSubgroup}`);
@@ -181,17 +182,7 @@ class Configure extends Component {
           </div>
           <div className="card-body">
             {this.props.subgroups.map(subgroup => {
-              return (
-                <Subgroup
-                  key={subgroup.id}
-                  subgroup={subgroup}
-                  deleteCallback={this.props.destroySubgroup}
-                  selectedGroup={this.props.groupName}
-                  updateGroupName={this.updateGroupName}
-                  private={subgroup.classification != 'u'}
-                  email={subgroup.email}
-                />
-              );
+              return <Subgroup key={subgroup.name} subgroup={subgroup} deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />;
             })}
           </div>
         </div>

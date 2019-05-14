@@ -27,7 +27,7 @@ export const RootReducer = (state = initialState, action) => {
     case Const.RECEIVE_SUBGROUPS:
       return { ...state, subgroups: action.subgroups, loading: { ...state.loading, subgroups: false } };
     case Const.DELETE_SUBGROUP:
-      let subgroups = state.subgroups.filter(sg => sg.id !== action.subgroup);
+      let subgroups = state.subgroups.filter(sg => sg.name !== action.subgroup);
       return { ...state, subgroups };
     case Const.LOADING_USERS:
       return { ...state, loading: { ...state.loading, users: true } };
@@ -52,8 +52,7 @@ export const RootReducer = (state = initialState, action) => {
       });
       return { ...state, users };
     case Const.REMOVE_USER:
-      let userRemoved = state.users.filter(u => u.UWNetID !== action.user);
-      return { ...state, users: userRemoved };
+      return { ...state, users: state.users.filter(u => u.UWNetID !== action.user) };
     case Const.USER_AUTHENTICATION:
       return { ...state, authenticated: action.authenticated, iaaAuth: action.iaaAuth, iaacheck: action.iaacheck };
     case Const.STORE_REGISTRATION_TOKEN:

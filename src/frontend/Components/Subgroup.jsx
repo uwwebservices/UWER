@@ -24,33 +24,34 @@ export default class Configure extends Component {
   };
   deleteSubgroup = async subgroup => {
     this.setState({ deleting: true });
-    await this.props.deleteCallback(subgroup.displayId);
+    await this.props.deleteCallback(subgroup);
   };
   render() {
-    let groupName = this.props.subgroup.displayId;
+    let subgroup = this.props.subgroup;
+    let groupName = subgroup.name;
     let SelectButton =
       groupName === this.props.selectedGroup ? (
         <span>
-          <Button color="primary" variant="raised" onClick={() => this.gws(this.props.subgroup.id)} disabled={this.state.deleting}>
+          <Button color="primary" variant="raised" onClick={() => this.gws(subgroup.url)} disabled={this.state.deleting}>
             <FA name="group" />
             &nbsp;GWS
           </Button>
           <ConfirmModal
             openButtonText={this.state.deleting ? 'Deleting' : 'Delete'}
             openButtonIcon={this.state.deleting ? 'spinner' : 'remove'}
-            confirmCallback={() => this.deleteSubgroup(this.props.subgroup)}
+            confirmCallback={() => this.deleteSubgroup(this.props.name)}
             dialogContent={`This will delete the leaf group and all members, are you sure you want to delete ${groupName}?`}
             dialogTitle={`Delete ${groupName}?`}
             openButtonDisabled={this.state.deleting}
             openButtonIconSpin={this.state.deleting}
           />
-          <Button color="primary" variant="raised" disabled={this.state.deleting} onClick={() => this.csvify(this.props.subgroup.id)}>
+          <Button color="primary" variant="raised" disabled={this.state.deleting} onClick={() => this.csvify(groupName)}>
             <FA name="file-excel-o" />
             &nbsp; CSV
           </Button>
         </span>
       ) : (
-        <Button color="default" variant="raised" onClick={() => this.props.updateGroupName(this.props.subgroup.displayId)}>
+        <Button color="default" variant="raised" onClick={() => this.props.updateGroupName(groupName)}>
           <FA name="check" />
           &nbsp;Select
         </Button>
@@ -58,18 +59,18 @@ export default class Configure extends Component {
     return (
       <div className={groupName === this.props.selectedGroup ? 'subgroupItem selected' : 'subgroupItem'}>
         <div className="subgroupName">
-          {this.props.subgroup.displayId}
-          {this.props.private && (
+          {groupName}
+          {subgroup.private && (
             <Tooltip title="Private Group - Member list hidden" placement="top" onClose={this.handleTooltipClose}>
               <span className="subgroupPrivate">
                 <FA name="lock" />
               </span>
             </Tooltip>
           )}
-          {this.props.email && (
+          {subgroup.email && (
             <span className="subgroupPrivate">
               <ContentModal openWithIcon={true} dialogTitle="Group Email" showCancelButton={false} approveButtonColor="default" approveButtonText="Close" openButtonIcon="envelope-o" iconButtonTitle="Group Email Enabled">
-                <div>{this.props.email}</div>
+                <div>{subgroup.email}</div>
               </ContentModal>
             </span>
           )}

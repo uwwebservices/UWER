@@ -227,15 +227,6 @@ export const StopRegistrationSession = () => {
   };
 };
 
-export const InitApp = () => {
-  return async (dispatch, getState) => {
-    let state = getState();
-    if (!state.authenticated && !state.registrationToken) {
-      await dispatch(CheckAuthentication());
-    }
-  };
-};
-
 export const FlashNotification = (title = '', message = '') => {
   return async dispatch => {
     let messageId = Math.floor(Math.random() * 10000).toString();
