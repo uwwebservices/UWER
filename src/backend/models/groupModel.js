@@ -218,7 +218,7 @@ const Groups = {
       }
       return SuccessResponse(
         data.sort(function(a, b) {
-          return a.id < b.id;
+          return a.name < b.name;
         })
       );
     } catch (ex) {

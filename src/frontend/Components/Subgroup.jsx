@@ -59,7 +59,7 @@ export default class Configure extends Component {
     return (
       <div className={groupName === this.props.selectedGroup ? 'subgroupItem selected' : 'subgroupItem'}>
         <div className="subgroupName">
-          {groupName}
+          {subgroup.display}
           {subgroup.private && (
             <Tooltip title="Private Group - Member list hidden" placement="top" onClose={this.handleTooltipClose}>
               <span className="subgroupPrivate">
