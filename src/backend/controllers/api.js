@@ -75,10 +75,9 @@ api.get(API.GetToken, authMiddleware, async (req, res) => {
   const confidential = await Groups.IsConfidentialGroup(getFullGroupName(groupName));
   const netidAllowed = req.query.netidAllowed;
   const tokenTTL = req.query.tokenTTL;
-  const expiry = now.setMinutes(now.getMinutes() + tokenTTL);
-
+  const expiry = now.setMinutes(now.getMinutes() + +tokenTTL);
   const token = { user, groupName, confidential, netidAllowed, expiry };
-  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (tokenTTL + 30) * 60 * 1000 });
+  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (+tokenTTL + 30) * 60 * 1000 });
 
   return res.sendStatus(200);
 });
