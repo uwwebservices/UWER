@@ -205,7 +205,6 @@ const Groups = {
           })
         );
         verboseGroups = verboseGroups.map(vg => {
-          console.log(vg);
           return {
             private: vg.classification === 'c',
             description: vg.description,
