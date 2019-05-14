@@ -19,8 +19,8 @@ export default class Configure extends Component {
   csvify = groupName => {
     window.open(`/api/csv/${groupName}.csv`);
   };
-  gws = groupName => {
-    window.open(`https://groups.uw.edu/group/${groupName}`, '_blank');
+  gws = gwsUrl => {
+    window.open(gwsUrl, '_blank');
   };
   deleteSubgroup = async subgroup => {
     this.setState({ deleting: true });
@@ -39,7 +39,7 @@ export default class Configure extends Component {
           <ConfirmModal
             openButtonText={this.state.deleting ? 'Deleting' : 'Delete'}
             openButtonIcon={this.state.deleting ? 'spinner' : 'remove'}
-            confirmCallback={() => this.deleteSubgroup(this.props.name)}
+            confirmCallback={() => this.deleteSubgroup(groupName)}
             dialogContent={`This will delete the leaf group and all members, are you sure you want to delete ${groupName}?`}
             dialogTitle={`Delete ${groupName}?`}
             openButtonDisabled={this.state.deleting}
