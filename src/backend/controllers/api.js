@@ -2,18 +2,15 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, idaaRedirectUrl, requestSettingsOverrides, setDevModeCookie, uwerSetCookieDefaults, ensureValidGroupName } from '../utils/helpers';
-import { API, Routes } from 'Routes';
-import csv from 'csv-express'; // required for csv route even though shown as unused
+import { API } from 'Routes';
+import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 
 let api = Router();
 
 const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
-const BASE_GROUP = process.env.BASE_GROUP;
 
-//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
-api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let groupName = settings.groupName;
   let confidential = settings.confidential;
@@ -27,15 +24,14 @@ api.get(API.GetMembers, ensureAuthOrToken, requestSettingsOverrides, async (req,
     return res.status(200).json(response);
   }
 
-  let result = await Groups.GetMembers(groupName);
+  let result = await Groups.GetMembers(getFullGroupName(groupName));
   let members = await PWS.GetMany(result.Payload);
   let verbose = await IDCard.GetManyPhotos(groupName, members);
   response.members = verbose;
   return res.status(result.Status).json(response);
 });
 
-//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
-api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
+api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
   let identifier = req.body.identifier;
   let displayId = req.body.displayId;
@@ -54,7 +50,7 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (
     identifier = (await PWS.Get(identifier)).UWNetID;
   }
 
-  let result = await Groups.AddMember(groupName, identifier);
+  let result = await Groups.AddMember(getFullGroupName(groupName), identifier);
   if (result.Status === 200) {
     let user = await PWS.Get(identifier);
 
@@ -66,22 +62,17 @@ api.put(API.RegisterMember, ensureAuthOrToken, requestSettingsOverrides, async (
   }
 });
 
-//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
-api.get(API.GetMemberPhoto, ensureAuthOrToken, requestSettingsOverrides, async (req, res) => {
-  const settings = req.signedCookies.registrationToken;
-  let groupName = settings.groupName;
-
+api.get(API.GetMemberPhoto, authOrTokenMiddleware, async (req, res) => {
   let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
   return res.status(200).send(image);
 });
 
-//@TODO: removed ensureValidGroupName as the frontend is passing only partial group name
-api.get(API.GetToken, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
+api.get(API.GetToken, authMiddleware, async (req, res) => {
   const now = new Date();
   const user = req.user;
-  const groupName = BASE_GROUP + req.query.groupName;
-  const confidential = await Groups.IsConfidentialGroup(groupName);
+  const groupName = req.query.groupName;
+  const confidential = await Groups.IsConfidentialGroup(getFullGroupName(groupName));
   const netidAllowed = req.query.netidAllowed;
   const tokenTTL = req.query.tokenTTL;
   const expiry = now.setMinutes(now.getMinutes() + tokenTTL);
@@ -108,28 +99,27 @@ api.get(API.Logout, (req, res) => {
   res.sendStatus(200);
 });
 
-api.delete(API.RemoveMember, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
-  let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
+api.delete(API.RemoveMember, authMiddleware, async (req, res) => {
+  let result = await Groups.RemoveMember(getFullGroupName(req.params.group), req.params.identifier);
   return res.status(result.Status).json(result.Payload);
 });
 
-api.get(API.GetSubgroups, ensureAPIAuth, async (req, res) => {
-  let result = await Groups.SearchGroups(BASE_GROUP, true);
+api.get(API.GetSubgroups, baseMiddleware, async (req, res) => {
+  let result = await Groups.SearchGroups(getFullGroupName(''), true);
   return res.status(result.Status).json(result.Payload);
 });
 
-api.delete(API.RemoveSubgroup, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
-  let result = await Groups.DeleteGroup(req.params.group);
+api.delete(API.RemoveSubgroup, authMiddleware, async (req, res) => {
+  let result = await Groups.DeleteGroup(getFullGroupName(req.params.group));
   return res.status(result.Status).json(result.Payload);
 });
 
-api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
+api.post(API.CreateGroup, baseMiddleware, async (req, res) => {
   let confidential = req.query.confidential;
   let description = req.query.description;
   let email = req.query.email;
-  let groupName = BASE_GROUP + req.params.group;
 
-  let result = await Groups.CreateGroup(groupName, confidential, description, email);
+  let result = await Groups.CreateGroup(getFullGroupName(req.params.group), confidential, description, email);
   return res.status(result.Status).json(result.Payload);
 });
 
@@ -169,11 +159,12 @@ api.get(API.CheckAuth, async (req, res) => {
   return res.status(200).json(auth);
 });
 
-api.get(API.CSV, ensureAPIAuth, ensureValidGroupName, async (req, res) => {
-  let members = await Groups.GetMembers(req.params.group);
+api.get(API.CSV, authMiddleware, async (req, res) => {
+  const fullGroupName = getFullGroupName(req.params.group);
+  let members = await Groups.GetMembers(fullGroupName);
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
   let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
-  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, req.params.group);
+  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, fullGroupName);
   res.csv(mergedMembers, true);
 });
 

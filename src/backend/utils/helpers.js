@@ -5,6 +5,8 @@ const BASE_GROUP = process.env.BASE_GROUP;
 
 export const uwerSetCookieDefaults = { path: '/', httpOnly: true, signed: true };
 
+export const getFullGroupName = groupName => `${BASE_GROUP}${groupName}`;
+
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
     if (req.isAuthenticated() || devModeAuthenticated(req)) {
@@ -45,7 +47,7 @@ export const idaaRedirectUrl = req => {
   return encodeURI(req.protocol + '://' + req.get('host') + '/config');
 };
 
-export const ensureAPIAuth = (req, res, next) => {
+const ensureAPIAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   } else {
@@ -53,7 +55,7 @@ export const ensureAPIAuth = (req, res, next) => {
   }
 };
 
-export const ensureAuthOrToken = (req, res, next) => {
+const ensureAuthOrToken = (req, res, next) => {
   if (req.isAuthenticated() || verifyAuthToken(req)) {
     return next();
   } else {
@@ -61,7 +63,7 @@ export const ensureAuthOrToken = (req, res, next) => {
   }
 };
 
-export const verifyAuthToken = req => {
+const verifyAuthToken = req => {
   if (!req.signedCookies.registrationToken) {
     return false;
   }
@@ -70,12 +72,12 @@ export const verifyAuthToken = req => {
   return req.signedCookies.registrationToken.expiry > new Date().getTime();
 };
 
-export const requestSettingsOverrides = async (req, res, next) => {
+const requestSettingsOverrides = async (req, res, next) => {
   let overrides = {};
 
   // Override the token if the user is authenticated
   if (req.isAuthenticated()) {
-    overrides.groupName = BASE_GROUP + req.params.group;
+    overrides.groupName = req.params.group;
     overrides.netidAllowed = req.isAuthenticated();
     overrides.confidential = !req.isAuthenticated();
   }
@@ -85,18 +87,17 @@ export const requestSettingsOverrides = async (req, res, next) => {
   next();
 };
 
-//@TODO: the frontend does not know about the full group name, need to adjust this
-export const ensureValidGroupName = async (req, res, next) => {
+/**
+ * The API will enforce the use of the BASE_GROUP prefix
+ * The frontend will send the group name without the BASE_GROUP prefix.
+ * This function needs to verify the group of the route matches the group of the cookie.
+ */
+const ensureValidGroupName = async (req, res, next) => {
   const routeGroupName = req.params && req.params.group;
   const cookieGroupName = req.signedCookies.registrationToken && req.signedCookies.registrationToken.groupName;
-  const queryGroupName = req.query && req.query.groupName;
-
-  const routeBaseMismatch = !!routeGroupName && !routeGroupName.startsWith(BASE_GROUP);
-  const cookieBaseMismatch = !!cookieGroupName && !cookieGroupName.startsWith(BASE_GROUP);
-  const queryBaseMismatch = !!queryGroupName && !queryGroupName.startsWith(BASE_GROUP);
   const routeCookieMismatch = !!routeGroupName && !!cookieGroupName && routeGroupName !== cookieGroupName;
 
-  if (routeBaseMismatch || cookieBaseMismatch || queryBaseMismatch || routeCookieMismatch) {
+  if (routeCookieMismatch) {
     return res.sendStatus(403);
   }
 
@@ -111,3 +112,9 @@ export const FilterModel = (model, whitelist) => {
       return obj;
     }, {});
 };
+
+export const authOrTokenMiddleware = [ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName];
+
+export const authMiddleware = [ensureAPIAuth, ensureValidGroupName];
+
+export const baseMiddleware = [ensureAPIAuth];
