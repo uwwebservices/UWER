@@ -1,6 +1,5 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import { FilterModel } from '../utils/helpers';
 
 const GROUPSBASEURL = process.env.GROUPSBASEURL;
 const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
@@ -175,6 +174,20 @@ const Groups = {
     }
   },
 
+  /**
+   * Return an array of subgroups from GWS
+   * Structure definition: {
+   *   private: [gws classification field],
+   *   description: [gws description field],
+   *   email: [gws id field + @uw.edu]
+   *   display: [group id sans BASE_GROUP; convert hypens to spaces],
+   *   url: [gws url],
+   *   name: [group id sans BASE_GROUP]
+   * }
+   *
+   * @param {string} group
+   * @param {boolean} verbose
+   */
   async SearchGroups(group, verbose = false) {
     let opts = Object.assign({}, options, {
       method: 'GET',
@@ -188,16 +201,19 @@ const Groups = {
         await Promise.all(
           data.map(async g => {
             let vg = await this.GetGroupInfo(g.regid);
-            if (vg.affiliates.length > 1) {
-              vg.email = `${vg.id}@uw.edu`;
-            }
-            vg.displayId = vg.id.replace(BASE_GROUP, '');
             verboseGroups.push(vg);
           })
         );
-        let filter = ['regid', 'displayName', 'id', 'url', 'description', 'classification', 'email', 'displayId'];
         verboseGroups = verboseGroups.map(vg => {
-          return FilterModel(vg, filter);
+          console.log(vg);
+          return {
+            private: vg.classification === 'c',
+            description: vg.description,
+            email: vg.affiliates.length > 1 ? `${vg.id}@uw.edu` : '',
+            display: vg.id.replace(BASE_GROUP, '').replace(/-/g, ' '),
+            url: `https://groups.uw.edu/group/${vg.id}`,
+            name: vg.id.replace(BASE_GROUP, '')
+          };
         });
         data = verboseGroups;
       }
