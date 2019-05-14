@@ -24,7 +24,7 @@ export default class Configure extends Component {
   };
   deleteSubgroup = async subgroup => {
     this.setState({ deleting: true });
-    await this.props.deleteCallback(subgroup.id);
+    await this.props.deleteCallback(subgroup.displayId);
   };
   render() {
     let groupName = this.props.subgroup.displayId;
