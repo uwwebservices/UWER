@@ -40,8 +40,9 @@ api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
   let groupName = settings.groupName;
   let netidAllowed = settings.netidAllowed;
   let confidential = settings.confidential;
+  let privGrpVis = settings.privGrpVis;
 
-  if (!validCard && netidAllowed == 'false') {
+  if (!validCard && !netidAllowed) {
     // if not a valid card and netid auth not allowed, 404
     return res.sendStatus(404);
   }
@@ -54,10 +55,15 @@ api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
   let result = await Groups.AddMember(getFullGroupName(groupName), identifier);
   if (result.Status === 200) {
     let user = await PWS.Get(identifier);
-
     user.displayId = displayId;
     user.Base64Image = await IDCard.GetOnePhoto(groupName, user.UWRegID);
-    res.status(confidential ? 201 : result.Status).json(user);
+
+    // Adjust the response if the group is confidential and we shouldn't show participants
+    if (confidential && !privGrpVis) {
+      user = {};
+    }
+
+    res.status(result.Status).json(user);
   } else {
     res.sendStatus(result.Status);
   }
@@ -73,11 +79,12 @@ api.get(API.GetToken, authMiddleware, async (req, res) => {
   const now = new Date();
   const user = req.user;
   const groupName = req.query.groupName;
+  const privGrpVis = req.query.privGrpVis === 'true';
   const confidential = await Groups.IsConfidentialGroup(getFullGroupName(groupName));
-  const netidAllowed = req.query.netidAllowed;
+  const netidAllowed = req.query.netidAllowed === 'true';
   const tokenTTL = req.query.tokenTTL;
   const expiry = now.setMinutes(now.getMinutes() + +tokenTTL);
-  const token = { user, groupName, confidential, netidAllowed, expiry };
+  const token = { user, groupName, confidential, netidAllowed, privGrpVis, expiry };
   res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (+tokenTTL + 30) * 60 * 1000 });
 
   return res.sendStatus(200);

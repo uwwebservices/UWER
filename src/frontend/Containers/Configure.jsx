@@ -96,7 +96,7 @@ class Configure extends Component {
     await this.props.updateGroupName(groupName);
   };
   startRegistration = async () => {
-    await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed, this.props.tokenTTL, this.props.privGrpVis, +this.props.privGrpVisTimeout);
+    await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed, this.props.tokenTTL, this.props.privGrpVis);
     this.props.history.push('/register');
   };
   endRegistration = async () => {
@@ -256,7 +256,7 @@ const mapDispatchToProps = dispatch => {
     destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
     clearUsers: () => dispatch(ClearUsers()),
     createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
-    startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVisTimeout) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVisTimeout)),
+    startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVis) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVis)),
     stopRegistrationSession: () => dispatch(StopRegistrationSession()),
     updatePrivateGroupVis: privateGroupVis => dispatch(UpdatePrivateGroupVis(privateGroupVis)),
     updatePrivateGroupVisTimeout: privateGroupVisTimeout => dispatch(UpdatePrivateGroupVisTimeout(privateGroupVisTimeout)),

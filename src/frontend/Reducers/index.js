@@ -35,7 +35,7 @@ export const RootReducer = (state = initialState, action) => {
     case Const.CLEAR_USERS:
       return { ...state, users: action.users, loading: { ...state.loading, users: false } };
     case Const.ADD_DUMMY_USER:
-      return { ...state, users: [{ displayId: action.displayId, Base64Image: defaultUser, loading: true }, ...state.users] };
+      return { ...state, users: [{ displayId: action.displayId, UWRegID: action.displayId, Base64Image: defaultUser, loading: true }, ...state.users] };
     case Const.FAILED_DUMMY_USER:
       return { ...state, users: state.users.filter(u => u.displayId !== action.displayId) };
     case Const.UPDATE_USERS:

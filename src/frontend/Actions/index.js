@@ -142,10 +142,6 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
-      let tempDispUserForPrivacyReasons = false;
-      if (res.status === 201) {
-        tempDispUserForPrivacyReasons = true;
-      }
       if (res.status === 404) {
         dispatch(FlashNotification('User not found', 'Could not find the specified user.'));
         return dispatch(DummyUserFail(displayId));
@@ -167,10 +163,19 @@ export const AddUser = (group, identifier) => {
         dispatch(FlashNotification('Duplicate User', `${user.UWNetID || 'This user'} has already been added to this group.`));
         dispatch(DummyUserFail(displayId));
       } else {
-        const fadeOutDelay = !state.privGrpVis ? 0 : 5000; // This should match scss `.fadeOutRemoval` transition
-        const visibleDelay = !state.privGrpVis ? 0 : state.privGrpVisTimeout * 1000;
+        // Return early if a private group w/o visibility
+        if (state.confidential && !state.privGrpVis) {
+          await dispatch(DummyUserFail(displayId));
+          return;
+        }
+
+        // Show the user
         await dispatch(UpdateUsers(user));
-        if (tempDispUserForPrivacyReasons) {
+
+        // Fade out the user if the group is confidential w/visibility
+        if (state.confidential && state.privGrpVis) {
+          const fadeOutDelay = 5000; // This should match scss `.fadeOutRemoval` transition
+          const visibleDelay = state.privGrpVisTimeout * 1000;
           window.setTimeout(async () => {
             await dispatch(MarkUserForDeletion(identifier));
             window.setTimeout(async () => {
@@ -211,9 +216,9 @@ export const Logout = (loggedOut = false) => {
   };
 };
 
-export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privateGroupVisTimeout = 5) => {
+export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privGrpVis = true) => {
   return async dispatch => {
-    await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`);
+    await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}&privGrpVis=${privGrpVis}`);
     dispatch(StoreRegistrationToken(true));
     dispatch(ClearUsers());
     await dispatch(Logout(true));
