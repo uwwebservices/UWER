@@ -86,7 +86,6 @@ export const CreateGroup = (group, confidential = true, description, email) => {
 export const LoadSubgroups = () => {
   return async (dispatch, getState) => {
     let state = getState();
-    console.log('Getting subgroups', state.loading.subgroups);
     if (!state.loading.subgroups) {
       dispatch(LoadingSubgroups());
       let subgroups = await (await APIRequestWithAuth(`/api/subgroups`)).json();
