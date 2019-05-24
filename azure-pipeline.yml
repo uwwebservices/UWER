@@ -6,10 +6,6 @@ pool:
   name: ECS Build Agents
 
 steps:
-  # Set the version of Python we want to use
-  #- task: UsePythonVersion@0
-  #  displayName: 'Use Python 3.x'
-
   # Change the service name and tag name when running on master
   - script: "echo '##vso[task.setvariable variable=serviceName]eventregistration-prod'"
     condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.Reason'], 'PullRequest'))
@@ -28,13 +24,6 @@ steps:
       downloadType: 'specific'
       itemPattern: '**'
       downloadPath: '$(System.DefaultWorkingDirectory)/temp'
-
-  # Install the AWS CLI which we will need later
-  #- task: Bash@3
-  #  displayName: 'Install AWS CLI and other dependencies'
-  #  inputs:
-  #    targetType: 'filePath'
-  #    filePath: '$(System.DefaultWorkingDirectory)/temp/scripts/InstallAWSCLI.sh'
 
   # Build the docker image
   - task: Docker@0
