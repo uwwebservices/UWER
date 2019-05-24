@@ -3,7 +3,7 @@ variables:
   tagName: 'develop'
 
 pool:
-  name: Hosted Ubuntu 1604
+  name: ECS Build Agents
 
 steps:
   # Set the version of Python we want to use
