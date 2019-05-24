@@ -7,8 +7,8 @@ pool:
 
 steps:
   # Set the version of Python we want to use
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.x'
+  #- task: UsePythonVersion@0
+  #  displayName: 'Use Python 3.x'
 
   # Change the service name and tag name when running on master
   - script: "echo '##vso[task.setvariable variable=serviceName]eventregistration-prod'"
