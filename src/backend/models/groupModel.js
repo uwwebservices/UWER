@@ -1,6 +1,5 @@
 import rp from 'request-promise';
 import fs from 'fs';
-import { FilterModel } from '../utils/helpers';
 
 const GROUPSBASEURL = process.env.GROUPSBASEURL;
 const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
@@ -46,7 +45,6 @@ const FixSubgroups = async parent => {
       data.admins = [...data.admins, { type: 'dns', id: 'integrations.event.uw.edu' }, { type: 'group', id: parent }];
       // Format into GWS body format
       let body = { data };
-      console.log('UPDATING', s.id, await Groups.UpdateGroup(s.id, body));
     }
   }
 };
@@ -176,6 +174,20 @@ const Groups = {
     }
   },
 
+  /**
+   * Return an array of subgroups from GWS
+   * Structure definition: {
+   *   private: [gws classification field],
+   *   description: [gws description field],
+   *   email: [gws id field + @uw.edu]
+   *   display: [group id sans BASE_GROUP; convert hypens to spaces],
+   *   url: [gws url],
+   *   name: [group id sans BASE_GROUP]
+   * }
+   *
+   * @param {string} group
+   * @param {boolean} verbose
+   */
   async SearchGroups(group, verbose = false) {
     let opts = Object.assign({}, options, {
       method: 'GET',
@@ -185,26 +197,28 @@ const Groups = {
     try {
       let data = (await rp(opts)).data;
       if (verbose) {
-        let promises = [];
         let verboseGroups = [];
         await Promise.all(
           data.map(async g => {
             let vg = await this.GetGroupInfo(g.regid);
-            if (vg.affiliates.length > 1) {
-              vg.email = `${vg.id}@uw.edu`;
-            }
             verboseGroups.push(vg);
           })
         );
-        let filter = ['regid', 'displayName', 'id', 'url', 'description', 'classification', 'email'];
         verboseGroups = verboseGroups.map(vg => {
-          return FilterModel(vg, filter);
+          return {
+            private: vg.classification === 'c',
+            description: vg.description,
+            email: vg.affiliates.length > 1 ? `${vg.id}@uw.edu` : '',
+            display: vg.id.replace(BASE_GROUP, '').replace(/-/g, ' '),
+            url: `https://groups.uw.edu/group/${vg.id}`,
+            name: vg.id.replace(BASE_GROUP, '')
+          };
         });
         data = verboseGroups;
       }
       return SuccessResponse(
         data.sort(function(a, b) {
-          return a.id < b.id;
+          return a.name < b.name;
         })
       );
     } catch (ex) {

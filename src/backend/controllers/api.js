@@ -2,19 +2,19 @@ import { Router } from 'express';
 import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
-import { ensureAPIAuth, ensureAuthOrToken, getAuthToken, idaaRedirectUrl, tokenToSession } from '../utils/helpers';
-import { API, Routes } from 'Routes';
+import { API } from 'Routes';
+import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
 let api = Router();
 
 const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
-const BASE_GROUP = process.env.BASE_GROUP;
 
-api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
-  let groupName = req.session.group.groupName;
-  let confidential = req.session.group.confidential;
+api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {
+  const settings = req.signedCookies.registrationToken;
+  let groupName = settings.groupName;
+  let confidential = settings.confidential;
   let response = {
     groupName,
     confidential,
@@ -24,22 +24,25 @@ api.get(API.GetMembers, ensureAuthOrToken, tokenToSession, async (req, res) => {
   if (confidential && !req.isAuthenticated()) {
     return res.status(200).json(response);
   }
-  let result = await Groups.GetMembers(groupName);
+
+  let result = await Groups.GetMembers(getFullGroupName(groupName));
   let members = await PWS.GetMany(result.Payload);
   let verbose = await IDCard.GetManyPhotos(groupName, members);
   response.members = verbose;
   return res.status(result.Status).json(response);
 });
 
-api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) => {
+api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
+  const settings = req.signedCookies.registrationToken;
   let identifier = req.body.identifier;
   let displayId = req.body.displayId;
   let validCard = IDCard.ValidCard(identifier);
-  let groupName = req.session.group.groupName;
-  let netidAllowed = req.session.group.netidAllowed;
-  let confidential = req.session.group.confidential;
+  let groupName = settings.groupName;
+  let netidAllowed = settings.netidAllowed;
+  let confidential = settings.confidential;
+  let privGrpVis = settings.privGrpVis;
 
-  if (!validCard && netidAllowed == 'false') {
+  if (!validCard && !netidAllowed) {
     // if not a valid card and netid auth not allowed, 404
     return res.sendStatus(404);
   }
@@ -49,68 +52,81 @@ api.put(API.RegisterMember, ensureAuthOrToken, tokenToSession, async (req, res) 
     identifier = (await PWS.Get(identifier)).UWNetID;
   }
 
-  let result = await Groups.AddMember(groupName, identifier);
+  let result = await Groups.AddMember(getFullGroupName(groupName), identifier);
   if (result.Status === 200) {
     let user = await PWS.Get(identifier);
-
     user.displayId = displayId;
     user.Base64Image = await IDCard.GetOnePhoto(groupName, user.UWRegID);
-    res.status(confidential ? 201 : result.Status).json(user);
+
+    // Adjust the response if the group is confidential and we shouldn't show participants
+    if (confidential && !privGrpVis) {
+      user = {};
+    }
+
+    res.status(result.Status).json(user);
   } else {
     res.sendStatus(result.Status);
   }
 });
 
-api.get(API.GetMemberPhoto, ensureAuthOrToken, tokenToSession, async (req, res) => {
+api.get(API.GetMemberPhoto, authOrTokenMiddleware, async (req, res) => {
   let image = await IDCard.GetPhoto(req.params.identifier);
   res.header('Content-Type', 'image/jpeg');
   return res.status(200).send(image);
 });
 
-api.get(API.GetToken, ensureAPIAuth, (req, res) => {
-  let groupName = req.query.groupName;
-  let netidAllowed = req.query.netidAllowed;
-  let tokenTTL = req.query.tokenTTL;
+api.get(API.GetToken, authMiddleware, async (req, res) => {
+  const now = new Date();
+  const user = req.user;
+  const groupName = req.query.groupName;
+  const privGrpVis = req.query.privGrpVis === 'true';
+  const confidential = await Groups.IsConfidentialGroup(getFullGroupName(groupName));
+  const netidAllowed = req.query.netidAllowed === 'true';
+  const tokenTTL = req.query.tokenTTL;
+  const expiry = now.setMinutes(now.getMinutes() + +tokenTTL);
+  const token = { user, groupName, confidential, netidAllowed, privGrpVis, expiry };
+  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (+tokenTTL + 30) * 60 * 1000 });
 
-  let token = getAuthToken(req, groupName, netidAllowed, tokenTTL);
-  if (token) {
-    return res.status(200).json({ token });
-  } else {
-    return res.status(401).json({ token: '' });
-  }
+  return res.sendStatus(200);
 });
 
 api.get(API.Logout, (req, res) => {
-  let loggedOut = req.query.loggedOut || false;
   req.logout();
-  res.clearCookie('connect.sid', { path: Routes.Welcome });
-  req.session.regenerate(() => {
-    req.session.loggedOut = loggedOut;
-    res.sendStatus(200);
-  });
+
+  // loggedOut 'mode' doesn't delete the token; also used in development mode
+  let loggedOut = req.query.loggedOut || false;
+  if (!loggedOut) {
+    setDevModeCookie(res, null);
+    res.clearCookie('IAAAgreed');
+    res.clearCookie('registrationToken');
+  } else {
+    setDevModeCookie(res, 'Token');
+  }
+
+  res.sendStatus(200);
 });
 
-api.delete(API.RemoveMember, ensureAPIAuth, async (req, res) => {
-  let result = await Groups.RemoveMember(req.params.group, req.params.identifier);
+api.delete(API.RemoveMember, authMiddleware, async (req, res) => {
+  let result = await Groups.RemoveMember(getFullGroupName(req.params.group), req.params.identifier);
   return res.status(result.Status).json(result.Payload);
 });
 
-api.get(API.GetSubgroups, ensureAPIAuth, async (req, res) => {
-  let result = await Groups.SearchGroups(req.params.group, true);
+api.get(API.GetSubgroups, baseMiddleware, async (req, res) => {
+  let result = await Groups.SearchGroups(getFullGroupName(''), true);
   return res.status(result.Status).json(result.Payload);
 });
 
-api.delete(API.RemoveSubgroup, ensureAPIAuth, async (req, res) => {
-  let result = await Groups.DeleteGroup(req.params.group);
+api.delete(API.RemoveSubgroup, authMiddleware, async (req, res) => {
+  let result = await Groups.DeleteGroup(getFullGroupName(req.params.group));
   return res.status(result.Status).json(result.Payload);
 });
 
-api.post(API.CreateGroup, ensureAPIAuth, async (req, res) => {
+api.post(API.CreateGroup, baseMiddleware, async (req, res) => {
   let confidential = req.query.confidential;
   let description = req.query.description;
   let email = req.query.email;
 
-  let result = await Groups.CreateGroup(req.params.group, confidential, description, email);
+  let result = await Groups.CreateGroup(getFullGroupName(req.params.group), confidential, description, email);
   return res.status(result.Status).json(result.Payload);
 });
 
@@ -118,12 +134,14 @@ api.get(API.CheckAuth, async (req, res) => {
   let redirectBack = IDAACHECK + idaaRedirectUrl(req);
   let auth = { Authenticated: req.isAuthenticated(), IAAAAuth: false, IAARedirect: redirectBack };
 
-  if (!req.session) {
+  if (!req.signedCookies) {
     return res.sendStatus(500);
   }
 
   if (req.isAuthenticated()) {
-    if (!req.session.IAAAgreed) {
+    const IAAAgreed = req.signedCookies.IAAAgreed || false;
+
+    if (!IAAAgreed) {
       let found = false;
       let members = (await Groups.GetMembers(IDAAGROUPID)).Payload;
       if (members.find(u => u.id === req.user.UWNetID)) {
@@ -136,25 +154,24 @@ api.get(API.CheckAuth, async (req, res) => {
           found = true;
         }
       } else {
-        req.session.IAAAgreed = true;
+        // Re-check IAAAAuth in 1h
+        res.cookie('IAAAgreed', true, { ...uwerSetCookieDefaults, maxAge: 60 * 60 * 1000 });
         auth.IAAAAuth = true;
       }
     } else {
       auth.IAAAAuth = true;
     }
   }
+
   return res.status(200).json(auth);
 });
 
-api.get(API.Config, (req, res) => {
-  res.status(200).json({ groupNameBase: BASE_GROUP });
-});
-
-api.get(API.CSV, ensureAPIAuth, async (req, res) => {
-  let members = await Groups.GetMembers(req.params.group);
+api.get(API.CSV, authMiddleware, async (req, res) => {
+  const fullGroupName = getFullGroupName(req.params.group);
+  let members = await Groups.GetMembers(fullGroupName);
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
   let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
-  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, req.params.group);
+  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, fullGroupName);
   res.csv(mergedMembers, true);
 });
 

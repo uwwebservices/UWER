@@ -1,34 +1,33 @@
 import Const from '../Constants';
 import defaultUser from 'Assets/defaultUser';
 
-const initialState = {
+export const initialState = {
   authenticated: null,
   iaaAuth: null,
   iaacheck: '',
   groupName: '',
-  groupNameBase: '',
   subgroups: [],
   users: [],
   loading: { users: false, subgroups: false },
-  registrationToken: '',
+  registrationToken: false,
+  privGrpVis: true,
   privGrpVisTimeout: 5,
   netidAllowed: false,
+  tokenTTL: 180,
   confidential: false,
   notifications: []
 };
 
-export default (state = initialState, action) => {
+export const RootReducer = (state = initialState, action) => {
   switch (action.type) {
     case Const.RECEIVE_GROUP_NAME:
       return { ...state, groupName: action.groupName };
-    case Const.RECEIVE_CONFIG:
-      return { ...state, groupNameBase: action.config.groupNameBase };
     case Const.LOADING_SUBGROUPS:
       return { ...state, loading: { ...state.loading, subgroups: true } };
     case Const.RECEIVE_SUBGROUPS:
       return { ...state, subgroups: action.subgroups, loading: { ...state.loading, subgroups: false } };
     case Const.DELETE_SUBGROUP:
-      let subgroups = state.subgroups.filter(sg => sg.id !== action.subgroup);
+      let subgroups = state.subgroups.filter(sg => sg.name !== action.subgroup);
       return { ...state, subgroups };
     case Const.LOADING_USERS:
       return { ...state, loading: { ...state.loading, users: true } };
@@ -36,7 +35,7 @@ export default (state = initialState, action) => {
     case Const.CLEAR_USERS:
       return { ...state, users: action.users, loading: { ...state.loading, users: false } };
     case Const.ADD_DUMMY_USER:
-      return { ...state, users: [{ displayId: action.displayId, Base64Image: defaultUser, loading: true }, ...state.users] };
+      return { ...state, users: [{ displayId: action.displayId, UWRegID: action.displayId, Base64Image: defaultUser, loading: true }, ...state.users] };
     case Const.FAILED_DUMMY_USER:
       return { ...state, users: state.users.filter(u => u.displayId !== action.displayId) };
     case Const.UPDATE_USERS:
@@ -53,16 +52,19 @@ export default (state = initialState, action) => {
       });
       return { ...state, users };
     case Const.REMOVE_USER:
-      let userRemoved = state.users.filter(u => u.UWNetID !== action.user);
-      return { ...state, users: userRemoved };
+      return { ...state, users: state.users.filter(u => u.UWNetID !== action.user) };
     case Const.USER_AUTHENTICATION:
       return { ...state, authenticated: action.authenticated, iaaAuth: action.iaaAuth, iaacheck: action.iaacheck };
     case Const.STORE_REGISTRATION_TOKEN:
       return { ...state, registrationToken: action.token };
+    case Const.STORE_PRIVATE_GROUP_VISIBILITY:
+      return { ...state, privGrpVis: action.enabled };
     case Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT:
       return { ...state, privGrpVisTimeout: action.timeout };
     case Const.STORE_NETID_ALLOWED:
       return { ...state, netidAllowed: action.netidAllowed };
+    case Const.STORE_TOKEN_TTL:
+      return { ...state, tokenTTL: action.tokenTTL };
     case Const.ADD_NOTIFICATION:
       return { ...state, notifications: [...state.notifications, action.notification] };
     case Const.REMOVE_NOTIFICATION:
@@ -71,6 +73,8 @@ export default (state = initialState, action) => {
       return { ...state, confidential: action.confidential };
     case Const.RESET_STATE:
       return initialState;
+    case Const.STORE_SETTINGS:
+      return { ...state, ...action.settings };
     default:
       return state;
   }

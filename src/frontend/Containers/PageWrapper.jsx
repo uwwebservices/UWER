@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { InitApp, CheckAuthentication } from '../Actions';
+import { CheckAuthentication, ResetState } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import Authorization from 'Components/Authorization';
@@ -10,14 +10,12 @@ import NotificationSystem from 'react-notification-system';
 class PageWrapper extends Component {
   constructor(props) {
     super(props);
-    this.props.initApp();
     this._notificationSystem = null;
   }
   componentDidMount() {
     this._notificationSystem = this.refs.notificationSystem;
   }
   componentDidUpdate() {
-    this.props.initApp();
     // Grabs notifications from the store and turns them into toasts
     if (this.props.notifications.length) {
       this.props.notifications.forEach(n => {
@@ -63,6 +61,7 @@ class PageWrapper extends Component {
             iaaRequired={this.props.iaaRequired}
             checkAuthentication={this.props.checkAuthentication}
             path={this.props.location.pathname}
+            resetState={this.props.resetState}
           >
             {childrenWithProps}
           </Authorization>
@@ -82,8 +81,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => {
   return {
-    initApp: () => dispatch(InitApp()),
-    checkAuthentication: () => dispatch(CheckAuthentication())
+    checkAuthentication: () => dispatch(CheckAuthentication()),
+    resetState: () => dispatch(ResetState())
   };
 };
 

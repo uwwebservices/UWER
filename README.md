@@ -1,4 +1,10 @@
-# UW Event Registration (UWER) [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uwwebservices.idcard-webapp-poc?branchName=develop)](https://dev.azure.com/uwit-ews/WS/_build/latest?definitionId=50&branchName=develop)
+# UW Event Registration (UWER)
+
+## Build Status
+
+master: [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uwwebservices.idcard-webapp-poc?branchName=master)](https://dev.azure.com/uwit-ews/WS/_build/latest?definitionId=50&branchName=master)
+
+develop: [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uwwebservices.idcard-webapp-poc?branchName=develop)](https://dev.azure.com/uwit-ews/WS/_build/latest?definitionId=50&branchName=develop)
 
 Documentation: [Client Wiki](https://wiki.cac.washington.edu/pages/viewpage.action?pageId=92391281)
 

@@ -1,32 +1,45 @@
-import { AES, enc } from 'crypto-js';
 import { Routes } from 'Routes';
-import Groups from 'models/groupModel';
 
-const SESSIONKEY = process.env.SESSIONKEY;
+const NODE_ENV = process.env.NODE_ENV;
+const BASE_GROUP = process.env.BASE_GROUP;
+
+export const uwerSetCookieDefaults = { path: '/', httpOnly: true, signed: true };
+
+export const getFullGroupName = groupName => `${BASE_GROUP}${groupName}`;
 
 export const ensureAuth = (returnUrl = '/') => {
   return function(req, res, next) {
-    const devVerifiedAuthToken = process.env.NODE_ENV === 'development' && verifyAuthToken(req);
-    if (req.isAuthenticated() || devVerifiedAuthToken) {
+    if (req.isAuthenticated() || devModeAuthenticated(req)) {
       return next();
     } else {
-      if (req.session) {
-        req.session.authRedirectUrl = req.originalUrl;
-      } else {
-        console.warn('passport-uwshib: No session property on request! Is your session store unreachable?');
-      }
-      res.redirect(Routes.Login);
+      res.redirect(`${Routes.Login}?returnUrl=${returnUrl}`);
     }
   };
 };
 
+export const setDevModeCookie = (res, val) => {
+  if (NODE_ENV !== 'development') {
+    return;
+  }
+
+  if (val === null) {
+    res.clearCookie('devMode', { path: '/' });
+  } else {
+    res.cookie('devMode', val, uwerSetCookieDefaults);
+  }
+};
+
+const devModeAuthenticated = req => {
+  if (NODE_ENV !== 'development') {
+    return false;
+  }
+
+  return req.signedCookies.devMode && (req.signedCookies.devMode == 'Authenticated' || req.signedCookies.devMode == 'Token');
+};
+
 export const backToUrl = (url = Routes.Register) => {
   return function(req, res) {
-    if (req.session) {
-      url = req.session.authRedirectUrl;
-      delete req.session.authRedirectUrl;
-    }
-    res.redirect(url || Routes.Register);
+    res.redirect(req.cookies.authRedirectUrl || Routes.Register);
   };
 };
 
@@ -34,7 +47,7 @@ export const idaaRedirectUrl = req => {
   return encodeURI(req.protocol + '://' + req.get('host') + '/config');
 };
 
-export const ensureAPIAuth = (req, res, next) => {
+const ensureAPIAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   } else {
@@ -42,7 +55,7 @@ export const ensureAPIAuth = (req, res, next) => {
   }
 };
 
-export const ensureAuthOrToken = (req, res, next) => {
+const ensureAuthOrToken = (req, res, next) => {
   if (req.isAuthenticated() || verifyAuthToken(req)) {
     return next();
   } else {
@@ -50,60 +63,43 @@ export const ensureAuthOrToken = (req, res, next) => {
   }
 };
 
-export const getAuthToken = (req, groupName, netidAllowed = false, ttl = 180, uriEncode = true) => {
-  let now = new Date();
-  let expiry = now.setMinutes(now.getMinutes() + ttl);
-  let token = AES.encrypt(JSON.stringify({ user: req.user, groupName, netidAllowed, expiry }), SESSIONKEY).toString();
-  return uriEncode ? encodeURIComponent(token) : token;
-};
-
-export const decryptAuthToken = token => {
-  let payload = AES.decrypt(decodeURIComponent(token), SESSIONKEY).toString(enc.Utf8);
-  return JSON.parse(payload);
-};
-
-export const verifyAuthToken = req => {
-  if (!req.session.token && !req.body.token && !req.query.token) {
+const verifyAuthToken = req => {
+  if (!req.signedCookies.registrationToken) {
     return false;
   }
-  if (!req.session.token && (req.body.token || req.query.token)) {
-    req.session.token = req.body.token ? decodeURIComponent(req.body.token) : decodeURIComponent(req.query.token);
-  }
-  let tokenData = decryptAuthToken(req.session.token);
-  console.log('verify, token expires:', new Date(tokenData.expiry));
-  console.log('now', new Date());
-  req.session.registrationUser = tokenData.user;
-  return tokenData.expiry > new Date().getTime();
+
+  console.log(`verifyAuthToken, token expires: ${new Date(req.signedCookies.registrationToken.expiry)}, now: ${new Date()}`);
+  return req.signedCookies.registrationToken.expiry > new Date().getTime();
 };
 
-export const tokenToSession = async (req, res, next) => {
-  // if user is not authenticated and presented a token, update session
-  let groupName = req.params.group;
-  let confidential = !req.isAuthenticated();
-  let netidAllowed = req.isAuthenticated();
+const requestSettingsOverrides = async (req, res, next) => {
+  let overrides = {};
 
-  if (!req.isAuthenticated() && req.body.token) {
-    let tokenData = decryptAuthToken(req.body.token);
-    groupName = tokenData.groupName;
-    netidAllowed = tokenData.netidAllowed;
-  }
-
-  if (!req.session.group || req.session.group.groupName !== groupName) {
-    confidential = await Groups.IsConfidentialGroup(groupName);
-  } else if (req.session.group) {
-    confidential = req.session.group.confidential;
-  }
-
-  // Admins and Developers can see confidential group members
+  // Override the token if the user is authenticated
   if (req.isAuthenticated()) {
-    confidential = false;
+    overrides.groupName = req.params.group;
+    overrides.netidAllowed = req.isAuthenticated();
+    overrides.confidential = !req.isAuthenticated();
   }
 
-  req.session.group = {
-    groupName,
-    confidential,
-    netidAllowed
-  };
+  req.signedCookies.registrationToken = { ...req.signedCookies.registrationToken, ...overrides };
+
+  next();
+};
+
+/**
+ * The API will enforce the use of the BASE_GROUP prefix
+ * The frontend will send the group name without the BASE_GROUP prefix.
+ * This function needs to verify the group of the route matches the group of the cookie.
+ */
+const ensureValidGroupName = async (req, res, next) => {
+  const routeGroupName = req.params && req.params.group;
+  const cookieGroupName = req.signedCookies.registrationToken && req.signedCookies.registrationToken.groupName;
+  const routeCookieMismatch = !!routeGroupName && !!cookieGroupName && routeGroupName !== cookieGroupName;
+
+  if (routeCookieMismatch) {
+    return res.sendStatus(403);
+  }
 
   next();
 };
@@ -116,3 +112,9 @@ export const FilterModel = (model, whitelist) => {
       return obj;
     }, {});
 };
+
+export const authOrTokenMiddleware = [ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName];
+
+export const authMiddleware = [ensureAPIAuth, ensureValidGroupName];
+
+export const baseMiddleware = [ensureAPIAuth];

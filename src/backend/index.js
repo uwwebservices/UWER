@@ -2,6 +2,7 @@ import fs from 'fs';
 import http from 'http';
 import express from 'express';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import api from 'controllers/api';
 import frontend from 'controllers/frontend';
@@ -12,14 +13,17 @@ import saml from 'passport-saml';
 import helmet from 'helmet';
 
 const NODE_ENV = process.env.NODE_ENV;
+const SECRET_KEY = process.env.SESSIONKEY || 'development';
 
 let app = express();
 
+app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
 app.set('trust proxy', 1);
 
+// Required for passport to setup a persistent login session
 const memStore = MemoryStore(session);
 app.use(
   session({
@@ -29,7 +33,7 @@ app.use(
     name: 'sessionId',
     saveUninitialized: true,
     resave: false,
-    secret: process.env.SESSIONKEY || 'development'
+    secret: SECRET_KEY
   })
 );
 
@@ -62,12 +66,11 @@ if (NODE_ENV === 'production') {
 } else if (NODE_ENV === 'development') {
   // Middleware to mock a login in development mode
   app.use(function(req, res, next) {
-    req.session = req.session || {};
-    req.session.loggedOut = req.session.loggedOut || false;
-
     req.user = { UWNetID: 'steven20' };
-    req.session.IAAAgreed = true;
-    req.isAuthenticated = () => !req.session.loggedOut;
+    req.signedCookies.devMode = req.signedCookies.devMode || 'Authenticated';
+    req.signedCookies.IAAAgreed = true;
+    req.isAuthenticated = () => req.signedCookies.devMode === 'Authenticated';
+
     next();
   });
 }
@@ -79,10 +82,8 @@ app.use(
     let identifier = req.body.identifier || '';
     if (req.user) {
       user = req.user.UWNetID;
-    } else if (req.session && req.session.user) {
-      user = req.session.user.UWNetID;
-    } else if (req.session && req.session.registrationUser) {
-      user = 'ActAs:' + req.session.registrationUser.UWNetID;
+    } else if (req.signedCookies && req.signedCookies.user) {
+      user = 'ActAs:' + req.signedCookies.user.UWNetID;
     }
 
     let logMessage = [
@@ -106,7 +107,7 @@ app.use(
 app.server = http.createServer(app);
 
 app.use('/api', api);
-app.use(['/', '/config'], frontend);
+app.use(['/'], frontend);
 
 app.server.listen(process.env.PORT || 1111, () => {
   console.log(`Started on port ${app.server.address().port} in '${NODE_ENV}' environment.`);
