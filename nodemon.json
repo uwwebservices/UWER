@@ -7,13 +7,10 @@
     "PORT": 1111,
     "BASE_GROUP": "uw_event_ws-eval_",
     "SESSIONKEY": "development",
-    "CERTIFICATEFILE": "config/cert.pfx",
-    "PASSPHRASEFILE": "config/passphrase.key",
-    "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1/card.json",
-    "PHOTOBASEURL": "https://wseval.s.uw.edu/idcard/v1/photo",
-    "PWSBASEURL": "https://wseval.s.uw.edu/identity/v2/person",
+    "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1",
+    "PWSBASEURL": "https://wseval.s.uw.edu/identity/v2",
     "GROUPSBASEURL": "https://groups.uw.edu/group_sws/v3",
-    "INCOMMONFILE": "config/incommon.pem",
+
     "GROUPDISPLAYNAME": "UW Event Registration",
     "IDAAGROUPID": "u_agreement_idaa_idcardeventregistration",
     "IDAACHECK": "https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl=",
@@ -21,6 +18,16 @@
     "IDPENTRYPOINT": "",
     "IDPCALLBACKURL": "",
     "IDPISSUER": "",
-    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu"
+    "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu",
+
+    "S3BUCKET": "ews-certs",
+    "S3CERTFILE": "integrations/integrations.event.uw.edu.pfx",
+    "S3CERTKEYFILE": "integrations/integrations.event.uw.edu.key",
+    "S3UWCAFILE": "common/uwca.pem",
+    "S3INCOMMONFILE": "common/incommon.pem",
+
+    "INCOMMONFILE": "config/incommon.pem",
+    "CERTIFICATEFILE": "config/cert.pfx",
+    "PASSPHRASEFILE": "config/passphrase.key"
   }
 }
