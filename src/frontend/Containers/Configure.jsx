@@ -3,10 +3,21 @@ import FA from 'react-fontawesome';
 import Subgroup from 'Components/Subgroup';
 import { connect } from 'react-redux';
 import RegistrationModal from 'Components/RegistrationModal';
-import EndRegistrationModal from 'Components/EndRegistrationModal';
 import ConfigOptions from 'Components/ConfigOptions';
 import ContentModal from 'Components/ContentModal';
-import { UpdateGroupName, LoadSubgroups, DestroySubgroup, ClearUsers, CreateGroup, StartRegistrationSession, StopRegistrationSession, ToggleNetIDAllowed } from '../Actions';
+import {
+  UpdateGroupName,
+  LoadSubgroups,
+  DestroySubgroup,
+  ClearUsers,
+  CreateGroup,
+  StartRegistrationSession,
+  StopRegistrationSession,
+  UpdateNetidAllowed,
+  UpdateTokenTTL,
+  UpdatePrivateGroupVis,
+  UpdatePrivateGroupVisTimeout
+} from '../Actions';
 
 class Configure extends Component {
   constructor(props) {
@@ -15,9 +26,6 @@ class Configure extends Component {
       newSubgroup: '',
       invalidSubgroup: true,
       confidential: true,
-      netidAllowed: false,
-      tokenTTL: 180,
-      privGrpVisTimeout: 5,
       newSubgroupDescription: '',
       newSubgroupEmailEnabled: false
     };
@@ -26,7 +34,7 @@ class Configure extends Component {
     this.setState({ groupName: this.props.groupName });
   }
   componentDidUpdate() {
-    if (!this.props.subgroups.length && this.props.groupNameBase) {
+    if (!this.props.subgroups.length) {
       this.loadSubGroups();
     }
   }
@@ -37,17 +45,23 @@ class Configure extends Component {
     }
     return false;
   }
-  generateGroupName(groupString) {
-    groupString = groupString.replace(/\s+/g, '-').toLowerCase();
-    return this.props.groupNameBase + groupString;
-  }
   loadSubGroups = async () => {
     await this.props.loadSubgroups();
   };
 
   handleChange = e => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    this.setState({ [e.target.name]: value });
+    if (e.target.name === 'netidAllowed') {
+      this.props.updateNetidAllowed(value);
+    } else if (e.target.name === 'tokenTTL') {
+      this.props.updateTokenTTL(value);
+    } else if (e.target.name === 'privGrpVis') {
+      this.props.updatePrivateGroupVis(value);
+    } else if (e.target.name === 'privGrpVisTimeout') {
+      this.props.updatePrivateGroupVisTimeout(value);
+    } else {
+      this.setState({ [e.target.name]: value });
+    }
 
     if (e.target.name === 'newSubgroup') {
       this.setState({ invalidSubgroup: !this.validateGroupString(value) });
@@ -57,7 +71,8 @@ class Configure extends Component {
   createSubgroup = async () => {
     if (this.validateGroupString(this.state.newSubgroup)) {
       this.setState({ creatingGroup: true });
-      let success = await this.props.createGroup(this.generateGroupName(this.state.newSubgroup), this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
+      let formattedGroupName = this.state.newSubgroup.replace(/\s+/g, '-').toLowerCase();
+      let success = await this.props.createGroup(formattedGroupName, this.state.confidential, this.state.newSubgroupDescription, this.state.newSubgroupEmailEnabled);
       if (success) {
         this.props.loadSubgroups(this.props.groupName);
         this.props._addNotification('Registration Group Created', `Successfully created registration group: ${this.state.newSubgroup}`);
@@ -79,16 +94,11 @@ class Configure extends Component {
   updateGroupName = async groupName => {
     this.props.clearUsers();
     await this.props.updateGroupName(groupName);
-    this.props._addNotification('Change Selected Group', `Selected group successfully changed to: ${this.displayGroupName(groupName)}`, 'success');
-  };
-  displayGroupName = groupName => {
-    return groupName.replace(this.props.groupNameBase, '').replace(/-/g, ' ');
   };
   startRegistration = async () => {
-    await this.props.startRegistrationSession(this.props.groupName, this.state.netidAllowed, this.state.tokenTTL, +this.state.privGrpVisTimeout);
+    await this.props.startRegistrationSession(this.props.groupName, this.props.netidAllowed, this.props.tokenTTL, this.props.privGrpVis);
     this.props.history.push('/register');
   };
-
   endRegistration = async () => {
     await this.props.stopRegistrationSession();
     this.props.history.push('/');
@@ -99,11 +109,13 @@ class Configure extends Component {
     return (
       <div>
         <div className="righted inline">
-          <EndRegistrationModal confirmCallback={this.endRegistration} openButtonText="Logout" />
+          <RegistrationModal openButtonText="Logout" endRegistration={this.endRegistration} dialogTitle="Logout of UWER" openButtonColor="secondary" approveButtonText="Logout" approveButtonColor="secondary">
+            <p>Are you sure you want to log out?</p>
+          </RegistrationModal>
         </div>
         <h1 className="inline">Configure</h1>
 
-        <ConfigOptions netidAllowed={this.state.netidAllowed} tokenTTL={this.state.tokenTTL} privGrpVisTimeout={this.state.privGrpVisTimeout} handleChange={this.handleChange} />
+        <ConfigOptions netidAllowed={this.props.netidAllowed} tokenTTL={this.props.tokenTTL} privGrpVis={this.props.privGrpVis} privGrpVisTimeout={this.props.privGrpVisTimeout} handleChange={this.handleChange} />
         <br />
         <div className="card">
           <div className="card-header">
@@ -170,26 +182,20 @@ class Configure extends Component {
           </div>
           <div className="card-body">
             {this.props.subgroups.map(subgroup => {
-              return (
-                <Subgroup
-                  key={subgroup.id}
-                  subgroup={subgroup}
-                  deleteCallback={this.props.destroySubgroup}
-                  selectedGroup={this.props.groupName}
-                  updateGroupName={this.updateGroupName}
-                  groupNameBase={this.props.groupNameBase}
-                  displayGroupName={this.displayGroupName}
-                  private={subgroup.classification != 'u'}
-                  email={subgroup.email}
-                />
-              );
+              return <Subgroup key={subgroup.name} subgroup={subgroup} deleteCallback={this.props.destroySubgroup} selectedGroup={this.props.groupName} updateGroupName={this.updateGroupName} />;
             })}
           </div>
         </div>
         <br />
 
         <div className="startRegistration">
-          <RegistrationModal startRegistration={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants" /> &nbsp;
+          <RegistrationModal startRegistration={this.startRegistration} openButtonDisabled={!canStartRegistration} openButtonText="Start Registering Participants">
+            <p>
+              Are you sure that you want to begin registration? <br />
+              This will end your UW NetID sign-in session.
+            </p>
+          </RegistrationModal>{' '}
+          &nbsp;
         </div>
         <br />
 
@@ -237,8 +243,11 @@ class Configure extends Component {
 const mapStateToProps = state => ({
   groupName: state.groupName,
   subgroups: state.subgroups,
-  groupNameBase: state.groupNameBase,
-  loadingSubgroups: state.loading.subgroups
+  loadingSubgroups: state.loading.subgroups,
+  netidAllowed: state.netidAllowed,
+  tokenTTL: state.tokenTTL,
+  privGrpVis: state.privGrpVis,
+  privGrpVisTimeout: state.privGrpVisTimeout
 });
 const mapDispatchToProps = dispatch => {
   return {
@@ -247,8 +256,12 @@ const mapDispatchToProps = dispatch => {
     destroySubgroup: subgroup => dispatch(DestroySubgroup(subgroup)),
     clearUsers: () => dispatch(ClearUsers()),
     createGroup: (group, confidential, description, email) => dispatch(CreateGroup(group, confidential, description, email)),
-    startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVisTimeout) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVisTimeout)),
-    stopRegistrationSession: () => dispatch(StopRegistrationSession())
+    startRegistrationSession: (groupName, netidAllowed, tokenTTL, privGrpVis) => dispatch(StartRegistrationSession(groupName, netidAllowed, tokenTTL, privGrpVis)),
+    stopRegistrationSession: () => dispatch(StopRegistrationSession()),
+    updatePrivateGroupVis: privateGroupVis => dispatch(UpdatePrivateGroupVis(privateGroupVis)),
+    updatePrivateGroupVisTimeout: privateGroupVisTimeout => dispatch(UpdatePrivateGroupVisTimeout(privateGroupVisTimeout)),
+    updateTokenTTL: tokenTTL => dispatch(UpdateTokenTTL(tokenTTL)),
+    updateNetidAllowed: netidAllowed => dispatch(UpdateNetidAllowed(netidAllowed))
   };
 };
 

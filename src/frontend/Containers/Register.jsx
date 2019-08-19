@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import AddMemberForm from 'Components/AddMemberForm';
 import Members from 'Components/Members';
-import PrivateMembers from 'Components/PrivateMembers';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import EndRegistrationModal from 'Components/EndRegistrationModal';
+import RegistrationModal from 'Components/RegistrationModal';
 import { connect } from 'react-redux';
 import { LoadUsers, AddUser, DeleteUser, StartRegistrationSession, StopRegistrationSession } from '../Actions';
-import Cookies from 'browser-cookies';
 import FA from 'react-fontawesome';
 import { Link } from 'react-router-dom';
 import LoadingUsers from 'Components/LoadingUsers';
@@ -67,20 +65,41 @@ class Register extends Component {
           </div>
         )}
         <div className="righted inline">
-          <EndRegistrationModal confirmCallback={this.endRegistration} showCancelButton={false} />
+          {!this.props.authenticated && (
+            <RegistrationModal
+              endRegistration={this.endRegistration}
+              dialogTitle="End Registration"
+              openButtonText="End Registration"
+              cancelButtonText="Back"
+              approveButtonText="End Registration"
+              approveButtonColor="secondary"
+              openButtonColor="secondary"
+            >
+              <p>
+                Are you sure that you want to end registration? <br />
+                This will completely log you out, to continue registering <br />
+                you will need an administrator to start a new session.
+              </p>
+            </RegistrationModal>
+          )}
         </div>
         <div>
           <h1 className="inline">Event Registration</h1>
         </div>
-        <AddMemberForm addUser={this.props.addUser} group={this.props.groupName} formDisabled={registrationDisabled} />
+        <AddMemberForm addUser={this.props.addUser} authenticated={this.props.authenticated} group={this.props.groupName} netidAllowed={this.props.netidAllowed} formDisabled={registrationDisabled} />
 
         <div className="memberList">
           <h2>Registered Participants {!this.props.confidential && <FA name="refresh" onClick={this.reload} spin={this.props.loadingUsers} />}</h2>
-          {this.props.confidential && (
-            <div>
-              <p>Some text related to the fact that confidential groups do not persistently display users.</p>
-            </div>
-          )}
+          {this.props.confidential &&
+            (this.props.privGrpVis ? (
+              <div>
+                <p>Membership for this event is private, participants will be displayed for {this.props.privGrpVisTimeout} seconds before fading away.</p>
+              </div>
+            ) : (
+              <div>
+                <p>Membership for this event is private, participants will not be displayed.</p>
+              </div>
+            ))}
           {!this.props.groupName && this.props.authenticated && (
             <p>
               No registration group selected, <Link to="config">choose one here.</Link>
@@ -91,11 +110,7 @@ class Register extends Component {
           {this.props.users.length > 0 && (
             <div>
               <List>
-                {!this.props.confidential ? (
-                  <Members members={this.props.users} groupNameBase={this.props.groupNameBase} removeUser={this.props.removeUser} keepUser={this.registerCardFocus} group={this.props.groupName} authenticated={this.props.authenticated} />
-                ) : (
-                  <PrivateMembers members={this.props.users} />
-                )}
+                <Members members={this.props.users} removeUser={this.props.removeUser} keepUser={this.registerCardFocus} group={this.props.groupName} authenticated={this.props.authenticated} confidential={this.props.confidential} />
               </List>
             </div>
           )}
@@ -110,10 +125,11 @@ const mapStateToProps = state => ({
   groupName: state.groupName,
   users: state.users,
   loadingUsers: state.loading.users,
-  groupNameBase: state.groupNameBase,
   authenticated: state.authenticated,
   token: state.registrationToken,
-  netidAllowed: state.netidAllowed
+  netidAllowed: state.netidAllowed,
+  privGrpVis: state.privGrpVis,
+  privGrpVisTimeout: state.privGrpVisTimeout
 });
 const mapDispatchToProps = dispatch => {
   return {

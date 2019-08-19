@@ -1,13 +1,6 @@
 import Const from '../Constants';
-import Cookies from 'browser-cookies';
 
 // Action Creators
-const ReceiveGroupName = groupName => {
-  return { type: Const.RECEIVE_GROUP_NAME, groupName };
-};
-const ConfigLoaded = config => {
-  return { type: Const.RECEIVE_CONFIG, config };
-};
 const ReceiveSubgroups = subgroups => {
   return { type: Const.RECEIVE_SUBGROUPS, subgroups };
 };
@@ -44,7 +37,7 @@ const MarkUserForDeletion = identifier => {
 const DummyUserFail = displayId => {
   return { type: Const.FAILED_DUMMY_USER, displayId };
 };
-const ResetState = () => {
+export const ResetState = () => {
   return { type: Const.RESET_STATE };
 };
 const AddNotification = (messageId, title, message) => {
@@ -56,11 +49,23 @@ const RemoveNotification = messageId => {
 const PrivateGroup = confidential => {
   return { type: Const.PRIVATE_GROUP, confidential };
 };
-export const StoreRegistrationToken = token => {
+const StoreRegistrationToken = token => {
   return { type: Const.STORE_REGISTRATION_TOKEN, token };
 };
-const StorePrivateGroupVisTimeout = timeout => {
+export const UpdateGroupName = groupName => {
+  return { type: Const.RECEIVE_GROUP_NAME, groupName };
+};
+export const UpdatePrivateGroupVis = enabled => {
+  return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY, enabled };
+};
+export const UpdatePrivateGroupVisTimeout = timeout => {
   return { type: Const.STORE_PRIVATE_GROUP_VISIBILITY_TIMEOUT, timeout };
+};
+export const UpdateNetidAllowed = netidAllowed => {
+  return { type: Const.STORE_NETID_ALLOWED, netidAllowed };
+};
+export const UpdateTokenTTL = tokenTTL => {
+  return { type: Const.STORE_TOKEN_TTL, tokenTTL };
 };
 
 // -----------------------
@@ -69,24 +74,6 @@ const StorePrivateGroupVisTimeout = timeout => {
 const APIRequestWithAuth = async (url, opts) => {
   let body = Object.assign({ method: 'GET', credentials: 'same-origin' }, opts);
   return await fetch(url, body);
-};
-
-// Load config file from API into store
-export const LoadConfig = () => {
-  return async dispatch => {
-    let json = await (await APIRequestWithAuth('/api/config')).json();
-    return dispatch(ConfigLoaded(json));
-  };
-};
-
-export const UpdateGroupName = groupName => {
-  return async dispatch => {
-    if (Cookies.get('groupName')) {
-      Cookies.erase('groupName');
-    }
-    Cookies.set('groupName', groupName, { expires: 1 / 24 });
-    return await dispatch(ReceiveGroupName(groupName));
-  };
 };
 
 export const CreateGroup = (group, confidential = true, description, email) => {
@@ -101,8 +88,7 @@ export const LoadSubgroups = () => {
     let state = getState();
     if (!state.loading.subgroups) {
       dispatch(LoadingSubgroups());
-      let groupNameBase = getState().groupNameBase;
-      let subgroups = await (await APIRequestWithAuth(`/api/subgroups/${groupNameBase}`)).json();
+      let subgroups = await (await APIRequestWithAuth(`/api/subgroups`)).json();
       return await dispatch(ReceiveSubgroups(subgroups));
     }
   };
@@ -111,21 +97,19 @@ export const LoadSubgroups = () => {
 export const DestroySubgroup = group => {
   return async dispatch => {
     await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'DELETE' });
-    Cookies.erase('groupName', { path: '/' });
+    dispatch(UpdateGroupName(''));
     return await dispatch(DeleteSubgroup(group));
   };
 };
 
 export const LoadUsers = () => {
   return async (dispatch, getState) => {
-    await dispatch(cookiesToState());
     let state = getState();
     let group = state.groupName;
-    let token = state.registrationToken || '';
     if (group) {
       dispatch(ClearUsers());
       dispatch(LoadingUsers());
-      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}?token=${token}`)).json();
+      let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
 
       state = getState();
@@ -141,14 +125,11 @@ export const LoadUsers = () => {
 
 export const AddUser = (group, identifier) => {
   return async (dispatch, getState) => {
-    await dispatch(cookiesToState());
     let state = getState();
     let displayId = Math.floor(Math.random() * 1000000).toString(16);
-    let token = state.registrationToken;
 
     dispatch(AddDummyUser(displayId));
     let body = {
-      token,
       displayId,
       identifier
     };
@@ -160,17 +141,12 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
-      let tempDispUserForPrivacyReasons = false;
-      if (res.status === 201) {
-        tempDispUserForPrivacyReasons = true;
-        dispatch(FlashNotification('Successfully Added User', 'Group Membership is Private'));
-      }
       if (res.status === 404) {
         dispatch(FlashNotification('User not found', 'Could not find the specified user.'));
         return dispatch(DummyUserFail(displayId));
       }
       if (res.status === 401) {
-        if (token) {
+        if (state.registrationToken) {
           dispatch(FlashNotification('Session Ended', 'Your registration session has ended, please start a new session.'));
           return dispatch(DummyUserFail(displayId));
         } else {
@@ -186,10 +162,19 @@ export const AddUser = (group, identifier) => {
         dispatch(FlashNotification('Duplicate User', `${user.UWNetID || 'This user'} has already been added to this group.`));
         dispatch(DummyUserFail(displayId));
       } else {
-        const fadeOutDelay = 5000; // This should match scss `.fadeOutRemoval` transition
-        const visibleDelay = state.privGrpVisTimeout * 1000;
+        // Return early if a private group w/o visibility
+        if (state.confidential && !state.privGrpVis) {
+          await dispatch(DummyUserFail(displayId));
+          return;
+        }
+
+        // Show the user
         await dispatch(UpdateUsers(user));
-        if (tempDispUserForPrivacyReasons) {
+
+        // Fade out the user if the group is confidential w/visibility
+        if (state.confidential && state.privGrpVis) {
+          const fadeOutDelay = 5000; // This should match scss `.fadeOutRemoval` transition
+          const visibleDelay = state.privGrpVisTimeout * 1000;
           window.setTimeout(async () => {
             await dispatch(MarkUserForDeletion(identifier));
             window.setTimeout(async () => {
@@ -230,37 +215,19 @@ export const Logout = (loggedOut = false) => {
   };
 };
 
-export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privateGroupVisTimeout = 5) => {
+export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privGrpVis = true) => {
   return async dispatch => {
-    let token = (await (await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}`)).json()).token;
-    dispatch(StoreRegistrationToken(token));
-    dispatch(StorePrivateGroupVisTimeout(privateGroupVisTimeout));
+    await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}&privGrpVis=${privGrpVis}`);
+    dispatch(StoreRegistrationToken(true));
     dispatch(ClearUsers());
-    resetTokenCookie(token, tokenTTL);
     await dispatch(Logout(true));
   };
 };
 
 export const StopRegistrationSession = () => {
   return async dispatch => {
-    Cookies.erase('registrationToken', { path: '/' });
-    Cookies.erase('groupName', { path: '/' });
     dispatch(Logout());
     dispatch(ResetState());
-  };
-};
-
-export const InitApp = () => {
-  return async (dispatch, getState) => {
-    let state = getState();
-    if (!state.authenticated && !state.registrationToken) {
-      await dispatch(CheckAuthentication());
-    }
-
-    !Object.keys(state.groupNameBase).length && (await dispatch(LoadConfig()));
-    state = getState();
-
-    dispatch(cookiesToState);
   };
 };
 
@@ -270,32 +237,4 @@ export const FlashNotification = (title = '', message = '') => {
     dispatch(AddNotification(messageId, title, message));
     dispatch(RemoveNotification(messageId));
   };
-};
-
-const cookiesToState = () => {
-  return async (dispatch, getState) => {
-    let state = getState();
-    if (!state.groupName) {
-      let groupName = Cookies.get('groupName');
-      if (groupName) {
-        dispatch(UpdateGroupName(groupName));
-      }
-    }
-    if (!state.registrationToken) {
-      let token = Cookies.get('registrationToken');
-      if (token) {
-        dispatch(StoreRegistrationToken(token));
-      }
-    }
-  };
-};
-
-const resetTokenCookie = (token, expires) => {
-  expires = expires / 60 / 24;
-  if (token) {
-    if (Cookies.get('registrationToken', { path: '/' })) {
-      Cookies.erase('registrationToken', { path: '/' });
-    }
-    Cookies.set('registrationToken', token, { expires });
-  }
 };

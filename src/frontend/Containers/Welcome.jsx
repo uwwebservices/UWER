@@ -6,7 +6,6 @@ import background from 'Images/oragami.jpg';
 class Welcome extends Component {
   componentDidUpdate() {
     setTimeout(() => {
-      console.log(this.props.authenticated, this.props.registrationToken);
       if (!this.props.authenticated && this.props.registrationToken) {
         this.props.history.push('/register');
         return;

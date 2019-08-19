@@ -15,10 +15,11 @@ export default class Form extends React.Component {
   };
 
   render() {
+    let placeholder = this.props.netidAllowed || this.props.authenticated ? 'magstripe/rfid/netid' : 'magstripe/rfid';
     return (
       <form className="form" autoComplete="new-password" onSubmit={this.registerUser} id="addUserForm">
         <div className="registerForm">
-          <TextField autoFocus={true} type="password" autoComplete="off" name="registerCard" id="registerCard" disabled={this.props.formDisabled} />
+          <TextField autoFocus={true} type="password" autoComplete="off" placeholder={placeholder} name="registerCard" id="registerCard" disabled={this.props.formDisabled} />
           <Button variant="raised" className="addMemberButton" color="primary" type="submit" disabled={this.props.formDisabled}>
             Register
           </Button>
