@@ -10,7 +10,6 @@
     "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1",
     "PWSBASEURL": "https://wseval.s.uw.edu/identity/v2",
     "GROUPSBASEURL": "https://groups.uw.edu/group_sws/v3",
-
     "GROUPDISPLAYNAME": "UW Event Registration",
     "IDAAGROUPID": "u_agreement_idaa_idcardeventregistration",
     "IDAACHECK": "https://uwnetid.washington.edu/agree/?accept=idaa&appid=idcardeventregistration&appname=&appurl=",
