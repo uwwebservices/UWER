@@ -273,7 +273,7 @@ const Groups = {
       .sort((a, b) => b.timestamp - a.timestamp)
       .map((e, i) => ({
         UWNetID: e.description.match(/^add member: '(.*)'$/)[1],
-        Registered: new Date(e.timestamp).toLocaleString()
+        Registered: new Date(e.timestamp).toString()
       }));
 
     const merged = memberList.map(src => ({
