@@ -18,29 +18,74 @@ const Groups = {
     let certificate = await Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile);
     GroupsWebService.Setup(certificate, baseUrl);
   },
+
+  /**
+   * Checks if a group is marked as confidential
+   * @param group The full group name to check confidentiality
+   * @returns boolean
+   */
   async IsConfidentialGroup(group) {
     return (await this.GetGroupInfo(group)).classification === 'c';
   },
+
+  /**
+   * Gets full group info
+   * @param group The full group name to get info on
+   * @returns UWGroup
+   */
   async GetGroupInfo(group) {
     return (await GroupsWebService.Info([group]))[0];
   },
+
+  /**
+   * Add a member to a group
+   * @param group the short group name
+   * @returns boolean
+   */
   async AddMember(group, identifier) {
     let fullGroupName = getFullGroupName(group);
     return await GroupsWebService.AddMember(fullGroupName, identifier);
   },
+
+  /**
+   * Get members of a group
+   * @param group The full group name
+   * @param force Force GWS to use the registry
+   * @returns List of members
+   */
   async GetMembers(group, force = false) {
     return await GroupsWebService.GetMembers(group, false, force);
   },
-  // Must have member read permission on all subgroups (or no viewer restrictions)
+
+  /**
+   * Get effective members of a group (members of group members)
+   * Must have member read permission on all subgroups (or no viewer restrictions)
+   * @param group The full group name
+   * @returns List of members
+   */
   async GetEffectiveMembers(group, force = false) {
     return await GroupsWebService.GetMembers(group, true, force);
   },
 
+  /**
+   * Remove a member from a group
+   * @param group The short group name
+   * @param netid The netid to remove
+   * @returns boolean
+   */
   async RemoveMember(group, netid) {
     let fullGroupName = getFullGroupName(group);
     return GroupsWebService.RemoveMember(fullGroupName, netid, true);
   },
 
+  /**
+   * Create a new group
+   * @param group The short group name to create
+   * @param confidential If group should be confidential
+   * @param description The description of the new group
+   * @param email Should email be enabled?
+   * @returns boolean
+   */
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
@@ -53,6 +98,9 @@ const Groups = {
 
   /**
    * Return an array of subgroups from GWS
+   * @param {string} group
+   * @param {boolean} verbose
+   * @returns
    * Structure definition: {
    *   private: [gws classification field],
    *   description: [gws description field],
@@ -61,9 +109,6 @@ const Groups = {
    *   url: [gws url],
    *   name: [group id sans BASE_GROUP]
    * }
-   *
-   * @param {string} group
-   * @param {boolean} verbose
    */
   async SearchGroups(group = process.env.BASE_GROUP, verbose = false) {
     const groupList = await GroupsWebService.Search(group, 'all', `&type=direct&owner=${CONTROLLING_CERTIFICATE}`);
@@ -91,10 +136,24 @@ const Groups = {
       return groupList;
     }
   },
+
+  /**
+   * Delete a group
+   * @param group The short group name
+   * @returns boolean
+   */
   async DeleteGroup(group) {
-    let result = await GroupsWebService.Delete([group], true);
+    let fullGroupName = getFullGroupName(group);
+    let result = await GroupsWebService.Delete([fullGroupName], true);
     return result.length === 1;
   },
+
+  /**
+   * Get Membership History of group members
+   * @param memberList The members to get history for
+   * @param group The short group name
+   * @returns boolean
+   */
   async GetMemberHistory(memberList, group) {
     const membershipHistory = await GroupsWebService.GetHistory(getFullGroupName(group));
     const usefulMembershipHistory = membershipHistory

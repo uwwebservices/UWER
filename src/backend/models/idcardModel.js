@@ -18,6 +18,11 @@ const IDCard = {
     IDCardWebService.Setup(certificate, baseUrl);
   },
 
+  /**
+   * Do some basic checking to see if the present card is valid
+   * @param cardnum magstrip or rfid value to validate
+   * @returns boolean
+   */
   ValidCard(cardnum) {
     let card = { magstrip: '', rfid: '' };
     if (cardnum.length === 16) {
@@ -41,15 +46,31 @@ const IDCard = {
     }
   },
 
+  /**
+   * Gets a regid from a valid card magstrip/rfid
+   * @param card An object with magstrip and rfid strings
+   * @returns UWRegID
+   */
   async Get(card) {
     return await IDCardWebService.GetRegID(card.magstrip, card.rfid);
   },
 
+  /**
+   * Get user photo from RegID
+   * @param regid The user's regid
+   * @returns A buffer of a user's photo or the default user buffer
+   */
   async GetPhoto(regid) {
     const photo = await IDCardWebService.GetPhoto(regid);
     return photo !== null ? photo : DefaultUserBuffer;
   },
 
+  /**
+   * Get photos for a list of members
+   * @param groupName the groupname the user is a member of
+   * @param membersList The members to get photos for
+   * @returns List of members with photos added
+   */
   async GetManyPhotos(groupName, memberList) {
     for (let mem of memberList) {
       mem.Base64Image = await this.GetOnePhoto(groupName, mem.UWRegID);
@@ -57,6 +78,12 @@ const IDCard = {
     return memberList;
   },
 
+  /**
+   * Generate a url to proxy a photo
+   * @param groupName The short group name
+   * @param uwRegId The user to generate a photo for
+   * @returns boolean
+   */
   async GetOnePhoto(groupName, uwRegID) {
     return 'api' + API.GetMemberPhoto.replace(':group', groupName).replace(':identifier', uwRegID);
   }

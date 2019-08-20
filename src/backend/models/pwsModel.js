@@ -25,11 +25,23 @@ const PWS = {
     PersonWebService.Setup(certificate, baseUrl);
   },
 
+  /**
+   * Get info about a user
+   * @param identifier UWNetID/UWRegID of the user
+   * @param whitelist The fields to allow in the response
+   * @returns UserInfo
+   */
   async Get(identifier, whitelist) {
     let person = await PersonWebService.Get(identifier);
     return person === null ? defaultMember : FilterPWSModel(person, whitelist);
   },
 
+  /**
+   * Get info about many users
+   * @param memberList list of UWNetID/UWRegID to look up
+   * @param whitelist The fields to allow in the response
+   * @returns UserInfo[]
+   */
   async GetMany(memberList, whitelist) {
     let persons = [];
     try {
