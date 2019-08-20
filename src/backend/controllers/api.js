@@ -39,7 +39,7 @@ api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
 
   if (!validCard && !netidAllowed) {
     // invalid card, netid not allowed; alert the media
-    return res.sendStatus(403);
+    return res.sendStatus(404);
   }
 
   if (validCard) {

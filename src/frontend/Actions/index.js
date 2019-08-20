@@ -146,10 +146,6 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
-      if (res.status === 403) {
-        dispatch(FlashNotification('Card not found, UWNetID Registration is disabled.'));
-        return dispatch(DummyUserFail(displayId));
-      }
       if (res.status === 404) {
         dispatch(FlashNotification('User not found', 'Could not find the specified user.'));
         return dispatch(DummyUserFail(displayId));
