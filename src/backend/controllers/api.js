@@ -111,7 +111,7 @@ api.get(API.GetSubgroups, baseMiddleware, async (req, res) => {
 });
 
 api.delete(API.RemoveSubgroup, authMiddleware, async (req, res) => {
-  const deleted = await Groups.DeleteGroup(getFullGroupName(req.params.group));
+  const deleted = await Groups.DeleteGroup(req.params.group);
   return res.sendStatus(deleted ? 200 : 500);
 });
 
