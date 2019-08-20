@@ -1,12 +1,7 @@
 //@ts-check
-import { Certificate, PersonWebService } from 'ews-api-lib';
+import { PersonWebService } from 'ews-api-lib';
 
 const baseUrl = process.env.PWSBASEURL;
-const s3Bucket = process.env.S3BUCKET;
-const s3CertFile = process.env.S3CERTFILE;
-const s3CertKeyFile = process.env.S3CERTKEYFILE;
-const s3UWCAFile = process.env.S3UWCAFILE;
-const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 const defaultWhiteList = ['DisplayName', 'UWNetID', 'UWRegID', 'EduPersonAffiliations'];
 const defaultMember = { UWNetID: 'User Registered', DisplayName: 'Details Not Found', UWRegID: '' };
@@ -20,8 +15,7 @@ const FilterPWSModel = (model, whitelist = defaultWhiteList) => {
 };
 
 const PWS = {
-  async Setup() {
-    let certificate = await Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile);
+  async Setup(certificate) {
     PersonWebService.Setup(certificate, baseUrl);
   },
 
@@ -56,7 +50,5 @@ const PWS = {
     return filtered;
   }
 };
-
-PWS.Setup();
 
 export default PWS;

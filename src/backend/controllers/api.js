@@ -3,6 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import { API } from 'Routes';
+import { Certificate } from 'ews-api-lib';
 import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -10,6 +11,17 @@ let api = Router();
 
 const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
+const s3Bucket = process.env.S3BUCKET;
+const s3CertFile = process.env.S3CERTFILE;
+const s3CertKeyFile = process.env.S3CERTKEYFILE;
+const s3UWCAFile = process.env.S3UWCAFILE;
+const s3IncommonFile = process.env.S3INCOMMONFILE;
+
+Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile).then(certificate => {
+  PWS.Setup(certificate);
+  IDCard.Setup(certificate);
+  Groups.Setup(certificate);
+});
 
 api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {
   const settings = req.signedCookies.registrationToken;

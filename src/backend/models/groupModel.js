@@ -7,15 +7,9 @@ const BASE_GROUP = process.env.BASE_GROUP;
 const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
 
 const baseUrl = process.env.GROUPSBASEURL;
-const s3Bucket = process.env.S3BUCKET;
-const s3CertFile = process.env.S3CERTFILE;
-const s3CertKeyFile = process.env.S3CERTKEYFILE;
-const s3UWCAFile = process.env.S3UWCAFILE;
-const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 const Groups = {
-  async Setup() {
-    let certificate = await Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile);
+  async Setup(certificate) {
     GroupsWebService.Setup(certificate, baseUrl);
   },
 
@@ -172,7 +166,5 @@ const Groups = {
     return merged;
   }
 };
-
-Groups.Setup();
 
 export default Groups;
