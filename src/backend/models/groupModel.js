@@ -1,177 +1,54 @@
-import rp from 'request-promise';
-import fs from 'fs';
+//@ts-check
+import { Certificate, GroupsWebService } from 'ews-api-lib';
+import { getFullGroupName } from '../utils/helpers';
 
-const GROUPSBASEURL = process.env.GROUPSBASEURL;
-const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
-const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
-const INCOMMONFILE = process.env.INCOMMONFILE;
-const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
-const BASE_GROUP = process.env.BASE_GROUP;
 const CONTROLLING_CERTIFICATE = process.env.CONTROLLING_CERTIFICATE || 'integrations.event.uw.edu';
+const BASE_GROUP = process.env.BASE_GROUP;
+const GROUPDISPLAYNAME = process.env.GROUPDISPLAYNAME;
 
-const options = {
-  method: 'GET',
-  url: '',
-  json: true,
-  ca: [fs.readFileSync(INCOMMONFILE, { encoding: 'utf8' })],
-  agentOptions: {
-    pfx: fs.readFileSync(CERTIFICATEFILE),
-    passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf8' }).toString(),
-    securityOptions: 'SSL_OP_NO_SSLv3'
-  }
-};
-
-const SuccessResponse = (Payload, Status = 200) => {
-  return {
-    Status,
-    Payload
-  };
-};
-const ErrorResponse = ex => {
-  return {
-    Status: ex.statusCode,
-    Payload: ex.error.errors
-  };
-};
-
-// Takes a parent group and updates all subgroups non-destructively
-const FixSubgroups = async parent => {
-  let subgroups = (await Groups.SearchGroups(parent)).Payload;
-  for (let s of subgroups) {
-    if (s.id != parent) {
-      let data = await Groups.GetGroupInfo(s.id);
-      // Things to update go here
-      // Extend admins section to include integrations cert and parent group members
-      data.admins = [...data.admins, { type: 'dns', id: 'integrations.event.uw.edu' }, { type: 'group', id: parent }];
-      // Format into GWS body format
-      let body = { data };
-    }
-  }
-};
+const baseUrl = process.env.GROUPSBASEURL;
+const s3Bucket = process.env.S3BUCKET;
+const s3CertFile = process.env.S3CERTFILE;
+const s3CertKeyFile = process.env.S3CERTKEYFILE;
+const s3UWCAFile = process.env.S3UWCAFILE;
+const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 const Groups = {
+  async Setup() {
+    let certificate = await Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile);
+    GroupsWebService.Setup(certificate, baseUrl);
+  },
   async IsConfidentialGroup(group) {
     return (await this.GetGroupInfo(group)).classification === 'c';
   },
   async GetGroupInfo(group) {
-    let opts = Object.assign({}, options, {
-      method: 'GET',
-      url: `${GROUPSBASEURL}/group/${group}`
-    });
-    try {
-      let res = await rp(opts);
-      return res.data;
-    } catch (ex) {
-      throw ex;
-    }
-  },
-  // Updates a group with the provided body (see: fixSubgroups for usage)
-  async UpdateGroup(group, body) {
-    let opts = Object.assign({}, options, {
-      method: 'PUT',
-      headers: {
-        'If-Match': '*'
-      },
-      url: `${GROUPSBASEURL}/group/${group}`,
-      body
-    });
-    try {
-      let res = await rp(opts);
-      return true;
-    } catch (ex) {
-      console.log('ERROR MESSAGE', ex);
-      return false;
-    }
+    return (await GroupsWebService.Info([group]))[0];
   },
   async AddMember(group, identifier) {
-    let opts = Object.assign({}, options, {
-      method: 'PUT',
-      url: `${GROUPSBASEURL}/group/${group}/member/${identifier}`
-    });
-    try {
-      let res = await rp(opts);
-      if (res.errors[0].notFound.length > 0) {
-        return ErrorResponse({ statusCode: 404, error: { errors: 'User Not Found' } });
-      }
-      return SuccessResponse(res.errors[0], res.errors[0].status);
-    } catch (ex) {
-      return ErrorResponse(ex);
-    }
+    let fullGroupName = getFullGroupName(group);
+    return await GroupsWebService.AddMember(fullGroupName, identifier);
   },
   async GetMembers(group, force = false) {
-    let opts = Object.assign({}, options, {
-      url: `${GROUPSBASEURL}/group/${group}/member${force ? '?source=registry' : ''}`
-    });
-    try {
-      let res = await rp(opts);
-
-      return SuccessResponse(res.data, res.error);
-    } catch (ex) {
-      return ErrorResponse(ex);
-    }
+    return await GroupsWebService.GetMembers(group, false, force);
   },
-  // effective members gets all members of all groups
-  // must have member read permission on all subgroups (or no viewer restrictions)
+  // Must have member read permission on all subgroups (or no viewer restrictions)
   async GetEffectiveMembers(group, force = false) {
-    let opts = Object.assign({}, options, {
-      url: `${GROUPSBASEURL}/group/${group}/effective_member${force ? '?source=registry' : ''}`
-    });
-    try {
-      let res = await rp(opts);
+    return await GroupsWebService.GetMembers(group, true, force);
+  },
 
-      return SuccessResponse(res.data.map(u => u.id), res.error);
-    } catch (ex) {
-      return ErrorResponse(ex);
-    }
-  },
   async RemoveMember(group, netid) {
-    let opts = Object.assign({}, options, {
-      method: 'DELETE',
-      url: `${GROUPSBASEURL}/group/${group}/member/${netid}?synchronized=true`
-    });
-    try {
-      let res = await rp(opts);
-      return SuccessResponse(res.errors[0], res.errors[0].status);
-    } catch (ex) {
-      return ErrorResponse(ex);
-    }
+    let fullGroupName = getFullGroupName(group);
+    return GroupsWebService.RemoveMember(fullGroupName, netid, true);
   },
+
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential == 'false' ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
+    let fullGroupName = getFullGroupName(group);
 
     let admins = [{ id: CONTROLLING_CERTIFICATE, type: 'dns' }, { id: 'uw_event', type: 'group' }, { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }];
 
-    let opts = Object.assign({}, options, {
-      method: 'PUT',
-      url: `${GROUPSBASEURL}/group/${group}?synchronized=true`,
-      body: {
-        data: {
-          id: group,
-          displayName: GROUPDISPLAYNAME,
-          description,
-          admins,
-          readers,
-          classification
-        }
-      }
-    });
-
-    try {
-      let res = await rp(opts);
-      if (email === 'true') {
-        rp(
-          Object.assign({}, options, {
-            method: 'PUT',
-            url: `${GROUPSBASEURL}/group/${group}/affiliate/google?status=active&sender=member`
-          })
-        );
-      }
-      return SuccessResponse(res.data);
-    } catch (ex) {
-      console.log(ex);
-      return ErrorResponse(ex);
-    }
+    return await GroupsWebService.Create(fullGroupName, admins, readers, classification, GROUPDISPLAYNAME, description, true, email);
   },
 
   /**
@@ -188,88 +65,40 @@ const Groups = {
    * @param {string} group
    * @param {boolean} verbose
    */
-  async SearchGroups(group, verbose = false) {
-    let opts = Object.assign({}, options, {
-      method: 'GET',
-      url: `${GROUPSBASEURL}/search?name=${group}*&owner=${CONTROLLING_CERTIFICATE}&type=direct&scope=all`
-    });
+  async SearchGroups(group = process.env.BASE_GROUP, verbose = false) {
+    const groupList = await GroupsWebService.Search(group, 'all', `&type=direct&owner=${CONTROLLING_CERTIFICATE}`);
 
-    try {
-      let data = (await rp(opts)).data;
-      if (verbose) {
-        let verboseGroups = [];
-        await Promise.all(
-          data.map(async g => {
-            let vg = await this.GetGroupInfo(g.regid);
-            verboseGroups.push(vg);
-          })
-        );
-        verboseGroups = verboseGroups.map(vg => {
-          return {
-            private: vg.classification === 'c',
-            description: vg.description,
-            email: vg.affiliates.length > 1 ? `${vg.id}@uw.edu` : '',
-            display: vg.id.replace(BASE_GROUP, '').replace(/-/g, ' '),
-            url: `https://groups.uw.edu/group/${vg.id}`,
-            name: vg.id.replace(BASE_GROUP, '')
-          };
-        });
-        data = verboseGroups;
-      }
-      return SuccessResponse(
-        data.sort(function(a, b) {
-          return a.name < b.name;
+    if (verbose) {
+      let verboseGroups = [];
+      await Promise.all(
+        groupList.map(async g => {
+          let vg = await this.GetGroupInfo(g);
+          verboseGroups.push(vg);
         })
       );
-    } catch (ex) {
-      return ErrorResponse(ex);
+      verboseGroups = verboseGroups.map(vg => {
+        return {
+          private: vg.classification === 'c',
+          description: vg.description,
+          email: vg.affiliates.length > 1 ? `${vg.id}@uw.edu` : '',
+          display: vg.id.replace(BASE_GROUP, '').replace(/-/g, ' '),
+          url: `https://groups.uw.edu/group/${vg.id}`,
+          name: vg.id.replace(BASE_GROUP, '')
+        };
+      });
+      return verboseGroups;
+    } else {
+      return groupList;
     }
   },
   async DeleteGroup(group) {
-    let opts = Object.assign({}, options, {
-      method: 'DELETE',
-      url: `${GROUPSBASEURL}/group/${group}?synchronized=true`
-    });
-    try {
-      let res = await rp(opts);
-      return SuccessResponse(res.errors[0], res.errors[0].status);
-    } catch (ex) {
-      return ErrorResponse(ex);
-    }
-  },
-  async GetHistory(group) {
-    let history = [];
-    let start = 0;
-    let fetchHistory = true;
-    let res;
-
-    while (fetchHistory) {
-      let opts = Object.assign({}, options, {
-        url: `${GROUPSBASEURL}/group/${group}/history?activity=membership&order=a&start=${start}`
-      });
-      try {
-        res = await rp(opts);
-
-        // Breakout if no data available
-        if (!res || !res.data || res.data.length == 0) {
-          fetchHistory = false;
-          break;
-        }
-
-        history = history.concat(res.data);
-        start = res.data.reduce((prev, current) => {
-          return prev > current.timestamp ? prev : current.timestamp + 1;
-        }, start);
-      } catch (ex) {
-        return ErrorResponse(ex);
-      }
-    }
-
-    return SuccessResponse(history, res.error);
+    let result = await GroupsWebService.Delete([group], true);
+    return result.length === 1;
   },
   async GetMemberHistory(memberList, group) {
-    const membershipHistory = await this.GetHistory(group, memberList.length);
-    const usefulMembershipHistory = membershipHistory.Payload.filter((e, i) => e && e.description && e.description.indexOf('add member') !== -1)
+    const membershipHistory = await GroupsWebService.GetHistory(getFullGroupName(group));
+    const usefulMembershipHistory = membershipHistory
+      .filter((e, i) => e && e.description && e.description.indexOf('add member') !== -1)
       .sort((a, b) => b.timestamp - a.timestamp)
       .map((e, i) => ({
         UWNetID: e.description.match(/^add member: '(.*)'$/)[1],
@@ -284,5 +113,7 @@ const Groups = {
     return merged;
   }
 };
+
+Groups.Setup();
 
 export default Groups;

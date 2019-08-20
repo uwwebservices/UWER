@@ -1,18 +1,19 @@
+//@ts-check
 import { Certificate, IDCardWebService } from 'ews-api-lib';
 import { API } from '../routes';
 import DefaultUser from 'Assets/defaultUser';
+
+const baseUrl = process.env.IDCARDBASEURL;
+const s3Bucket = process.env.S3BUCKET;
+const s3CertFile = process.env.S3CERTFILE;
+const s3CertKeyFile = process.env.S3CERTKEYFILE;
+const s3UWCAFile = process.env.S3UWCAFILE;
+const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 const DefaultUserBuffer = new Buffer.from(DefaultUser.replace('data:image/jpeg;base64,', ''), 'base64');
 
 const IDCard = {
   async Setup() {
-    const baseUrl = process.env.IDCARDBASEURL;
-    let s3Bucket = process.env.S3BUCKET;
-    let s3CertFile = process.env.S3CERTFILE;
-    let s3CertKeyFile = process.env.S3CERTKEYFILE;
-    let s3UWCAFile = process.env.S3UWCAFILE;
-    let s3IncommonFile = process.env.S3INCOMMONFILE;
-
     let certificate = await Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile);
     IDCardWebService.Setup(certificate, baseUrl);
   },
