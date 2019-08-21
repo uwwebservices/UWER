@@ -61,7 +61,7 @@ app.post(
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true }),
   async (req, res, next) => {
     // admins are the effective members of the base group
-    let admins = (await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1))).Payload;
+    let admins = await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1));
 
     if (admins && admins.indexOf(req.user.UWNetID) > -1) {
       next();
