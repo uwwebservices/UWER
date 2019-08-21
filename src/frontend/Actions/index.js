@@ -83,7 +83,13 @@ export const CreateGroup = (group, confidential = true, description, email) => {
       description,
       email
     };
-    let res = await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'POST', body: JSON.stringify(body) });
+    let res = await APIRequestWithAuth(`/api/subgroups/${group}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     return res.status === 200;
   };
 };

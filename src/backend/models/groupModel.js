@@ -81,7 +81,7 @@ const Groups = {
    * @returns boolean
    */
   async CreateGroup(group, confidential, description, email) {
-    let classification = confidential == 'false' ? 'u' : 'c';
+    let classification = confidential === false ? 'u' : 'c';
     let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
     let fullGroupName = getFullGroupName(group);
 
