@@ -78,7 +78,12 @@ const APIRequestWithAuth = async (url, opts) => {
 
 export const CreateGroup = (group, confidential = true, description, email) => {
   return async dispatch => {
-    let res = await APIRequestWithAuth(`/api/subgroups/${group}?confidential=${confidential}&description=${description}&email=${email}`, { method: 'POST' });
+    let body = {
+      confidential,
+      description,
+      email
+    };
+    let res = await APIRequestWithAuth(`/api/subgroups/${group}`, { method: 'POST', body: JSON.stringify(body) });
     return res.status === 200;
   };
 };

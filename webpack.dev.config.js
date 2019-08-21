@@ -27,8 +27,24 @@ module.exports = function(env) {
             babelrc: true
           }
         },
-        { test: /\.css$/, loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]' },
-        { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader' },
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 1,
+                modules: {
+                  localIdentName: '[name]_[local]_[hash:base64:5]'
+                }
+              }
+            }
+          ]
+        },
+        { test: /\.scss$/, use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }] },
         {
           test: /\.(png|jp(e*)g)$/,
           use: [

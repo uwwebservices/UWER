@@ -32,7 +32,22 @@ module.exports = {
   module: {
     rules: [
       { test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/, query: { presets: ['react'] } },
-      { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]'], exclude: /node_modules/ },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: {
+                localIdentName: '[name]_[local]_[hash:base64:5]'
+              }
+            }
+          }
+        ],
+        exclude: /node_modules/
+      },
       { test: /\.scss$/, use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'], exclude: /node_modules/ },
       {
         test: /\.(png|jp(e*)g)$/,
