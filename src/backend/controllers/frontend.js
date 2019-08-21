@@ -66,7 +66,7 @@ app.post(
     if (admins && admins.indexOf(req.user.UWNetID) > -1) {
       next();
     } else {
-      console.log(`User ${req.user.UWNetID} is not in the admins group, redirect to homepage and log out`);
+      console.log(`User ${req.user.UWNetID} is not in the ${BASE_GROUP.slice(0, -1)} group, admins: ${JSON.stringify(admins)}`);
       req.logout();
       res.redirect(Routes.NotAuthorized);
     }
