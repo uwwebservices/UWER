@@ -62,7 +62,7 @@ app.post(
   async (req, res, next) => {
     // admins are the effective members of the base group
     let admins = await Groups.GetEffectiveMembers(BASE_GROUP.slice(0, -1));
-
+    admins = admins.map(admin => admin.id);
     if (admins && admins.indexOf(req.user.UWNetID) > -1) {
       next();
     } else {
