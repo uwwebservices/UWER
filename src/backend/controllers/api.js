@@ -3,6 +3,7 @@ import Groups from 'models/groupModel';
 import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import { API } from 'Routes';
+import { Certificate } from 'ews-api-lib';
 import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
@@ -10,6 +11,17 @@ let api = Router();
 
 const IDAACHECK = process.env.IDAACHECK;
 const IDAAGROUPID = process.env.IDAAGROUPID;
+const s3Bucket = process.env.S3BUCKET;
+const s3CertFile = process.env.S3CERTFILE;
+const s3CertKeyFile = process.env.S3CERTKEYFILE;
+const s3UWCAFile = process.env.S3UWCAFILE;
+const s3IncommonFile = process.env.S3INCOMMONFILE;
+
+Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile).then(certificate => {
+  PWS.Setup(certificate);
+  IDCard.Setup(certificate);
+  Groups.Setup(certificate);
+});
 
 api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {
   const settings = req.signedCookies.registrationToken;
@@ -25,25 +37,20 @@ api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {
     return res.status(200).json(response);
   }
 
-  let result = await Groups.GetMembers(getFullGroupName(groupName));
-  let members = await PWS.GetMany(result.Payload);
+  let groupMembers = await Groups.GetMembers(getFullGroupName(groupName));
+  let members = await PWS.GetMany(groupMembers);
   let verbose = await IDCard.GetManyPhotos(groupName, members);
   response.members = verbose;
-  return res.status(result.Status).json(response);
+  return res.status(200).json(response);
 });
 
 api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
-  const settings = req.signedCookies.registrationToken;
+  let { groupName, netidAllowed, confidential, privGrpVis } = req.signedCookies.registrationToken;
   let identifier = req.body.identifier;
-  let displayId = req.body.displayId;
   let validCard = IDCard.ValidCard(identifier);
-  let groupName = settings.groupName;
-  let netidAllowed = settings.netidAllowed;
-  let confidential = settings.confidential;
-  let privGrpVis = settings.privGrpVis;
 
   if (!validCard && !netidAllowed) {
-    // if not a valid card and netid auth not allowed, 404
+    // invalid card, netid not allowed; alert the media
     return res.sendStatus(404);
   }
 
@@ -52,20 +59,19 @@ api.put(API.RegisterMember, authOrTokenMiddleware, async (req, res) => {
     identifier = (await PWS.Get(identifier)).UWNetID;
   }
 
-  let result = await Groups.AddMember(getFullGroupName(groupName), identifier);
-  if (result.Status === 200) {
+  let added = await Groups.AddMember(groupName, identifier);
+  if (!added) {
+    result.sendStatus(500);
+  } else {
     let user = await PWS.Get(identifier);
-    user.displayId = displayId;
+    user.displayId = req.body.displayId;
     user.Base64Image = await IDCard.GetOnePhoto(groupName, user.UWRegID);
 
     // Adjust the response if the group is confidential and we shouldn't show participants
     if (confidential && !privGrpVis) {
       user = {};
     }
-
-    res.status(result.Status).json(user);
-  } else {
-    res.sendStatus(result.Status);
+    res.status(200).json(user);
   }
 });
 
@@ -107,27 +113,23 @@ api.get(API.Logout, (req, res) => {
 });
 
 api.delete(API.RemoveMember, authMiddleware, async (req, res) => {
-  let result = await Groups.RemoveMember(getFullGroupName(req.params.group), req.params.identifier);
-  return res.status(result.Status).json(result.Payload);
+  let deleted = await Groups.RemoveMember(req.params.group, req.params.identifier);
+  return res.sendStatus(deleted ? 200 : 500);
 });
 
 api.get(API.GetSubgroups, baseMiddleware, async (req, res) => {
-  let result = await Groups.SearchGroups(getFullGroupName(''), true);
-  return res.status(result.Status).json(result.Payload);
+  let subgroups = await Groups.SearchGroups(process.env.BASE_GROUP, true);
+  return res.status(200).json(subgroups);
 });
 
 api.delete(API.RemoveSubgroup, authMiddleware, async (req, res) => {
-  let result = await Groups.DeleteGroup(getFullGroupName(req.params.group));
-  return res.status(result.Status).json(result.Payload);
+  const deleted = await Groups.DeleteGroup(req.params.group);
+  return res.sendStatus(deleted ? 200 : 500);
 });
 
 api.post(API.CreateGroup, baseMiddleware, async (req, res) => {
-  let confidential = req.query.confidential;
-  let description = req.query.description;
-  let email = req.query.email;
-
-  let result = await Groups.CreateGroup(getFullGroupName(req.params.group), confidential, description, email);
-  return res.status(result.Status).json(result.Payload);
+  let created = await Groups.CreateGroup(req.params.group, req.body.confidential, req.body.description, req.body.email);
+  return res.sendStatus(created ? 200 : 500);
 });
 
 api.get(API.CheckAuth, async (req, res) => {
@@ -143,13 +145,13 @@ api.get(API.CheckAuth, async (req, res) => {
 
     if (!IAAAgreed) {
       let found = false;
-      let members = (await Groups.GetMembers(IDAAGROUPID)).Payload;
+      let members = await Groups.GetMembers(IDAAGROUPID);
       if (members.find(u => u.id === req.user.UWNetID)) {
         found = true;
       }
 
       if (!found) {
-        members = (await Groups.GetMembers(IDAAGROUPID, true)).Payload;
+        members = await Groups.GetMembers(IDAAGROUPID, true);
         if (members.find(u => u.id === req.user.UWNetID)) {
           found = true;
         }
@@ -167,11 +169,10 @@ api.get(API.CheckAuth, async (req, res) => {
 });
 
 api.get(API.CSV, authMiddleware, async (req, res) => {
-  const fullGroupName = getFullGroupName(req.params.group);
-  let members = await Groups.GetMembers(fullGroupName);
+  let members = await Groups.GetMembers(getFullGroupName(req.params.group));
   let csvWhitelist = ['DisplayName', 'UWNetID', 'UWRegID'];
-  let verboseMembers = await PWS.GetMany(members.Payload, csvWhitelist);
-  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, fullGroupName);
+  let verboseMembers = await PWS.GetMany(members, csvWhitelist);
+  let mergedMembers = await Groups.GetMemberHistory(verboseMembers, req.params.group);
   res.csv(mergedMembers, true);
 });
 

@@ -9,6 +9,8 @@ COPY package.json .
 
 # ---- Dependencies ----
 FROM base AS dependencies
+# install git to pull down ews-api-lib
+RUN apk update && apk upgrade && apk add --no-cache git
 # install node packages
 RUN npm set progress=false && npm config set depth 0
 RUN npm install --only=production 

@@ -1,30 +1,22 @@
-import request from 'request';
-import rp from 'request-promise';
-import fs from 'fs';
-import DefaultUser from 'Assets/defaultUser';
+//@ts-check
+import { Certificate, IDCardWebService } from 'ews-api-lib';
 import { API } from '../routes';
+import DefaultUser from 'Assets/defaultUser';
 
-const CERTIFICATEFILE = process.env.CERTIFICATEFILE;
-const PASSPHRASEFILE = process.env.PASSPHRASEFILE;
-const IDCARDBASEURL = process.env.IDCARDBASEURL;
-const PHOTOBASEURL = process.env.PHOTOBASEURL;
+const baseUrl = process.env.IDCARDBASEURL;
 
 const DefaultUserBuffer = new Buffer.from(DefaultUser.replace('data:image/jpeg;base64,', ''), 'base64');
 
-const options = {
-  method: 'GET',
-  url: '',
-  agentOptions: {
-    pfx: fs.readFileSync(CERTIFICATEFILE),
-    passphrase: fs.readFileSync(PASSPHRASEFILE, { encoding: 'utf8' }).toString(),
-    securityOptions: 'SSL_OP_NO_SSLv3',
-    simple: false,
-    resolveWithFullResponse: true
-  },
-  json: true
-};
-
 const IDCard = {
+  async Setup(certificate) {
+    IDCardWebService.Setup(certificate, baseUrl);
+  },
+
+  /**
+   * Do some basic checking to see if the present card is valid
+   * @param cardnum magstrip or rfid value to validate
+   * @returns boolean
+   */
   ValidCard(cardnum) {
     let card = { magstrip: '', rfid: '' };
     if (cardnum.length === 16) {
@@ -47,47 +39,47 @@ const IDCard = {
       return false;
     }
   },
-  async Get(card) {
-    let opts = Object.assign({}, options, {
-      url: `${IDCARDBASEURL}?mag_strip_code=${card.magstrip}&prox_rfid=${card.rfid}`
-    });
-    try {
-      let res = await rp(opts);
 
-      // Not doing anything with this info yet, but catching the difference
-      if (res.Current.MagStripCode === card.magstrip.toString() || res.Current.ProxRFID === card.rfid.toString()) {
-        //console.log("NO REDIRECT");
-      } else {
-        //console.log("REDIRECTED")
-      }
-      return res.Cards[0].RegID;
-    } catch (ex) {
-      console.log('GetCard Error', ex);
-      return '';
-    }
+  /**
+   * Gets a regid from a valid card magstrip/rfid
+   * @param card An object with magstrip and rfid strings
+   * @returns UWRegID
+   */
+  async Get(card) {
+    return await IDCardWebService.GetRegID(card.magstrip, card.rfid);
   },
+
+  /**
+   * Get user photo from RegID
+   * @param regid The user's regid
+   * @returns A buffer of a user's photo or the default user buffer
+   */
+  async GetPhoto(regid) {
+    const photo = await IDCardWebService.GetPhoto(regid);
+    return photo !== null ? photo : DefaultUserBuffer;
+  },
+
+  /**
+   * Get photos for a list of members
+   * @param groupName the groupname the user is a member of
+   * @param membersList The members to get photos for
+   * @returns List of members with photos added
+   */
   async GetManyPhotos(groupName, memberList) {
     for (let mem of memberList) {
       mem.Base64Image = await this.GetOnePhoto(groupName, mem.UWRegID);
     }
     return memberList;
   },
+
+  /**
+   * Generate a url to proxy a photo
+   * @param groupName The short group name
+   * @param uwRegId The user to generate a photo for
+   * @returns boolean
+   */
   async GetOnePhoto(groupName, uwRegID) {
     return 'api' + API.GetMemberPhoto.replace(':group', groupName).replace(':identifier', uwRegID);
-  },
-  async GetPhoto(regid) {
-    let opts = Object.assign({}, options, {
-      url: `${PHOTOBASEURL}/${regid}-medium.jpg`,
-      encoding: null
-    });
-
-    try {
-      let res = await rp(opts);
-      return new Buffer.from(res);
-    } catch (ex) {
-      console.log(`Error fetching photo: ${ex}`);
-      return DefaultUserBuffer;
-    }
   }
 };
 
