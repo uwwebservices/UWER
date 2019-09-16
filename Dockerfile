@@ -30,6 +30,7 @@ COPY --from=dependencies /www/prod_node_modules /www/node_modules
 # copy only the things we need for production
 COPY --from=dependencies /www/dist /www/dist
 COPY --from=dependencies /www/config_base /www/config_base
+COPY sp-key.pem /www/config/sp-key-test.pem
 
 EXPOSE 1111
 CMD npm start
