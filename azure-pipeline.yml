@@ -38,7 +38,7 @@ steps:
       overWrite: true
       sourceFolder: '$(Agent.TempDirectory)'
       contents: 'sp-key.pem'
-      targetFolder: '$(Build.SourcesDirectory)/www/config/'
+      targetFolder: '$(Build.SourcesDirectory)/www/config/sp-key'
 
   # Build the docker image
   - task: Docker@0
