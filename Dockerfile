@@ -31,5 +31,8 @@ COPY --from=dependencies /www/prod_node_modules /www/node_modules
 COPY --from=dependencies /www/dist /www/dist
 COPY --from=dependencies /www/config_base /www/config_base
 
+# sp-key.pem is injected by Azure DevOps, copy it to a better location
+COPY sp-key.pem /www/config/sp-key.pem
+
 EXPOSE 1111
 CMD npm start
