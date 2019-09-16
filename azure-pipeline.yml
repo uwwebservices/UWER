@@ -29,7 +29,7 @@ steps:
   - task: DownloadSecureFile@1
     displayName: 'Download sp-key file'
     inputs:
-      secureFile: 'sp-key.pem'
+      secureFile: 'sp-key-test.pem'
 
     # Copy files from source folder to target folder using match patterns (The match patterns will only match file paths, not folder paths)
   - task: CopyFiles@2
@@ -37,8 +37,8 @@ steps:
     inputs:
       overWrite: true
       sourceFolder: '$(Agent.TempDirectory)'
-      contents: 'sp-key.pem'
-      targetFolder: '$(Build.SourcesDirectory)/www/config/sp-key/test'
+      contents: 'sp-key-test.pem'
+      targetFolder: '$(Build.SourcesDirectory)/dist'
 
   # Build the docker image
   - task: Docker@0
