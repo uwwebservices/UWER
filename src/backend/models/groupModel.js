@@ -107,6 +107,10 @@ const Groups = {
   async SearchGroups(group = process.env.BASE_GROUP, verbose = false) {
     const groupList = await GroupsWebService.Search(group, 'all', `&type=direct&owner=${CONTROLLING_CERTIFICATE}`);
 
+    // GWS sometimes returns the base group in the results with this type of query, lets remove that
+    const basegroupidx = groupList.indexOf(group.slice(0, -1));
+    groupList.splice(groupList.indexOf(basegroupidx), 1);
+
     if (verbose) {
       let verboseGroups = [];
       await Promise.all(
