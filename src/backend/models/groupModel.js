@@ -1,5 +1,5 @@
 //@ts-check
-import { Certificate, GroupsWebService } from 'ews-api-lib';
+import { GroupsWebService } from 'ews-api-lib';
 import { getFullGroupName } from '../utils/helpers';
 
 const CONTROLLING_CERTIFICATE = process.env.CONTROLLING_CERTIFICATE || 'integrations.event.uw.edu';

@@ -1,11 +1,11 @@
 //@ts-check
 import { Certificate, IDCardWebService } from 'ews-api-lib';
 import { API } from '../routes';
-import DefaultUser from 'Assets/defaultUser';
+import DefaultUser from '../assets/defaultUser';
 
 const baseUrl = process.env.IDCARDBASEURL;
 
-const DefaultUserBuffer = new Buffer.from(DefaultUser.replace('data:image/jpeg;base64,', ''), 'base64');
+const DefaultUserBuffer = Buffer.from(DefaultUser.replace('data:image/jpeg;base64,', ''), 'base64');
 
 const IDCard = {
   async Setup(certificate) {
