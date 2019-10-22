@@ -109,7 +109,9 @@ const Groups = {
 
     // GWS sometimes returns the base group in the results with this type of query, lets remove that
     const basegroupidx = groupList.indexOf(group.slice(0, -1));
-    groupList.splice(basegroupidx, 1);
+    if (basegroupidx !== -1) {
+      groupList.splice(basegroupidx, 1);
+    }
 
     if (verbose) {
       let verboseGroups = [];
