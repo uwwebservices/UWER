@@ -8,12 +8,17 @@ import api from 'controllers/api';
 import frontend from 'controllers/frontend';
 import MemoryStore from 'memorystore';
 import session from 'express-session';
+import responseTime from 'response-time';
 import passport from 'passport';
 import saml from 'passport-saml';
 import helmet from 'helmet';
+import metrics from './metrics';
 
 const NODE_ENV = process.env.NODE_ENV;
 const SECRET_KEY = process.env.SESSIONKEY || 'development';
+const BASE_GROUP = process.env.BASE_GROUP;
+const GRAPHITE_HOSTNAME = process.env.GRAPHITE_HOSTNAME || '';
+const GRAPHITE_PREFIX = process.env.GRAPHITE_PREFIX || 'test';
 
 let app = express();
 
@@ -74,6 +79,17 @@ if (NODE_ENV === 'production') {
     next();
   });
 }
+
+// Metrics; needs to come before morgan is setup
+const metricService = 'uwer';
+const metricInstance = BASE_GROUP.replace('uw_event_', '').replace(/_$/, '');
+metrics.Setup(GRAPHITE_HOSTNAME, GRAPHITE_PREFIX, metricService, metricInstance);
+metrics.IntervalFlush();
+app.use(
+  responseTime(function(req, res, time) {
+    metrics.Push(time);
+  })
+);
 
 // Log formatting
 app.use(
