@@ -18,7 +18,7 @@ const NODE_ENV = process.env.NODE_ENV;
 const SECRET_KEY = process.env.SESSIONKEY || 'development';
 const BASE_GROUP = process.env.BASE_GROUP;
 const GRAPHITE_HOSTNAME = process.env.GRAPHITE_HOSTNAME || '';
-const GRAPHITE_PREFIX = process.env.GRAPHITE_PREFIX || 'test';
+const GRAPHITE_PREFIX = process.env.GRAPHITE_PREFIX !== undefined ? process.env.GRAPHITE_PREFIX : 'test';
 
 let app = express();
 
