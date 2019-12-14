@@ -1,5 +1,5 @@
 //@ts-check
-import { Certificate, GroupsWebService } from 'ews-api-lib';
+import { GroupsWebService } from 'ews-api-lib';
 import { getFullGroupName } from '../utils/helpers';
 
 const CONTROLLING_CERTIFICATE = process.env.CONTROLLING_CERTIFICATE || 'integrations.event.uw.edu';
@@ -74,15 +74,15 @@ const Groups = {
 
   /**
    * Create a new group
-   * @param group The short group name to create
-   * @param confidential If group should be confidential
-   * @param description The description of the new group
-   * @param email Should email be enabled?
+   * @param {string} group The short group name to create
+   * @param {boolean} confidential If group should be confidential
+   * @param {string} description The description of the new group
+   * @param {boolean} email Should email be enabled?
    * @returns boolean
    */
   async CreateGroup(group, confidential, description, email) {
     let classification = confidential === false ? 'u' : 'c';
-    let readers = confidential == 'false' ? [] : [{ type: 'set', id: 'none' }];
+    let readers = confidential === false ? [] : [{ type: 'set', id: 'none' }];
     let fullGroupName = getFullGroupName(group);
 
     let admins = [{ id: CONTROLLING_CERTIFICATE, type: 'dns' }, { id: 'uw_event', type: 'group' }, { id: BASE_GROUP.substring(0, BASE_GROUP.length - 1), type: 'group' }];
@@ -106,6 +106,12 @@ const Groups = {
    */
   async SearchGroups(group = process.env.BASE_GROUP, verbose = false) {
     const groupList = await GroupsWebService.Search(group, 'all', `&type=direct&owner=${CONTROLLING_CERTIFICATE}`);
+
+    // GWS sometimes returns the base group in the results with this type of query, lets remove that
+    const basegroupidx = groupList.indexOf(group.slice(0, -1));
+    if (basegroupidx !== -1) {
+      groupList.splice(basegroupidx, 1);
+    }
 
     if (verbose) {
       let verboseGroups = [];

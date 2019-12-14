@@ -7,6 +7,8 @@
     "PORT": 1111,
     "BASE_GROUP": "uw_event_ws-eval_",
     "SESSIONKEY": "development",
+    "GRAPHITE_HOSTNAME": "it-wsapp1.s.uw.edu",
+    "GRAPHITE_PREFIX": "test",
     "IDCARDBASEURL": "https://wseval.s.uw.edu/idcard/v1",
     "PWSBASEURL": "https://wseval.s.uw.edu/identity/v2",
     "GROUPSBASEURL": "https://groups.uw.edu/group_sws/v3",
