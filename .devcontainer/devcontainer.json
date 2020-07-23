@@ -1,0 +1,32 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/javascript-node-10
+{
+	"name": "UWER",
+	"dockerFile": "Dockerfile",
+	
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"ms-azuretools.vscode-docker"
+	],
+
+	"runArgs": [
+		"-p",
+		"1111:1111",
+		"-v",
+		"${env:HOME}${env:USERPROFILE}/.ssh:/node/.ssh-localhost:ro",
+		"-v",
+		"${env:HOME}${env:USERPROFILE}/.aws:/node/.aws-localhost:ro"
+	],
+
+	"postCreateCommand": "mkdir -p $HOME/.ssh && cp -r /node/.ssh-localhost/* $HOME/.ssh && chmod 700 $HOME/.ssh && chmod 600 $HOME/.ssh/* && mkdir -p $HOME/.aws && cp -r /node/.aws-localhost/* $HOME/.aws && chmod 700 $HOME/.aws && chmod 600 $HOME/.aws/*",
+
+	// Uncomment to connect as a non-root user. See https://aka.ms/node-remote/containers/non-root.
+	"remoteUser": "node"
+}
