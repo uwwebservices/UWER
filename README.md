@@ -21,3 +21,6 @@ In order to develop with VSCode in containers, you should download the [Remote -
 1. Clone repo
 2. Open repo in container, vscode should notify you asking if you want to open in the container.
 3. Once open in the container run `npm install`, then `npm run dev`.
+
+**To debug**
+1. Run via Debug tab, use config `Run Script: dev` from `.vscode\launch.json`
