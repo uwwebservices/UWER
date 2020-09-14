@@ -91,7 +91,7 @@ api.get(API.GetToken, authMiddleware, async (req, res) => {
   const tokenTTL = req.query.tokenTTL;
   const expiry = now.setMinutes(now.getMinutes() + +tokenTTL);
   const token = { user, groupName, confidential, netidAllowed, privGrpVis, expiry };
-  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (+tokenTTL + 30) * 60 * 1000 });
+  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: +tokenTTL * 60 * 1000 });
 
   return res.sendStatus(200);
 });
