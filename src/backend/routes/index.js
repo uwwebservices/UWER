@@ -8,6 +8,7 @@ export const API = {
   RemoveSubgroup: '/subgroups/:group',
   CreateGroup: '/subgroups/:group',
   CheckAuth: '/checkAuth',
+  CheckToken: '/checkToken',
   CSV: '/csv/:group.csv',
   GetToken: '/getToken',
   Logout: '/logout'

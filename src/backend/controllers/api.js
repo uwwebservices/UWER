@@ -4,7 +4,7 @@ import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import { API } from 'Routes';
 import { Certificate } from 'ews-api-lib';
-import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
+import { authMiddleware, authOrTokenMiddleware, tokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
 let api = Router();
@@ -21,6 +21,13 @@ Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3Inco
   PWS.Setup(certificate);
   IDCard.Setup(certificate);
   Groups.Setup(certificate);
+});
+
+// Endpoint to check the registration token
+// If the token is still valid, 200 is returned.
+// If not valid, 401 Unauthroized is returned.
+api.get(API.CheckToken, tokenMiddleware, (req, res) => {
+  return res.sendStatus(200);
 });
 
 api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {

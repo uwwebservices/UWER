@@ -63,6 +63,14 @@ const ensureAuthOrToken = (req, res, next) => {
   }
 };
 
+const ensureToken = (req, res, next) => {
+  if (verifyAuthToken(req)) {
+    return next();
+  } else {
+    res.sendStatus(401);
+  }
+};
+
 const verifyAuthToken = req => {
   if (!req.signedCookies.registrationToken) {
     return false;
@@ -114,6 +122,8 @@ export const FilterModel = (model, whitelist) => {
 };
 
 export const authOrTokenMiddleware = [ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName];
+
+export const tokenMiddleware = [ensureToken, requestSettingsOverrides, ensureValidGroupName];
 
 export const authMiddleware = [ensureAPIAuth, ensureValidGroupName];
 

@@ -17,21 +17,34 @@ class Register extends Component {
       loadedUsers: false
     };
   }
+
+  intervalId = 0;
+
   async componentDidMount() {
     if (!this.state.loadedUsers) {
       await this.props.loadUsers();
       this.setState({ loadedUsers: true });
     }
-  }
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    setTimeout(() => {
-      if (!this.props.authenticated && !this.props.token) {
-        if (!Cookies.get('registrationToken')) {
-          this.props.history.push('/');
-        }
-      }
-    }, 0);
 
+    this.intervalId = setInterval(async () => {
+      let res = await fetch('/api/checkToken', {
+        method: 'GET',
+        credentials: 'same-origin'
+      });
+
+      console.log('CheckToken call: ' + res.status);
+
+      if (res.status === 401) {
+        this.endRegistration();
+      }
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.users.length === 0 || prevProps.users.length !== this.props.users.length) {
       this.registerCardFocus();
     }
