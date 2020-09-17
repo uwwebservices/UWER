@@ -123,6 +123,8 @@ export const LoadUsers = () => {
       let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
 
+      dispatch(CheckToken());
+
       state = getState();
       // only receive the users for the selected group
       // if a user switches groups a bunch, we can't cancel the API calls
@@ -152,6 +154,9 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
+
+      dispatch(CheckToken());
+
       if (res.status === 404) {
         dispatch(FlashNotification('User not found', 'Could not find the specified user.'));
         return dispatch(DummyUserFail(displayId));
@@ -216,6 +221,19 @@ export const CheckAuthentication = () => {
     } catch (ex) {
       dispatch(Authenticated(false, false));
     }
+  };
+};
+
+// Checks for registration token authentication
+// Sets registrationToken bool in redux state based on response
+export const CheckToken = () => {
+  return async (dispatch) => {
+    let res = await fetch('/api/checkToken', {
+      method: 'GET',
+      credentials: 'same-origin'
+    });
+
+    dispatch(StoreRegistrationToken(res.status === 200));
   };
 };
 

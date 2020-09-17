@@ -25,7 +25,7 @@ Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3Inco
 
 // Endpoint to check the registration token
 // If the token is still valid, 200 is returned.
-// If not valid, 401 Unauthroized is returned.
+// If not valid, tokenMiddleware returns 401 Unauthroized.
 api.get(API.CheckToken, tokenMiddleware, (req, res) => {
   return res.sendStatus(200);
 });
