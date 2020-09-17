@@ -16,10 +16,14 @@ class Authorization extends React.Component {
     const { loginRequired, tokenRequired, authenticated, registrationToken, iaaAuth, iaaCheck, iaaRequired, children, path, resetState } = this.props;
 
     if (authenticated !== null && iaaAuth !== null) {
-      // If we navigate and are not authenticated but have a token, go back to register
+      // If we navigate to /config, are not authenticated, have no token, go back to /
       if (tokenRequired && !authenticated && !registrationToken) {
-        console.log('tokenRequired');
         window.location = `/`;
+      }
+
+      // If we navigate to /config, are not authenticated, but have a token, go back to /register
+      if (loginRequired && !authenticated && registrationToken) {
+        window.location = `/register`;
       }
 
       if (loginRequired && !authenticated && !registrationToken) {
