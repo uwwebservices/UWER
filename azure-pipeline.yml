@@ -43,7 +43,7 @@ steps:
   # Remove dangling docker images
   - task: CmdLine@2
     inputs:
-      script: 'docker image prune'
+      script: 'docker image prune -f'
 
   # Build the docker image
   - task: Docker@0
