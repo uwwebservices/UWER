@@ -40,12 +40,6 @@ steps:
       contents: 'sp-key.pem'
       targetFolder: '$(Build.SourcesDirectory)'
 
-  # Remove dangling docker images
-  - task: Docker@2
-    displayName: 'Remove dangling docker images'
-    inputs:
-      command: 'image prune'
-
   # Build the docker image
   - task: Docker@0
     displayName: 'Build docker image'
