@@ -42,6 +42,7 @@ steps:
 
   # Remove dangling docker images
   - task: CmdLine@2
+    displayName: 'Remove dangling docker images'
     inputs:
       script: 'docker image prune -f'
 
