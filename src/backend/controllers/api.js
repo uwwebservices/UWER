@@ -18,6 +18,7 @@ const s3UWCAFile = process.env.S3UWCAFILE;
 const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile).then(certificate => {
+  certificate.ca = '';
   PWS.Setup(certificate);
   IDCard.Setup(certificate);
   Groups.Setup(certificate);
