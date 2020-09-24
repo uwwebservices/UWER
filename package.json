@@ -19,20 +19,6 @@
     "start": "node dist/backend",
     "test": "eslint src && cross-env NODE_ENV=test mocha --require babel-core/register test/*.js"
   },
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": 7,
-      "sourceType": "module"
-    },
-    "env": {
-      "node": true
-    },
-    "rules": {
-      "no-console": 0,
-      "no-unused-vars": 1
-    }
-  },
   "dependencies": {
     "@material-ui/core": "^1.5.1",
     "babel-runtime": "^6.26.0",
