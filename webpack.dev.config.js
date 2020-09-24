@@ -44,7 +44,20 @@ module.exports = function(env) {
             }
           ]
         },
-        { test: /\.scss$/, use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }] },
+        {
+          test: /\.scss$/,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader'
+            }
+          ]
+        },
         {
           test: /\.(png|jp(e*)g)$/,
           use: [
