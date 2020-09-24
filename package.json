@@ -6,7 +6,12 @@
     "node": "14.11.0"
   },
   "description": "UW Event Registration",
-  "main": "dist",
+  "author": "UW-IT Enterprise Web Services and Events <ews-team@uw.edu>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uwwebservices/idcard-webapp-poc.git"
+  },
   "scripts": {
     "dev": "nodemon --inspect --config nodemon.json",
     "prebuild": "rm -rf dist",
@@ -28,12 +33,6 @@
       "no-unused-vars": 1
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uwwebservices/idcard-webapp-poc.git"
-  },
-  "author": "UWWebServices <ews-team@uw.edu>",
-  "license": "MIT",
   "dependencies": {
     "@material-ui/core": "^1.5.1",
     "babel-runtime": "^6.26.0",
