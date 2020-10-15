@@ -25,7 +25,18 @@ let app = express();
 app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "default-src": ["'self'"],
+        "frame-src": ["'self'", "idp.u.washington.edu"],
+        "style-src": ["'self'", "'unsafe-inline'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
+        "font-src": ["'self'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"]
+      }
+    }
+  })
+);
 app.set('trust proxy', 1);
 
 // Required for passport to setup a persistent login session

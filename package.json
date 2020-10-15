@@ -32,7 +32,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "graphite": "^0.1.4",
-    "helmet": "^3.15.1",
+    "helmet": "^4.1.1",
     "memorystore": "^1.6.2",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
