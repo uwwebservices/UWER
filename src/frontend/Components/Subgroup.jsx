@@ -32,7 +32,7 @@ export default class Configure extends Component {
     let SelectButton =
       groupName === this.props.selectedGroup ? (
         <span>
-          <Button color="primary" variant="raised" onClick={() => this.gws(subgroup.url)} disabled={this.state.deleting}>
+          <Button color="primary" variant="contained" onClick={() => this.gws(subgroup.url)} disabled={this.state.deleting}>
             <FA name="group" />
             &nbsp;GWS
           </Button>
@@ -45,13 +45,13 @@ export default class Configure extends Component {
             openButtonDisabled={this.state.deleting}
             openButtonIconSpin={this.state.deleting}
           />
-          <Button color="primary" variant="raised" disabled={this.state.deleting} onClick={() => this.csvify(groupName)}>
+          <Button color="primary" variant="contained" disabled={this.state.deleting} onClick={() => this.csvify(groupName)}>
             <FA name="file-excel-o" />
             &nbsp; CSV
           </Button>
         </span>
       ) : (
-        <Button color="default" variant="raised" onClick={() => this.props.updateGroupName(groupName)}>
+        <Button color="default" variant="contained" onClick={() => this.props.updateGroupName(groupName)}>
           <FA name="check" />
           &nbsp;Select
         </Button>

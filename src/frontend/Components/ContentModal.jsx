@@ -46,7 +46,6 @@ class ContentModal extends React.Component {
             disabled={this.props.openButtonDisabled}
             color={this.props.openButtonColor}
             onClick={this.handleClickOpen}
-            mini={this.props.openButtonMini}
             className={this.props.openButtonClasses.join(' ')}
           >
             {this.props.openButtonIcon && (
@@ -64,12 +63,12 @@ class ContentModal extends React.Component {
           <DialogContent>{...this.props.children}</DialogContent>
           <DialogActions>
             {this.props.showCancelButton && (
-              <Button onClick={() => this.handleClose(false)} variant="raised" color={this.props.cancelButtonColor} disabled={this.props.cancelButtonDisabled}>
+              <Button onClick={() => this.handleClose(false)} variant="contained" color={this.props.cancelButtonColor} disabled={this.props.cancelButtonDisabled}>
                 {this.props.cancelButtonText}
               </Button>
             )}
             {this.props.showApproveButton && (
-              <Button onClick={() => this.handleClose(true)} variant="raised" color={this.props.approveButtonColor} autoFocus disabled={this.props.approveButtonDisabled}>
+              <Button onClick={() => this.handleClose(true)} variant="contained" color={this.props.approveButtonColor} autoFocus disabled={this.props.approveButtonDisabled}>
                 {this.props.approveButtonText}
               </Button>
             )}
@@ -93,9 +92,8 @@ ContentModal.propTypes = {
   approveButtonDisabled: PropTypes.bool,
   openButtonText: PropTypes.string,
   openButtonIcon: PropTypes.string,
-  openButtonVariant: PropTypes.oneOf(['text', 'flat', 'outlined', 'contained', 'raised', 'fab', 'extendedFab']),
+  openButtonVariant: PropTypes.oneOf(['text', 'outlined', 'contained']),
   openButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
-  openButtonMini: PropTypes.bool,
   openButtonClasses: PropTypes.arrayOf(PropTypes.string),
   disableBackdropClick: PropTypes.bool,
   openButtonDisabled: PropTypes.bool,
@@ -114,9 +112,8 @@ ContentModal.defaultProps = {
   approveButtonDisabled: false,
   openButtonText: 'Open Modal',
   openButtonIcon: '',
-  openButtonVariant: 'raised',
+  openButtonVariant: 'contained',
   openButtonColor: 'primary',
-  openButtonMini: false,
   openButtonClasses: [],
   confirmCallback: () => {},
   cancelCallback: () => {},

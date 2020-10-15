@@ -124,12 +124,10 @@ class Configure extends Component {
             </h2>
             <ContentModal
               openWithButton={true}
-              openButtonText="Add a new Registration Group"
+              openButtonText="&nbsp; Add"
               openButtonIcon="plus"
               dialogTitle="Create a New Registration Group"
-              openButtonText=""
-              openButtonVariant="fab"
-              openButtonMini={true}
+              openButtonVariant="contained"
               openButtonClasses={['createSubgroup']}
               confirmCallback={this.createSubgroup}
               approveButtonText={
