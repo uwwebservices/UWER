@@ -32,7 +32,8 @@ app.use(
         "default-src": ["'self'"],
         "frame-src": ["'self'", "idp.u.washington.edu"],
         "style-src": ["'self'", "'unsafe-inline'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
-        "font-src": ["'self'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"]
+        "font-src": ["'self'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
+        "img-src": ["'self'", "data:"]
       }
     }
   })
