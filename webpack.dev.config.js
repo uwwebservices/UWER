@@ -94,7 +94,6 @@ module.exports = function(env) {
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
       new HtmlWebpackPlugin({
         template: './src/index.template.html',
         inject: 'body',
