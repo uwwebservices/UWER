@@ -30,7 +30,14 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/, query: { presets: ['react'] } },
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        query: {
+          presets: ['react']
+        }
+      },
       {
         test: /\.css$/,
         use: [
@@ -47,7 +54,11 @@ module.exports = {
         ],
         exclude: /node_modules/
       },
-      { test: /\.scss$/, use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'], exclude: /node_modules/ },
+      {
+        test: /\.scss$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        exclude: /node_modules/
+      },
       {
         test: /\.(png|jp(e*)g)$/,
         use: [
