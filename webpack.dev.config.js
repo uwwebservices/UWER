@@ -22,10 +22,7 @@ module.exports = function(env) {
         {
           test: /\.jsx?$/,
           loader: 'babel-loader',
-          exclude: /node_modules/,
-          options: {
-            babelrc: true
-          }
+          exclude: /node_modules/
         },
         {
           test: /\.css$/,
