@@ -7,12 +7,6 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  devtool: '#source-map',
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    module: 'empty'
-  },
   entry: './src/frontend/App.js',
   output: {
     path: path.resolve(__dirname + '/dist/'),
@@ -42,7 +36,7 @@ module.exports = {
             options: {
               importLoaders: 1,
               modules: {
-                localIdentName: '[name]_[local]_[hash:base64:5]'
+                localIdentName: '[name]_[local]_[contenthash:base64:5]'
               }
             }
           }
@@ -61,7 +55,7 @@ module.exports = {
             loader: 'url-loader',
             options: {
               limit: 8000, // Convert images < 8kb to base64 strings
-              name: 'assets/img/[hash]-[name].[ext]'
+              name: 'assets/img/[contenthash]-[name].[ext]'
             }
           }
         ]
@@ -113,7 +107,12 @@ module.exports = {
       Assets: path.resolve('./src/backend/assets'),
       Routes: path.resolve('./src/backend/routes')
     },
-    extensions: ['.js', '.jsx', '.json', '.css', '.scss']
+    extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
+    fallback: {
+      fs: false,
+      net: false,
+      module: false
+    }
   },
   target: 'web'
 };
