@@ -37,6 +37,11 @@ class ContentModal extends React.Component {
   };
 
   render() {
+    // https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
+    const childrenWithProps = React.Children.map(this.props.children, child =>
+      React.cloneElement(child, { ...this.props })
+    );
+
     return (
       <span>
         {/* Should the modal output a button or an icon? */}
@@ -60,7 +65,7 @@ class ContentModal extends React.Component {
 
         <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" disableBackdropClick={this.props.disableBackdropClick}>
           <DialogTitle id="alert-dialog-title">{this.props.dialogTitle}</DialogTitle>
-          <DialogContent>{...this.props.children}</DialogContent>
+          <DialogContent>{childrenWithProps}</DialogContent>
           <DialogActions>
             {this.props.showCancelButton && (
               <Button onClick={() => this.handleClose(false)} variant="contained" color={this.props.cancelButtonColor} disabled={this.props.cancelButtonDisabled}>

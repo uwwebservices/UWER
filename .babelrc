@@ -9,6 +9,7 @@
                 "Assets": "./src/backend/assets",
                 "Routes": "./src/backend/routes"
             }
-        }]
+        }],
+        ["@babel/plugin-proposal-class-properties"]
     ]
 }
