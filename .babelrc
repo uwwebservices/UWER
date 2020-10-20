@@ -10,6 +10,7 @@
                 "Routes": "./src/backend/routes"
             }
         }],
-        ["@babel/plugin-proposal-class-properties"]
+        ["@babel/plugin-proposal-class-properties"],
+        ["@babel/plugin-transform-runtime"]
     ]
 }
