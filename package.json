@@ -64,7 +64,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "sass-loader": "^10.0.3",
     "style-loader": "^2.0.0",
-    "terser-webpack-plugin": "4.2.2",
+    "terser-webpack-plugin": "^4.2.3",
     "url-loader": "^4.1.1",
     "webpack-cli": "^4.1.0",
     "webpack-dev-middleware": "^3.7.2",
