@@ -25,24 +25,17 @@ let app = express();
 app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// Chromium is broken with CSP and favicons (find workaround)
-// https://chromium-review.googlesource.com/c/chromium/src/+/2438388
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//       directives: {
-//         "default-src": ["'self'"],
-//         "frame-src": ["'self'", "idp.u.washington.edu"],
-//         "style-src": ["'self'", "'unsafe-inline'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
-//         "font-src": ["'self'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
-//         "img-src": ["'self'", "data:"]
-//       }
-//     }
-//   })
-// );
 app.use(
   helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: {
+      directives: {
+        "default-src": ["'self'"],
+        "frame-src": ["'self'", "idp.u.washington.edu"],
+        "style-src": ["'self'", "'unsafe-inline'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
+        "font-src": ["'self'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
+        "img-src": ["'self'", "data:"]
+      }
+    }
   })
 );
 app.set('trust proxy', 1);

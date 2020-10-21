@@ -5,7 +5,12 @@ const path = require('path');
 module.exports = function(env) {
   return {
     mode: 'development',
-    devtool: 'source-map',
+    devtool: '#source-map',
+    node: {
+      fs: 'empty',
+      net: 'empty',
+      module: 'empty'
+    },
     entry: ['webpack/hot/dev-server', 'webpack-hot-middleware/client?path=//localhost:' + (env.PORT || 1111) + '/__webpack_hmr&reload=true', './src/frontend/App.js'],
     output: {
       path: path.resolve(__dirname + '/src/frontend'),
@@ -16,8 +21,11 @@ module.exports = function(env) {
       rules: [
         {
           test: /\.jsx?$/,
+          loader: 'babel-loader',
           exclude: /node_modules/,
-          loader: 'babel-loader'
+          options: {
+            babelrc: true
+          }
         },
         {
           test: /\.css$/,
@@ -30,7 +38,7 @@ module.exports = function(env) {
               options: {
                 importLoaders: 1,
                 modules: {
-                  localIdentName: '[name]_[local]_[contenthash:base64:5]'
+                  localIdentName: '[name]_[local]_[hash:base64:5]'
                 }
               }
             }
@@ -57,7 +65,7 @@ module.exports = function(env) {
               loader: 'url-loader',
               options: {
                 limit: 8000, // Convert images < 8kb to base64 strings
-                name: 'frontend/img/[contenthash]-[name].[ext]'
+                name: 'frontend/img/[hash]-[name].[ext]'
               }
             }
           ]
@@ -86,11 +94,11 @@ module.exports = function(env) {
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoEmitOnErrorsPlugin(),
       new HtmlWebpackPlugin({
         template: './src/index.template.html',
         inject: 'body',
-        filename: 'index.html',
-        favicon: './src/favicon.ico'
+        filename: 'index.html'
       })
     ],
     resolve: {
@@ -103,12 +111,7 @@ module.exports = function(env) {
         Assets: path.resolve('./src/backend/assets'),
         Routes: path.resolve('./src/backend/routes')
       },
-      extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
-      fallback: {
-        fs: false,
-        net: false,
-        module: false
-      }
+      extensions: ['.js', '.jsx', '.json', '.css', '.scss']
     },
     target: 'web'
   };

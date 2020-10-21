@@ -1,5 +1,5 @@
 {
-    "presets": [ "@babel/preset-env", "@babel/preset-react" ],
+    "presets": [ "env", "react-app" ],
     "plugins": [
         ["module-resolver", {
             "alias": {
@@ -9,9 +9,6 @@
                 "Assets": "./src/backend/assets",
                 "Routes": "./src/backend/routes"
             }
-        }],
-        ["@babel/plugin-proposal-class-properties"],
-        ["@babel/plugin-transform-runtime"],
-        ["@babel/plugin-transform-spread", { "loose": true }]
+        }]
     ]
 }
