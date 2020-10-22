@@ -62,6 +62,7 @@ app.use(
 );
 
 if (NODE_ENV === 'production') {
+  app.use('/favicon.ico', express.static('dist/favicon.ico'));
   app.use('/assets', express.static('dist/assets'));
   app.use(passport.initialize());
   app.use(passport.session());
