@@ -5,7 +5,7 @@ const Footer = () => {
     return (
       <footer className={style['uw-footer']}>
         Enterprise Web Services and Events
-        <div>v{process.env.APP_VERSION}</div>
+        <div>{REACT_APP_NAME} v{REACT_APP_VERSION}</div>
       </footer>
     )
 }

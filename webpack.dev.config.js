@@ -86,7 +86,8 @@ module.exports = (env) => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.APP_VERSION': JSON.stringify(process.env.npm_package_version || 'development')
+        'REACT_APP_VERSION': JSON.stringify(process.env.npm_package_version || 'development'),
+        'REACT_APP_NAME': JSON.stringify(process.env.npm_package_name || '')
       }),
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
