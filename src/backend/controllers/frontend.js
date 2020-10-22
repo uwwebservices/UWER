@@ -76,9 +76,7 @@ app.post(
 
 // This route must be the very last one or things get wonky in production
 if (process.env.NODE_ENV === 'production') {
-  app.get([Routes.Welcome, Routes.Config, Routes.Register, Routes.Login, Routes.NotAuthorized], (req, res) => {
-    // TODO fix babel spread for routes
-    //app.get([...Routes], (req, res) => {
+  app.get(Object.values(Routes), (req, res) => {
     res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
   });
 }
