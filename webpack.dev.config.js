@@ -1,8 +1,8 @@
-import webpack from 'webpack';
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
-module.exports = function(env) {
+module.exports = (env) => {
   return {
     mode: 'development',
     devtool: 'source-map',
@@ -85,6 +85,9 @@ module.exports = function(env) {
       ]
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env.APP_VERSION': JSON.stringify(process.env.npm_package_version || 'development')
+      }),
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         template: './src/index.template.html',
