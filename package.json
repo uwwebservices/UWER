@@ -28,7 +28,8 @@
     "dev": "nodemon --inspect --config nodemon.json",
     "prebuild": "rm -rf dist",
     "build": "cross-env-shell NODE_ENV=production \"babel src/backend -s -D -d dist/backend && webpack --config webpack.config.js\"",
-    "start": "node dist/backend"
+    "start": "node dist/backend",
+    "test": "jest"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
