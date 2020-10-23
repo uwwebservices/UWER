@@ -21,7 +21,6 @@ const GRAPHITE_HOSTNAME = process.env.GRAPHITE_HOSTNAME || '';
 const GRAPHITE_PREFIX = process.env.GRAPHITE_PREFIX !== undefined ? process.env.GRAPHITE_PREFIX : 'test';
 
 let app = express();
-app = null; // @TODO(mannkind) Testing stable service.
 app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
