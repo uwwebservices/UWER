@@ -2,6 +2,11 @@
   grid-row: 2 / 3;
   background: #4b2e83;
   color: white;
-  padding: 20px;
+  padding: 8px;
   text-align: center;
+}
+
+.uw-footer div {
+  font-size: 75%;
+  margin-top: -5px;
 }

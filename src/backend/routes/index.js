@@ -17,6 +17,7 @@ export const API = {
 // Page Routes
 export const Routes = {
   Welcome: '/',
+  Config: '/config',
   Register: '/register',
   Login: '/login',
   NotAuthorized: '/notAuthorized'

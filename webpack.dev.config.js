@@ -1,8 +1,8 @@
-import webpack from 'webpack';
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
-module.exports = function(env) {
+module.exports = (env) => {
   return {
     mode: 'development',
     devtool: 'source-map',
@@ -85,11 +85,16 @@ module.exports = function(env) {
       ]
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'REACT_APP_VERSION': JSON.stringify(process.env.npm_package_version || 'development'),
+        'REACT_APP_NAME': JSON.stringify(process.env.npm_package_name || '')
+      }),
       new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
         template: './src/index.template.html',
         inject: 'body',
-        filename: 'index.html'
+        filename: 'index.html',
+        favicon: './src/favicon.ico'
       })
     ],
     resolve: {

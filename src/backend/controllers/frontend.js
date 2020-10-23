@@ -76,7 +76,7 @@ app.post(
 
 // This route must be the very last one or things get wonky in production
 if (process.env.NODE_ENV === 'production') {
-  app.get([...Routes], (req, res) => {
+  app.get(Object.values(Routes), (req, res) => {
     res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
   });
 }

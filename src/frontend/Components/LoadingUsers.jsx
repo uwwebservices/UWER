@@ -1,10 +1,16 @@
 import React from 'react';
-const importAll = r => r.keys().map(r);
+import userImages from '../images/userImages';
 
 export default class Form extends React.Component {
   constructor() {
     super();
-    this.state = { userCount: 5, displayImages: [], allImages: importAll(require.context('Images/', false, /\.(svg)$/)), interval: null, lastChanged: null };
+    this.state = {
+      userCount: 5,
+      displayImages: [],
+      allImages: userImages,
+      interval: null,
+      lastChanged: null
+    };
   }
   componentWillUnmount() {
     clearInterval(this.state.interval);
