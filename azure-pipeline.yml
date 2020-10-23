@@ -85,3 +85,18 @@ steps:
       awsSubCommand: 'update-service'
       awsArguments: '--cluster ews-cluster --service $(serviceName) --force-new-deployment'
       failOnStandardError: true
+
+  - task: AWSCLI@1
+    condition: |
+      and(
+          or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'master')), 
+          ne(variables['Build.Reason'], 'PullRequest')
+      )
+    displayName: 'Wait for the service to become stable'
+    inputs:
+      awsCredentials: 'AWS OTIK2'
+      regionName: 'us-east-1'
+      awsCommand: ecs
+      awsSubCommand: 'wait'
+      awsArguments: 'services-stable --cluster ews-cluster --service $(serviceName)'
+      failOnStandardError: true
