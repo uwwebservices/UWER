@@ -1,8 +1,5 @@
 module.exports = {
-    preset: "jest-puppeteer",
-    globals: {
-        URL: "localhost:1111"
-    },
+    preset: 'jest-puppeteer-docker',
     testMatch: [
         "**/test/**/*.test.js"
     ],
