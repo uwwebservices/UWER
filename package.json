@@ -1,5 +1,5 @@
 {
-  "name": "UWER",
+  "name": "uwer",
   "version": "1.0.0-dev",
   "engines": {
     "npm": "6.14.4",
@@ -83,10 +83,10 @@
     "puppeteer": "^5.4.1",
     "sass-loader": "^10.0.4",
     "style-loader": "^2.0.0",
-    "terser-webpack-plugin": "^5.0.2",
+    "terser-webpack-plugin": "^5.0.3",
     "url-loader": "^4.1.1",
     "webpack-cli": "^4.1.0",
-    "webpack-dev-middleware": "^3.7.2",
+    "webpack-dev-middleware": "^4.0.0",
     "webpack-hot-middleware": "^2.25.0"
   }
 }
