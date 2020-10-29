@@ -18,7 +18,13 @@ if (NODE_ENV === 'development') {
   let compiler = webpack(webpackConfig);
 
   app.use(
-    webpackDevMiddleware(compiler)
+    webpackDevMiddleware(compiler, {
+      publicPath: webpackConfig.output.publicPath,	
+      stats: { colors: true },	
+      watchOptions: {	
+        ignored: [path.resolve(__dirname, '..', 'config')]	
+      }	
+    })
   );
   app.use(
     webpackHotMiddleware(compiler, {

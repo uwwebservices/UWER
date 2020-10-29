@@ -12,10 +12,6 @@ module.exports = (env) => {
       publicPath: '/',
       filename: 'scripts/bundle.js'
     },
-    stats: { colors: true },
-    watchOptions: {
-      ignored: [path.resolve(__dirname, '..', 'config')]
-    },
     module: {
       rules: [
         {
