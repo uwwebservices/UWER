@@ -10,7 +10,7 @@ import MemoryStore from 'memorystore';
 import session from 'express-session';
 import responseTime from 'response-time';
 import passport from 'passport';
-import saml from 'passport-saml';
+import * as saml from 'passport-saml';
 import helmet from 'helmet';
 import metrics from './metrics';
 
