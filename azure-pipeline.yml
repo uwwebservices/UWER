@@ -48,6 +48,9 @@ steps:
         [string] $year = (Get-Date).Year
         [string] $versionNumber = "$(packageVersion)-$year$dayOfYear.$(Build.BuildId)"
         [string] $buildName = "$(Build.DefinitionName)_$versionNumber"
+        $packageFile = (Get-Content package.json) -join "`n" | ConvertFrom-Json
+        $packageFile.version = $versionNumber
+        $packageFile | ConvertTo-Json | Set-Content package.json
         Write-Host "Setting the version number variable to '$versionNumber'."
         Write-Host "##vso[task.setvariable variable=versionNumber]$versionNumber"
         Write-Host "Setting the name of the build to '$buildName'."
