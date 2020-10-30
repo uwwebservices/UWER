@@ -1,6 +1,8 @@
 variables:
   serviceName: 'eventregistration-eval'
   tagName: 'develop'
+  packageVersion: ''
+  prereleaseVersion: ''
 
 pool:
   name: ECS Build Agents
@@ -24,6 +26,32 @@ steps:
       downloadType: 'specific'
       itemPattern: '**'
       downloadPath: '$(System.DefaultWorkingDirectory)/temp'
+  
+  # Get package.json version
+  - task: PowerShell@2
+    displayName: Get package.json version
+    inputs:
+      targetType: 'inline'
+      script: |
+      [string] $packageVersion = (Get-Content -Raw -Path Path/package.json | ConvertFrom-Json).version
+      Write-Host "Setting the 'packageVersion' variable to '$packageVersion'."
+      Write-Host "##vso[task.setvariable variable=packageVersion]$packageVersion"
+
+  # Set prereleaseVersion
+  - task: PowerShell@2
+    displayName: Set prereleaseVersion
+    condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      targetType: 'inline'
+      script: |
+        [string] $dayOfYear = (Get-Date).DayOfYear
+        [string] $year = (Get-Date).Year
+        [string] $versionNumber = "$(packageVersion)-$(Build.SourceBranchName).$year$dayOfYear.$(Build.BuildId)"
+        [string] $buildName = "$(Build.DefinitionName)_$versionNumber"
+        Write-Host "Setting the version number variable to '$versionNumber'."
+        Write-Host "##vso[task.setvariable variable=versionNumber]$versionNumber"
+        Write-Host "Setting the name of the build to '$buildName'."
+        Write-Host "##vso[build.updatebuildnumber]$buildName"
 
   # Download sp-key file from secure files
   - task: DownloadSecureFile@1
