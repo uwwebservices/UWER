@@ -88,8 +88,7 @@ module.exports = {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'REACT_APP_VERSION': JSON.stringify(process.env.npm_package_version || ''),
-        'REACT_APP_NAME': JSON.stringify(process.env.npm_package_name || '')
+        'REACT_APP_VERSION': JSON.stringify(process.env.npm_package_version || '')
       }),
       new MiniCssExtractPlugin({
         filename: 'assets/[name].css',
