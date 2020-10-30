@@ -33,7 +33,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-      [string] $packageVersion = (Get-Content -Raw -Path Path/package.json | ConvertFrom-Json).version
+      [string] $packageVersion = (Get-Content package.json) -join "`n" | ConvertFrom-Json | Select -ExpandProperty "version"
       Write-Host "Setting the 'packageVersion' variable to '$packageVersion'."
       Write-Host "##vso[task.setvariable variable=packageVersion]$packageVersion"
 
