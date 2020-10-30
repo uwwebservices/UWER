@@ -45,16 +45,16 @@ steps:
       targetType: 'inline'
       script: |
         [string] $dayOfYear = (Get-Date).DayOfYear
-        [string] $year = (Get-Date).Year
-        [string] $versionNumber = "$(packageVersion)-$year$dayOfYear.$(Build.BuildId)"
-        [string] $buildName = "$(Build.DefinitionName)_$versionNumber"
+        [string] $year = (Get-Date -Format "yy")
+        [string] $time = [Math]::Round((Get-Date -Format "ss") / 60)
+        [string] $versionNumber = "$(packageVersion)-$year$dayOfYear.$time"
+        Write-Host "Setting package.json version property to '$versionNumber' and leaving dirty"
         $packageFile = (Get-Content package.json) -join "`n" | ConvertFrom-Json
         $packageFile.version = $versionNumber
         $packageFile | ConvertTo-Json | Set-Content package.json
-        Write-Host "Setting the version number variable to '$versionNumber'."
+        Write-Host "Setting the name of the build AND the version number variable to '$versionNumber'."
         Write-Host "##vso[task.setvariable variable=versionNumber]$versionNumber"
-        Write-Host "Setting the name of the build to '$buildName'."
-        Write-Host "##vso[build.updatebuildnumber]$buildName"
+        Write-Host "##vso[build.updatebuildnumber]$versionNumber"
 
   # Download sp-key file from secure files
   - task: DownloadSecureFile@1
