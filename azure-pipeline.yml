@@ -46,8 +46,9 @@ steps:
       script: |
         [string] $dayOfYear = (Get-Date).DayOfYear
         [string] $year = (Get-Date -Format "yy")
-        [string] $time = [Math]::Round((Get-Date -Format "ss") / 60)
-        [string] $versionNumber = "$(packageVersion)-$year$dayOfYear.$time"
+        [string] $time = (Get-Date -Format "HHmm")
+        [string] $partialMinute = [Math]::Round((Get-Date -Format "ss") / 60)
+        [string] $versionNumber = "$(packageVersion)-$year$dayOfYear.$time$partialMinute"
         Write-Host "Setting package.json version property to '$versionNumber' and leaving dirty"
         $packageFile = (Get-Content package.json) -join "`n" | ConvertFrom-Json
         $packageFile.version = $versionNumber
