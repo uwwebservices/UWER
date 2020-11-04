@@ -10,7 +10,7 @@ import MemoryStore from 'memorystore';
 import session from 'express-session';
 import responseTime from 'response-time';
 import passport from 'passport';
-import * as saml from 'passport-saml';
+import { Strategy } from 'passport-saml';
 import helmet from 'helmet';
 import metrics from './metrics';
 
@@ -64,7 +64,7 @@ if (NODE_ENV === 'production') {
   const spPrivateKey = process.env.SPKEYFILE ? fs.readFileSync(process.env.SPKEYFILE, { encoding: 'utf8' }) : '';
 
   passport.use(
-    new saml.Strategy(
+    new Strategy(
       {
         callbackUrl: process.env.IDPCALLBACKURL,
         entryPoint: process.env.IDPENTRYPOINT,
