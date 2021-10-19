@@ -1,9 +1,5 @@
 # UW Event Registration (UWER)
 
-**REMOVE BEFORE MERGING TO MASTER**
-
-In `src/backend/controllers/api.js` remove the line `certificate.ca = ''` inside `Certificate.GetPFXFromS3()`.
-
 ## Build Status
 
 master: [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uwwebservices.UWER?branchName=master)](https://dev.azure.com/uwit-ews/WS/_build/latest?definitionId=50&branchName=master)
