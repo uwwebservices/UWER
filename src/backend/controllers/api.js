@@ -18,6 +18,7 @@ const s3UWCAFile = process.env.S3UWCAFILE;
 const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile).then(certificate => {
+  //migrate to inCommon CA, this UWCA (certificate.ca) will be ignored, so set it to empty
   certificate.ca = '';
   PWS.Setup(certificate);
   IDCard.Setup(certificate);

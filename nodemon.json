@@ -1,4 +1,4 @@
-{
+﻿{
   "exec": "babel-node src/backend",
   "ignore": ["src/frontend"],
   "watch": ["src/backend"],
@@ -22,8 +22,8 @@
     "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu",
 
     "S3BUCKET": "ews-certs",
-    "S3CERTFILE": "integrations/integrations.event.uw.edu.pfx",
-    "S3CERTKEYFILE": "integrations/integrations.event.uw.edu.key",
+    "S3CERTFILE": "integrations/integrations.event.uw.edu.incommon.pfx",
+    "S3CERTKEYFILE": "integrations/integrations.event.uw.edu.incommon.key",
     "S3UWCAFILE": "common/uwca.pem",
     "S3INCOMMONFILE": "common/incommon.pem"
   }
