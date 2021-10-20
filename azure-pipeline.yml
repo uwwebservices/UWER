@@ -1,6 +1,6 @@
 variables:
   serviceName: 'eventregistration-eval'
-  tagName: 'develop'
+  tagName: 'dev'
   packageVersion: ''
   prereleaseVersion: ''
 
