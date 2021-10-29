@@ -131,8 +131,13 @@ const Groups = {
           name: vg.id.replace(BASE_GROUP, '')
         };
       });
+
+      //sorted by Name
+      verboseGroups.sort((a, b) => (a.name === b.name) ? 0 : (a.name < b.name ? -1 : 1));
+
       return verboseGroups;
     } else {
+      //already sorted
       return groupList;
     }
   },
