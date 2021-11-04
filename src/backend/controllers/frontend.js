@@ -44,6 +44,7 @@ if (NODE_ENV === 'development') {
 app.get(
   Routes.Login,
   function(req, res, next) {
+    console.log(`Login: set cookie authRedirectUrl= ${req.query.returnUrl}`);
     res.cookie('authRedirectUrl', req.query.returnUrl, { ...uwerSetCookieDefaults, signed: false, maxAge: 5 * 60 * 1000 });
     next();
   },
