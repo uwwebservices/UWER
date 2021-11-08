@@ -39,6 +39,7 @@ const devModeAuthenticated = req => {
 
 export const backToUrl = (url = Routes.Register) => {
   return function(req, res) {
+    console.log(`backToUrl: cookie authRedirectUrl: ${req.cookies.authRedirectUrl}`);
     res.redirect(req.cookies.authRedirectUrl || Routes.Register);
   };
 };
