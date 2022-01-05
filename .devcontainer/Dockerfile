@@ -1,7 +1,7 @@
 # Based on Microsoft's Node 10 example
 # To fully customize the contents of this image, use the following Dockerfile instead:
 # https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/javascript-node-10/.devcontainer/Dockerfile
-FROM mcr.microsoft.com/vscode/devcontainers/javascript-node@sha256:567574eac6192c01ea2c725573ecfe6f4873384097caca222de1568231518924
+FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:0-14
 
 RUN apt-get update \
     && export DEBIAN_FRONTEND=noninteractive \

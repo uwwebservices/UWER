@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { CheckAuthentication, ResetState } from '../Actions';
+import { CheckAuthentication, CheckToken, ResetState, StopRegistrationSession } from '../Actions';
 import Header from 'Components/Header';
 import Footer from 'Components/Footer';
 import Authorization from 'Components/Authorization';
@@ -12,9 +12,11 @@ class PageWrapper extends Component {
     super(props);
     this._notificationSystem = null;
   }
+
   componentDidMount() {
     this._notificationSystem = this.refs.notificationSystem;
   }
+
   componentDidUpdate() {
     // Grabs notifications from the store and turns them into toasts
     if (this.props.notifications.length) {
@@ -23,6 +25,11 @@ class PageWrapper extends Component {
       });
     }
   }
+
+  endRegistration = () => {
+    this.props.stopRegistrationSession();
+    this.props.history.push('/');
+  };
 
   // level = ["success", "error", "warning", "info"]
   // position = tr (top right), tl (top left), tc (top center), br (bottom right), bl (bottom left), bc (bottom center)
@@ -56,10 +63,12 @@ class PageWrapper extends Component {
             authenticated={this.props.authenticated}
             registrationToken={this.props.registrationToken}
             loginRequired={this.props.loginRequired}
+            tokenRequired={this.props.tokenRequired}
             iaaAuth={this.props.iaaAuth}
             iaaCheck={this.props.iaaCheck}
             iaaRequired={this.props.iaaRequired}
             checkAuthentication={this.props.checkAuthentication}
+            checkToken={this.props.checkToken}
             path={this.props.location.pathname}
             resetState={this.props.resetState}
           >
@@ -79,10 +88,13 @@ const mapStateToProps = state => ({
   iaaAuth: state.iaaAuth,
   iaaCheck: state.iaacheck
 });
+
 const mapDispatchToProps = dispatch => {
   return {
     checkAuthentication: () => dispatch(CheckAuthentication()),
-    resetState: () => dispatch(ResetState())
+    checkToken: () => dispatch(CheckToken()),
+    resetState: () => dispatch(ResetState()),
+    stopRegistrationSession: () => dispatch(StopRegistrationSession())
   };
 };
 

@@ -10,7 +10,7 @@ import MemoryStore from 'memorystore';
 import session from 'express-session';
 import responseTime from 'response-time';
 import passport from 'passport';
-import saml from 'passport-saml';
+import * as saml from 'passport-saml';
 import helmet from 'helmet';
 import metrics from './metrics';
 
@@ -21,11 +21,22 @@ const GRAPHITE_HOSTNAME = process.env.GRAPHITE_HOSTNAME || '';
 const GRAPHITE_PREFIX = process.env.GRAPHITE_PREFIX !== undefined ? process.env.GRAPHITE_PREFIX : 'test';
 
 let app = express();
-
 app.use(cookieParser(SECRET_KEY));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "default-src": ["'self'"],
+        "frame-src": ["'self'", "idp.u.washington.edu"],
+        "style-src": ["'self'", "'unsafe-inline'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
+        "font-src": ["'self'", "fonts.gstatic.com", "fonts.googleapis.com", "stackpath.bootstrapcdn.com"],
+        "img-src": ["'self'", "data:"]
+      }
+    }
+  })
+);
 app.set('trust proxy', 1);
 
 // Required for passport to setup a persistent login session
@@ -43,6 +54,7 @@ app.use(
 );
 
 if (NODE_ENV === 'production') {
+  app.use('/favicon.ico', express.static('dist/favicon.ico'));
   app.use('/assets', express.static('dist/assets'));
   app.use(passport.initialize());
   app.use(passport.session());

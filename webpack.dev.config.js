@@ -1,31 +1,27 @@
-import webpack from 'webpack';
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
-module.exports = function(env) {
+module.exports = (env) => {
   return {
     mode: 'development',
-    devtool: '#source-map',
-    node: {
-      fs: 'empty',
-      net: 'empty',
-      module: 'empty'
-    },
+    devtool: 'source-map',
     entry: ['webpack/hot/dev-server', 'webpack-hot-middleware/client?path=//localhost:' + (env.PORT || 1111) + '/__webpack_hmr&reload=true', './src/frontend/App.js'],
     output: {
       path: path.resolve(__dirname + '/src/frontend'),
       publicPath: '/',
       filename: 'scripts/bundle.js'
     },
+    stats: { colors: true },	
+    watchOptions: {	
+      ignored: [path.resolve(__dirname, '..', 'config')]	
+    }	,
     module: {
       rules: [
         {
           test: /\.jsx?$/,
-          loader: 'babel-loader',
           exclude: /node_modules/,
-          options: {
-            babelrc: true
-          }
+          loader: 'babel-loader'
         },
         {
           test: /\.css$/,
@@ -38,13 +34,26 @@ module.exports = function(env) {
               options: {
                 importLoaders: 1,
                 modules: {
-                  localIdentName: '[name]_[local]_[hash:base64:5]'
+                  localIdentName: '[name]_[local]_[contenthash:base64:5]'
                 }
               }
             }
           ]
         },
-        { test: /\.scss$/, use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }] },
+        {
+          test: /\.scss$/,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader'
+            }
+          ]
+        },
         {
           test: /\.(png|jp(e*)g)$/,
           use: [
@@ -52,7 +61,7 @@ module.exports = function(env) {
               loader: 'url-loader',
               options: {
                 limit: 8000, // Convert images < 8kb to base64 strings
-                name: 'frontend/img/[hash]-[name].[ext]'
+                name: 'frontend/img/[contenthash]-[name].[ext]'
               }
             }
           ]
@@ -80,12 +89,15 @@ module.exports = function(env) {
       ]
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'REACT_APP_VERSION': JSON.stringify(process.env.npm_package_version || 'development')
+      }),
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
       new HtmlWebpackPlugin({
         template: './src/index.template.html',
         inject: 'body',
-        filename: 'index.html'
+        filename: 'index.html',
+        favicon: './src/favicon.ico'
       })
     ],
     resolve: {
@@ -98,7 +110,12 @@ module.exports = function(env) {
         Assets: path.resolve('./src/backend/assets'),
         Routes: path.resolve('./src/backend/routes')
       },
-      extensions: ['.js', '.jsx', '.json', '.css', '.scss']
+      extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
+      fallback: {
+        fs: false,
+        net: false,
+        module: false
+      }
     },
     target: 'web'
   };

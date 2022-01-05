@@ -1,5 +1,5 @@
 # ---- Base Node ----
-FROM node:10.4.1-alpine AS base
+FROM node:14.11.0-alpine AS base
 RUN apk add --no-cache nodejs-current tini
 WORKDIR /www
 # Set tini as entrypoint
@@ -29,7 +29,6 @@ COPY --from=dependencies /www/prod_node_modules /www/node_modules
 
 # copy only the things we need for production
 COPY --from=dependencies /www/dist /www/dist
-COPY --from=dependencies /www/config_base /www/config_base
 
 # sp-key.pem is injected by Azure DevOps, copy it to a better location
 COPY sp-key.pem /www/config/sp-key.pem

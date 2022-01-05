@@ -1,6 +1,8 @@
 variables:
-  serviceName: 'eventregistration-eval'
-  tagName: 'develop'
+  serviceName: 'eventregistration-dev'
+  tagName: 'dev'
+  packageVersion: ''
+  prereleaseVersion: ''
 
 pool:
   name: ECS Build Agents
@@ -11,6 +13,12 @@ steps:
     condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.Reason'], 'PullRequest'))
   - script: "echo '##vso[task.setvariable variable=tagName]prod'"
     condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.Reason'], 'PullRequest'))
+
+  # Change the service name and tag name when running on eval
+  - script: "echo '##vso[task.setvariable variable=serviceName]eventregistration-eval'"
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'eval'), ne(variables['Build.Reason'], 'PullRequest'))
+  - script: "echo '##vso[task.setvariable variable=tagName]eval'"
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'eval'), ne(variables['Build.Reason'], 'PullRequest'))
 
   # Download common build scripts
   - task: DownloadBuildArtifacts@0
@@ -24,6 +32,36 @@ steps:
       downloadType: 'specific'
       itemPattern: '**'
       downloadPath: '$(System.DefaultWorkingDirectory)/temp'
+  
+  # Get package.json version
+  - task: PowerShell@2
+    displayName: Get package.json version
+    inputs:
+      targetType: 'inline'
+      script: |
+        [string] $packageVersion = (Get-Content package.json) -join "`n" | ConvertFrom-Json | Select -ExpandProperty "version"
+        Write-Host "Setting the package version variable to '$packageVersion'."
+        Write-Host "##vso[task.setvariable variable=packageVersion]$packageVersion"
+
+  # Set prereleaseVersion
+  - task: PowerShell@2
+    displayName: Set prereleaseVersion
+    condition: and(succeeded(), ne(variables['Build.SourceBranchName'], 'master'), ne(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      targetType: 'inline'
+      script: |
+        [string] $dayOfYear = (Get-Date).DayOfYear
+        [string] $year = (Get-Date -Format "yy")
+        [string] $time = (Get-Date -Format "HHmm")
+        [string] $partialMinute = [Math]::Round((Get-Date -Format "ss") / 60d * 10)
+        [string] $versionNumber = "$(packageVersion)-$year$dayOfYear.$time$partialMinute"
+        Write-Host "Setting package.json version property to '$versionNumber' and leaving dirty"
+        $packageFile = (Get-Content package.json) -join "`n" | ConvertFrom-Json
+        $packageFile.version = $versionNumber
+        $packageFile | ConvertTo-Json | Set-Content package.json
+        Write-Host "Setting the name of the build AND the version number variable to '$versionNumber'."
+        Write-Host "##vso[task.setvariable variable=versionNumber]$versionNumber"
+        Write-Host "##vso[build.updatebuildnumber]$versionNumber"
 
   # Download sp-key file from secure files
   - task: DownloadSecureFile@1
@@ -40,6 +78,12 @@ steps:
       contents: 'sp-key.pem'
       targetFolder: '$(Build.SourcesDirectory)'
 
+  # Remove dangling docker images
+  - task: CmdLine@2
+    displayName: 'Remove dangling docker images'
+    inputs:
+      script: 'docker image prune -f'
+
   # Build the docker image
   - task: Docker@0
     displayName: 'Build docker image'
@@ -53,7 +97,7 @@ steps:
   - task: ECRPushImage@1
     condition: |
       and(
-          or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'master')), 
+          or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'eval'), eq(variables['Build.SourceBranchName'], 'master')), 
           ne(variables['Build.Reason'], 'PullRequest')
       )
     displayName: 'Push docker image to AWS Container Registry'
@@ -68,7 +112,7 @@ steps:
   - task: AWSCLI@1
     condition: |
       and(
-          or(eq(variables['Build.SourceBranchName'], 'develop'), eq(variables['Build.SourceBranchName'], 'master')), 
+          or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'eval'), eq(variables['Build.SourceBranchName'], 'master')), 
           ne(variables['Build.Reason'], 'PullRequest')
       )
     displayName: 'Force a new deployment for the new docker image'
@@ -78,4 +122,19 @@ steps:
       awsCommand: ecs
       awsSubCommand: 'update-service'
       awsArguments: '--cluster ews-cluster --service $(serviceName) --force-new-deployment'
+      failOnStandardError: true
+
+  - task: AWSCLI@1
+    condition: |
+      and(
+          or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'eval'), eq(variables['Build.SourceBranchName'], 'master')), 
+          ne(variables['Build.Reason'], 'PullRequest')
+      )
+    displayName: 'Wait for the service to become stable'
+    inputs:
+      awsCredentials: 'AWS OTIK2'
+      regionName: 'us-east-1'
+      awsCommand: ecs
+      awsSubCommand: 'wait'
+      awsArguments: 'services-stable --cluster ews-cluster --service $(serviceName)'
       failOnStandardError: true

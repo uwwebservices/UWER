@@ -1,11 +1,11 @@
-{
+﻿{
   "exec": "babel-node src/backend",
   "ignore": ["src/frontend"],
   "watch": ["src/backend"],
   "env": {
     "NODE_ENV": "development",
     "PORT": 1111,
-    "BASE_GROUP": "uw_event_ws-eval_",
+    "BASE_GROUP": "uw_event_dev_",
     "SESSIONKEY": "development",
     "GRAPHITE_HOSTNAME": "it-wsapp1.s.uw.edu",
     "GRAPHITE_PREFIX": "test",
@@ -22,8 +22,8 @@
     "CONTROLLING_CERTIFICATE": "integrations.event.uw.edu",
 
     "S3BUCKET": "ews-certs",
-    "S3CERTFILE": "integrations/integrations.event.uw.edu.pfx",
-    "S3CERTKEYFILE": "integrations/integrations.event.uw.edu.key",
+    "S3CERTFILE": "integrations/integrations.event.uw.edu.incommon.pfx",
+    "S3CERTKEYFILE": "integrations/integrations.event.uw.edu.incommon.key",
     "S3UWCAFILE": "common/uwca.pem",
     "S3INCOMMONFILE": "common/incommon.pem"
   }

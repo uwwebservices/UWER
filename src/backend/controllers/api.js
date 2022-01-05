@@ -4,7 +4,7 @@ import IDCard from 'models/idcardModel';
 import PWS from 'models/pwsModel';
 import { API } from 'Routes';
 import { Certificate } from 'ews-api-lib';
-import { authMiddleware, authOrTokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
+import { authMiddleware, authOrTokenMiddleware, tokenMiddleware, baseMiddleware, getFullGroupName, idaaRedirectUrl, setDevModeCookie, uwerSetCookieDefaults } from '../utils/helpers';
 import csv from 'csv-express'; // required for csv route even though shown as unused
 
 let api = Router();
@@ -18,9 +18,18 @@ const s3UWCAFile = process.env.S3UWCAFILE;
 const s3IncommonFile = process.env.S3INCOMMONFILE;
 
 Certificate.GetPFXFromS3(s3Bucket, s3CertFile, s3CertKeyFile, s3UWCAFile, s3IncommonFile).then(certificate => {
+  //migrate to inCommon CA, this UWCA (certificate.ca) will be ignored, so set it to empty
+  certificate.ca = '';
   PWS.Setup(certificate);
   IDCard.Setup(certificate);
   Groups.Setup(certificate);
+});
+
+// Endpoint to check the registration token
+// If the token is still valid, 200 is returned.
+// If not valid, tokenMiddleware returns 401 Unauthroized.
+api.get(API.CheckToken, tokenMiddleware, (req, res) => {
+  return res.sendStatus(200);
 });
 
 api.get(API.GetMembers, authOrTokenMiddleware, async (req, res) => {
@@ -91,7 +100,7 @@ api.get(API.GetToken, authMiddleware, async (req, res) => {
   const tokenTTL = req.query.tokenTTL;
   const expiry = now.setMinutes(now.getMinutes() + +tokenTTL);
   const token = { user, groupName, confidential, netidAllowed, privGrpVis, expiry };
-  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: (+tokenTTL + 30) * 60 * 1000 });
+  res.cookie('registrationToken', token, { ...uwerSetCookieDefaults, maxAge: +tokenTTL * 60 * 1000 });
 
   return res.sendStatus(200);
 });

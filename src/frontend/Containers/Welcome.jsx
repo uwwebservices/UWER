@@ -28,7 +28,7 @@ class Welcome extends Component {
             <p>Access is restricted to previously setup personnel. If you need help with your Event Registration setup, please email help@uw.edu and ask for Enterprise Web Services.</p>
           </div>
           <div className="welcomeRight">
-            <Button variant="raised" color="primary" type="submit" onClick={this.configure}>
+            <Button variant="contained" color="primary" type="submit" onClick={this.configure}>
               Start Event Setup
             </Button>
           </div>

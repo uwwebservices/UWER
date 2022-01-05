@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
+import style from './style';
 
-import s from './style';
-
-export default class Footer extends Component {
-  render() {
-    return <footer className={s['uw-footer']}>Enterprise Web Services and Events</footer>;
-  }
+const Footer = () => {
+    return (
+      <footer className={style['uw-footer']}>
+        Enterprise Web Services and Events
+        <div>v{REACT_APP_VERSION}</div>
+      </footer>
+    )
 }
+
+export default Footer;

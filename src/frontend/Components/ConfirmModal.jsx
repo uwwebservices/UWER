@@ -35,9 +35,6 @@ class AlertDialog extends React.Component {
           variant={this.props.openButtonVariant}
           disabled={this.props.openButtonDisabled}
           color={this.props.openButtonColor}
-          size="small"
-          mini={this.props.openButtonFabMini}
-          size={this.props.openButtonSize}
           onClick={() => this.setState({ open: true })}
         >
           {this.props.openButtonIcon && <FA name={this.props.openButtonIcon} spin={this.props.openButtonIconSpin} />}
@@ -65,9 +62,6 @@ class AlertDialog extends React.Component {
 AlertDialog.propTypes = {
   confirmCallback: PropTypes.func,
   exitedCallback: PropTypes.func,
-  openButtonIcon: PropTypes.string,
-  openButtonText: PropTypes.string,
-  openButtonDisabled: PropTypes.bool,
   dialogTitle: PropTypes.string,
   dialogContent: PropTypes.string,
   cancelButtonText: PropTypes.string,
@@ -77,33 +71,29 @@ AlertDialog.propTypes = {
   approveButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
   approveButtonVariant: PropTypes.string,
   disableBackdropClick: PropTypes.bool,
+  openButtonText: PropTypes.string,
   openButtonVariant: PropTypes.string,
-  openButtonSize: PropTypes.string,
   openButtonIcon: PropTypes.string,
   openButtonIconSpin: PropTypes.bool,
   openButtonColor: PropTypes.oneOf(['default', 'primary', 'secondary']),
-  openButtonFabMini: PropTypes.bool,
   openButtonDisabled: PropTypes.bool
 };
 AlertDialog.defaultProps = {
   exitedCallback: () => {},
-  openButtonText: 'Delete',
   dialogTitle: '',
   dialogContent: 'Are you sure?',
   cancelButtonText: 'Cancel',
   cancelButtonColor: 'secondary',
-  cancelButtonVariant: 'raised',
+  cancelButtonVariant: 'contained',
   approveButtonText: 'Delete',
   approveButtonColor: 'default',
-  approveButtonVariant: 'raised',
+  approveButtonVariant: 'contained',
   disableBackdropClick: true,
-  openButtonVariant: 'raised',
-  openButtonDisabled: false,
-  openButtonSize: 'medium',
+  openButtonText: 'Delete',
+  openButtonVariant: 'contained',
   openButtonIcon: 'remove',
   openButtonIconSpin: false,
   openButtonColor: 'secondary',
-  openButtonFabMini: false,
   openButtonDisabled: false
 };
 

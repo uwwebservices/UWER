@@ -18,13 +18,7 @@ if (NODE_ENV === 'development') {
   let compiler = webpack(webpackConfig);
 
   app.use(
-    webpackDevMiddleware(compiler, {
-      publicPath: webpackConfig.output.publicPath,
-      stats: { colors: true },
-      watchOptions: {
-        ignored: [path.resolve(__dirname, '..', 'config')]
-      }
-    })
+    webpackDevMiddleware(compiler)
   );
   app.use(
     webpackHotMiddleware(compiler, {
@@ -50,7 +44,7 @@ if (NODE_ENV === 'development') {
 app.get(
   Routes.Login,
   function(req, res, next) {
-    res.cookie('authRedirectUrl', req.query.returnUrl, { ...uwerSetCookieDefaults, signed: false, maxAge: 5 * 60 * 1000 });
+    res.cookie('authRedirectUrl', req.query.returnUrl, { ...uwerSetCookieDefaults, signed: false, maxAge: 5 * 60 * 1000, sameSite: 'none', secure: true});
     next();
   },
   passport.authenticate('saml', { failureRedirect: Routes.Welcome, failureFlash: true })
@@ -76,7 +70,7 @@ app.post(
 
 // This route must be the very last one or things get wonky in production
 if (process.env.NODE_ENV === 'production') {
-  app.get([...Routes], (req, res) => {
+  app.get(Object.values(Routes), (req, res) => {
     res.sendFile(path.resolve(__dirname, '..', '..', 'index.html'));
   });
 }

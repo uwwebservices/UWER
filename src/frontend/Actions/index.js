@@ -123,6 +123,8 @@ export const LoadUsers = () => {
       let groupInfo = await (await APIRequestWithAuth(`/api/members/${group}`)).json();
       dispatch(PrivateGroup(groupInfo.confidential));
 
+      dispatch(CheckToken());
+
       state = getState();
       // only receive the users for the selected group
       // if a user switches groups a bunch, we can't cancel the API calls
@@ -152,6 +154,9 @@ export const AddUser = (group, identifier) => {
           'Content-Type': 'application/json'
         }
       });
+
+      dispatch(CheckToken());
+
       if (res.status === 404) {
         dispatch(FlashNotification('User not found', 'Could not find the specified user.'));
         return dispatch(DummyUserFail(displayId));
@@ -219,6 +224,19 @@ export const CheckAuthentication = () => {
   };
 };
 
+// Checks for registration token authentication
+// Sets registrationToken bool in redux state based on response
+export const CheckToken = () => {
+  return async (dispatch) => {
+    let res = await fetch('/api/checkToken', {
+      method: 'GET',
+      credentials: 'same-origin'
+    });
+
+    dispatch(StoreRegistrationToken(res.status === 200));
+  };
+};
+
 export const Logout = (loggedOut = false) => {
   return async dispatch => {
     await APIRequestWithAuth('/api/logout' + (loggedOut ? `?loggedOut=${loggedOut}` : ''));
@@ -228,6 +246,7 @@ export const Logout = (loggedOut = false) => {
 
 export const StartRegistrationSession = (groupName, netidAllowed = false, tokenTTL = 180, privGrpVis = true) => {
   return async dispatch => {
+    await idpLogoutPopup();
     await APIRequestWithAuth(`/api/getToken?groupName=${groupName}&netidAllowed=${netidAllowed}&tokenTTL=${tokenTTL}&privGrpVis=${privGrpVis}`);
     dispatch(StoreRegistrationToken(true));
     dispatch(ClearUsers());
@@ -237,10 +256,40 @@ export const StartRegistrationSession = (groupName, netidAllowed = false, tokenT
 
 export const StopRegistrationSession = () => {
   return async dispatch => {
+    await idpLogoutPopup();
     dispatch(Logout());
     dispatch(ResetState());
   };
 };
+
+export const idpLogoutPopup = async () => {
+  const w = 450;
+  const h = 340;
+  const left = (screen.width/2)-(w/2);
+  const top = (screen.height/2)-(h/2);
+
+  var features = [];
+  features.push('menubar=no');
+  features.push('toolbar=no');
+  features.push('status=no');
+  features.push('scrollbars=no');
+  features.push('resizable=no');
+  features.push('location=no');
+  features.push('width=' + w);
+  features.push('height=' + h);
+  features.push('left=' + left);
+  features.push('top=' + top);
+
+  var popup_window = window.open(
+    "https://idp.u.washington.edu/idp/profile/Logout",
+    "IDP Logout",
+    features.join(','));
+
+    //wait 2 seconds for IDP logout
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    popup_window.close();
+}
 
 // spec compliant uuid v4: https://gist.github.com/jed/982883#file-index-js
 const uuid = function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b)};

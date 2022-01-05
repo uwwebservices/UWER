@@ -8,7 +8,7 @@ import Configure from 'Containers/Configure';
 import Welcome from 'Containers/Welcome';
 import PageWrapper from 'Containers/PageWrapper';
 import NotAuthorized from 'Containers/NotAuthorized';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './Store.js';
 
@@ -28,16 +28,16 @@ class App extends React.Component {
         <Provider store={store}>
           <MuiThemeProvider theme={theme}>
             <Switch>
-              <PorousRoute path="/config" loginRequired={true} iaaRequired={true}>
+              <PorousRoute path="/config" loginRequired={true} iaaRequired={true} tokenRequired={false}>
                 <Configure />
               </PorousRoute>
-              <PorousRoute path="/register" loginRequired={false} iaaRequired={false}>
+              <PorousRoute path="/register" loginRequired={false} iaaRequired={false} tokenRequired={true}>
                 <Register />
               </PorousRoute>
-              <PorousRoute path="/notAuthorized" loginRequired={false} iaaRequired={false}>
+              <PorousRoute path="/notAuthorized" loginRequired={false} iaaRequired={false} tokenRequired={false}>
                 <NotAuthorized />
               </PorousRoute>
-              <PorousRoute path="/" loginRequired={false} iaaRequired={false}>
+              <PorousRoute path="/" loginRequired={false} iaaRequired={false} tokenRequired={false}>
                 <Welcome />
               </PorousRoute>
             </Switch>

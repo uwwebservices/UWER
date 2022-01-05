@@ -17,21 +17,15 @@ class Register extends Component {
       loadedUsers: false
     };
   }
+
   async componentDidMount() {
     if (!this.state.loadedUsers) {
       await this.props.loadUsers();
       this.setState({ loadedUsers: true });
     }
   }
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    setTimeout(() => {
-      if (!this.props.authenticated && !this.props.token) {
-        if (!Cookies.get('registrationToken')) {
-          this.props.history.push('/');
-        }
-      }
-    }, 0);
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.users.length === 0 || prevProps.users.length !== this.props.users.length) {
       this.registerCardFocus();
     }
@@ -59,7 +53,7 @@ class Register extends Component {
           <div className="registrationNotification">
             {registrationDisabled && <span>You must first select a group to begin registration &nbsp;</span>}
             {adminMode && <span>Hey! It looks like you're still logged in, do you want to start kiosk mode? &nbsp;</span>}
-            <Button variant="raised" onClick={() => this.configRedirect()} color="primary" className="righty">
+            <Button variant="contained" onClick={() => this.configRedirect()} color="primary" className="righty">
               Finish Configuring
             </Button>
           </div>

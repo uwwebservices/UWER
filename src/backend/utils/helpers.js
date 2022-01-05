@@ -39,6 +39,7 @@ const devModeAuthenticated = req => {
 
 export const backToUrl = (url = Routes.Register) => {
   return function(req, res) {
+    console.log(`backToUrl: cookie authRedirectUrl: ${req.cookies.authRedirectUrl}`);
     res.redirect(req.cookies.authRedirectUrl || Routes.Register);
   };
 };
@@ -57,6 +58,14 @@ const ensureAPIAuth = (req, res, next) => {
 
 const ensureAuthOrToken = (req, res, next) => {
   if (req.isAuthenticated() || verifyAuthToken(req)) {
+    return next();
+  } else {
+    res.sendStatus(401);
+  }
+};
+
+const ensureToken = (req, res, next) => {
+  if (verifyAuthToken(req)) {
     return next();
   } else {
     res.sendStatus(401);
@@ -114,6 +123,8 @@ export const FilterModel = (model, whitelist) => {
 };
 
 export const authOrTokenMiddleware = [ensureAuthOrToken, requestSettingsOverrides, ensureValidGroupName];
+
+export const tokenMiddleware = [ensureToken, requestSettingsOverrides, ensureValidGroupName];
 
 export const authMiddleware = [ensureAPIAuth, ensureValidGroupName];
 
