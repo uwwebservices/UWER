@@ -7,6 +7,7 @@ master: [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uw
 develop: [![Build Status](https://dev.azure.com/uwit-ews/WS/_apis/build/status/uwwebservices.UWER?branchName=develop)](https://dev.azure.com/uwit-ews/WS/_build/latest?definitionId=50&branchName=develop)
 
 Documentation: [Client Wiki](https://wiki.cac.washington.edu/pages/viewpage.action?pageId=92391281)
+Language Guidelines: [IT Inclusive Language](https://itconnect.uw.edu/work/inclusive-language-guide/)
 
 ## Beta Service Availability
 
