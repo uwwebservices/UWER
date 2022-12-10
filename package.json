@@ -38,7 +38,7 @@
     "cookie-parser": "1.4.5",
     "csv-express": "1.2.2",
     "ews-api-lib": "git+https://github.com/uwwebservices/ews-api-lib.git#0.2.8",
-    "express": "4.17.1",
+    "express": "4.17.3",
     "express-session": "1.17.1",
     "graphite": "0.1.4",
     "helmet": "4.2.0",
