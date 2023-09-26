@@ -10,6 +10,7 @@ const baseUrl = process.env.GROUPSBASEURL;
 
 const Groups = {
   async Setup(certificate) {
+    console.log(baseUrl);
     GroupsWebService.Setup(certificate, baseUrl);
   },
 
